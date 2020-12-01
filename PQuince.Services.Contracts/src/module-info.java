@@ -1,0 +1,2 @@
+module PQuince.Services.Contracts {
+}
