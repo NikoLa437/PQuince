@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.IngredientDTO;
-import quince_it.pquince.services.contracts.identifiable.dto.IdentifiableDTO;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.implementation.drugs.IngredientService;
 
 @RestController
