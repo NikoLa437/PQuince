@@ -1,4 +1,4 @@
-package quince_it.pquince.services.contracts.identifiable.dto;
+package quince_it.pquince.services.contracts.identifiable_dto;
 
 import java.util.UUID;
 

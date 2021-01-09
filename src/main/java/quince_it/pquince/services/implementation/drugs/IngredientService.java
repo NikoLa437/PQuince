@@ -7,10 +7,10 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import quince_it.pquince.data_provider.IngredientRepository;
 import quince_it.pquince.entities.drugs.Ingredient;
+import quince_it.pquince.repository.drugs.IngredientRepository;
 import quince_it.pquince.services.contracts.dto.IngredientDTO;
-import quince_it.pquince.services.contracts.identifiable.dto.IdentifiableDTO;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.IIngredientService;
 import quince_it.pquince.services.implementation.util.IngredientMapper;
 
