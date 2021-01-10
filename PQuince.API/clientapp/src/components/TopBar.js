@@ -22,7 +22,7 @@ class TopBar extends React.Component{
                     
                     <div className="register-login">
                         <a href="#">Register</a>
-                        <a href="#">Login</a>
+                        <a href="/login">LogIn</a>
                     </div>
                 </div>
             </div>

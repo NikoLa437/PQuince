@@ -12,8 +12,8 @@ insert into city (id, name, country_id) values ('12293162-52d3-11eb-ae93-0242ac1
 insert into city (id, name, country_id) values ('12793162-52d3-11eb-ae93-0252ac130002','Pariz','eec1937c-52d2-11eb-ae93-0242ac130002');
 insert into city (id, name, country_id) values ('12793162-52d3-11eb-ae93-0252ac130102','Lion','eec1937c-52d2-11eb-ae93-0242ac130002');
 
-insert into users (id, active,email, name,password,phone_number,surname, address, city_id) values ('22793162-52d3-11eb-ae93-0242ac130002',true, 'example@example.com','Stefan','123','0600000','Stefic','Boracka 2','12793162-52d3-11eb-ae93-0242ac130002');
-insert into users (id, active,email, name,password,phone_number,surname, address ,city_id) values ('23793162-52d3-11eb-ae93-0242ac130002',true, 'example1@example.com','Nikola','123','0600000','Stefic','Ustanicka 3','12793162-52d3-11eb-ae93-0242ac130002');
+insert into users (id, active,email, name,password,phone_number,surname, address, city_id) values ('22793162-52d3-11eb-ae93-0242ac130002',true, 'example@example.com','Stefan','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','Boracka 2','12793162-52d3-11eb-ae93-0242ac130002');
+insert into users (id, active,email, name,password,phone_number,surname, address ,city_id) values ('23793162-52d3-11eb-ae93-0242ac130002',true, 'example1@example.com','Nikola','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','Ustanicka 3','12793162-52d3-11eb-ae93-0242ac130002');
 
 insert into patient (id, penalty) values ('22793162-52d3-11eb-ae93-0242ac130002',0);
 insert into patient (id, penalty) values ('23793162-52d3-11eb-ae93-0242ac130002',0);

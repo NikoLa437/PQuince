@@ -8,6 +8,7 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface ICityService {
 	List<IdentifiableDTO<CityDTO>> findAll();
+	List<IdentifiableDTO<CityDTO>> findByCountryId(UUID countryId);
 	IdentifiableDTO<CityDTO> findById(UUID id);
 	
 }

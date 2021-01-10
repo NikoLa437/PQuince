@@ -10,4 +10,5 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 
 	IdentifiableDTO<UserDTO> findByEmail ( String email );
 	UUID createPatient(UserRequestDTO entityDTO);
+	boolean activatePatientAccount(UUID id);
 }

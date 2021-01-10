@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.users.City;
@@ -37,6 +38,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private ICountryService countryService;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -87,8 +91,21 @@ public class UserService implements IUserService{
 	private Patient CreatePatientFromDTO(UserRequestDTO patientDTO) {
 		IdentifiableDTO<CityDTO> cityDTO = cityService.findById(patientDTO.getCityId());
 		IdentifiableDTO<CountryDTO> countryDTO = countryService.findById(cityDTO.EntityDTO.getCountryId());
-
+		
 		City city = new City(cityDTO.Id, cityDTO.EntityDTO.getName(), new Country(countryDTO.Id, countryDTO.EntityDTO.getName()));
-		return new Patient(patientDTO.getEmail(), patientDTO.getPassword(), patientDTO.getName(), patientDTO.getSurname(), patientDTO.getAddress(), city, patientDTO.getPhoneNumber(), false, 0);
+		return new Patient(patientDTO.getEmail(), passwordEncoder.encode(patientDTO.getPassword()), patientDTO.getName(), patientDTO.getSurname(), patientDTO.getAddress(), city, patientDTO.getPhoneNumber(), false, 0);
+	}
+
+	@Override
+	public boolean activatePatientAccount(UUID id) {
+		try {
+			Patient patient = patientRepository.getOne(id);
+			patient.setActive(true);
+			patientRepository.save(patient);
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
 	}
 }

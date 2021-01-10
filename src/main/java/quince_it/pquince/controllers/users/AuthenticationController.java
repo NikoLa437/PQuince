@@ -1,4 +1,4 @@
-package quince_it.pquince.controllers;
+package quince_it.pquince.controllers.users;
 
 import java.util.Date;
 import java.util.UUID;

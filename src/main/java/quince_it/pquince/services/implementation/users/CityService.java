@@ -31,4 +31,11 @@ public class CityService implements ICityService {
 		return CityMapper.MapCityPersistenceToCityIdentifiableDTO(cityRepository.getOne(id));
 	}
 
+	@Override
+	public List<IdentifiableDTO<CityDTO>> findByCountryId(UUID countryId) {
+		List<IdentifiableDTO<CityDTO>> cities = new ArrayList<IdentifiableDTO<CityDTO>>();
+		cityRepository.findByCountryId(countryId).forEach((c) -> cities.add(CityMapper.MapCityPersistenceToCityIdentifiableDTO(c)));
+		return cities;
+	}
+
 }
