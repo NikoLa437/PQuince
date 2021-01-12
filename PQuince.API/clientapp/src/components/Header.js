@@ -18,7 +18,7 @@ class Header extends React.Component{
             <header id="header" className="fixed-top">
                 <div className="container d-flex align-items-center">
             
-                    <h1 className="logo mr-auto"><a href="">PQuince</a></h1>
+                    <h1 className="logo mr-auto"><a href="/">PQuince</a></h1>
             
                     <nav className="nav-menu d-none d-lg-block">
                         <ul>
