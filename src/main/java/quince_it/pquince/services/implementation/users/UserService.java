@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.ICityService;
 import quince_it.pquince.services.contracts.interfaces.ICountryService;
 import quince_it.pquince.services.contracts.interfaces.IUserService;
+import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.UserMapper;
 
 @Service
@@ -41,6 +45,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -85,6 +92,16 @@ public class UserService implements IUserService{
 	public UUID createPatient(UserRequestDTO entityDTO) {
 		Patient patient = CreatePatientFromDTO(entityDTO);
 		patientRepository.save(patient);
+		try {
+			emailService.sendSignUpNotificaitionAsync(patient);
+		} catch (MailException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return patient.getId();
 	}
 

@@ -3,6 +3,8 @@ import Header from '../components/Header';
 import TopBar from '../components/TopBar';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
+import { Button } from 'react-bootstrap';
+
 
 class LoginPage extends Component {
     state = {
@@ -20,7 +22,9 @@ class LoginPage extends Component {
         let loginDTO = { username : this.state.email, password : this.state.password};
         console.log(loginDTO);
         Axios.post(BASE_URL + "/auth/login", loginDTO).then((res) =>{
-            console.log("Success")
+            console.log("Success");
+            console.log(res.data);
+            localStorage.setItem('keyToken', res.data.accessToken);
         }).catch((err) => {console.log(err);});
     }
     render() { 
@@ -50,7 +54,7 @@ class LoginPage extends Component {
                                     </div>
             
                                     <div  className="form-group">
-                                        <button style={{background: "#1977cc",marginTop: "15px",marginLeft: "40%", width: "20%"}} onClick = {this.handleLogin} className="btn btn-primary btn-xl" id="sendMessageButton" type="button">Login</button>
+                                        <Button style={{background: "#1977cc",marginTop: "15px",marginLeft: "40%", width: "20%"}} href="/" onClick = {this.handleLogin} className="btn btn-primary btn-xl" id="sendMessageButton" type="button">Login</Button>
                                     </div>
                                 </form>
                         </div>

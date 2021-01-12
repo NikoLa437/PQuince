@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import TopBar from '../components/TopBar';
 import {BASE_URL} from '../constants.js';
 import Axios from 'axios';
+import ModalDialog from '../components/ModalDialog';
 
 class RegisterPage extends Component {
     state = {
@@ -16,6 +17,16 @@ class RegisterPage extends Component {
         phoneNumber:"",
         countryId:"select",
         cityId:"select",
+        emailError:"none",
+        passwordError:"none",
+        nameError:"none",
+        surnameError:"none",
+        addressError:"none",
+        phoneError:"none",
+        countryError:"none",
+        cityError:"none",
+        emailNotValid:"none",
+        openModal:false,
     }
 
     componentDidMount() {
@@ -66,13 +77,61 @@ class RegisterPage extends Component {
         });
     }
 
+    validateForm = (userDTO) => {
+
+        this.setState({emailError:"none", emailNotValid:"none", nameError:"none", surnameError:"none", cityError:"none", addressError:"none", phoneError:"none", passwordError:"none"});
+
+        if(userDTO.email == ""){
+            this.setState({ emailError : "initial"});
+            return false;
+        }
+        else if (!userDTO.email.includes("@")){
+            this.setState({ emailNotValid : "initial"});
+            return false;
+        }
+        else if (userDTO.name == "") {
+            this.setState({ nameError : "initial"});
+            return false;
+        }
+        else if (userDTO.surname == ""){
+            this.setState({ surnameError : "initial"});
+            return false;
+        }
+        else if (userDTO.cityId == "" || userDTO.cityId == "select"){
+            this.setState({ cityError : "initial"});
+            return false;
+        }
+        else if (userDTO.address == ""){
+            this.setState({ addressError : "initial"});
+            return false;
+        }
+        else if (userDTO.phoneNumber == ""){
+            this.setState({ phoneError : "initial"});
+            return false;
+        }
+        else if (userDTO.password == ""){
+            this.setState({ passwordError : "initial"});
+            return false;
+        }
+        return true;
+    }
+
+    handleModalClose = () => {
+        this.setState({openModal: false});
+        
+    }
+
     handleSignUp = () => {
         let userDTO = { email: this.state.email, name: this.state.name, surname: this.state.surname, address: this.state.address, phoneNumber: this.state.phoneNumber,
                           cityId : this.state.cityId, password : this.state.password};
-        console.log(userDTO);
-        Axios.post(BASE_URL + "/auth/signup", userDTO).then((res) =>{
-            console.log("Success")
-        }).catch((err) => {console.log(err);});
+
+        if (this.validateForm(userDTO)) {
+            console.log(userDTO);
+            Axios.post(BASE_URL + "/auth/signup", userDTO).then((res) =>{
+                console.log("Success");
+                this.setState({openModal: true});
+            }).catch((err) => {console.log(err);});
+        }
     }
 
     render() { 
@@ -93,17 +152,29 @@ class RegisterPage extends Component {
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <input placeholder="Email address" className="form-control" id="name" type="text" onChange={this.handleEmailChange} value={this.state.email}/>
                                     </div>
+                                    <div className="text-danger" style={{display:this.state.emailError}}>
+                                        Email address must be entered.
+                                    </div>
+                                    <div className="text-danger" style={{display:this.state.emailNotValid}}>
+                                        Email address is not valid.
+                                    </div>
                                 </div>
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Name:</label>
                                         <input placeholder="Name" class="form-control" type="text" onChange={this.handleNameChange} value={this.state.name} />
                                     </div>
+                                    <div className="text-danger" style={{display:this.state.nameError}}>
+                                        Name must be entered.
+                                    </div>
                                 </div>
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Surname:</label>
                                         <input placeholder="Surname" class="form-control" type="text" onChange={this.handleSurnameChange} value={this.state.surname} />
+                                    </div>
+                                    <div className="text-danger" style={{display:this.state.surnameError}}>
+                                        Surname must be entered.
                                     </div>
                                 </div>
                                 <div className="control-group">
@@ -123,23 +194,35 @@ class RegisterPage extends Component {
                                             {this.state.cities.map(city => <option id={city.Id} key={city.Id} value = {city.Id}>{city.EntityDTO.name}</option>)}
                                         </select>
                                     </div>
+                                    <div className="text-danger" style={{display:this.state.cityError}}>
+                                        City must be selected.
+                                    </div>
                                 </div>
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
-                                        <label>Street and number:</label>
-                                        <input placeholder="Street and number" class="form-control" id="password" type="text" onChange={this.handleAddressChange} value={this.state.address} />
+                                        <label>Address:</label>
+                                        <input placeholder="Address" class="form-control" type="text" onChange={this.handleAddressChange} value={this.state.address} />
+                                    </div>
+                                    <div className="text-danger" style={{display:this.state.addressError}}>
+                                        Address must be entered.
                                     </div>
                                 </div>
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Phone number:</label>
-                                        <input placeholder="Phone number" class="form-control" id="password" type="text" onChange={this.handlePhoneNumberChange} value={this.state.phoneNumber} />
+                                        <input placeholder="Phone number" class="form-control" type="text" onChange={this.handlePhoneNumberChange} value={this.state.phoneNumber} />
+                                    </div>
+                                    <div className="text-danger" style={{display:this.state.phoneError}}>
+                                        Phone number must be entered.
                                     </div>
                                 </div>
                                 <div className="control-group">
                                     <label>Password:</label>
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
-                                        <input placeholder="Password" class="form-control" id="password" type="password" onChange={this.handlePasswordChange} value={this.state.password} />
+                                        <input placeholder="Password" class="form-control" type="password" onChange={this.handlePasswordChange} value={this.state.password} />
+                                    </div>
+                                    <div className="text-danger" style={{display:this.state.passwordError}}>
+                                        Password must be entered.
                                     </div>
                                 </div>
                                 
@@ -151,6 +234,7 @@ class RegisterPage extends Component {
                     </div>
                 </div>
             </div>
+            <ModalDialog show={this.state.openModal} href="/" onCloseModal={this.handleModalClose} header="Uspesna registracija" text="Nalog mozete aktivirati preko linka koji Vam je poslat na unetu e-mail adresu."/>
         </React.Fragment> 
         );
     }
