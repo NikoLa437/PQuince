@@ -79,9 +79,9 @@ class RegisterPage extends Component {
 
     validateForm = (userDTO) => {
 
-        this.setState({emailError:"none", emailNotValid:"none", nameError:"none", surnameError:"none", cityError:"none", addressError:"none", phoneError:"none", passwordError:"none"});
+        this.setState({emailError:"none", emailNotValid:"none", nameError:"none", surnameError:"none", countryError:"none", cityError:"none", addressError:"none", phoneError:"none", passwordError:"none"});
 
-        if(userDTO.email == ""){
+        if(userDTO.email === ""){
             this.setState({ emailError : "initial"});
             return false;
         }
@@ -89,27 +89,31 @@ class RegisterPage extends Component {
             this.setState({ emailNotValid : "initial"});
             return false;
         }
-        else if (userDTO.name == "") {
+        else if (userDTO.name === "") {
             this.setState({ nameError : "initial"});
             return false;
         }
-        else if (userDTO.surname == ""){
+        else if (userDTO.surname === ""){
             this.setState({ surnameError : "initial"});
             return false;
         }
-        else if (userDTO.cityId == "" || userDTO.cityId == "select"){
+        else if (this.state.countryId === "" || this.state.countryId === "select"){
+            this.setState({ countryError : "initial"});
+            return false;
+        }
+        else if (userDTO.cityId === "" || userDTO.cityId === "select"){
             this.setState({ cityError : "initial"});
             return false;
         }
-        else if (userDTO.address == ""){
+        else if (userDTO.address === ""){
             this.setState({ addressError : "initial"});
             return false;
         }
-        else if (userDTO.phoneNumber == ""){
+        else if (userDTO.phoneNumber === ""){
             this.setState({ phoneError : "initial"});
             return false;
         }
-        else if (userDTO.password == ""){
+        else if (userDTO.password === ""){
             this.setState({ passwordError : "initial"});
             return false;
         }
@@ -148,9 +152,9 @@ class RegisterPage extends Component {
                         <br/>
                             <form id="contactForm" name="sentMessage" novalidate="novalidate">
                                 <div className="control-group">
-                                    <label>Email address:</label>
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
-                                        <input placeholder="Email address" className="form-control" id="name" type="text" onChange={this.handleEmailChange} value={this.state.email}/>
+                                        <label>Email address:</label>
+                                        <input placeholder="Email address" className="form-control" id="email" type="text" onChange={this.handleEmailChange} value={this.state.email}/>
                                     </div>
                                     <div className="text-danger" style={{display:this.state.emailError}}>
                                         Email address must be entered.
@@ -162,7 +166,7 @@ class RegisterPage extends Component {
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Name:</label>
-                                        <input placeholder="Name" class="form-control" type="text" onChange={this.handleNameChange} value={this.state.name} />
+                                        <input placeholder="Name" class="form-control" type="text" id="name" onChange={this.handleNameChange} value={this.state.name} />
                                     </div>
                                     <div className="text-danger" style={{display:this.state.nameError}}>
                                         Name must be entered.
@@ -171,7 +175,7 @@ class RegisterPage extends Component {
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Surname:</label>
-                                        <input placeholder="Surname" class="form-control" type="text" onChange={this.handleSurnameChange} value={this.state.surname} />
+                                        <input placeholder="Surname" class="form-control" type="text" id="surname" onChange={this.handleSurnameChange} value={this.state.surname} />
                                     </div>
                                     <div className="text-danger" style={{display:this.state.surnameError}}>
                                         Surname must be entered.
@@ -184,6 +188,9 @@ class RegisterPage extends Component {
                                             <option disabled={true} selected value="select">Select country</option>
                                             {this.state.countries.map(country => <option id={country.Id} key={country.Id} value = {country.Id}>{country.EntityDTO.name}</option>)}
                                         </select>
+                                    </div>
+                                    <div className="text-danger" style={{display:this.state.countryError}}>
+                                        Country must be selected.
                                     </div>
                                 </div>
                                 <div className="control-group">
@@ -201,7 +208,7 @@ class RegisterPage extends Component {
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Address:</label>
-                                        <input placeholder="Address" class="form-control" type="text" onChange={this.handleAddressChange} value={this.state.address} />
+                                        <input placeholder="Address" class="form-control" id="address" type="text" onChange={this.handleAddressChange} value={this.state.address} />
                                     </div>
                                     <div className="text-danger" style={{display:this.state.addressError}}>
                                         Address must be entered.
@@ -210,7 +217,7 @@ class RegisterPage extends Component {
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Phone number:</label>
-                                        <input placeholder="Phone number" class="form-control" type="text" onChange={this.handlePhoneNumberChange} value={this.state.phoneNumber} />
+                                        <input placeholder="Phone number" class="form-control" id="phone" type="text" onChange={this.handlePhoneNumberChange} value={this.state.phoneNumber} />
                                     </div>
                                     <div className="text-danger" style={{display:this.state.phoneError}}>
                                         Phone number must be entered.
@@ -234,7 +241,7 @@ class RegisterPage extends Component {
                     </div>
                 </div>
             </div>
-            <ModalDialog show={this.state.openModal} href="/" onCloseModal={this.handleModalClose} header="Uspesna registracija" text="Nalog mozete aktivirati preko linka koji Vam je poslat na unetu e-mail adresu."/>
+            <ModalDialog show={this.state.openModal} href="/" onCloseModal={this.handleModalClose} header="Successful registration" text="You can activate your account by clicking on link sent to provided email address."/>
         </React.Fragment> 
         );
     }

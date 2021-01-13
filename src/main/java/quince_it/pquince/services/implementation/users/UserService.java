@@ -11,20 +11,26 @@ import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.drugs.Allergen;
 import quince_it.pquince.entities.users.City;
 import quince_it.pquince.entities.users.Country;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.UserRepository;
+import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
+import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.CityDTO;
 import quince_it.pquince.services.contracts.dto.users.CountryDTO;
+import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
+import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.ICityService;
 import quince_it.pquince.services.contracts.interfaces.ICountryService;
 import quince_it.pquince.services.contracts.interfaces.IUserService;
+import quince_it.pquince.services.implementation.drugs.AllergenService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.UserMapper;
 
@@ -39,6 +45,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private ICityService cityService;
+	
+	@Autowired
+	private AllergenService allergenService;
 	
 	@Autowired
 	private ICountryService countryService;
@@ -104,13 +113,14 @@ public class UserService implements IUserService{
 		
 		return patient.getId();
 	}
+	
 
 	private Patient CreatePatientFromDTO(UserRequestDTO patientDTO) {
 		IdentifiableDTO<CityDTO> cityDTO = cityService.findById(patientDTO.getCityId());
 		IdentifiableDTO<CountryDTO> countryDTO = countryService.findById(cityDTO.EntityDTO.getCountryId());
 		
 		City city = new City(cityDTO.Id, cityDTO.EntityDTO.getName(), new Country(countryDTO.Id, countryDTO.EntityDTO.getName()));
-		return new Patient(patientDTO.getEmail(), passwordEncoder.encode(patientDTO.getPassword()), patientDTO.getName(), patientDTO.getSurname(), patientDTO.getAddress(), city, patientDTO.getPhoneNumber(), false, 0);
+		return new Patient(patientDTO.getEmail(), passwordEncoder.encode(patientDTO.getPassword()), patientDTO.getName(), patientDTO.getSurname(), patientDTO.getAddress(), city, patientDTO.getPhoneNumber());
 	}
 
 	@Override
@@ -125,4 +135,56 @@ public class UserService implements IUserService{
 			return false;
 		}
 	}
+
+	@Override
+	public IdentifiableDTO<PatientDTO> getPatientById(UUID id) {	
+		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(id));
+	}
+
+	@Override
+	public boolean addAllergen(AllergenUserDTO allergenUserDTO) {
+		try {
+			Patient patient = patientRepository.getOne(allergenUserDTO.getPatientId());
+			IdentifiableDTO<AllergenDTO> allergenDTO = allergenService.findById(allergenUserDTO.getAllergenId());
+			
+			patient.addAllergen(new Allergen(allergenDTO.Id, allergenDTO.EntityDTO.getName()));
+			patientRepository.save(patient);
+			return true;
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean removeAllergen(AllergenUserDTO allergenUserDTO) {
+		try {
+			Patient patient = patientRepository.getOne(allergenUserDTO.getPatientId());			
+			patient.removeAllergen(allergenUserDTO.getAllergenId());
+			patientRepository.save(patient);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Override
+	public void updatePatient(UUID patientId, UserInfoChangeDTO patientInfoChangeDTO) {
+		Patient patient = patientRepository.getOne(patientId);		
+		
+		patient.setAddress(patientInfoChangeDTO.getAddress());
+		patient.setName(patientInfoChangeDTO.getName());
+		patient.setPhoneNumber(patientInfoChangeDTO.getPhoneNumber());
+		patient.setSurname(patientInfoChangeDTO.getPhoneNumber());
+		
+		IdentifiableDTO<CityDTO> city = cityService.findById(patientInfoChangeDTO.getCityId());
+		IdentifiableDTO<CountryDTO> country = countryService.findById(city.EntityDTO.getCountryId());
+
+		patient.setCity(new City(city.Id, city.EntityDTO.getName(), new Country(country.Id, country.EntityDTO.getName())));
+		
+		patientRepository.save(patient);
+	}
+
+
 }

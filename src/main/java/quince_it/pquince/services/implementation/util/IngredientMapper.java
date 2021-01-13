@@ -1,7 +1,7 @@
 package quince_it.pquince.services.implementation.util;
 
 import quince_it.pquince.entities.drugs.Ingredient;
-import quince_it.pquince.services.contracts.dto.IngredientDTO;
+import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public class IngredientMapper {

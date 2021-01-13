@@ -1,11 +1,11 @@
 package quince_it.pquince.services.contracts.dto.drugs;
 
-public class IngredientDTO {
-	
+public class AllergenDTO {
+
 	private String name;
-		
-	public IngredientDTO() { }
-	public IngredientDTO(String name) {
+	
+	public AllergenDTO() { }
+	public AllergenDTO(String name) {
 		super();
 		this.name = name;
 	}
@@ -17,6 +17,4 @@ public class IngredientDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
 }
