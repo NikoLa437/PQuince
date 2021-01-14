@@ -12,7 +12,7 @@ class HomePage extends React.Component{
                 <section id="hero" class="d-flex align-items-center">
                     <div class="container">
                         <h1>Welcome to PQuince</h1>
-                        <a href="#about" className="btn-get-started scrollto">Register</a>
+                        <a href="/registration" className="btn-get-started scrollto">Register</a>
                     </div>
                 </section>
 

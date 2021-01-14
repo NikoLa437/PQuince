@@ -3,6 +3,7 @@ package quince_it.pquince.services.contracts.dto.users;
 import java.util.List;
 
 import quince_it.pquince.entities.users.Authority;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public class UserDTO {
 	
@@ -14,7 +15,7 @@ public class UserDTO {
     
 	private String address;
 	
-	private CityDTO city;
+	private IdentifiableDTO<CityDTO> city;
     
 	private String phoneNumber;
 	
@@ -23,7 +24,7 @@ public class UserDTO {
     private List<Authority> authorities;
 
     
-	public UserDTO(String email, String name, String surname, String address, CityDTO city, String phoneNumber, boolean active,
+	public UserDTO(String email, String name, String surname, String address, IdentifiableDTO<CityDTO> city, String phoneNumber, boolean active,
 			List<Authority> authorities) {
 		super();
 		this.email = email;
@@ -84,11 +85,11 @@ public class UserDTO {
 		this.authorities = authorities;
 	}
 
-	public CityDTO getCity() {
+	public IdentifiableDTO<CityDTO> getCity() {
 		return city;
 	}
 
-	public void setCity(CityDTO city) {
+	public void setCity(IdentifiableDTO<CityDTO> city) {
 		this.city = city;
 	}
 

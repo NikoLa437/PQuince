@@ -13,7 +13,9 @@ public class UserMapper {
 		if(user == null) throw new IllegalArgumentException();
 
 		
-		return new IdentifiableDTO<UserDTO>(user.getId(), new UserDTO(user.getEmail(), user.getName(), user.getSurname(), user.getAddress(), new CityDTO(user.getCity().getName(), user.getCity().getCountry().getId()), user.getPhoneNumber(), user.isActive(), user.getUserAuthorities()));
+		return new IdentifiableDTO<UserDTO>(user.getId(), new UserDTO(user.getEmail(), user.getName(), user.getSurname(), user.getAddress(),
+											new IdentifiableDTO<CityDTO>(user.getCity().getId(), new CityDTO(user.getCity().getName(), user.getCity().getCountry().getId())),
+											user.getPhoneNumber(), user.isActive(), user.getUserAuthorities()));
 
 	}
 	
@@ -21,7 +23,12 @@ public class UserMapper {
 		if(patient == null) throw new IllegalArgumentException();
 
 		
-		return new IdentifiableDTO<PatientDTO>(patient.getId(), new PatientDTO(patient.getEmail(), patient.getName(), patient.getSurname(), patient.getAddress(), new CityDTO(patient.getCity().getName(), patient.getCity().getCountry().getId()), patient.getPhoneNumber(), patient.isActive(), patient.getUserAuthorities(), patient.getPenalty()));
+		return new IdentifiableDTO<PatientDTO>(patient.getId(), new PatientDTO(patient.getEmail(), patient.getName(), patient.getSurname(), patient.getAddress(),
+												new IdentifiableDTO<CityDTO>(patient.getCity().getId(), new CityDTO(patient.getCity().getName(), patient.getCity().getCountry().getId())),
+												patient.getPhoneNumber(), patient.isActive(), patient.getUserAuthorities(), patient.getPenalty(),
+												AllergenMapper.MapAllergenPersistenceListToAllergenIdentifiableDTOList(patient.getAllergens()),
+												patient.getPoints(),
+												patient.getLoyalityCategory()));
 
 	}
 }

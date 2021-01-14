@@ -1,4 +1,4 @@
-package quince_it.pquince.controllers;
+package quince_it.pquince.controllers.drugs;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import quince_it.pquince.services.contracts.dto.IngredientDTO;
+import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.implementation.drugs.IngredientService;
 

@@ -23,9 +23,9 @@ class Header extends React.Component{
                     <nav className="nav-menu d-none d-lg-block">
                         <ul>
                             <li className="active"><a href="index.html">Home</a></li>
-                                <li><a href="#about">Pharmachy</a></li>
+                                <li><a href="/pharmacies">Pharmacies</a></li>
                         
-                                <li className="drop-down"><a href="">Drop Down</a>
+                                <li className="drop-down"><a href="">My record</a>
                                     <ul>
                                     <li><a href="#">Drop Down 1</a></li>
                                     <li><a href="#">Drop Down 2</a></li>
