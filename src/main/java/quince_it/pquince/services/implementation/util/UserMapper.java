@@ -25,7 +25,10 @@ public class UserMapper {
 		
 		return new IdentifiableDTO<PatientDTO>(patient.getId(), new PatientDTO(patient.getEmail(), patient.getName(), patient.getSurname(), patient.getAddress(),
 												new IdentifiableDTO<CityDTO>(patient.getCity().getId(), new CityDTO(patient.getCity().getName(), patient.getCity().getCountry().getId())),
-												patient.getPhoneNumber(), patient.isActive(), patient.getUserAuthorities(), patient.getPenalty(), patient.getAllergens(), patient.getPoints()));
+												patient.getPhoneNumber(), patient.isActive(), patient.getUserAuthorities(), patient.getPenalty(),
+												AllergenMapper.MapAllergenPersistenceListToAllergenIdentifiableDTOList(patient.getAllergens()),
+												patient.getPoints(),
+												patient.getLoyalityCategory()));
 
 	}
 }

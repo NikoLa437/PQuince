@@ -18,7 +18,7 @@ class AllergensModal extends Component {
     doesUserContains = (allergenId) => {
         console.log(this.props.userAllergens);
         for(let allergen of this.props.userAllergens){
-            if(allergen.id === allergenId)
+            if(allergen.Id === allergenId)
                 return true;
         }
         return false;

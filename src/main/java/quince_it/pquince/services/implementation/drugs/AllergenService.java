@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.repository.drugs.AllergenRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
@@ -27,12 +26,10 @@ public class AllergenService implements IAllergenService {
 	
 	@Override
 	public List<IdentifiableDTO<AllergenDTO>> getPatientAllergens(UUID patientId) {
+		
 		IdentifiableDTO<PatientDTO> patient = userService.getPatientById(patientId);
-		
-		List<IdentifiableDTO<AllergenDTO>> allergens = new ArrayList<IdentifiableDTO<AllergenDTO>>();
-		patient.EntityDTO.getAllergens().forEach((a) -> allergens.add(AllergenMapper.MapAllergenPersistenceToAllergenIdentifiableDTO(a)));
-		
-		return allergens;
+				
+		return patient.EntityDTO.getAllergens();
 	}
 
 	@Override

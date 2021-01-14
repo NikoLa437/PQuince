@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -29,6 +31,10 @@ public class Patient extends User {
             joinColumns = @JoinColumn(name = "patient_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "allergen_id", referencedColumnName = "id"))
     private List<Allergen> allergens;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name="loyality_category")
+	private LoyalityCategory loyalityCategory;
 
 	public Patient() {
 		super();
@@ -40,15 +46,17 @@ public class Patient extends User {
 		this.allergens = new ArrayList<Allergen>();
 		this.penalty = 0;
 		this.points = 0;
+		this.loyalityCategory = LoyalityCategory.REGULAR;
 	}
 
 	public Patient(UUID id, String email, String password, String name, String surname, String address, City city,
-			String phoneNumber, boolean active, int penalty, List<Allergen> allergens,int points) {
+			String phoneNumber, boolean active, int penalty, List<Allergen> allergens,int points,LoyalityCategory loyalityCategory) {
 		super(id, email, password, name, surname, address, city, phoneNumber, active);
 
 		this.penalty = penalty;
 		this.allergens = allergens;
 		this.points = points;
+		this.loyalityCategory = loyalityCategory;
 	}
 
 	public int getPenalty() {
@@ -93,6 +101,14 @@ public class Patient extends User {
 
 	public void setPoints(int points) {
 		this.points = points;
+	}
+
+	public LoyalityCategory getLoyalityCategory() {
+		return loyalityCategory;
+	}
+
+	public void setLoyalityCategory(LoyalityCategory loyalityCategory) {
+		this.loyalityCategory = loyalityCategory;
 	}
 	
 }

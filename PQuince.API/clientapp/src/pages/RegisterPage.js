@@ -64,7 +64,7 @@ class RegisterPage extends Component {
         this.setState({
             countryId: event.target.value
         });
-        console.log(event.target.value);
+        this.setState({cityId :"select"})
         Axios
         .get(BASE_URL + "/api/city/filterByCountry/" + event.target.value).then((res) =>{
             this.setState({cities : res.data});
@@ -184,7 +184,7 @@ class RegisterPage extends Component {
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Country:</label>
-                                        <select class="form-control" onChange={this.onCountryChange} value={this.state.value}>
+                                        <select class="form-control" onChange={this.onCountryChange} value={this.state.countryId}>
                                             <option disabled={true} selected value="select">Select country</option>
                                             {this.state.countries.map(country => <option id={country.Id} key={country.Id} value = {country.Id}>{country.EntityDTO.name}</option>)}
                                         </select>
@@ -196,7 +196,7 @@ class RegisterPage extends Component {
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>City:</label>
-                                        <select class="form-control" onChange={this.onCityChange}>
+                                        <select class="form-control" onChange={this.onCityChange} value={this.state.cityId}>
                                             <option disabled={true} selected value="select">Select city</option>
                                             {this.state.cities.map(city => <option id={city.Id} key={city.Id} value = {city.Id}>{city.EntityDTO.name}</option>)}
                                         </select>

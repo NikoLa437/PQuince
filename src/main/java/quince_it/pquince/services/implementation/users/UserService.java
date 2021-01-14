@@ -176,8 +176,9 @@ public class UserService implements IUserService{
 		patient.setAddress(patientInfoChangeDTO.getAddress());
 		patient.setName(patientInfoChangeDTO.getName());
 		patient.setPhoneNumber(patientInfoChangeDTO.getPhoneNumber());
-		patient.setSurname(patientInfoChangeDTO.getPhoneNumber());
+		patient.setSurname(patientInfoChangeDTO.getSurname());
 		
+		System.out.println("City ID" + patientInfoChangeDTO.getCityId());
 		IdentifiableDTO<CityDTO> city = cityService.findById(patientInfoChangeDTO.getCityId());
 		IdentifiableDTO<CountryDTO> country = countryService.findById(city.EntityDTO.getCountryId());
 

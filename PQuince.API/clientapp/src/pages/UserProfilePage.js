@@ -18,6 +18,7 @@ class UserProfilePage extends Component {
         surname:"",
         address:"",
         phoneNumber:"",
+        loyalityCategory:"",
         countryId:"select",
         cityId:"select",
         nameError:"none",
@@ -26,11 +27,16 @@ class UserProfilePage extends Component {
         phoneError:"none",
         countryError:"none",
         cityError:"none",
+        oldPasswordEmptyError : "none",
+        newPasswordEmptyError : "none",
+        newPasswordRetypeEmptyError : "none",
+        newPasswordRetypeNotSameError : "none",
         openModal:false,
         openPasswordModal:false,
         openSuccessModal: false,
         userAllergens:[],
         patientPoints:"",
+        loyalityCategoryColor:"#1977cc",
     }
 
     componentDidMount() {
@@ -53,7 +59,13 @@ class UserProfilePage extends Component {
                           countryId: res.data.EntityDTO.city.EntityDTO.countryId,
                           userAllergens : res.data.EntityDTO.allergens,
                           patientPoints : res.data.EntityDTO.points,
+                          loyalityCategory : res.data.EntityDTO.category,
                         });
+
+              if(this.state.loyalityCategory == "SILVER")
+                this.setState({loyalityCategoryColor:"#808080"});
+              else if (this.state.loyalityCategory == "GOLD")
+                this.setState({loyalityCategoryColor:"#FFCC00"});
         
             Axios
             .get(BASE_URL + "/api/city/filterByCountry/" + res.data.EntityDTO.city.EntityDTO.countryId).then((res) =>{
@@ -67,10 +79,6 @@ class UserProfilePage extends Component {
 
     handleEmailChange = (event) => {
         this.setState({email: event.target.value});
-    }
-
-    handlePasswordChange = (event) => {
-        this.setState({password: event.target.value});
     }
 
     handleNameChange = (event) => {
@@ -93,7 +101,7 @@ class UserProfilePage extends Component {
         this.setState({
             countryId: event.target.value
         });
-        console.log(event.target.value);
+        this.setState({cityId :"select"})
         Axios
         .get(BASE_URL + "/api/city/filterByCountry/" + event.target.value).then((res) =>{
             this.setState({cities : res.data});
@@ -101,6 +109,7 @@ class UserProfilePage extends Component {
     }
 
     onCityChange = (event) => {
+        console.log(event.target.value);
         this.setState({
             cityId: event.target.value
         });
@@ -151,7 +160,7 @@ class UserProfilePage extends Component {
                           cityId : this.state.cityId};
         if (this.validateForm(userDTO)) {
             console.log(userDTO);
-            Axios.put(BASE_URL + "/api/users/", userDTO).then((res) =>{
+            Axios.put(BASE_URL + "/api/users/" + this.state.id, userDTO).then((res) =>{
                 console.log("Success");
                 this.setState({openSuccessModal: true});
             }).catch((err) => {console.log(err);});
@@ -174,7 +183,7 @@ class UserProfilePage extends Component {
             let allergens = [];
             console.log(allergens);
             for(let allerg of this.state.userAllergens){
-                if(allerg.id !== allergen.Id){
+                if(allerg.Id !== allergen.Id){
                     allergens.push(allerg);
                 }
             }
@@ -188,11 +197,28 @@ class UserProfilePage extends Component {
         console.log(patientUserDTO);
         Axios.post(BASE_URL + "/api/users/patient-allergens", patientUserDTO).then((res) =>{
             let allergens = [...this.state.userAllergens];
-            allergens.push({id:allergen.Id, name:allergen.EntityDTO.name});
+            allergens.push(allergen);
             this.setState({userAllergens: allergens});
         }).catch((err) => {console.log(err);});
     }
     
+    changePassword = (oldPassword, newPassword, newPasswordRetype) => {
+
+        this.setState({oldPasswordEmptyError:"none", newPasswordEmptyError:"none",newPasswordRetypeEmptyError:"none",newPasswordRetypeNotSameError:"none"})
+
+        if(oldPassword === ""){
+            this.setState({oldPasswordEmptyError:"initial"});
+        }
+        else if(newPassword === ""){
+            this.setState({newPasswordEmptyError:"initial"});
+        }
+        else if(newPasswordRetype === ""){
+            this.setState({newPasswordRetypeEmptyError:"initial"});
+        }
+        else if(newPasswordRetype !== newPassword){
+            this.setState({newPasswordRetypeNotSameError:"initial"});
+        }
+    }
 
     render() { 
         return ( 
@@ -207,6 +233,24 @@ class UserProfilePage extends Component {
                     <div className="col-lg-8 mx-auto">
                         <br/>
                             <form id="contactForm" name="sentMessage" novalidate="novalidate">
+                                <div className="control-group">
+                                    <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
+                                        <div className="form-row">
+                                            <div className="form-col" style={{fontSize:"1.5em"}}>Loyality category: </div>
+                                            <div className="form-col ml-2 rounded pr-2 pl-2"  style={{color:"white",background:this.state.loyalityCategoryColor,fontSize:"1.5em"}}> {this.state.loyalityCategory} </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div className="control-group">
+                                    <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
+                                        <div className="form-row">
+                                            <div className="form-col" style={{fontSize:"1.5em"}}>Number of points: </div>
+                                            <div className="form-col ml-2 rounded pr-2 pl-2"  style={{color:"white",background:"#1977cc",fontSize:"1.5em"}}> {this.state.patientPoints} </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Email address:</label>
@@ -234,7 +278,7 @@ class UserProfilePage extends Component {
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>Country:</label>
-                                        <select class="form-control" onChange={this.onCountryChange} value={this.state.value}>
+                                        <select class="form-control" onChange={this.onCountryChange} value={this.state.countryId}>
                                             <option disabled={true}  value="select">Select country</option>
                                             {this.state.countries.map(country => country.Id === this.state.countryId ? <option selected id={country.Id} key={country.Id} value = {country.Id}>{country.EntityDTO.name}</option> :
                                                                                                                        <option id={country.Id} key={country.Id} value = {country.Id}>{country.EntityDTO.name}</option>)}
@@ -244,7 +288,7 @@ class UserProfilePage extends Component {
                                 <div className="control-group">
                                     <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
                                         <label>City:</label>
-                                        <select class="form-control" onChange={this.onCityChange}>
+                                        <select class="form-control" value={this.state.cityId} onChange={this.onCityChange}>
                                             <option disabled={true} value="select">Select city</option>
                                             {this.state.cities.map(city => city.Id === this.state.cityId ? <option selected id={city.Id} key={city.Id} value = {city.Id}>{city.EntityDTO.name}</option> :
                                                                                                            <option id={city.Id} key={city.Id} value = {city.Id}>{city.EntityDTO.name}</option>)}
@@ -276,14 +320,7 @@ class UserProfilePage extends Component {
                                     <button style={{background: "#1977cc",marginTop: "15px"}} onClick = {this.handleChangeInfo} className="btn btn-primary btn-xl" id="sendMessageButton" type="button">Change information</button>
                                 </div>
                                 <br/>
-                                <div className="control-group">
-                                    <div className="form-group controls mb-0 pb-2" style={{color: "#6c757d",opacity: 1}}>
-                                        <div className="form-row">
-                                            <div className="form-col" style={{fontSize:"1.5em"}}>Number of points: </div>
-                                            <div className="form-col ml-2 rounded pr-2 pl-2"  style={{color:"white",background:"#1977cc",fontSize:"1.5em"}}> {this.state.patientPoints} </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                                 
                                 <div  className="form-group">
                                     <div className="form-group controls mb-0 pb-2">
@@ -303,8 +340,8 @@ class UserProfilePage extends Component {
                 </div>
             </div>
             <AllergensModal userAllergens={this.state.userAllergens} show={this.state.openModal} onAllergenRemove={this.handleAlergenRemove} onAllergenAdd={this.handleAllergenAdd} onCloseModal={this.handleModalClose} header="Patients allergens" subheader="Add or remove patients allergens"/>
-            <PasswordChangeModal show={this.state.openPasswordModal} onCloseModal={this.handlePasswordModalClose} header="Change password"/>
-            <ModalDialog show={this.state.openSuccessModal} href="/" onCloseModal={this.handleSuccessModalClose} header="Successful" text="Your information are changed succesfully."/>
+            <PasswordChangeModal oldPasswordEmptyError={this.state.oldPasswordEmptyError} newPasswordEmptyError={this.state.newPasswordEmptyError} newPasswordRetypeEmptyError={this.state.newPasswordRetypeEmptyError} newPasswordRetypeNotSameError={this.state.newPasswordRetypeNotSameError} show={this.state.openPasswordModal} changePassword={this.changePassword} onCloseModal={this.handlePasswordModalClose} header="Change password"/>
+            <ModalDialog show={this.state.openSuccessModal} href="/" onCloseModal={this.handleSuccessModalClose} header="Successful" text="Your information is changed succesfully."/>
         </React.Fragment> 
         );
     }
