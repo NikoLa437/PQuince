@@ -68,7 +68,6 @@ public class UserService implements IUserService{
 	@Override
 	public IdentifiableDTO<UserDTO> findById(UUID id) {
 		return UserMapper.MapUserPersistenceToUserIdentifiableDTO(userRepository.getOne(id));
-
 	}
 
 	@Override

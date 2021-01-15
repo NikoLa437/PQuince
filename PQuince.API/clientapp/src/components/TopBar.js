@@ -15,7 +15,7 @@ class TopBar extends React.Component{
             <div id="topbar" className="d-none d-lg-flex align-items-center fixed-top">
                 <div className="container d-flex">
                     <div className="contact-info mr-auto">
-                        <i className="icofont-envelope"></i> <a style={myStyle} href="mailto:contact@example.com">contact@pquince.com</a>
+                        <i className="icofont-envelope"></i> <a style={myStyle} href="mailto:quinceit.pquince@gmail.com">quinceit.pquince@gmail.com</a>
                         <a href="#" style={myStyle} className="instagram"><i className="icofont-instagram"></i>PQuince</a>
                         <a href="#" style={myStyle} className="facebook"><i className="icofont-facebook"></i>QuincePharmacy</a>
                     </div>

@@ -4,6 +4,7 @@ import {BrowserRouter as Router,Link,Switch} from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import UserProfilePage from './pages/UserProfilePage';
+import PharmaciesPage from './pages/PharmaciesPage';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Link exact path='/login' component={LoginPage}/>
           <Link exact path='/registration' component={RegisterPage}/>
           <Link exact path='/profile' component={UserProfilePage}/>
+          <Link exact path='/pharmacies' component={PharmaciesPage}/>
         </Switch>
     </Router>
   

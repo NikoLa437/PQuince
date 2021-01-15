@@ -27,10 +27,11 @@ class Header extends React.Component{
                         
                                 <li className="drop-down"><a href="">My record</a>
                                     <ul>
-                                    <li><a href="#">Drop Down 1</a></li>
-                                    <li><a href="#">Drop Down 2</a></li>
-                                    <li><a href="#">Drop Down 3</a></li>
-                                    <li><a href="#">Drop Down 4</a></li>
+                                    <li><a href="#">Dermatologist visits</a></li>
+                                    <li><a href="#">Consultations with a pharmacist</a></li>
+                                    <li><a href="#">Observe appointments</a></li>
+                                    <li><a href="#">eReciepts</a></li>
+                                    <li><a href="#">Reserved medicines</a></li>
                                     </ul>
                                 </li>
                                 <li className="drop-down">
