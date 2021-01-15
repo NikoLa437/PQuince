@@ -9,8 +9,8 @@ class HomePage extends React.Component{
                 <TopBar/>
                 <Header/>
                 
-                <section id="hero" class="d-flex align-items-center">
-                    <div class="container">
+                <section id="hero" className="d-flex align-items-center">
+                    <div className="container">
                         <h1>Welcome to PQuince</h1>
                         <a href="/registration" className="btn-get-started scrollto">Register</a>
                     </div>

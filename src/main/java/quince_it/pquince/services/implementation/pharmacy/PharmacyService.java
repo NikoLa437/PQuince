@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
@@ -76,6 +77,12 @@ public class PharmacyService implements IPharmacyService {
 		}
 
 		return new IdentifiableDTO<PharmacyGradeDTO>(pharmacy.getId(), new PharmacyGradeDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade));
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(
+			PharmacyFiltrationDTO pharmacyFiltrationDTO) {
+		return pharmacyFeedbackService.findByNameGradeAndDistance(pharmacyFiltrationDTO);
 	}
 
 }

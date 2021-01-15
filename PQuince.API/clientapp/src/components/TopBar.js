@@ -1,12 +1,6 @@
 import React from 'react';
 
 class TopBar extends React.Component{
-    constructor(){
-        super();
-
-
-    }
-
     render(){
         const myStyle = {
             margin: 10
