@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
+import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
@@ -130,9 +131,8 @@ public class UserService implements IUserService{
 			patientRepository.save(patient);
 			return true;
 		}
-		catch (Exception e) {
-			return false;
-		}
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }
 	}
 
 	@Override
@@ -145,15 +145,13 @@ public class UserService implements IUserService{
 		try {
 			Patient patient = patientRepository.getOne(allergenUserDTO.getPatientId());
 			IdentifiableDTO<AllergenDTO> allergenDTO = allergenService.findById(allergenUserDTO.getAllergenId());
-			
 			patient.addAllergen(new Allergen(allergenDTO.Id, allergenDTO.EntityDTO.getName()));
+			
 			patientRepository.save(patient);
 			return true;
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			return false;
-		}
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }
 	}
 
 	@Override
@@ -161,11 +159,12 @@ public class UserService implements IUserService{
 		try {
 			Patient patient = patientRepository.getOne(allergenUserDTO.getPatientId());			
 			patient.removeAllergen(allergenUserDTO.getAllergenId());
+			
 			patientRepository.save(patient);
 			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }
 	}
 
 	@Override

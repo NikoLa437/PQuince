@@ -80,8 +80,7 @@ public class PharmacyService implements IPharmacyService {
 	}
 
 	@Override
-	public List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(
-			PharmacyFiltrationDTO pharmacyFiltrationDTO) {
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
 		return pharmacyFeedbackService.findByNameGradeAndDistance(pharmacyFiltrationDTO);
 	}
 

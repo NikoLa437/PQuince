@@ -31,8 +31,14 @@ public class PharmacyController {
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findByNameGradeAndDistance(@RequestParam String name, @RequestParam double gradeFrom, @RequestParam double gradeTo,
 			@RequestParam double distanceFrom, @RequestParam double distanceTo) {
 		
-		PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, gradeFrom, gradeTo, distanceFrom, distanceTo);
-		
-		return new ResponseEntity<>(pharmacyService.findByNameGradeAndDistance(pharmacyFiltrationDTO),HttpStatus.OK);
+		try {
+			PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, gradeFrom, gradeTo, distanceFrom, distanceTo);
+			List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findByNameGradeAndDistance(pharmacyFiltrationDTO);
+			
+			return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 }
