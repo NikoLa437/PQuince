@@ -27,8 +27,8 @@ public class DrugInstance extends Drug {
 	@Column(name = "drugFormat", nullable = false)
 	private FormatDrug drugFormat;
 	
-	@Column(name = "quiantity", nullable = false)
-	private double quiantity;
+	@Column(name = "quantity", nullable = false)
+	private double quantity;
 	
 	@Column(name = "sideEffects", nullable = false)
 	private String sideEffects;
@@ -37,7 +37,7 @@ public class DrugInstance extends Drug {
 	private String recommendedAmount;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "drug_repacement",
+    @JoinTable(name = "drug_replacement",
             joinColumns = @JoinColumn(name = "drug_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "replacement_drug_id", referencedColumnName = "id"))
 	 private List<DrugInstance> replacingDrugs;
@@ -64,14 +64,14 @@ public class DrugInstance extends Drug {
 		super();
 	}
 
-	public DrugInstance(String name, String code, String drugInstanceName, Manufacturer manufacturer, FormatDrug drugFormat, double quiantity,
+	public DrugInstance(String name, String code, String drugInstanceName, Manufacturer manufacturer, FormatDrug drugFormat, double quantity,
 			String sideEffects, String recommendedAmount, List<DrugInstance> replacingDrugs, List<Allergen> allergens,
 			List<Ingredient> ingredients, int loyalityPoints, boolean onReciept) {
 		super(UUID.randomUUID(),name, code);
 		this.drugInstanceName = drugInstanceName;
 		this.manufacturer = manufacturer;
 		this.drugFormat = drugFormat;
-		this.quiantity = quiantity;
+		this.quantity = quantity;
 		this.sideEffects = sideEffects;
 		this.recommendedAmount = recommendedAmount;
 		this.replacingDrugs = replacingDrugs;
@@ -88,7 +88,7 @@ public class DrugInstance extends Drug {
 		this.drugInstanceName = drugInstanceName;
 		this.manufacturer = manufacturer;
 		this.drugFormat = drugFormat;
-		this.quiantity = quiantity;
+		this.quantity = quiantity;
 		this.sideEffects = sideEffects;
 		this.recommendedAmount = recommendedAmount;
 		this.replacingDrugs = replacingDrugs;
@@ -114,12 +114,12 @@ public class DrugInstance extends Drug {
 		this.manufacturer = manufacturer;
 	}
 
-	public double getQuiantity() {
-		return quiantity;
+	public double getQuantity() {
+		return quantity;
 	}
 
-	public void setQuiantity(double quiantity) {
-		this.quiantity = quiantity;
+	public void setQuantity(double quantity) {
+		this.quantity = quantity;
 	}
 
 	public String getSideEffects() {
