@@ -4,6 +4,7 @@ import TopBar from '../components/TopBar';
 import {BASE_URL} from '../constants.js';
 import Axios from 'axios';
 import ModalDialog from '../components/ModalDialog';
+import LocationSearchInput from '../components/LocationSearchInput';
 
 class RegisterPage extends Component {
     state = {
@@ -27,6 +28,7 @@ class RegisterPage extends Component {
         cityError:"none",
         emailNotValid:"none",
         openModal:false,
+        coords: [],
     }
 
     componentDidMount() {
@@ -124,7 +126,7 @@ class RegisterPage extends Component {
         this.setState({openModal: false});
         
     }
-
+      
     handleSignUp = () => {
         let userDTO = { email: this.state.email, name: this.state.name, surname: this.state.surname, address: this.state.address, phoneNumber: this.state.phoneNumber,
                           cityId : this.state.cityId, password : this.state.password};
@@ -149,6 +151,7 @@ class RegisterPage extends Component {
 
                 <div className="row section-design">
                     <div className="col-lg-8 mx-auto">
+                        <LocationSearchInput />
                         <br/>
                             <form id="contactForm" name="sentMessage" novalidate="novalidate">
                                 <div className="control-group">

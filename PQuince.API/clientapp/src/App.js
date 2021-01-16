@@ -4,16 +4,18 @@ import {BrowserRouter as Router,Link,Switch} from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import UserProfilePage from './pages/UserProfilePage';
+import PharmaciesPage from './pages/PharmaciesPage';
 
 
 function App() {
   return (
     <Router>
         <Switch>
-          <Link exact path='/' component={HomePage}/>
-          <Link exact path='/login' component={LoginPage}/>
-          <Link exact path='/registration' component={RegisterPage}/>
-          <Link exact path='/profile' component={UserProfilePage}/>
+          <Link exact to="/" path='/' component={HomePage}/>
+          <Link exact to="/login" path='/login' component={LoginPage}/>
+          <Link exact to="/registration" path='/registration' component={RegisterPage}/>
+          <Link exact to="/profile" path='/profile' component={UserProfilePage}/>
+          <Link exact to="/pharmacies" path='/pharmacies' component={PharmaciesPage}/>
         </Switch>
     </Router>
   

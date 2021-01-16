@@ -23,3 +23,12 @@ insert into allergen (id, name) values ('062d319f-f393-464c-98fb-b3db29e77626', 
 insert into allergen (id, name) values ('7512234e-c9f9-44bd-94be-4f49c32a342e', 'Ibuprofen');
 
 insert into patient_allergen (patient_id, allergen_id) values('22793162-52d3-11eb-ae93-0242ac130002','3b27db4c-48bb-4f78-a3da-745d9c9458ba');
+
+insert into pharmacy (id, name, address, description) values ('cafeddee-56cb-11eb-ae93-0242ac130002', 'Benu', 'Novosadskog sajma 2', 'Benu apoteka');
+insert into pharmacy (id, name, address, description) values ('cafeddee-56cb-11eb-ae93-0242ac111002', 'Ivancic i sinovi', 'Novosadskog sajma 32', 'Ivancic i sinovi');
+insert into pharmacy (id, name, address, description) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Sremska 3', 'Zdravlje apoteka');
+insert into pharmacy (id, name, address, description) values ('cafeddee-56cb-11eb-ae93-0242ac131302', 'Kopriva', 'Srpska 233', 'Kopriva apoteka');
+
+insert into pharmacy_feedback (patient_id, pharmacy_id, date, grade, comment) values ('22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', '2020-03-03', 1, 'Uzas uzas');
+insert into pharmacy_feedback (patient_id, pharmacy_id, date, grade, comment) values ('23793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', '2020-03-03', 5, 'Sve naj naj');
+insert into pharmacy_feedback (patient_id, pharmacy_id, date, grade, comment) values ('22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130202', '2020-03-03', 2, 'Solidno');
