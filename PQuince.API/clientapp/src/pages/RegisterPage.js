@@ -28,6 +28,7 @@ class RegisterPage extends Component {
         cityError:"none",
         emailNotValid:"none",
         openModal:false,
+        coords: [],
     }
 
     componentDidMount() {
@@ -125,7 +126,7 @@ class RegisterPage extends Component {
         this.setState({openModal: false});
         
     }
-
+      
     handleSignUp = () => {
         let userDTO = { email: this.state.email, name: this.state.name, surname: this.state.surname, address: this.state.address, phoneNumber: this.state.phoneNumber,
                           cityId : this.state.cityId, password : this.state.password};
