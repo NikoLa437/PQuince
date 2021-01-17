@@ -1,29 +1,18 @@
 package quince_it.pquince.entities.drugs;
 
-import java.io.Serializable;
 import java.sql.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.ManyToOne;
 
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Entity
-@IdClass(DrugPriceForPharmacyId.class)
-public class DrugPriceForPharmacy implements Serializable{
+public class DrugPriceForPharmacy{
 	
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	@ManyToOne
-	private DrugInstance drugInstance;
-	
-	@Id
-	@ManyToOne
-	private Pharmacy pharmacy;
+	@EmbeddedId
+	private DrugPriceForPharmacyId drugPriceForPharmacyId;
 	
 	@Column(name = "dateFrom", nullable = false)
 	private Date dateFrom;
@@ -40,8 +29,7 @@ public class DrugPriceForPharmacy implements Serializable{
 	public DrugPriceForPharmacy(DrugInstance drugInstance, Pharmacy pharmacy, Date dateFrom, Date dateTo,
 			double price) {
 		super();
-		this.drugInstance = drugInstance;
-		this.pharmacy = pharmacy;
+		this.drugPriceForPharmacyId = new DrugPriceForPharmacyId(drugInstance, pharmacy);
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
 		this.price = price;
@@ -49,22 +37,22 @@ public class DrugPriceForPharmacy implements Serializable{
 
 
 	public DrugInstance getDrugInstance() {
-		return drugInstance;
+		return this.drugPriceForPharmacyId.getDrugInstance();
 	}
 
 
 	public void setDrugInstance(DrugInstance drugInstance) {
-		this.drugInstance = drugInstance;
+		this.drugPriceForPharmacyId.setDrugInstance(drugInstance);
 	}
 
 
 	public Pharmacy getPharmacy() {
-		return pharmacy;
+		return this.drugPriceForPharmacyId.getPharmacy();
 	}
 
 
 	public void setPharmacy(Pharmacy pharmacy) {
-		this.pharmacy = pharmacy;
+		this.drugPriceForPharmacyId.setPharmacy(pharmacy);
 	}
 
 

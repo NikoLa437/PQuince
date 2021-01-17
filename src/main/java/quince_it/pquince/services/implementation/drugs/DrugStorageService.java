@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.drugs.DrugStorage;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -57,6 +58,23 @@ public class DrugStorageService implements IDrugStorageService {
 			System.out.println("ZERO");
 			return 0;
 		}		
+	}
+
+	@Override
+	public boolean reduceAmountOfReservedDrug(UUID drugId, UUID pharmacyId, int amount) {
+		
+	
+			DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacyId);
+			System.out.println("AMOUNT " + drugStorage.getCount());
+			drugStorage.reduceAmount(amount);
+			System.out.println("AMOUNT " + drugStorage.getCount());
+
+			drugStorageRepository.save(drugStorage);
+			
+			System.out.println("LALLA" + drugStorage.getCount());
+			
+			return true;
+
 	}
 
 }

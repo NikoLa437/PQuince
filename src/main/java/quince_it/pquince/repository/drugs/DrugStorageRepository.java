@@ -10,6 +10,9 @@ import quince_it.pquince.entities.drugs.DrugStorageId;
 
 public interface DrugStorageRepository extends JpaRepository<DrugStorage, DrugStorageId>{
 	
-	@Query(value = "SELECT d.count FROM DrugStorage d WHERE d.drugInstance.id = ?1 AND d.pharmacy.id = ?2")
+	@Query(value = "SELECT d.count FROM DrugStorage d WHERE d.drugStorageId.drugInstance.id = ?1 AND d.drugStorageId.pharmacy.id = ?2")
 	int getDrugCountForDrug(UUID drugId, UUID pharmacyId);
+	
+	@Query(value = "SELECT d FROM DrugStorage d WHERE d.drugStorageId.drugInstance.id = ?1 AND d.drugStorageId.pharmacy.id = ?2")
+	DrugStorage findByDrugIdAndPharmacyId(UUID drugId, UUID pharmacyId);
 }

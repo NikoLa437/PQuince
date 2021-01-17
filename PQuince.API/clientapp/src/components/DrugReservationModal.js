@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import Axios from 'axios';
-import {BASE_URL} from '../constants.js';
 import CapsuleLogo from '../static/capsuleLogo.png';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

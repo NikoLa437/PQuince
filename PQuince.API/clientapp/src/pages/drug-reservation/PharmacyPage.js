@@ -71,7 +71,7 @@ class PharmacyPage extends Component {
                     <table className="table" style={{width:"100%", marginTop:"3rem"}}>
                         <tbody>
                             {this.props.pharmacies.map(pharmacy => 
-                                <tr id={pharmacy.Id} key={pharmacy.Id} onClick={() => this.props.onPharmacyClick(pharmacy.price, pharmacy.count)}>
+                                <tr id={pharmacy.Id} key={pharmacy.Id} onClick={() => this.props.onPharmacyClick(pharmacy.Id, pharmacy.price, pharmacy.count)}>
                                     <td width="130em">
                                         <img className="img-fluid" src={PharmacyLogo} width="70em"/>
                                     </td>

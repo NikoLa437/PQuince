@@ -1,28 +1,16 @@
 package quince_it.pquince.entities.drugs;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.ManyToOne;
 
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Entity
-@IdClass(DrugStorageId.class)
-public class DrugStorage implements Serializable {
+public class DrugStorage{
 	
-	private static final long serialVersionUID = 1L;
-
-	@Id
-	@ManyToOne
-	private DrugInstance drugInstance;
-	
-	@Id
-	@ManyToOne
-	private Pharmacy pharmacy;
+	@EmbeddedId
+	private DrugStorageId drugStorageId;
 	
 	@Column(name = "count", nullable = false)
 	private int count;
@@ -31,25 +19,24 @@ public class DrugStorage implements Serializable {
 	
 	public DrugStorage(DrugInstance drugInstance, Pharmacy pharmacy, int count) {
 		super();
-		this.drugInstance = drugInstance;
-		this.pharmacy = pharmacy;
+		drugStorageId = new DrugStorageId(drugInstance, pharmacy);
 		this.count = count;
 	}
 
 	public DrugInstance getDrugInstance() {
-		return drugInstance;
+		return drugStorageId.getDrugInstance();
 	}
 
 	public void setDrugInstance(DrugInstance drugInstance) {
-		this.drugInstance = drugInstance;
+		this.drugStorageId.setDrugInstance(drugInstance);
 	}
 
 	public Pharmacy getPharmacy() {
-		return pharmacy;
+		return this.drugStorageId.getPharmacy();
 	}
 
 	public void setPharmacy(Pharmacy pharmacy) {
-		this.pharmacy = pharmacy;
+		this.drugStorageId.setPharmacy(pharmacy);
 	}
 
 	public int getCount() {
@@ -60,6 +47,16 @@ public class DrugStorage implements Serializable {
 		this.count = count;
 	}
 	
+	public void addAmount(int amount) {
+		this.count += amount;
+	}
+	
+	public void reduceAmount(int amount) {
+		if(this.count - amount < 0)
+			throw new IllegalArgumentException();
+		else
+			this.count -= amount;
+	}
 	
 
 }
