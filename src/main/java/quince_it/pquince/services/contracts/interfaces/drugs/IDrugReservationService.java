@@ -8,8 +8,8 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface IDrugReservationService{
-
-	public List<IdentifiableDTO<DrugReservationDTO>> findAll();
+	
+	public List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId(UUID patientId);
 	
 	public IdentifiableDTO<DrugReservationDTO> findById(UUID id);
 
@@ -18,4 +18,6 @@ public interface IDrugReservationService{
 	public void update(DrugReservationDTO entityDTO, UUID id);
 
 	public boolean delete(UUID id) ;
+	
+	public boolean cancelDrugReservation(UUID id);
 }
