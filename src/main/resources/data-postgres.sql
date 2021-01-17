@@ -23,3 +23,5 @@ insert into allergen (id, name) values ('062d319f-f393-464c-98fb-b3db29e77626', 
 insert into allergen (id, name) values ('7512234e-c9f9-44bd-94be-4f49c32a342e', 'Ibuprofen');
 
 insert into patient_allergen (patient_id, allergen_id) values('22793162-52d3-11eb-ae93-0242ac130002','3b27db4c-48bb-4f78-a3da-745d9c9458ba');
+
+insert into staff (id) values ('23793162-52d3-11eb-ae93-0242ac130002');
