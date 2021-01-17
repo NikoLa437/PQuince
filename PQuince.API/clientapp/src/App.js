@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage';
 import UserProfilePage from './pages/UserProfilePage';
 import PharmaciesPage from './pages/PharmaciesPage';
 import DrugReservation from './pages/drug-reservation/DrugReservation';
+import PharmacyProfilePage from './pages/PharmacyProfilePage';
 
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
           <Link exact to="/profile" path='/profile' component={UserProfilePage}/>
           <Link exact to="/pharmacies" path='/pharmacies' component={PharmaciesPage}/>
           <Link exact to="/drugs-reservation" path='/drugs-reservation' component={DrugReservation}/>
+          <Link exact to="/pharmacy" path='/pharmacy' component={PharmacyProfilePage}/>
+
         </Switch>
     </Router>
   

@@ -10,13 +10,16 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import quince_it.pquince.entities.pharmacy.Pharmacy;
+
 @Entity
 public class WorkTime {
 	@Id
     @Column(name = "id")
 	private UUID id;
 	
-	//TODO: dodati deo za apoteku
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Pharmacy forPharmacy;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Staff forStaff;

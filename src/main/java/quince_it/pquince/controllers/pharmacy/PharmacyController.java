@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -39,6 +41,12 @@ public class PharmacyController {
 		return new ResponseEntity<>(drugService.findByDrugId(drugId),HttpStatus.OK);
 	}
 	
+	@CrossOrigin
+	@GetMapping("/get-pharmacy-profile")
+	public ResponseEntity<IdentifiableDTO<PharmacyDTO>> findPharmacyProfile(@RequestParam UUID pharmacyId) {
+		return new ResponseEntity<>(pharmacyService.findById(pharmacyId),HttpStatus.OK);
+	}
+	
 	@GetMapping("/search")
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findByNameGradeAndDistance(@RequestParam String name, @RequestParam double gradeFrom, @RequestParam double gradeTo,
 			@RequestParam double distanceFrom, @RequestParam double distanceTo) {
@@ -48,7 +56,6 @@ public class PharmacyController {
 			List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findByNameGradeAndDistance(pharmacyFiltrationDTO);
 			
 			return new ResponseEntity<>(pharmacies, HttpStatus.OK);
-
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}

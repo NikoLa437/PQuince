@@ -3,13 +3,6 @@ package quince_it.pquince.services.contracts.dto.users;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-
-import quince_it.pquince.entities.users.Staff;
-
 public class WorkTimeDTO {
 	
 	
