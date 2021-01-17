@@ -8,12 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 
 import quince_it.pquince.entities.drugs.DrugPriceForPharmacy;
 import quince_it.pquince.entities.drugs.DrugPriceForPharmacyId;
-import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 
 public interface DrugPriceForPharmacyRepository extends JpaRepository<DrugPriceForPharmacy, DrugPriceForPharmacyId>{
 
-	@Query(value = "SELECT new quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceDTO"
-				 + "(d.pharmacy.id, d.pharmacy.name, d.pharmacy.address, d.pharmacy.description, d.price) "
+	@Query(value = "SELECT new quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO"
+				 + "(d.pharmacy.id, d.pharmacy.name, d.pharmacy.address, d.pharmacy.description, d.price, 0) "
 			 	 + "FROM DrugPriceForPharmacy d WHERE d.drugInstance.id = ?1 and d.dateFrom <= CURRENT_DATE and d.dateTo >= CURRENT_DATE")
-	List<IdentifiablePharmacyDrugPriceDTO> findByDrugId(UUID id);
+	List<IdentifiablePharmacyDrugPriceAmountDTO> findByDrugId(UUID id);
 }

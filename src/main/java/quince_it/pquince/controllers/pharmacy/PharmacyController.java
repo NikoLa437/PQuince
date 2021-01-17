@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -35,7 +35,7 @@ public class PharmacyController {
 	}
 	
 	@GetMapping("/find-by-drug/{drugId}")
-	public ResponseEntity<List<IdentifiablePharmacyDrugPriceDTO>> findPharnaciesWithPriceForDrug(@PathVariable UUID drugId) {
+	public ResponseEntity<List<IdentifiablePharmacyDrugPriceAmountDTO>> findPharnaciesWithPriceForDrug(@PathVariable UUID drugId) {
 		return new ResponseEntity<>(drugService.findByDrugId(drugId),HttpStatus.OK);
 	}
 	

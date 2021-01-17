@@ -10,9 +10,10 @@ import org.springframework.stereotype.Service;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
-import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
 import quince_it.pquince.services.implementation.util.drugs.DrugInstanceMapper;
 
 @Service
@@ -23,6 +24,9 @@ public class DrugInstanceService implements IDrugInstanceService{
 	
 	@Autowired
 	private DrugPriceForPharmacyRepository drugPriceForPharmacyRepository;
+	
+	@Autowired
+	private IDrugStorageService drugStorageService;
 	
 	@Override
 	public List<IdentifiableDTO<DrugInstanceDTO>> findAll() {
@@ -58,8 +62,18 @@ public class DrugInstanceService implements IDrugInstanceService{
 	}
 
 	@Override
-	public List<IdentifiablePharmacyDrugPriceDTO> findByDrugId(UUID id) {
-		return drugPriceForPharmacyRepository.findByDrugId(id);
+	public List<IdentifiablePharmacyDrugPriceAmountDTO> findByDrugId(UUID drugId) {
+		
+		List<IdentifiablePharmacyDrugPriceAmountDTO> retVal = new ArrayList<IdentifiablePharmacyDrugPriceAmountDTO>();
+		for (IdentifiablePharmacyDrugPriceAmountDTO pharmacy : drugPriceForPharmacyRepository.findByDrugId(drugId)) {
+			int countDrug = drugStorageService.getDrugCountForDrugAndPharmacy(drugId, pharmacy.Id);
+			if(countDrug > 0) {
+				pharmacy.setCount(countDrug);
+				retVal.add(pharmacy);
+			}
+		}
+
+		return retVal;
 	}
 
 }
