@@ -11,8 +11,8 @@ import quince_it.pquince.entities.drugs.Ingredient;
 import quince_it.pquince.repository.drugs.IngredientRepository;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-import quince_it.pquince.services.contracts.interfaces.IIngredientService;
-import quince_it.pquince.services.implementation.util.IngredientMapper;
+import quince_it.pquince.services.contracts.interfaces.drugs.IIngredientService;
+import quince_it.pquince.services.implementation.util.drugs.IngredientMapper;
 
 @Service
 public class IngredientService implements IIngredientService{

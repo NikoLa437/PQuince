@@ -8,6 +8,7 @@ public class PharmacyDTO {
 	
 	private String description;
 
+	public PharmacyDTO() {}
 	
 	public PharmacyDTO(String name, String address, String description) {
 		super();

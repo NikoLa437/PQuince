@@ -11,9 +11,9 @@ import quince_it.pquince.repository.drugs.AllergenRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-import quince_it.pquince.services.contracts.interfaces.IAllergenService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IAllergenService;
 import quince_it.pquince.services.implementation.users.UserService;
-import quince_it.pquince.services.implementation.util.AllergenMapper;
+import quince_it.pquince.services.implementation.util.drugs.AllergenMapper;
 
 @Service
 public class AllergenService implements IAllergenService {

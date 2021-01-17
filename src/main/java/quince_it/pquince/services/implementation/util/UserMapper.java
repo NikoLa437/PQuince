@@ -6,6 +6,7 @@ import quince_it.pquince.services.contracts.dto.users.CityDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
+import quince_it.pquince.services.implementation.util.drugs.AllergenMapper;
 
 public class UserMapper {
 	

@@ -17,7 +17,8 @@ class Header extends Component{
                         <ul>
                             <li className="active"><a href="index.html">Home</a></li>
                                 <li><a href="/pharmacies">Pharmacies</a></li>
-                        
+                                <li><a href="/drugs-reservation">Drugs reservation</a></li>
+
                                 <li className="drop-down"><a href="#">My record</a>
                                     <ul>
                                     <li><a href="/">Dermatologist visits</a></li>
