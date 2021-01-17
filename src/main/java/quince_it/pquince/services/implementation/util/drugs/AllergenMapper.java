@@ -1,4 +1,4 @@
-package quince_it.pquince.services.implementation.util;
+package quince_it.pquince.services.implementation.util.drugs;
 
 import java.util.ArrayList;
 import java.util.List;

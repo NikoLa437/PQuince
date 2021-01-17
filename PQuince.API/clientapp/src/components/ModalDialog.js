@@ -23,7 +23,7 @@ class ModalDialog extends Component {
                     </p>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={this.props.onCloseModal} href="/">Close</Button>
+                    <Button onClick={this.props.onCloseModal} href={this.props.href}>Close</Button>
                 </Modal.Footer>
            </Modal>
         );

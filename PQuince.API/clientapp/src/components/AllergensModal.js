@@ -43,8 +43,8 @@ class AllergensModal extends Component {
                     <h4>{this.props.subheader}</h4>
                     <table className="table" style={{width:"100%"}}>
                         <thead>
-                            <td class="col-md-3">Allergen name</td>
-                            <td class="col-md-1"></td>
+                            <td className="col-md-3">Allergen name</td>
+                            <td className="col-md-1"></td>
                         </thead>
                         <tbody>
                             {this.state.allAllergens.map(allergen => 

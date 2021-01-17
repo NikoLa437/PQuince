@@ -62,9 +62,9 @@ class UserProfilePage extends Component {
                           loyalityCategory : res.data.EntityDTO.category,
                         });
 
-              if(this.state.loyalityCategory == "SILVER")
+              if(this.state.loyalityCategory === "SILVER")
                 this.setState({loyalityCategoryColor:"#808080"});
-              else if (this.state.loyalityCategory == "GOLD")
+              else if (this.state.loyalityCategory === "GOLD")
                 this.setState({loyalityCategoryColor:"#FFCC00"});
         
             Axios

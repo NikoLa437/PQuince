@@ -1,14 +1,7 @@
 import React, {Component} from 'react';
 
 
-class Header extends React.Component{
-    constructor(){
-        super();
-
-
-    }
-
-
+class Header extends Component{
     render(){
         const myStyle = {
             color: 'white',
@@ -24,17 +17,19 @@ class Header extends React.Component{
                         <ul>
                             <li className="active"><a href="index.html">Home</a></li>
                                 <li><a href="/pharmacies">Pharmacies</a></li>
-                        
-                                <li className="drop-down"><a href="">My record</a>
+                                <li><a href="/drugs-reservation">Drugs reservation</a></li>
+
+                                <li className="drop-down"><a href="#">My record</a>
                                     <ul>
-                                    <li><a href="#">Drop Down 1</a></li>
-                                    <li><a href="#">Drop Down 2</a></li>
-                                    <li><a href="#">Drop Down 3</a></li>
-                                    <li><a href="#">Drop Down 4</a></li>
+                                    <li><a href="/">Dermatologist visits</a></li>
+                                    <li><a href="/">Consultations with a pharmacist</a></li>
+                                    <li><a href="/">Observe appointments</a></li>
+                                    <li><a href="/">eReciepts</a></li>
+                                    <li><a href="/">Reserved medicines</a></li>
                                     </ul>
                                 </li>
                                 <li className="drop-down">
-                                    <a href="" className="appointment-btn scrollto"  style={myStyle}>Make an Appointment
+                                    <a href="#" className="appointment-btn scrollto"  style={myStyle}>Make an Appointment
                                     </a>
                                         <ul>
                                             <li><a href="/">Dermatolog</a></li>

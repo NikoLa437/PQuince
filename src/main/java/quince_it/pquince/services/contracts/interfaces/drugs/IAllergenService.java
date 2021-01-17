@@ -1,4 +1,4 @@
-package quince_it.pquince.services.contracts.interfaces;
+package quince_it.pquince.services.contracts.interfaces.drugs;
 
 import java.util.List;
 import java.util.UUID;
