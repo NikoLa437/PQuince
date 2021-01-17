@@ -12,7 +12,7 @@ public class AbsenceMapper {
 	public static IdentifiableDTO<AbsenceDTO> MapAbsencePersistenceToAbsenceIdentifiableDTO(Absence absence){
 		if(absence == null) throw new IllegalArgumentException();
 		
-		return new IdentifiableDTO<AbsenceDTO>(absence.getId(), new AbsenceDTO(absence.getForStaff().getId(), absence.getStartDate(), absence.getEndDate(), absence.getAbsenceStatus()));
+		return new IdentifiableDTO<AbsenceDTO>(absence.getId(), new AbsenceDTO(absence.getForStaff().getId(), absence.getStartDate(), absence.getEndDate(), absence.getAbsenceStatus(),absence.getRejectReason()));
 	}
 	
 	public static List<IdentifiableDTO<AbsenceDTO>> MapAbsencePersistenceListToAbsenceIdentifiableDTOList(List<Absence> absence){

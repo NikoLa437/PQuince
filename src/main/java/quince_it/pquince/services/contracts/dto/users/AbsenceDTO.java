@@ -15,19 +15,30 @@ public class AbsenceDTO {
 	private Date endDate;
     
 	private AbsenceStatus absenceStatus;
+	
+	private String rejectReason;
    
 	public AbsenceDTO() {
 		
 	}
-	
-	public AbsenceDTO(UUID forStaff, Date startDate, Date endDate, AbsenceStatus absenceStatus) {
+
+
+	public AbsenceDTO(UUID forStaff, Date startDate, Date endDate, AbsenceStatus absenceStatus,String rejectReason) {
 		super();
 		this.forStaff= forStaff;
 		this.startDate= startDate;
 		this.endDate= endDate;
 		this.absenceStatus=absenceStatus;
+		this.rejectReason= rejectReason;
 	}
 	
+	public String getRejectReason() {
+		return rejectReason;
+	}
+
+	public void setRejectReason(String rejectReason) {
+		this.rejectReason = rejectReason;
+	}
 
 	public UUID getForStaff() {
 		return forStaff;

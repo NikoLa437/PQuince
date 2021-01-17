@@ -31,20 +31,24 @@ public class Absence {
 	@Enumerated(EnumType.STRING)
 	@Column(name="absence_status")
 	private AbsenceStatus absenceStatus;
+	
+    @Column(name = "rejectReason")
+	private String rejectReason;
     
     public Absence() {}
 	
 	public Absence(Staff forStaff, Date startDate, Date endDate) {
-		this(UUID.randomUUID(), forStaff,startDate,endDate,AbsenceStatus.WAIT);
+		this(UUID.randomUUID(), forStaff,startDate,endDate,AbsenceStatus.WAIT, "");
 	}
 	
-	public Absence(UUID id, Staff forStaff, Date startDate, Date endDate, AbsenceStatus absenceStatus) {
+	public Absence(UUID id, Staff forStaff, Date startDate, Date endDate, AbsenceStatus absenceStatus, String rejectReason) {
 		super();
 		this.id = id;
 		this.forStaff= forStaff;
 		this.startDate= startDate;
 		this.endDate= endDate;
 		this.absenceStatus=absenceStatus;
+		this.rejectReason= rejectReason;
 	}
 	
 	public UUID getId() {
@@ -84,5 +88,13 @@ public class Absence {
 
 	public void setAbsenceStatus(AbsenceStatus absenceStatus) {
 		this.absenceStatus = absenceStatus;
+	}
+
+	public String getRejectReason() {
+		return rejectReason;
+	}
+
+	public void setRejectReason(String rejectReason) {
+		this.rejectReason = rejectReason;
 	}
 }
