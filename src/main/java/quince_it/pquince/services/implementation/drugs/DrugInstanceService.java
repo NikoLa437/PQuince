@@ -76,4 +76,19 @@ public class DrugInstanceService implements IDrugInstanceService{
 		return retVal;
 	}
 
+	@Override
+	public IdentifiablePharmacyDrugPriceAmountDTO findByDrugInPharmacy(UUID drugId, UUID pharmacyId) {
+		for (IdentifiablePharmacyDrugPriceAmountDTO pharmacy : drugPriceForPharmacyRepository.findByDrugId(drugId)) {
+			if(pharmacy.Id.equals(pharmacyId)) {
+				int countDrug = drugStorageService.getDrugCountForDrugAndPharmacy(drugId, pharmacyId);
+				if(countDrug > 0) {
+					pharmacy.setCount(countDrug);
+					return pharmacy;
+				}
+			}
+		}
+
+		return null;
+	}
+
 }

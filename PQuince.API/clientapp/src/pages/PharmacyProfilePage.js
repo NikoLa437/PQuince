@@ -5,6 +5,7 @@ import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import { YMaps, Map, GeoObject, Placemark } from 'react-yandex-maps';
 import PharmacyDermatologistModal from '../components/PharmacyDermatologistModal';
+import DrugsInPharmacyModal from '../components/DrugsInPharmacyModal';
 
 
 
@@ -17,7 +18,8 @@ class PharmacyProfilePage extends Component {
         pharmacyAdress:'',
         x:'',
         y:'',
-        showDermatologistModal:false
+        showDermatologistModal:false,
+        showDrugsInPharmacy:false
     }
 
 
@@ -44,11 +46,21 @@ class PharmacyProfilePage extends Component {
             showDermatologistModal:true
         });  
     }
+
+    handleOurDrugs = () => {
+      this.setState(
+        {
+          showDrugsInPharmacy:true
+        });  
+    }
   
     handleModalClose = () => {
       this.setState({showDermatologistModal: false});
     }
 
+    handleShowDrugsInPharmacyClose = () => {
+      this.setState({showDrugsInPharmacy: false});
+    }
 
     render() { 
         const {pharmacy,pharmacyName,pharmacyDescription,pharmacyAdress,x,y}= this.state
@@ -94,7 +106,7 @@ class PharmacyProfilePage extends Component {
                         <br></br>
                         <button style={{background: "#1977cc"},{height:'30px'},{verticalAlign:'center'},{marginTop:'1%'}} onClick = {this.handleSubscribe} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Nasi farmaceuti</button>
                         <br></br>
-                        <button style={{background: "#1977cc"},{height:'30px'},{verticalAlign:'center'},{marginTop:'1%'}} onClick = {this.handleSubscribe} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Lekovi na stanju</button>
+                        <button style={{background: "#1977cc"},{height:'30px'},{verticalAlign:'center'},{marginTop:'1%'}} onClick = {this.handleOurDrugs} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Lekovi na stanju</button>
                     </div>
                     <div className="col-xs-8">
                       <YMaps >
@@ -120,7 +132,7 @@ class PharmacyProfilePage extends Component {
 
 
               <PharmacyDermatologistModal show={this.state.showDermatologistModal} onCloseModal={this.handleModalClose} pharmacyId={this.state.pharmacyId} header="Our dermatologist" />
-            
+              <DrugsInPharmacyModal show={this.state.showDrugsInPharmacy} onCloseModal={this.handleShowDrugsInPharmacyClose} pharmacyId= {this.state.pharmacyId} header="Our drugs in stock"/>
             </div>
         </React.Fragment> );
     }
