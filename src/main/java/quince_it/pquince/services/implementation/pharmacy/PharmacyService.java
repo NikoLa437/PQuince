@@ -83,5 +83,7 @@ public class PharmacyService implements IPharmacyService {
 	public List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
 		return pharmacyFeedbackService.findByNameGradeAndDistance(pharmacyFiltrationDTO);
 	}
+	
+
 
 }
