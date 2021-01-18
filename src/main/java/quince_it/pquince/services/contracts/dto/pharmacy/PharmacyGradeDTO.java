@@ -1,16 +1,18 @@
 package quince_it.pquince.services.contracts.dto.pharmacy;
 
+import quince_it.pquince.entities.users.Address;
+
 public class PharmacyGradeDTO {
 
 	private String name;
 	
-	private String address;
+	private Address address;
 	
 	private String description;
 
 	private double grade;
 	
-	public PharmacyGradeDTO(String name, String address, String description, double grade) {
+	public PharmacyGradeDTO(String name, Address address, String description, double grade) {
 		super();
 		this.name = name;
 		this.address = address;
@@ -26,11 +28,11 @@ public class PharmacyGradeDTO {
 		this.name = name;
 	}
 
-	public String getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 

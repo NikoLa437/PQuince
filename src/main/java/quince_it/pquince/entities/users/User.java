@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -14,7 +14,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -45,19 +44,15 @@ public class User implements UserDetails {
     
     @Column(name = "surname", nullable = false)
 	private String surname;
-    
-    @Column(name = "address", nullable = false)
-	private String address;
-    
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "city_id", referencedColumnName = "id")
-	private City city;
-    
+        
     @Column(name = "phoneNumber")
 	private String phoneNumber;
 	
     @Column(name = "active")
     private boolean active;
+    
+    @Embedded
+    private Address address;
     
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",
@@ -67,12 +62,12 @@ public class User implements UserDetails {
 	
 	public User() {}
 	
-	public User(String email, String password, String name, String surname, String address, City city,
+	public User(String email, String password, String name, String surname, Address address,
 			String phoneNumber, boolean active) {
-		this(UUID.randomUUID(), email, password, name, surname, address, city, phoneNumber, active);
+		this(UUID.randomUUID(), email, password, name, surname, address, phoneNumber, active);
 	}
 	
-	public User(UUID id, String email, String password, String name, String surname, String address, City city,
+	public User(UUID id, String email, String password, String name, String surname, Address address,
 			String phoneNumber, boolean active) {
 		super();
 		this.id = id;
@@ -105,7 +100,7 @@ public class User implements UserDetails {
 		return surname;
 	}
 	
-	public String getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 	
@@ -163,9 +158,6 @@ public class User implements UserDetails {
 		return serialVersionUID;
 	}
 
-	public City getCity() {
-		return city;
-	}
 
 	public void setPassword(String password) {
 		this.password = password;
@@ -179,17 +171,13 @@ public class User implements UserDetails {
 		this.surname = surname;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(Address address) {
 		this.address = address;
-	}
-
-	public void setCity(City city) {
-		this.city = city;
 	}
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	
 
+	
 }

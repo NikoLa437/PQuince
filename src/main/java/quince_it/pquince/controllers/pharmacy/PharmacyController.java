@@ -40,11 +40,11 @@ public class PharmacyController {
 	}
 	
 	@GetMapping("/search")
-	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findByNameGradeAndDistance(@RequestParam String name, @RequestParam double gradeFrom, @RequestParam double gradeTo,
-			@RequestParam double distanceFrom, @RequestParam double distanceTo) {
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findByNameGradeAndDistance(@RequestParam String name,@RequestParam String city, @RequestParam double gradeFrom, @RequestParam double gradeTo,
+			@RequestParam double distanceFrom, @RequestParam double distanceTo, @RequestParam double latitude, @RequestParam double longitude) {
 		
 		try {
-			PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, gradeFrom, gradeTo, distanceFrom, distanceTo);
+			PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, city, gradeFrom, gradeTo, distanceFrom, distanceTo, latitude, longitude);
 			List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findByNameGradeAndDistance(pharmacyFiltrationDTO);
 			
 			return new ResponseEntity<>(pharmacies, HttpStatus.OK);

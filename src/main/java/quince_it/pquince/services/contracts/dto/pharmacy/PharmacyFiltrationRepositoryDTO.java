@@ -2,13 +2,15 @@ package quince_it.pquince.services.contracts.dto.pharmacy;
 
 import java.util.UUID;
 
+import quince_it.pquince.entities.users.Address;
+
 public class PharmacyFiltrationRepositoryDTO {
 
 	private UUID pharmacyId;
 	
 	private String name;
 	
-	private String address;
+	private Address address;
 	
 	private String description;
 
@@ -16,7 +18,7 @@ public class PharmacyFiltrationRepositoryDTO {
 	
 	public PharmacyFiltrationRepositoryDTO() {}
 	
-	public PharmacyFiltrationRepositoryDTO(UUID pharmacyId, String name, String address, String description,
+	public PharmacyFiltrationRepositoryDTO(UUID pharmacyId, String name, Address address, String description,
 			double grade) {
 		super();
 		this.pharmacyId = pharmacyId;
@@ -42,11 +44,11 @@ public class PharmacyFiltrationRepositoryDTO {
 		this.name = name;
 	}
 
-	public String getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 

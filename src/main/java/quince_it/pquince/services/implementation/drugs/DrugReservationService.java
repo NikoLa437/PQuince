@@ -105,6 +105,7 @@ public class DrugReservationService implements IDrugReservationService{
 			
 			drugReservation.setReservationStatus(ReservationStatus.CANCELED);
 			drugReservationRepository.save(drugReservation);
+			drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
 			
 			return true;
 		} catch (Exception e) {
