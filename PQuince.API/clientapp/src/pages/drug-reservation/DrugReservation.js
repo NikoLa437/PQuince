@@ -43,6 +43,7 @@ class DrugReservation extends Component {
     handleModalClose = () => {
         this.setState({reservationModalShow: false});
     }
+    
     handleModalSuccessClose = () => {
         this.setState({openModal: false});
     }

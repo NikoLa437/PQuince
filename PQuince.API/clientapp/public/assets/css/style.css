@@ -1738,3 +1738,8 @@ section {
   color: #fff;
   text-decoration: none;
 }
+
+#map {
+  width: 200px;
+  height: 200px;
+}

@@ -4,17 +4,20 @@ import Header from '../components/Header';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import { YMaps, Map, GeoObject, Placemark } from 'react-yandex-maps';
+import PharmacyDermatologistModal from '../components/PharmacyDermatologistModal';
 
 
 
 class PharmacyProfilePage extends Component {
     state = {
         pharmacy :'',
+        pharmacyId:'',
         pharmacyName:'',
         pharmacyDescription:'',
         pharmacyAdress:'',
         x:'',
-        y:''
+        y:'',
+        showDermatologistModal:false
     }
 
 
@@ -24,6 +27,7 @@ class PharmacyProfilePage extends Component {
             this.setState(
             {
                 pharmacy : response.data,
+                pharmacyId : response.data.Id,
                 pharmacyName : response.data.EntityDTO.name,
                 pharmacyDescription:response.data.EntityDTO.description,
                 pharmacyAdress:response.data.EntityDTO.address,
@@ -35,29 +39,52 @@ class PharmacyProfilePage extends Component {
     }
 
     handleSubscribe = () => {
-
-      alert('subscribed')
-  }
-
+      this.setState(
+        {
+            showDermatologistModal:true
+        });  
+    }
+  
+    handleModalClose = () => {
+      this.setState({showDermatologistModal: false});
+    }
 
 
     render() { 
         const {pharmacy,pharmacyName,pharmacyDescription,pharmacyAdress,x,y}= this.state
         const mapState = { center: [x, y], zoom: 17 }
+        const myStyle = {
+          color: 'white',
+          textAlign: 'center'
+        };
         return ( 
         <React.Fragment>
             <TopBar/>
             <Header/>
-            
 
-            <div className="container" style={{marginTop:"10%"}}>
+            <nav className="nav-menu d-none d-lg-block" style={{marginTop:"8%"}}>
+                        <ul style={{marginLeft:"28%"}}>
+                          <li><a href="#" className="appointment-btn scrollto" style={myStyle} >Rezervisi lek</a></li>
+                          <li><a href="#" className="appointment-btn scrollto" style={myStyle} >Proveri dostupnost leka</a></li>                          
+                          <li className="drop-down">
+                            <a href="#" className="appointment-btn scrollto" style={myStyle} >Zakazi pregled</a>
+                              <ul>
+                                <li><a href="/">Dermatolog</a></li>
+                                <li><a href="/">Farmaceut</a></li>
+                              </ul>
+                          </li>
+                        </ul>
+                    </nav>
+
+            <div className="container" style={{marginTop:"0%"}}>
                 <div className="row" style={{verticalAlign:'center'}}>
-                  <h2 style={{marginLeft:'40%'}} className=" text-center mb-0 mt-2 text-uppercase">{pharmacyName}</h2>
-                  <button style={{background: "#1977cc"},{height:'30px'},{verticalAlign:'center'},{marginLeft:'3%'}} onClick = {this.handleSubscribe} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Subscribe</button>
                 </div>
                 <div className="row" style={{marginTop:"3%"}}>
                     <div className="col-xs-4" style={{width: "50%"}}>
-                        <h7>Ime apoteke: {pharmacyName}</h7>
+                      <div className="form-row">                        
+                        <h1>{pharmacyName}</h1>  
+                        <button style={{background: "#1977cc"},{height:'20px'},{verticalAlign:'center'},{marginLeft:'5%'}} onClick = {this.handleSubscribe} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Subscribe</button>
+                      </div>
                         <br></br>
                         <h7>Adresa apoteke: {pharmacyAdress}</h7>
                         <br></br>
@@ -70,8 +97,8 @@ class PharmacyProfilePage extends Component {
                         <button style={{background: "#1977cc"},{height:'30px'},{verticalAlign:'center'},{marginTop:'1%'}} onClick = {this.handleSubscribe} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Lekovi na stanju</button>
                     </div>
                     <div className="col-xs-8">
-                      <YMaps>
-                              <Map state={mapState}>
+                      <YMaps >
+                              <Map state={mapState} width="35em" height="500px">
                                 <GeoObject
                                   geometry={{
                                     type: 'Point',
@@ -86,15 +113,14 @@ class PharmacyProfilePage extends Component {
                                     draggable: true,
                                   }}
                                 />
-
-
                               </Map>
                       </YMaps>
                     </div>
               </div>
 
 
-                    
+              <PharmacyDermatologistModal show={this.state.showDermatologistModal} onCloseModal={this.handleModalClose} pharmacyId={this.state.pharmacyId} header="Our dermatologist" />
+            
             </div>
         </React.Fragment> );
     }
