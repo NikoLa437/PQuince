@@ -20,4 +20,7 @@ public interface IDrugReservationService{
 	public boolean delete(UUID id) ;
 	
 	public boolean cancelDrugReservation(UUID id);
+	
+	public void givePenaltyForMissedDrugReservation();
+
 }

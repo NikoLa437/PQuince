@@ -111,4 +111,8 @@ public class Patient extends User {
 		this.loyalityCategory = loyalityCategory;
 	}
 	
+	public void addPenalty(int amount) {
+		this.penalty += amount;
+	}
+	
 }

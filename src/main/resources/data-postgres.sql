@@ -53,3 +53,6 @@ insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, da
 
 insert into drug_storage(drug_instance_id, pharmacy_id, count) values ('dac2b818-5838-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24);
 insert into drug_storage(drug_instance_id, pharmacy_id, count) values ('dac2b818-5838-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130202', 55);
+
+
+insert into drug_reservation(id, amount, drug_peace_price, end_date, reservation_status, start_date, drug_instance_id, patient_id, pharmacy_id) values ('f96fe75e-59a5-11eb-ae93-0242ac130002', 3, 340, '2021-01-18 17:04:03',  'ACTIVE', '2021-01-16 17:04:03', 'dac2b818-5838-11eb-ae93-0242ac130002', '22793162-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002');

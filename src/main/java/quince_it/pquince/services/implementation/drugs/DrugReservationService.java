@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.drugs.ReservationStatus;
+import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.DrugReservationRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
@@ -127,6 +128,27 @@ public class DrugReservationService implements IDrugReservationService{
 	@Override
 	public List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId(UUID patientId) {
 		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findAllByPatientId(patientId));
+	}
+
+	@Override
+	public void givePenaltyForMissedDrugReservation() {
+
+		try {
+			List<DrugReservation> expiredReservations = drugReservationRepository.findExpiredDrugReservations();
+			for (DrugReservation drugReservation : expiredReservations) {
+				
+				drugReservation.setReservationStatus(ReservationStatus.EXPIRED);
+				drugReservationRepository.save(drugReservation);
+				
+				Patient patient = patientRepository.findById(drugReservation.getPatient().getId()).get();
+				patient.addPenalty(1);
+				patientRepository.save(patient);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 
