@@ -2,6 +2,7 @@ package quince_it.pquince.services.contracts.dto.drugs;
 
 import java.util.List;
 
+import quince_it.pquince.entities.drugs.DrugKind;
 import quince_it.pquince.entities.drugs.FormatDrug;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
@@ -17,6 +18,8 @@ public class DrugInstanceDTO {
 	
 	private FormatDrug drugFormat;
 	
+	private DrugKind drugKind;
+
 	private double quantity;
 	
 	private String sideEffects;
@@ -36,7 +39,7 @@ public class DrugInstanceDTO {
 	public DrugInstanceDTO(String name, String code, String drugInstanceName, IdentifiableDTO<ManufacturerDTO> manufacturer,
 			FormatDrug drugFormat, double quiantity, String sideEffects, String recommendedAmount,
 			List<IdentifiableDTO<ReplaceDrugDTO>> replacingDrugs, List<IdentifiableDTO<AllergenDTO>> allergens,
-			List<IdentifiableDTO<IngredientDTO>> ingredients, boolean onReciept) {
+			List<IdentifiableDTO<IngredientDTO>> ingredients, boolean onReciept, DrugKind drugKind) {
 		super();
 		this.name = name;
 		this.code = code;
@@ -50,6 +53,7 @@ public class DrugInstanceDTO {
 		this.allergens = allergens;
 		this.ingredients = ingredients;
 		this.onReciept = onReciept;
+		this.drugKind = drugKind;
 	}
 
 	public String getName() {
@@ -146,6 +150,14 @@ public class DrugInstanceDTO {
 
 	public void setOnReciept(boolean onReciept) {
 		this.onReciept = onReciept;
+	}
+
+	public DrugKind getDrugKind() {
+		return drugKind;
+	}
+
+	public void setDrugKind(DrugKind drugKind) {
+		this.drugKind = drugKind;
 	}
 	
 	
