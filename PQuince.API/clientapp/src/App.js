@@ -8,6 +8,7 @@ import PharmaciesPage from "./pages/PharmaciesPage";
 import DrugReservation from "./pages/drug-reservation/DrugReservation";
 import PatientsDrugReservations from "./pages/drug-reservation/PatientsDrugReservations";
 import PharmacyProfilePage from "./pages/PharmacyProfilePage";
+import Appointments from "./pages/dermatologist-appointment/Appointments";
 
 function App() {
 	return (
@@ -26,6 +27,12 @@ function App() {
 				/>
 				<Link exact to="/drugs" path="/drugs" component={DrugReservation} />
 				<Link exact to="/pharmacy" path="/pharmacy" component={PharmacyProfilePage} />
+				<Link
+					exact
+					to="/reserve-appointment"
+					path="/reserve-appointment"
+					component={Appointments}
+				/>
 			</Switch>
 		</Router>
 	);

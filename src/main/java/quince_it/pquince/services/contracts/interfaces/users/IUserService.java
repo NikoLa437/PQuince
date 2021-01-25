@@ -1,8 +1,11 @@
 package quince_it.pquince.services.contracts.interfaces.users;
 
+import java.util.List;
 import java.util.UUID;
 
+import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
@@ -19,4 +22,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	boolean addAllergen(AllergenUserDTO allergenUserDTO);
 	boolean removeAllergen(AllergenUserDTO allergenUserDTO);
 	void updatePatient(UUID patientId,UserInfoChangeDTO patientInfoChangeDTO);
+	
+	List<IdentifiableStaffGradeDTO> findAllStaffWithAvgGradeByStaffType(StaffType staffType);
+
 }

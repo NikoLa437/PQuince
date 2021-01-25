@@ -46,6 +46,8 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
 	@Column(name = "appointmentStatus", nullable = false)
 	private AppointmentStatus appointmentStatus;
+    
+    public Appointment() {}
 
     public Appointment(Pharmacy pharmacy, Staff staff, Patient patient, Date startDateTime, Date endDateTime,
 			double price, AppointmentType appointmentType, AppointmentStatus appointmentStatus) {

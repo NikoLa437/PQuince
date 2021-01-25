@@ -1,25 +1,34 @@
 package quince_it.pquince.services.implementation.appointment;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
+import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
+import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
-import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.util.appointment.AppointmentMapper;
 
+@Service
 public class AppointmentService implements IAppointmentService{
 
 	@Autowired
-	private IStaffFeedbackService staffFeedbackService;
+	private IUserService userService;
+	
+	@Autowired
+	private PatientRepository patientRepository;
 	
 	@Autowired
 	private AppointmentRepository appointmentRepository;
@@ -59,11 +68,39 @@ public class AppointmentService implements IAppointmentService{
 			AppointmentType appointmentType) {
 		
 		List<Appointment> appointments = appointmentRepository.findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, appointmentType);
-		List<IdentifiableStaffGradeDTO> staffWithGrades = staffFeedbackService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
+		List<IdentifiableStaffGradeDTO> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
 		
 		return returnAppointments;
+	}
+
+	@Override
+	public boolean reserveAppointment(UUID appointmentId, UUID patientId) {
+		
+		try {
+			Appointment appointment = appointmentRepository.findById(appointmentId).get();
+			Patient patient = patientRepository.findById(patientId).get();
+
+			if(!CanReserveAppointment(appointment)) return false;
+			
+			appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
+			appointment.setPatient(patient);
+			
+			appointmentRepository.save(appointment);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean CanReserveAppointment(Appointment appointment) {
+		
+		if(appointment.getStartDateTime().after(new Date()) && 
+				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED)))
+			return true;
+		
+		return false;
 	}
 
 }

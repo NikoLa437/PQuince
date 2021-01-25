@@ -14,16 +14,21 @@ import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.Allergen;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.Staff;
+import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
+import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
@@ -34,6 +39,12 @@ public class UserService implements IUserService{
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private IStaffFeedbackService staffFeedbackService;
+	
+	@Autowired
+	private StaffRepository staffRepository;
 	
 	@Autowired
 	private PatientRepository patientRepository;
@@ -162,5 +173,22 @@ public class UserService implements IUserService{
 		patientRepository.save(patient);
 	}
 
+	@Override
+	public List<IdentifiableStaffGradeDTO> findAllStaffWithAvgGradeByStaffType(StaffType staffType) {
+		
+		List<Staff> staffs = staffRepository.findAllStaffByStaffType(staffType);
+		List<IdentifiableStaffGradeDTO> retStaffs = new ArrayList<IdentifiableStaffGradeDTO>();
+		
+		staffs.forEach((s) -> retStaffs.add(MapStaffPersistenceToStaffGradeIdentifiableDTO(s)));
+		return retStaffs;
+	}
+
+	
+	public IdentifiableStaffGradeDTO MapStaffPersistenceToStaffGradeIdentifiableDTO(Staff staff){
+		if(staff == null) throw new IllegalArgumentException();
+		
+		return new IdentifiableStaffGradeDTO(staff.getId(), staff.getEmail(), staff.getName(), staff.getSurname(),
+											 staff.getAddress(), staff.getPhoneNumber(), staffFeedbackService.findAvgGradeForStaff(staff.getId()));
+	}
 
 }

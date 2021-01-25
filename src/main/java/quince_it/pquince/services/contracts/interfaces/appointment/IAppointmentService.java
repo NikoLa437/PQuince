@@ -11,4 +11,6 @@ import quince_it.pquince.services.contracts.interfaces.IService;
 public interface IAppointmentService extends IService<AppointmentDTO, IdentifiableDTO<AppointmentDTO>> {
 
 	List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentType(UUID pharmacyId, AppointmentType appointmentType);
+	
+	boolean reserveAppointment(UUID appointmentId, UUID patientId);
 }

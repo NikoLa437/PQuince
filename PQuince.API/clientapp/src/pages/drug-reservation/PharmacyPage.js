@@ -85,7 +85,10 @@ class PharmacyPage extends Component {
 						Currently unavailable
 					</h5>
 
-					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+					<table
+						className="table table-hover"
+						style={{ width: "100%", marginTop: "3rem" }}
+					>
 						<tbody>
 							{this.props.pharmacies.map((pharmacy) => (
 								<tr
@@ -98,6 +101,7 @@ class PharmacyPage extends Component {
 											pharmacy.count
 										)
 									}
+									style={{ cursor: "pointer" }}
 								>
 									<td width="130em">
 										<img

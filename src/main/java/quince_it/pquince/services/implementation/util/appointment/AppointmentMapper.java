@@ -26,11 +26,12 @@ public class AppointmentMapper {
 	}
 	
 	public static IdentifiableStaffGradeDTO findAppropriateStaff(UUID staffId, List<IdentifiableStaffGradeDTO> staffs) {
+		
 		for(IdentifiableStaffGradeDTO staff : staffs) {
 			if(staff.Id.equals(staffId)) 
 				return staff;
 		}
-		
+
 		return null;
 	}
 }
