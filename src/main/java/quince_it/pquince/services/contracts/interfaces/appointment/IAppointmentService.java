@@ -12,5 +12,13 @@ public interface IAppointmentService extends IService<AppointmentDTO, Identifiab
 
 	List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentType(UUID pharmacyId, AppointmentType appointmentType);
 	
+	List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceAscending(UUID pharmacyId, AppointmentType appointmentType);
+
+	List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceDescending(UUID pharmacyId, AppointmentType appointmentType);
+	
+	List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeAscending(UUID pharmacyId, AppointmentType appointmentType);
+
+	List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeDescending(UUID pharmacyId, AppointmentType appointmentType);
+
 	boolean reserveAppointment(UUID appointmentId, UUID patientId);
 }

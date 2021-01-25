@@ -4,17 +4,20 @@ import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
+import ModalDialog from "../../components/ModalDialog";
 
 class Appointments extends Component {
 	state = {
 		appointments: [],
+		openModalSuccess: false,
+		showingSorted: false,
 	};
 
 	componentDidMount() {
 		Axios.get(
 			BASE_URL +
-				"/api/appointment/for-dermatologist/find-by-pharmacy/" +
-				"cafeddee-56cb-11eb-ae93-0242ac130202"
+				"/api/appointment/dermatologist/find-by-pharmacy/" +
+				"cafeddee-56cb-11eb-ae93-0242ac130002"
 		)
 			.then((res) => {
 				this.setState({ appointments: res.data });
@@ -28,6 +31,86 @@ class Appointments extends Component {
 	handleAppointmentClick = (appointmentId) => {
 		Axios.post(BASE_URL + "/api/appointment/reserve-appointment/" + appointmentId)
 			.then((res) => {
+				this.setState({ openModalSuccess: true });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleModalSuccessClose = () => {
+		this.setState({ openModalSuccess: false });
+	};
+
+	handleResetSort = () => {
+		Axios.get(
+			BASE_URL +
+				"/api/appointment/dermatologist/find-by-pharmacy/" +
+				"cafeddee-56cb-11eb-ae93-0242ac130002"
+		)
+			.then((res) => {
+				this.setState({ appointments: res.data, showingSorted: false });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleSortByGradeAscending = () => {
+		Axios.get(
+			BASE_URL +
+				"/api/appointment/dermatologist/find-by-pharmacy/sort-by-grade-ascending/" +
+				"cafeddee-56cb-11eb-ae93-0242ac130002"
+		)
+			.then((res) => {
+				this.setState({ appointments: res.data, showingSorted: true });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleSortByGradeDesscending = () => {
+		Axios.get(
+			BASE_URL +
+				"/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-descending/" +
+				"cafeddee-56cb-11eb-ae93-0242ac130002"
+		)
+			.then((res) => {
+				this.setState({ appointments: res.data, showingSorted: true });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleSortByPriceAscending = () => {
+		Axios.get(
+			BASE_URL +
+				"/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-ascending/" +
+				"cafeddee-56cb-11eb-ae93-0242ac130002"
+		)
+			.then((res) => {
+				this.setState({ appointments: res.data, showingSorted: true });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleSortByPriceDescending = () => {
+		Axios.get(
+			BASE_URL +
+				"/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-descending/" +
+				"cafeddee-56cb-11eb-ae93-0242ac130002"
+		)
+			.then((res) => {
+				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
 			})
 			.catch((err) => {
@@ -42,11 +125,80 @@ class Appointments extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Appointments</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Create Appointment</h5>
 
 					<p className="mb-0 mt-2 text-uppercase">
 						Click on appointment to make reservation
 					</p>
+
+					<div className="form-group">
+						<div className="form-group controls mb-0 pb-2">
+							<div className="form-row mt-3">
+								<div className="form-col">
+									<div class="dropdown">
+										<button
+											class="btn btn-primary dropdown-toggle"
+											type="button"
+											id="dropdownMenu2"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="false"
+										>
+											Sort by
+										</button>
+										<div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+											<button
+												class="dropdown-item"
+												type="button"
+												onClick={this.handleSortByGradeAscending}
+											>
+												Dermatologist grade ascending
+											</button>
+											<button
+												class="dropdown-item"
+												type="button"
+												onClick={this.handleSortByGradeDesscending}
+											>
+												Dermatologist grade descending
+											</button>
+											<button
+												class="dropdown-item"
+												type="button"
+												onClick={this.handleSortByPriceAscending}
+											>
+												Examination price ascending
+											</button>
+											<button
+												class="dropdown-item"
+												type="button"
+												onClick={this.handleSortByPriceDescending}
+											>
+												Examination price descending
+											</button>
+										</div>
+									</div>
+								</div>
+								<div className="form-col ml-3">
+									<div
+										className={
+											this.state.showingSorted
+												? "form-group"
+												: "form-group collapse"
+										}
+									>
+										<button
+											type="button"
+											className="btn btn-outline-secondary"
+											onClick={this.handleResetSort}
+										>
+											<i className="icofont-close-line mr-1"></i>Reset
+											criteria
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
 					<table
 						className="table table-hover"
@@ -120,6 +272,13 @@ class Appointments extends Component {
 						</tbody>
 					</table>
 				</div>
+				<ModalDialog
+					show={this.state.openModalSuccess}
+					href="/"
+					onCloseModal={this.handleModalSuccessClose}
+					header="Successfully reserved"
+					text="Your appointment is reserved. Further details are sent to your email address."
+				/>
 			</React.Fragment>
 		);
 	}

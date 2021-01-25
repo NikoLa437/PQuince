@@ -18,9 +18,6 @@ class Header extends Component {
 							<li className="active">
 								<a href="/">Home</a>
 							</li>
-							<li className="active">
-								<a href="/reserve-appointment">Appointments</a>
-							</li>
 							<li>
 								<a href="/pharmacies">Pharmacies</a>
 							</li>
@@ -56,7 +53,7 @@ class Header extends Component {
 								</a>
 								<ul>
 									<li>
-										<a href="/">Dermatolog</a>
+										<a href="/reserve-appointment">Dermatologist</a>
 									</li>
 									<li>
 										<a href="/">Farmaceut</a>
