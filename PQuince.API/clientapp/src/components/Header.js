@@ -53,7 +53,7 @@ class Header extends Component {
 								</a>
 								<ul>
 									<li>
-										<a href="/">Dermatolog</a>
+										<a href="/reserve-appointment">Dermatologist</a>
 									</li>
 									<li>
 										<a href="/">Farmaceut</a>

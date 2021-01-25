@@ -1,17 +1,20 @@
 package quince_it.pquince.services.implementation.users.mail;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.users.Patient;
 
@@ -30,18 +33,38 @@ public class EmailService {
 			throws MailException, InterruptedException, MessagingException {
 		System.out.println("Slanje emaila...");
 
-		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setTo(patient.getEmail());
-		mail.setFrom(env.getProperty("spring.mail.username"));
-		mail.setSubject("Activate yout account");
-		 
-		mail.setText("Hello " + patient.getName() + ",\n" +
-					"You registered an account on PQuince portal, before being able to use your account you need to verify that this is your email address by clicking here:\n"
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Hello " + patient.getName() + ",</p>" +
+					"<p>You registered an account on PQuince portal, before being able to use your account you need to verify that this is your email address by clicking here:</p>"
 					+ "<a href=\"http://localhost:8081/api/users/activate-patient/" + patient.getId()
-					+ "\">Verify your account</a>" + "\n\nKind Regards, PQuince"); 
-		javaMailSender.send(mail);
-
+					+ "\">Verify your account</a>.</p>" + "<p>Kind Regards, PQuince</p>"; 
+		helper.setText(htmlMsg, true);
+		helper.setTo(patient.getEmail());
+		helper.setSubject("Activate account");
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
 		System.out.println("Email poslat!");
+	}
+	
+	@Async
+	public void sendDermatologistAppointmentReservation(Appointment appointment) throws MessagingException {
+		
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat formatterTime = new SimpleDateFormat("HH:mm");
+
+		
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Hello " + appointment.getPatient().getName() + ",</p>" + "<p>You successfully reserved appointment at dr. " + appointment.getStaff().getName() + " "
+						+ appointment.getStaff().getSurname() + ", for date " + formatter.format(appointment.getStartDateTime()) + ", at " + formatterTime.format(appointment.getStartDateTime()) + " o'clock."+
+						"</p> <p>Kind Regards, PQuince</p>";
+
+		helper.setText(htmlMsg, true);
+		helper.setTo(appointment.getPatient().getEmail());
+		helper.setSubject("Appointment reservation");
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
 	}
 	
 	@Async
@@ -49,16 +72,21 @@ public class EmailService {
 			throws MailException, InterruptedException, MessagingException {
 		System.out.println("Slanje emaila...");
 
-		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setTo(drugReservation.getPatient().getEmail());
-		mail.setFrom(env.getProperty("spring.mail.username"));
-		mail.setSubject("Activate yout account");
-		 
-		mail.setText("Hello " + drugReservation.getPatient().getName() + ",\n\n" +
-					"You reservation code for drug " + drugReservation.getDrugInstance().getName() + " is:" + drugReservation.getId() +".\n"
-				  + "Yor reservation lasts until "+ new SimpleDateFormat("yyyy-MM-dd HH-mm").format(drugReservation.getEndDate()) + ", and you can pick up your drugs at "
-				  + drugReservation.getPharmacy().getName() + " pharmacy at " + drugReservation.getPharmacy().getAddress() + " address."+"\n\nKind Regards, PQuince"); 
-		javaMailSender.send(mail);
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Hello " + drugReservation.getPatient().getName() + ",</p>" +
+					"<p>You reservation code for drug " + drugReservation.getDrugInstance().getName() + " is:" + drugReservation.getId() +".</p>"
+				  + "<p>Yor reservation lasts until "+ new SimpleDateFormat("yyyy-MM-dd HH:mm").format(drugReservation.getEndDate()) + ", and you can pick up your drugs at "
+				  + drugReservation.getPharmacy().getName() + " pharmacy at "+ drugReservation.getPharmacy().getAddress().getStreet() + ", "
+				  + drugReservation.getPharmacy().getAddress().getCity() + ", " 
+				  + drugReservation.getPharmacy().getAddress().getCountry()
+				  + " address.</p>"+"<p>Kind Regards, PQuince</p>"; 
+		
+		helper.setText(htmlMsg, true);
+		helper.setTo(drugReservation.getPatient().getEmail());
+		helper.setSubject("Activate account");
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
 
 		System.out.println("Email poslat!");
 	}

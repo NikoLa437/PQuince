@@ -4,7 +4,7 @@ import java.util.Date;
 
 import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 
-public class AppointmentDTO {
+public class DermatologistAppointmentDTO {
 
 	private IdentifiableStaffGradeDTO staff;
 	
@@ -14,9 +14,9 @@ public class AppointmentDTO {
     
     private double price;
     
-    public AppointmentDTO() {}
+    public DermatologistAppointmentDTO() {}
 
-	public AppointmentDTO(IdentifiableStaffGradeDTO staff, Date startDateTime, Date endDateTime, double price) {
+	public DermatologistAppointmentDTO(IdentifiableStaffGradeDTO staff, Date startDateTime, Date endDateTime, double price) {
 		super();
 		this.staff = staff;
 		this.startDateTime = startDateTime;

@@ -3,8 +3,7 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('11355678-52d3-11eb-ae93-0242ac130002',true, 'example5@example.com','Jelena','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('22345678-52d3-11eb-ae93-0242ac130002',true, 'example6@example.com','Dusan','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
-
-
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345678-52d3-11eb-ae93-0242ac130002',true, 'example8@example.com','Nemanja','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 
 
 insert into patient (id, penalty, points, loyality_category) values ('22793162-52d3-11eb-ae93-0242ac130002',0,2, 'REGULAR');
@@ -27,14 +26,19 @@ insert into pharmacy (id, name, description, city, country, street, latitude, lo
 insert into pharmacy (id, name, description, city, country, street, latitude, longitude) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Zdravlje apoteka','gradska opština Zemun','Serbia','Šilerova ulica',44.845752,20.387903);
 insert into pharmacy (id, name, description, city, country, street, latitude, longitude) values ('cafeddee-56cb-11eb-ae93-0242ac131302', 'Kopriva', 'Kopriva apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929);
 
-insert into staff (id) values ('11355678-52d3-11eb-ae93-0242ac130002');
-insert into staff (id) values ('22345678-52d3-11eb-ae93-0242ac130002');
+insert into staff (id, staff_type) values ('11355678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
+insert into staff (id, staff_type) values ('22345678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
+insert into staff (id, staff_type) values ('25345678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
 
 insert into dermatologist (id) values ('11355678-52d3-11eb-ae93-0242ac130002');
 insert into dermatologist (id) values ('22345678-52d3-11eb-ae93-0242ac130002');
+insert into dermatologist (id) values ('25345678-52d3-11eb-ae93-0242ac130002');
 
 
 insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('11355678-52d3-11eb-ae93-0242ac130002' ,'cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('22345678-52d3-11eb-ae93-0242ac130002' ,'cafeddee-56cb-11eb-ae93-0242ac130202');
+insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('25345678-52d3-11eb-ae93-0242ac130002' ,'cafeddee-56cb-11eb-ae93-0242ac130202');
+
 
 insert into pharmacy_feedback (patient_id, pharmacy_id, date, grade, comment) values ('22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', '2020-03-03', 1, 'Uzas uzas');
 insert into pharmacy_feedback (patient_id, pharmacy_id, date, grade, comment) values ('23793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', '2020-03-03', 5, 'Sve naj naj');
@@ -71,4 +75,14 @@ insert into drug_storage(drug_instance_id, pharmacy_id, count) values ('dac2b818
 
 
 insert into drug_reservation(id, amount, drug_peace_price, end_date, reservation_status, start_date, drug_instance_id, patient_id, pharmacy_id) values ('f96fe75e-59a5-11eb-ae93-0242ac130002', 3, 340, '2021-01-18 17:04:03',  'ACTIVE', '2021-01-16 17:04:03', 'dac2b818-5838-11eb-ae93-0242ac130002', '22793162-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002');
+
+insert into staff_feedback (staff_id, patient_id, date, grade) values ('22345678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002','2020-03-03',4);
+insert into staff_feedback (staff_id, patient_id, date, grade) values ('22345678-52d3-11eb-ae93-0242ac130002','23793162-52d3-11eb-ae93-0242ac130002','2020-03-03',2);
+insert into staff_feedback (staff_id, patient_id, date, grade) values ('11355678-52d3-11eb-ae93-0242ac130002','23793162-52d3-11eb-ae93-0242ac130002','2020-03-03',3);
+insert into staff_feedback (staff_id, patient_id, date, grade) values ('25345678-52d3-11eb-ae93-0242ac130002','23793162-52d3-11eb-ae93-0242ac130002','2020-03-03',5);
+
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2ba86116-5f40-11eb-ae93-0242ac130002','CREATED','EXAMINATION', '2021-02-11 11:00:00', '2021-02-11 11:30:00', 1400, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002');
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2ba86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-11 11:30:00', '2021-02-11 12:00:00', 1300, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002');
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2ca86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-13 11:30:00', '2021-02-13 12:00:00', 1500, 'cafeddee-56cb-11eb-ae93-0242ac130202', '22345678-52d3-11eb-ae93-0242ac130002');
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2da86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-13 11:30:00', '2021-02-13 12:00:00', 1500, 'cafeddee-56cb-11eb-ae93-0242ac130002', '25345678-52d3-11eb-ae93-0242ac130002');
 
