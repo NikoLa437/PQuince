@@ -15,11 +15,12 @@ import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.users.PatientRepository;
-import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
+import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.appointment.AppointmentMapper;
 
 @Service
@@ -34,26 +35,29 @@ public class AppointmentService implements IAppointmentService{
 	@Autowired
 	private AppointmentRepository appointmentRepository;
 	
+	@Autowired
+	private EmailService emailService;
+	
 	@Override
-	public List<IdentifiableDTO<AppointmentDTO>> findAll() {
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IdentifiableDTO<AppointmentDTO> findById(UUID id) {
+	public IdentifiableDTO<DermatologistAppointmentDTO> findById(UUID id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public UUID create(AppointmentDTO entityDTO) {
+	public UUID create(DermatologistAppointmentDTO entityDTO) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void update(AppointmentDTO entityDTO, UUID id) {
+	public void update(DermatologistAppointmentDTO entityDTO, UUID id) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -65,13 +69,13 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentType(UUID pharmacyId,
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentType(UUID pharmacyId,
 			AppointmentType appointmentType) {
 		
 		List<Appointment> appointments = appointmentRepository.findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, appointmentType);
 		List<IdentifiableStaffGradeDTO> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
-		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
 		
 		return returnAppointments;
 	}
@@ -89,6 +93,8 @@ public class AppointmentService implements IAppointmentService{
 			appointment.setPatient(patient);
 			
 			appointmentRepository.save(appointment);
+			emailService.sendDermatologistAppointmentReservation(appointment);
+			
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -105,43 +111,43 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceAscending(UUID pharmacyId, AppointmentType appointmentType) {
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceAscending(UUID pharmacyId, AppointmentType appointmentType) {
 		
 		List<Appointment> appointments = appointmentRepository.findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceAscending(pharmacyId, appointmentType);
 		List<IdentifiableStaffGradeDTO> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
-		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
 		
 		return returnAppointments;
 	}
 
 	@Override
-	public List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceDescending(
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceDescending(
 			UUID pharmacyId, AppointmentType appointmentType) {
 		
 		List<Appointment> appointments = appointmentRepository.findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceDescending(pharmacyId, appointmentType);
 		List<IdentifiableStaffGradeDTO> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
-		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
 		
 		return returnAppointments;
 	}
 
 	@Override
-	public List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeAscending(
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeAscending(
 			UUID pharmacyId, AppointmentType appointmentType) {
 		
-		List<IdentifiableDTO<AppointmentDTO>> staffWithGrades = findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, appointmentType);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> staffWithGrades = findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, appointmentType);
 		Collections.sort(staffWithGrades, (s1, s2) -> Double.compare(s1.EntityDTO.getStaff().EntityDTO.getGrade(), s2.EntityDTO.getStaff().EntityDTO.getGrade()));
 		
 		return staffWithGrades;
 	}
 
 	@Override
-	public List<IdentifiableDTO<AppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeDescending(
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeDescending(
 			UUID pharmacyId, AppointmentType appointmentType) {
 		
-		List<IdentifiableDTO<AppointmentDTO>> staffWithGrades = findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, appointmentType);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> staffWithGrades = findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, appointmentType);
 		Collections.sort(staffWithGrades, (s1, s2) -> Double.compare(s1.EntityDTO.getStaff().EntityDTO.getGrade(), s2.EntityDTO.getStaff().EntityDTO.getGrade()));
 		Collections.reverse(staffWithGrades);
 
