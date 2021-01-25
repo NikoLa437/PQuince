@@ -22,15 +22,15 @@ public class Staff extends User {
 		super();
 	}
 
-	public Staff(String email, String password, String name, String surname, String address, City city, String phoneNumber) {
-		super(email, password, name, surname, address, city, phoneNumber, false);
+	public Staff(String email, String password, String name, String surname, Address address, String phoneNumber) {
+		super(email, password, name, surname, address, phoneNumber, false);
 		
 		this.absences = new ArrayList<Absence>();
 	}
 
-	public Staff(UUID id, String email, String password, String name, String surname, String address, City city,
+	public Staff(UUID id, String email, String password, String name, String surname, Address address,
 			String phoneNumber, boolean active, int penalty, List<Absence> absences,int points,LoyalityCategory loyalityCategory) {
-		super(id, email, password, name, surname, address, city, phoneNumber, active);
+		super(id, email, password, name, surname, address, phoneNumber, active);
 
 		this.absences = absences;
 	}

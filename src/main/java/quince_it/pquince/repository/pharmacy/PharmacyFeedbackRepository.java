@@ -16,8 +16,8 @@ public interface PharmacyFeedbackRepository extends JpaRepository<PharmacyFeedba
 	double findAvgGradeForPharmacy(UUID pharmacyId);
 	
 	@Query(value = "SELECT new quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationRepositoryDTO(p.pharmacy.id, p.pharmacy.name, p.pharmacy.address,  p.pharmacy.description, AVG(p.grade)) "
-				 + "FROM PharmacyFeedback p WHERE LOWER(p.pharmacy.name) LIKE %?1% GROUP BY p.pharmacy.id, p.pharmacy.name, p.pharmacy.address, p.pharmacy.description "
+				 + "FROM PharmacyFeedback p WHERE LOWER(p.pharmacy.name) LIKE %?1% AND LOWER(p.pharmacy.address.city) LIKE %?4% GROUP BY p.pharmacy.id, p.pharmacy.name, p.pharmacy.address, p.pharmacy.description "
 				 + "HAVING AVG(p.grade) >= ?2 AND AVG(p.grade) <= ?3 ")
-	List<PharmacyFiltrationRepositoryDTO> findByNameGradeAndDistance(String name, double gradeFrom, double gradeTo);
-
+	List<PharmacyFiltrationRepositoryDTO> findByNameCityAndGrade(String name, double gradeFrom, double gradeTo, String city);
+	
 }

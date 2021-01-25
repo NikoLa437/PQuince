@@ -25,9 +25,9 @@ public class Dermatologist extends Staff{
 	public Dermatologist() {}
 	
 
-	public Dermatologist(UUID id, String email, String password, String name, String surname, String address, City city,
+	public Dermatologist(UUID id, String email, String password, String name, String surname, Address address,
 			String phoneNumber, boolean active, int penalty, List<Absence> absences,int points,LoyalityCategory loyalityCategory, List<Pharmacy> pharmacies) {
-		super(id, email, password, name, surname, address, city, phoneNumber, active,penalty,absences,points,loyalityCategory);
+		super(id, email, password, name, surname, address, phoneNumber, active,penalty,absences,points,loyalityCategory);
 		this.pharmacies= pharmacies;
 	}
 

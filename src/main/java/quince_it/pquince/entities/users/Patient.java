@@ -40,8 +40,8 @@ public class Patient extends User {
 		super();
 	}
 
-	public Patient(String email, String password, String name, String surname, String address, City city, String phoneNumber) {
-		super(email, password, name, surname, address, city, phoneNumber, false);
+	public Patient(String email, String password, String name, String surname, Address address, String phoneNumber) {
+		super(email, password, name, surname, address, phoneNumber, false);
 		
 		this.allergens = new ArrayList<Allergen>();
 		this.penalty = 0;
@@ -49,9 +49,9 @@ public class Patient extends User {
 		this.loyalityCategory = LoyalityCategory.REGULAR;
 	}
 
-	public Patient(UUID id, String email, String password, String name, String surname, String address, City city,
+	public Patient(UUID id, String email, String password, String name, String surname, Address address,
 			String phoneNumber, boolean active, int penalty, List<Allergen> allergens,int points,LoyalityCategory loyalityCategory) {
-		super(id, email, password, name, surname, address, city, phoneNumber, active);
+		super(id, email, password, name, surname, address, phoneNumber, active);
 
 		this.penalty = penalty;
 		this.allergens = allergens;
@@ -109,6 +109,10 @@ public class Patient extends User {
 
 	public void setLoyalityCategory(LoyalityCategory loyalityCategory) {
 		this.loyalityCategory = loyalityCategory;
+	}
+	
+	public void addPenalty(int amount) {
+		this.penalty += amount;
 	}
 	
 }

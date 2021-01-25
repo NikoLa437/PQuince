@@ -2,6 +2,7 @@ package quince_it.pquince.services.contracts.dto.users;
 
 import java.util.List;
 
+import quince_it.pquince.entities.users.Address;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.LoyalityCategory;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
@@ -17,10 +18,10 @@ public class PatientDTO extends UserDTO {
 	
 	private LoyalityCategory category;
 
-	public PatientDTO(String email, String name, String surname, String address, IdentifiableDTO<CityDTO> city, String phoneNumber, boolean active,
+	public PatientDTO(String email, String name, String surname, Address address, String phoneNumber, boolean active,
 			List<Authority> authorities, int penalty,List<IdentifiableDTO<AllergenDTO>> allergens, int points, LoyalityCategory category) {
 		
-		super(email, name, surname, address, city, phoneNumber, active, authorities);
+		super(email, name, surname, address, phoneNumber, active, authorities);
 		this.allergens = allergens;
 		this.penalty = penalty;
 		this.points = points;

@@ -2,9 +2,8 @@ package quince_it.pquince.services.contracts.dto.users;
 
 import java.util.List;
 
-
+import quince_it.pquince.entities.users.Address;
 import quince_it.pquince.entities.users.Authority;
-import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public class StaffDTO extends UserDTO{
 	
@@ -12,9 +11,9 @@ public class StaffDTO extends UserDTO{
 	
     private List<UserFeedbackDTO> feedbacks;
 
-	public StaffDTO(String email, String name, String surname, String address, IdentifiableDTO<CityDTO> city,
+	public StaffDTO(String email, String name, String surname, 	Address address,
 			String phoneNumber, boolean active, List<Authority> authorities, List<AbsenceDTO> absencesDTO, List<UserFeedbackDTO> userFeedbacksDTO) {
-		super(email, name, surname, address, city, phoneNumber, active, authorities);
+		super(email, name, surname, address, phoneNumber, active, authorities);
 		// TODO Auto-generated constructor stub
 		this.absences= absencesDTO;
 		this.feedbacks=userFeedbacksDTO;
