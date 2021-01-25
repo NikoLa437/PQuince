@@ -9,10 +9,10 @@ public class StaffDTO extends UserDTO{
 	
 	private List<AbsenceDTO> absences;
 	
-    private List<UserFeedbackDTO> feedbacks;
+    private List<StaffFeedbackDTO> feedbacks;
 
 	public StaffDTO(String email, String name, String surname, 	Address address,
-			String phoneNumber, boolean active, List<Authority> authorities, List<AbsenceDTO> absencesDTO, List<UserFeedbackDTO> userFeedbacksDTO) {
+			String phoneNumber, boolean active, List<Authority> authorities, List<AbsenceDTO> absencesDTO, List<StaffFeedbackDTO> userFeedbacksDTO) {
 		super(email, name, surname, address, phoneNumber, active, authorities);
 		// TODO Auto-generated constructor stub
 		this.absences= absencesDTO;
@@ -27,11 +27,11 @@ public class StaffDTO extends UserDTO{
 		this.absences = absences;
 	}
 
-	public List<UserFeedbackDTO> getFeedbacks() {
+	public List<StaffFeedbackDTO> getFeedbacks() {
 		return feedbacks;
 	}
 
-	public void setFeedbacks(List<UserFeedbackDTO> feedbacks) {
+	public void setFeedbacks(List<StaffFeedbackDTO> feedbacks) {
 		this.feedbacks = feedbacks;
 	}
 }

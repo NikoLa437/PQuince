@@ -33,8 +33,8 @@ public class Appointment {
     @Column(name = "startDateTime")
     private Date startDateTime;
     
-    @Column(name = "endtDateTime")
-    private Date endtDateTime;
+    @Column(name = "endDateTime")
+    private Date endDateTime;
     
     @Column(name = "price")
     private double price;
@@ -47,12 +47,12 @@ public class Appointment {
 	@Column(name = "appointmentStatus", nullable = false)
 	private AppointmentStatus appointmentStatus;
 
-    public Appointment(Pharmacy pharmacy, Staff staff, Patient patient, Date startDateTime, Date endtDateTime,
+    public Appointment(Pharmacy pharmacy, Staff staff, Patient patient, Date startDateTime, Date endDateTime,
 			double price, AppointmentType appointmentType, AppointmentStatus appointmentStatus) {
-    	this(UUID.randomUUID(), pharmacy, staff, patient, startDateTime, endtDateTime, price, appointmentType, appointmentStatus);
+    	this(UUID.randomUUID(), pharmacy, staff, patient, startDateTime, endDateTime, price, appointmentType, appointmentStatus);
 	}
     
-	public Appointment(UUID id, Pharmacy pharmacy, Staff staff, Patient patient, Date startDateTime, Date endtDateTime,
+	public Appointment(UUID id, Pharmacy pharmacy, Staff staff, Patient patient, Date startDateTime, Date endDateTime,
 			double price, AppointmentType appointmentType, AppointmentStatus appointmentStatus) {
 		super();
 		this.id = id;
@@ -60,7 +60,7 @@ public class Appointment {
 		this.staff = staff;
 		this.patient = patient;
 		this.startDateTime = startDateTime;
-		this.endtDateTime = endtDateTime;
+		this.endDateTime = endDateTime;
 		this.price = price;
 		this.appointmentType = appointmentType;
 		this.appointmentStatus = appointmentStatus;
@@ -106,8 +106,8 @@ public class Appointment {
 		return startDateTime;
 	}
 
-	public Date getEndtDateTime() {
-		return endtDateTime;
+	public Date getEndDateTime() {
+		return endDateTime;
 	}
 
 	public AppointmentType getAppointmentType() {

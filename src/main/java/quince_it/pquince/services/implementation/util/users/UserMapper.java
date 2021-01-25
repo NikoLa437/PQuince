@@ -1,4 +1,4 @@
-package quince_it.pquince.services.implementation.util;
+package quince_it.pquince.services.implementation.util.users;
 
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;

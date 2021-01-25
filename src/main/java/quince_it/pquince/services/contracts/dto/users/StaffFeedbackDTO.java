@@ -3,9 +3,7 @@ package quince_it.pquince.services.contracts.dto.users;
 import java.util.Date;
 import java.util.UUID;
 
-import quince_it.pquince.entities.users.Grade;
-
-public class UserFeedbackDTO {
+public class StaffFeedbackDTO {
 
 	private UUID id;
 	
@@ -13,9 +11,9 @@ public class UserFeedbackDTO {
 	
 	private Date Date;
     
-	private Grade grade;
+	private int grade;
 		
-	public UserFeedbackDTO(UUID id, UUID forStaff, Date date, Grade grade) {
+	public StaffFeedbackDTO(UUID id, UUID forStaff, Date date, int grade) {
 		this.id = id;
 		this.forStaff= forStaff;
 		this.Date=date;
@@ -46,11 +44,11 @@ public class UserFeedbackDTO {
 		Date = date;
 	}
 
-	public Grade getGrade() {
+	public int getGrade() {
 		return grade;
 	}
 
-	public void setGrade(Grade grade) {
+	public void setGrade(int grade) {
 		this.grade = grade;
 	}
 }

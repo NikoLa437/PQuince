@@ -1,4 +1,4 @@
-package quince_it.pquince.services.contracts.interfaces;
+package quince_it.pquince.services.contracts.interfaces.users;
 
 import java.util.UUID;
 
@@ -8,6 +8,7 @@ import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
+import quince_it.pquince.services.contracts.interfaces.IService;
 
 public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>> {
 

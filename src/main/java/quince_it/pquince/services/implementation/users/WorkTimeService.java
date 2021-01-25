@@ -12,7 +12,7 @@ import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-import quince_it.pquince.services.contracts.interfaces.IWorkTimeService;
+import quince_it.pquince.services.contracts.interfaces.users.IWorkTimeService;
 
 @Service
 public class WorkTimeService implements IWorkTimeService{
