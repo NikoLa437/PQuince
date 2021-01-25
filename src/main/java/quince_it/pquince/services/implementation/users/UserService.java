@@ -24,10 +24,10 @@ import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-import quince_it.pquince.services.contracts.interfaces.IUserService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
-import quince_it.pquince.services.implementation.util.UserMapper;
+import quince_it.pquince.services.implementation.util.users.UserMapper;
 
 @Service
 public class UserService implements IUserService{
