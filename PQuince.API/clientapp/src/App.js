@@ -7,36 +7,28 @@ import UserProfilePage from "./pages/UserProfilePage";
 import PharmaciesPage from "./pages/PharmaciesPage";
 import DrugReservation from "./pages/drug-reservation/DrugReservation";
 import PatientsDrugReservations from "./pages/drug-reservation/PatientsDrugReservations";
+import PharmacyProfilePage from "./pages/PharmacyProfilePage";
 
 function App() {
-  return (
-    <Router>
-      <Switch>
-        <Link exact to="/" path="/" component={HomePage} />
-        <Link exact to="/login" path="/login" component={LoginPage} />
-        <Link
-          exact
-          to="/registration"
-          path="/registration"
-          component={RegisterPage}
-        />
-        <Link exact to="/profile" path="/profile" component={UserProfilePage} />
-        <Link
-          exact
-          to="/pharmacies"
-          path="/pharmacies"
-          component={PharmaciesPage}
-        />
-        <Link
-          exact
-          to="/drugs-reservation"
-          path="/drugs-reservation"
-          component={PatientsDrugReservations}
-        />
-        <Link exact to="/drugs" path="/drugs" component={DrugReservation} />
-      </Switch>
-    </Router>
-  );
+	return (
+		<Router>
+			<Switch>
+				<Link exact to="/" path="/" component={HomePage} />
+				<Link exact to="/login" path="/login" component={LoginPage} />
+				<Link exact to="/registration" path="/registration" component={RegisterPage} />
+				<Link exact to="/profile" path="/profile" component={UserProfilePage} />
+				<Link exact to="/pharmacies" path="/pharmacies" component={PharmaciesPage} />
+				<Link
+					exact
+					to="/drugs-reservation"
+					path="/drugs-reservation"
+					component={PatientsDrugReservations}
+				/>
+				<Link exact to="/drugs" path="/drugs" component={DrugReservation} />
+				<Link exact to="/pharmacy" path="/pharmacy" component={PharmacyProfilePage} />
+			</Switch>
+		</Router>
+	);
 }
 
 export default App;

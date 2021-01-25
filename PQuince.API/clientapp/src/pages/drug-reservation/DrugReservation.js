@@ -60,6 +60,7 @@ class DrugReservation extends Component {
 		this.setState({ openModal: false });
 	};
 
+<<<<<<< HEAD
 	handleDrugSelect = (drug) => {
 		console.log(drug);
 		Axios.get(BASE_URL + "/api/pharmacy/find-by-drug/" + drug.Id)
@@ -78,6 +79,15 @@ class DrugReservation extends Component {
 				console.log(err);
 			});
 	};
+=======
+    handleModalClose = () => {
+        this.setState({reservationModalShow: false});
+    }
+    
+    handleModalSuccessClose = () => {
+        this.setState({openModal: false});
+    }
+>>>>>>> develop
 
 	render() {
 		return (

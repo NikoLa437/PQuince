@@ -106,6 +106,8 @@ public class PharmacyService implements IPharmacyService {
 		
 		return returnPharmacies;
 	}
+	
+
 
 	private boolean isDistanceInRange(double distance, double distanceFrom, double distanceTo) {
 		return distance >= distanceFrom && distance <= distanceTo;
