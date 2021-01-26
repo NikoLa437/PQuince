@@ -16,10 +16,12 @@ class PharmacyProfilePage extends Component {
         pharmacyName:'',
         pharmacyDescription:'',
         pharmacyAdress:'',
+        pharmacyCity:'',
+        grade:'',
         x:'',
         y:'',
         showDermatologistModal:false,
-        showDrugsInPharmacy:false
+        showDrugsInPharmacy:false,
     }
 
 
@@ -32,10 +34,14 @@ class PharmacyProfilePage extends Component {
                 pharmacyId : response.data.Id,
                 pharmacyName : response.data.EntityDTO.name,
                 pharmacyDescription:response.data.EntityDTO.description,
-                pharmacyAdress:response.data.EntityDTO.address,
-                x:45.25,
-                y:19.85
-            });          
+                pharmacyAdress:response.data.EntityDTO.address.street,
+                pharmacyCity:response.data.EntityDTO.address.city,
+                x:response.data.EntityDTO.address.latitude,
+                y:response.data.EntityDTO.address.longitude,
+                grade:response.data.EntityDTO.grade
+            });    
+            
+   
 
         }).catch((err) => {console.log(err);});
     }
@@ -63,7 +69,7 @@ class PharmacyProfilePage extends Component {
     }
 
     render() { 
-        const {pharmacy,pharmacyName,pharmacyDescription,pharmacyAdress,x,y}= this.state
+        const {pharmacy,pharmacyName,pharmacyDescription,pharmacyAdress,pharmacyCity,x,y}= this.state
         const mapState = { center: [x, y], zoom: 17 }
         const myStyle = {
           color: 'white',
@@ -93,12 +99,13 @@ class PharmacyProfilePage extends Component {
                 </div>
                 <div className="row" style={{marginTop:"3%"}}>
                     <div className="col-xs-4" style={{width: "50%"}}>
-                      <div className="form-row">                        
+                      <div>                        
                         <h1>{pharmacyName}</h1>  
-                        <button style={{background: "#1977cc"},{height:'20px'},{verticalAlign:'center'},{marginLeft:'5%'}} onClick = {this.handleSubscribe} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Subscribe</button>
+
+                        <i className="icofont-star" style={{ color: "#1977cc" }}>{this.state.grade}</i>
                       </div>
                         <br></br>
-                        <h7>Adresa apoteke: {pharmacyAdress}</h7>
+                        <h7>Adresa apoteke: {pharmacyAdress}, {pharmacyCity}</h7>
                         <br></br>
                         <h7>Opis apoteke: {pharmacyDescription}</h7>
                         <br></br>

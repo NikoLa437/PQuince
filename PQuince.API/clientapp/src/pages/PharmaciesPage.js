@@ -72,6 +72,8 @@ class PharmaciesPage extends Component {
 		this.setState({ city: event.target.value });
 	};
 
+	
+
 	handleSearch = () => {
 		console.log(this.state);
 		if (
