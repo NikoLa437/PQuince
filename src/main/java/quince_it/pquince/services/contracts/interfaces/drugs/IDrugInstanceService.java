@@ -11,4 +11,5 @@ import quince_it.pquince.services.contracts.interfaces.IService;
 public interface IDrugInstanceService extends IService<DrugInstanceDTO, IdentifiableDTO<DrugInstanceDTO>>{
 	List<IdentifiablePharmacyDrugPriceAmountDTO> findByDrugId(UUID drugId);
 	IdentifiablePharmacyDrugPriceAmountDTO findByDrugInPharmacy(UUID drugId, UUID pharmacyId);
+	List<IdentifiableDTO<DrugInstanceDTO>> findDrugsByPharmacy(UUID pharmacyId);
 }

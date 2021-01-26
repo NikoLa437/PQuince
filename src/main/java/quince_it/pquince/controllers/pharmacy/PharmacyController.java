@@ -47,6 +47,7 @@ public class PharmacyController {
 		return new ResponseEntity<>(drugService.findByDrugInPharmacy(drugId, pharmacyId),HttpStatus.OK);
 	}
 	
+	
 	@CrossOrigin
 	@GetMapping("/get-pharmacy-profile")
 	public ResponseEntity<IdentifiableDTO<PharmacyDTO>> findPharmacyProfile(@RequestParam UUID pharmacyId) {

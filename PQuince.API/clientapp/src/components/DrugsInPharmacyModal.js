@@ -63,7 +63,7 @@ class DrugsInPharmacyModal extends Component {
 
     componentDidMount() {
         Axios
-        .get(BASE_URL + "/api/drug").then((res) =>{
+        .get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId=cafeddee-56cb-11eb-ae93-0242ac130002"+ this.props.pharmacyId).then((res) =>{
             this.setState({drugs : res.data});
             console.log(res.data);
         }).catch((err) => {console.log(err);});
@@ -117,7 +117,7 @@ class DrugsInPharmacyModal extends Component {
                                                 <div className="form-col" >
                                                     <img className="img-fluid" src={CapsuleLogo} width="90em"/>
                                                 </div>
-                                                <div className="form-col">
+                                                <div className="form-col" style={{marginLeft:"2%"}}>
                                                     <div><b>Name:</b> {this.state.drugName}</div>
                                                     <div><b>Manufacturer:</b> {this.state.drugManufacturer}</div>
                                                     <div><b>Quantity:</b> {this.state.drugQuantity}<b>mg</b></div>

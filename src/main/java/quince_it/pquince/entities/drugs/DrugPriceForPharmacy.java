@@ -20,7 +20,6 @@ public class DrugPriceForPharmacy{
 	@Column(name = "dateTo", nullable = false)
 	private Date dateTo;
 	
-	
 	@Column(name = "price", nullable = false)
 	private double price;
 

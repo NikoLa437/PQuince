@@ -59,11 +59,25 @@ public class DrugStorageService implements IDrugStorageService {
 			return 0;
 		}		
 	}
+	
+	@Override
+	public boolean hasDrugInPharmacy(UUID drugId, UUID pharmacyId) {
+		try {
+			for(DrugStorage drugStorage : drugStorageRepository.findAll()) {
+				if(drugStorage.getPharmacy().getId().equals(pharmacyId) && drugStorage.getDrugInstance().getId().equals(drugId)) {
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			System.out.println("ZERO");
+			return false;
+		}		
+	}
 
 	@Override
 	public boolean reduceAmountOfReservedDrug(UUID drugId, UUID pharmacyId, int amount) {
 		
-	
 			DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacyId);
 			System.out.println("AMOUNT " + drugStorage.getCount());
 			drugStorage.reduceAmount(amount);
