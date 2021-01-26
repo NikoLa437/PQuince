@@ -2,6 +2,7 @@ package quince_it.pquince.services.implementation.drugs;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +48,7 @@ public class DrugReservationService implements IDrugReservationService{
 	@Autowired
 	private EmailService emailService;
 
+	private int MAX_PENALTY = 3;
 
 	@Override
 	public IdentifiableDTO<DrugReservationDTO> findById(UUID id) {
@@ -60,14 +62,19 @@ public class DrugReservationService implements IDrugReservationService{
 	 */
 	@Override
 	public UUID create(DrugReservationRequestDTO entityDTO) {
+		//TODO : NOT HARDCODED ID
+		Patient patient = patientRepository.getOne(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"));
 		DrugReservation drugReservation = new DrugReservation(pharmacyRepository.getOne(entityDTO.getPharmacyId()),
 															  drugInstanceRepository.getOne(entityDTO.getDrugId()),
-															  patientRepository.getOne(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")),
+															  patient,
 															  entityDTO.getDrugAmount(), entityDTO.getEndDate(), entityDTO.getDrugPrice());
 		
-		drugReservationRepository.save(drugReservation);
-		drugStorageService.reduceAmountOfReservedDrug(entityDTO.getDrugId(), entityDTO.getPharmacyId(), entityDTO.getDrugAmount());
-		
+		if(!CanReserveDrug(drugReservation, patient))
+			throw new IllegalArgumentException();
+		else {
+			drugReservationRepository.save(drugReservation);
+			drugStorageService.reduceAmountOfReservedDrug(entityDTO.getDrugId(), entityDTO.getPharmacyId(), entityDTO.getDrugAmount());
+		}
 		try {
 			emailService.sendDrugReservationNotificaitionAsync(drugReservation);
 		} catch (MailException e) {
@@ -82,6 +89,14 @@ public class DrugReservationService implements IDrugReservationService{
 		}
 		
 		return drugReservation.getId();
+	}
+	
+	private boolean CanReserveDrug(DrugReservation drugReservation,Patient patient) {
+			
+		if(drugReservation.getEndDate().after(new Date()) && drugReservation.getStartDate().after(new Date()) && patient.getPenalty() < MAX_PENALTY )
+			return true;
+		
+		return false;
 	}
 
 	@Override

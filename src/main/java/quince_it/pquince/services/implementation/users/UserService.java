@@ -191,4 +191,18 @@ public class UserService implements IUserService{
 											 staff.getAddress(), staff.getPhoneNumber(), staffFeedbackService.findAvgGradeForStaff(staff.getId()));
 	}
 
+	@Override
+	public void deleteAllPatientsPenalties() {
+		try {
+			List<Patient> patients = patientRepository.findAll();
+			for(Patient patient : patients) {
+				if(patient.getPenalty() > 0) {
+					patient.setPenalty(0);
+					patientRepository.save(patient);
+				}
+			}
+		} catch (Exception e) {
+		}
+	}
+
 }

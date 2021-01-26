@@ -24,5 +24,6 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	void updatePatient(UUID patientId,UserInfoChangeDTO patientInfoChangeDTO);
 	
 	List<IdentifiableStaffGradeDTO> findAllStaffWithAvgGradeByStaffType(StaffType staffType);
+	void deleteAllPatientsPenalties();
 
 }

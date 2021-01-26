@@ -41,6 +41,8 @@ public class AppointmentService implements IAppointmentService{
 	@Autowired
 	private EmailService emailService;
 	
+	private int MAX_PENALTY = 3;
+	
 	@Override
 	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAll() {
 		// TODO Auto-generated method stub
@@ -90,7 +92,7 @@ public class AppointmentService implements IAppointmentService{
 			Appointment appointment = appointmentRepository.findById(appointmentId).get();
 			Patient patient = patientRepository.findById(patientId).get();
 
-			if(!CanReserveAppointment(appointment)) return false;
+			if(!CanReserveAppointment(appointment, patient)) return false;
 			
 			appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 			appointment.setPatient(patient);
@@ -104,9 +106,9 @@ public class AppointmentService implements IAppointmentService{
 		}
 	}
 
-	private boolean CanReserveAppointment(Appointment appointment) {
+	private boolean CanReserveAppointment(Appointment appointment,Patient patient) {
 		
-		if(appointment.getStartDateTime().after(new Date()) && 
+		if(appointment.getStartDateTime().after(new Date()) && patient.getPenalty() < MAX_PENALTY &&
 				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED)))
 			return true;
 		
