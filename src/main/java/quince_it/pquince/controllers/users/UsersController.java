@@ -23,6 +23,7 @@ import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -93,6 +94,19 @@ public class UsersController {
 		}
 	}
 	
+	@PutMapping("/staff/{staffId}") 
+	@CrossOrigin
+	public ResponseEntity<?> updateStaffInformation(@PathVariable UUID staffId,@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
+	  
+		try {
+			userService.updateStaff(staffId, userInfoChangeDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
 	
 	@GetMapping("/patient/{patientId}") 
 	public ResponseEntity<IdentifiableDTO<PatientDTO>> getPatientById(@PathVariable UUID patientId) {
@@ -108,6 +122,19 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/staff/{staffId}") 
+	public ResponseEntity<IdentifiableDTO<StaffDTO>> getStaffById(@PathVariable UUID staffId) {
+	  
+		try {
+			IdentifiableDTO<StaffDTO> staff = userService.getStaffById(staffId);
+			return new ResponseEntity<>(staff,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} 
+		catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
 	
 	@GetMapping("/patient-allergens/{patientId}") 
 	public ResponseEntity<List<IdentifiableDTO<AllergenDTO>>> getAllergensForPatient(@PathVariable UUID patientId) {
