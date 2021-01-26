@@ -31,7 +31,7 @@ class Header extends Component {
 								<a href="#">My record</a>
 								<ul>
 									<li>
-										<a href="/">Dermatologist visits</a>
+										<a href="/dermatologist-history">Dermatologist visits</a>
 									</li>
 									<li>
 										<a href="/">Consultations with a pharmacist</a>
