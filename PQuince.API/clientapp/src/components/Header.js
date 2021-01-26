@@ -37,7 +37,7 @@ class Header extends Component {
 										<a href="/">Consultations with a pharmacist</a>
 									</li>
 									<li>
-										<a href="/">Observe appointments</a>
+										<a href="/patients-appointments">Observe appointments</a>
 									</li>
 									<li>
 										<a href="/">eReciepts</a>

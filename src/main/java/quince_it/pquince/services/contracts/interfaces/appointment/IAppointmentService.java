@@ -5,11 +5,14 @@ import java.util.UUID;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.IService;
 
 public interface IAppointmentService extends IService<DermatologistAppointmentDTO, IdentifiableDTO<DermatologistAppointmentDTO>> {
 
+	List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>> findAllFutureAppointmentsForPatient(UUID patientId, AppointmentType appointmentType);
+	
 	List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentType(UUID pharmacyId, AppointmentType appointmentType);
 	
 	List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceAscending(UUID pharmacyId, AppointmentType appointmentType);
@@ -21,4 +24,7 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeDescending(UUID pharmacyId, AppointmentType appointmentType);
 
 	boolean reserveAppointment(UUID appointmentId, UUID patientId);
+	
+	boolean cancelAppointment(UUID appointmentId);
+
 }

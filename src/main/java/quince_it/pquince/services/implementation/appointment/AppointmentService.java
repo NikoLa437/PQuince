@@ -1,5 +1,7 @@
 package quince_it.pquince.services.implementation.appointment;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +18,7 @@ import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
@@ -154,4 +157,43 @@ public class AppointmentService implements IAppointmentService{
 		return staffWithGrades;
 	}
 
+	@Override
+	public boolean cancelAppointment(UUID appointmentId) {
+		
+		try {
+			Appointment appointment = appointmentRepository.findById(appointmentId).get();
+			if(!canAppointmentBeCanceled(appointment.getStartDateTime())) return false;
+			
+			appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
+			appointment.setPatient(null);
+			appointmentRepository.save(appointment);
+	
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean canAppointmentBeCanceled(Date appointmentStartDateTime) {
+		
+		LocalDateTime ldt = LocalDateTime.ofInstant(appointmentStartDateTime.toInstant(), ZoneId.systemDefault());
+		ldt = ldt.minusDays(1);
+		
+		if(ldt.isBefore(LocalDateTime.now())) return false;
+		
+		return true;
+	}
+
+	@Override
+	public List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>> findAllFutureAppointmentsForPatient(UUID patientId, AppointmentType appointmentType) {
+		
+		List<Appointment> appointments = appointmentRepository.findAllFutureAppointmentsForPatient(patientId, appointmentType);
+		List<IdentifiableStaffGradeDTO> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
+		
+		List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>> returnAppointments = AppointmentMapper
+																									.MapAppointmentPersistenceListToAppointmentWithPharmacyIdentifiableDTOList
+																									(appointments, staffWithGrades);
+		
+		return returnAppointments;
+	}
 }

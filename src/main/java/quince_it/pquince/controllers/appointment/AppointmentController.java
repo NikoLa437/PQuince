@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 
@@ -25,6 +27,13 @@ public class AppointmentController {
 	
 	@Autowired
 	private IAppointmentService appointmentService;
+	
+	@GetMapping("/dermatologist/pending/find-by-patient")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>>> findAllFuturePatientsAppointments() {
+		//TODO : URADITI SA ULOGOVANIM
+		
+		return new ResponseEntity<>(appointmentService.findAllFutureAppointmentsForPatient(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+	}
 	
 	@GetMapping("/dermatologist/find-by-pharmacy/{pharmacyId}")
 	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllFreeAppointmentsByPharmacyAndAppointmentType(@PathVariable UUID pharmacyId) {
@@ -58,6 +67,19 @@ public class AppointmentController {
 		boolean isSuccesfull = appointmentService.reserveAppointment(appointmentId, UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"));
 		
 		if(isSuccesfull) return new ResponseEntity<>(appointmentId,HttpStatus.CREATED);
+		
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@PutMapping("/cancel-appointment/{appointmentId}")
+	@CrossOrigin
+	public ResponseEntity<?> cancelAppointment(@PathVariable UUID appointmentId) {
+		
+		
+		//TODO : PROVERA JEL PACIJENTOV APPOINTMENT
+		boolean isSuccesfull = appointmentService.cancelAppointment(appointmentId);
+		
+		if(isSuccesfull) return new ResponseEntity<>(appointmentId,HttpStatus.NO_CONTENT);
 		
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
