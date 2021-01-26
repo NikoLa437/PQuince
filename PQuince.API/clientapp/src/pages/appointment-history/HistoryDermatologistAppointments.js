@@ -4,21 +4,15 @@ import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
-import ModalDialog from "../../components/ModalDialog";
 
-class Appointments extends Component {
+class HistoryDermatologistAppointments extends Component {
 	state = {
 		appointments: [],
-		openModalSuccess: false,
 		showingSorted: false,
 	};
 
 	componentDidMount() {
-		Axios.get(
-			BASE_URL +
-				"/api/appointment/dermatologist/find-by-pharmacy/" +
-				"cafeddee-56cb-11eb-ae93-0242ac130002"
-		)
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
 			.then((res) => {
 				this.setState({ appointments: res.data });
 				console.log(res.data);
@@ -28,27 +22,8 @@ class Appointments extends Component {
 			});
 	}
 
-	handleAppointmentClick = (appointmentId) => {
-		Axios.post(BASE_URL + "/api/appointment/reserve-appointment/" + appointmentId)
-			.then((res) => {
-				this.setState({ openModalSuccess: true });
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	};
-
-	handleModalSuccessClose = () => {
-		this.setState({ openModalSuccess: false });
-	};
-
 	handleResetSort = () => {
-		Axios.get(
-			BASE_URL +
-				"/api/appointment/dermatologist/find-by-pharmacy/" +
-				"cafeddee-56cb-11eb-ae93-0242ac130002"
-		)
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: false });
 				console.log(res.data);
@@ -58,12 +33,8 @@ class Appointments extends Component {
 			});
 	};
 
-	handleSortByGradeAscending = () => {
-		Axios.get(
-			BASE_URL +
-				"/api/appointment/dermatologist/find-by-pharmacy/sort-by-grade-ascending/" +
-				"cafeddee-56cb-11eb-ae93-0242ac130002"
-		)
+	handleSortByDateAscending = () => {
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-date-ascending")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -73,12 +44,8 @@ class Appointments extends Component {
 			});
 	};
 
-	handleSortByGradeDesscending = () => {
-		Axios.get(
-			BASE_URL +
-				"/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-descending/" +
-				"cafeddee-56cb-11eb-ae93-0242ac130002"
-		)
+	handleSortByDateDescending = () => {
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-date-descending")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -89,11 +56,7 @@ class Appointments extends Component {
 	};
 
 	handleSortByPriceAscending = () => {
-		Axios.get(
-			BASE_URL +
-				"/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-ascending/" +
-				"cafeddee-56cb-11eb-ae93-0242ac130002"
-		)
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-price-ascending")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -104,11 +67,29 @@ class Appointments extends Component {
 	};
 
 	handleSortByPriceDescending = () => {
-		Axios.get(
-			BASE_URL +
-				"/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-descending/" +
-				"cafeddee-56cb-11eb-ae93-0242ac130002"
-		)
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-price-descending")
+			.then((res) => {
+				this.setState({ appointments: res.data, showingSorted: true });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleSortByDurationAscending = () => {
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-time-ascending")
+			.then((res) => {
+				this.setState({ appointments: res.data, showingSorted: true });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleSortByDurationDescending = () => {
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-time-descending")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -125,11 +106,9 @@ class Appointments extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Create Appointment</h5>
-
-					<p className="mb-0 mt-2 text-uppercase">
-						Click on appointment to make reservation
-					</p>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">
+						Dermatologist Appointment History
+					</h5>
 
 					<div className="form-group">
 						<div className="form-group controls mb-0 pb-2">
@@ -153,30 +132,44 @@ class Appointments extends Component {
 											<button
 												className="dropdown-item"
 												type="button"
-												onClick={this.handleSortByGradeAscending}
+												onClick={this.handleSortByDateAscending}
 											>
-												Dermatologist grade ascending
+												Date ascending
 											</button>
 											<button
 												className="dropdown-item"
 												type="button"
-												onClick={this.handleSortByGradeDesscending}
+												onClick={this.handleSortByDateDescending}
 											>
-												Dermatologist grade descending
+												Date descending
 											</button>
 											<button
 												className="dropdown-item"
 												type="button"
 												onClick={this.handleSortByPriceAscending}
 											>
-												Examination price ascending
+												Price ascending
 											</button>
 											<button
 												className="dropdown-item"
 												type="button"
 												onClick={this.handleSortByPriceDescending}
 											>
-												Examination price descending
+												Price descending
+											</button>
+											<button
+												className="dropdown-item"
+												type="button"
+												onClick={this.handleSortByDurationAscending}
+											>
+												Appointment duration ascending
+											</button>
+											<button
+												className="dropdown-item"
+												type="button"
+												onClick={this.handleSortByDurationDescending}
+											>
+												Appointment duration descending
 											</button>
 										</div>
 									</div>
@@ -203,10 +196,7 @@ class Appointments extends Component {
 						</div>
 					</div>
 
-					<table
-						className="table table-hover"
-						style={{ width: "100%", marginTop: "3rem" }}
-					>
+					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.appointments.map((appointment) => (
 								<tr
@@ -214,7 +204,6 @@ class Appointments extends Component {
 									key={appointment.Id}
 									onClick={() => this.handleAppointmentClick(appointment.Id)}
 									className="rounded"
-									style={{ cursor: "pointer" }}
 								>
 									<td width="190em">
 										<img
@@ -275,16 +264,9 @@ class Appointments extends Component {
 						</tbody>
 					</table>
 				</div>
-				<ModalDialog
-					show={this.state.openModalSuccess}
-					href="/"
-					onCloseModal={this.handleModalSuccessClose}
-					header="Successfully reserved"
-					text="Your appointment is reserved. Further details are sent to your email address."
-				/>
 			</React.Fragment>
 		);
 	}
 }
 
-export default Appointments;
+export default HistoryDermatologistAppointments;
