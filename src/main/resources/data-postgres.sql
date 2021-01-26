@@ -74,12 +74,15 @@ insert into drug_storage(drug_instance_id, pharmacy_id, count) values ('dac2b818
 insert into drug_storage(drug_instance_id, pharmacy_id, count) values ('dac2b818-5838-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130202', 55);
 
 
-insert into drug_reservation(id, amount, drug_peace_price, end_date, reservation_status, start_date, drug_instance_id, patient_id, pharmacy_id) values ('f96fe75e-59a5-11eb-ae93-0242ac130002', 3, 340, '2021-01-18 17:04:03',  'ACTIVE', '2021-01-16 17:04:03', 'dac2b818-5838-11eb-ae93-0242ac130002', '22793162-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into drug_reservation(id, amount, drug_peace_price, end_date, reservation_status, start_date, drug_instance_id, patient_id, pharmacy_id) values ('f96fe75e-59a5-11eb-ae93-0242ac130002', 3, 340, '2021-01-18 17:04:03',  'EXPIRED', '2021-01-16 17:04:03', 'dac2b818-5838-11eb-ae93-0242ac130002', '22793162-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002');
 
 insert into staff_feedback (staff_id, patient_id, date, grade) values ('22345678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002','2020-03-03',4);
 insert into staff_feedback (staff_id, patient_id, date, grade) values ('22345678-52d3-11eb-ae93-0242ac130002','23793162-52d3-11eb-ae93-0242ac130002','2020-03-03',2);
 insert into staff_feedback (staff_id, patient_id, date, grade) values ('11355678-52d3-11eb-ae93-0242ac130002','23793162-52d3-11eb-ae93-0242ac130002','2020-03-03',3);
 insert into staff_feedback (staff_id, patient_id, date, grade) values ('25345678-52d3-11eb-ae93-0242ac130002','23793162-52d3-11eb-ae93-0242ac130002','2020-03-03',5);
+
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id, patient_id) values ('2ba86116-5a40-11eb-ae93-0242ac130002','FINISHED','EXAMINATION', '2021-01-11 11:00:00', '2021-01-11 11:30:00', 1450, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002');
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id, patient_id) values ('2ba86116-5c40-11eb-ae93-0242ac130002','FINISHED','EXAMINATION', '2021-01-14 11:00:00', '2021-01-14 11:15:00', 1400, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002');
 
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2ba86116-5f40-11eb-ae93-0242ac130002','CREATED','EXAMINATION', '2021-02-11 11:00:00', '2021-02-11 11:30:00', 1400, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002');
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2ba86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-11 11:30:00', '2021-02-11 12:00:00', 1300, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002');
