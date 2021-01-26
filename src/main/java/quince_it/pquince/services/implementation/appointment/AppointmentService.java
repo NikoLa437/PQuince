@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
@@ -41,7 +42,8 @@ public class AppointmentService implements IAppointmentService{
 	@Autowired
 	private EmailService emailService;
 	
-	private int MAX_PENALTY = 3;
+	@Autowired
+	private Environment env;
 	
 	@Override
 	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAll() {
@@ -108,7 +110,7 @@ public class AppointmentService implements IAppointmentService{
 
 	private boolean CanReserveAppointment(Appointment appointment,Patient patient) {
 		
-		if(appointment.getStartDateTime().after(new Date()) && patient.getPenalty() < MAX_PENALTY &&
+		if(appointment.getStartDateTime().after(new Date()) && patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count")) &&
 				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED)))
 			return true;
 		

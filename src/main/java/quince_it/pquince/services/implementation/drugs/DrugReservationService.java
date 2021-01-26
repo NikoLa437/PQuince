@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +48,9 @@ public class DrugReservationService implements IDrugReservationService{
 	
 	@Autowired
 	private EmailService emailService;
-
-	private int MAX_PENALTY = 3;
+	
+	@Autowired
+	private Environment env;
 
 	@Override
 	public IdentifiableDTO<DrugReservationDTO> findById(UUID id) {
@@ -93,7 +95,8 @@ public class DrugReservationService implements IDrugReservationService{
 	
 	private boolean CanReserveDrug(DrugReservation drugReservation,Patient patient) {
 			
-		if(drugReservation.getEndDate().after(new Date()) && drugReservation.getStartDate().after(new Date()) && patient.getPenalty() < MAX_PENALTY )
+		if(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0
+				&& patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count")))
 			return true;
 		
 		return false;
