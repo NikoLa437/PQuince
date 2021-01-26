@@ -28,6 +28,7 @@ import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
@@ -140,7 +141,12 @@ public class UserService implements IUserService{
 	public IdentifiableDTO<PatientDTO> getPatientById(UUID id) {	
 		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(id));
 	}
-
+	
+	@Override
+	public IdentifiableDTO<StaffDTO> getStaffById(UUID id) {	
+		return UserMapper.MapStaffPersistenceToStaffIdentifiableDTO(staffRepository.getOne(id));
+	}
+	
 	@Override
 	public boolean addAllergen(AllergenUserDTO allergenUserDTO) {
 		try {
@@ -180,6 +186,18 @@ public class UserService implements IUserService{
 		patientRepository.save(patient);
 	}
 
+	@Override
+	public void updateStaff(UUID staffId, UserInfoChangeDTO staffInfoChangeDTO) {
+		Staff staff = staffRepository.getOne(staffId);		
+		
+		staff.setAddress(staffInfoChangeDTO.getAddress());
+		staff.setName(staffInfoChangeDTO.getName());
+		staff.setPhoneNumber(staffInfoChangeDTO.getPhoneNumber());
+		staff.setSurname(staffInfoChangeDTO.getSurname());
+		
+		staffRepository.save(staff);
+	}
+	
 	@Override
 	public List<IdentifiableStaffGradeDTO> findAllStaffWithAvgGradeByStaffType(StaffType staffType) {
 		
