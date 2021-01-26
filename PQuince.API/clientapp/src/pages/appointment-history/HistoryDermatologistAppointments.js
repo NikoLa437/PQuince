@@ -16,7 +16,6 @@ class HistoryDermatologistAppointments extends Component {
 		StaffName: "",
 		StaffSurame: "",
 		grade: 0,
-		feedbackId: "",
 	};
 
 	componentDidMount() {

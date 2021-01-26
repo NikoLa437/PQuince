@@ -11,6 +11,7 @@ import PharmacyProfilePage from "./pages/PharmacyProfilePage";
 import Appointments from "./pages/dermatologist-appointment/Appointments";
 import PatientsAppointments from "./pages/dermatologist-appointment/PatientsAppointments";
 import HistoryDermatologistAppointments from "./pages/appointment-history/HistoryDermatologistAppointments";
+import PatientsDrugReservationHistory from "./pages/drug-reservation/PatientsDrugReservationHistory";
 
 function App() {
 	return (
@@ -26,6 +27,12 @@ function App() {
 					to="/drugs-reservation"
 					path="/drugs-reservation"
 					component={PatientsDrugReservations}
+				/>
+				<Link
+					exact
+					to="/drugs-reservation-history"
+					path="/drugs-reservation-history"
+					component={PatientsDrugReservationHistory}
 				/>
 				<Link exact to="/drugs" path="/drugs" component={DrugReservation} />
 				<Link exact to="/pharmacy" path="/pharmacy" component={PharmacyProfilePage} />

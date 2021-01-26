@@ -9,18 +9,22 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface IDrugReservationService{
 	
-	public List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId(UUID patientId);
+	List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId(UUID patientId);
 	
-	public IdentifiableDTO<DrugReservationDTO> findById(UUID id);
-
-	public UUID create(DrugReservationRequestDTO entityDTO);
-
-	public void update(DrugReservationDTO entityDTO, UUID id);
-
-	public boolean delete(UUID id) ;
+	List<IdentifiableDTO<DrugReservationDTO>> findAllFutureReservationsByPatientId(UUID patientId);
 	
-	public boolean cancelDrugReservation(UUID id);
+	List<IdentifiableDTO<DrugReservationDTO>> findProcessedDrugReservationsForPatient(UUID patientId);
+
+	IdentifiableDTO<DrugReservationDTO> findById(UUID id);
+
+	UUID create(DrugReservationRequestDTO entityDTO);
+
+	void update(DrugReservationDTO entityDTO, UUID id);
+
+	boolean delete(UUID id) ;
 	
-	public void givePenaltyForMissedDrugReservation();
+	boolean cancelDrugReservation(UUID id);
+	
+	void givePenaltyForMissedDrugReservation();
 
 }

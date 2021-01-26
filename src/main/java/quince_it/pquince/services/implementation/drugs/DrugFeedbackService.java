@@ -40,12 +40,17 @@ public class DrugFeedbackService implements IDrugFeedbackService{
 		
 		try {
 			Patient patient = patientRepository.findById(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")).get();
+			System.out.println("USAO1");
+
 			
 			if(!CanPatientGiveFeedback(patient.getId())) throw new FeedbackNotAllowedException();
 			
+			System.out.println("USAO");
+			System.out.println(entityDTO.getDrugId());
 			DrugInstance drugInstance = drugInstanceRepository.findById(entityDTO.getDrugId()).get();
 			DrugFeedback drugFeedback = new DrugFeedback(drugInstance,  patient, entityDTO.getGrade());
-			
+			System.out.println("USAO3");
+
 			drugFeedbackRepository.save(drugFeedback);
 			
 		}catch (Exception e) {

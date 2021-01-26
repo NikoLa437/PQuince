@@ -52,16 +52,23 @@ public class DrugController {
 	}
 	
 	//NECE TREBATI ID KAD BUDE ULOGOVAN
-	@GetMapping("/reservations/find-by/{patientId}")
-	public ResponseEntity<List<IdentifiableDTO<DrugReservationDTO>>> findAllDrugReservationByPatientId(@PathVariable UUID patientId) {
+	@GetMapping("/future-reservations")
+	public ResponseEntity<List<IdentifiableDTO<DrugReservationDTO>>> findAllFutureDrugReservationByPatientId() {
 		
-		return new ResponseEntity<>(drugReservationService.findAllByPatientId(patientId) ,HttpStatus.OK);
+		return new ResponseEntity<>(drugReservationService.findAllFutureReservationsByPatientId(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")) ,HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/processed-reservations")
+	public ResponseEntity<List<IdentifiableDTO<DrugReservationDTO>>> findProcessedDrugReservationsForPatient() {
+		
+		return new ResponseEntity<>(drugReservationService.findProcessedDrugReservationsForPatient(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")) ,HttpStatus.OK);
 	}
 	
 	@GetMapping("/feedback/{drugId}")
 	public ResponseEntity<DrugFeedbackDTO> findByPatientAndDrug(@PathVariable UUID drugId) {
 		try {
-			return new ResponseEntity<>(drugFeedbackService.findByPatientAndDrug(drugId, UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")) ,HttpStatus.OK);
+			return new ResponseEntity<>(drugFeedbackService.findByPatientAndDrug(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"), drugId) ,HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
