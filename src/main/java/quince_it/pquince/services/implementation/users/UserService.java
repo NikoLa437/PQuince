@@ -205,4 +205,11 @@ public class UserService implements IUserService{
 		}
 	}
 
+	@Override
+	public List<IdentifiableDTO<UserDTO>> findByNameAndSurname(String name, String surname) {
+		List<IdentifiableDTO<UserDTO>> users = new ArrayList<IdentifiableDTO<UserDTO>>();
+		userRepository.findByNameAndSurname(name, surname).forEach((u) -> users.add(UserMapper.MapUserPersistenceToUserIdentifiableDTO(u)));
+		return users;
+	}
+
 }
