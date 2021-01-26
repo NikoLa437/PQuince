@@ -7,6 +7,7 @@ import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
@@ -24,5 +25,9 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	void updatePatient(UUID patientId,UserInfoChangeDTO patientInfoChangeDTO);
 	
 	List<IdentifiableStaffGradeDTO> findAllStaffWithAvgGradeByStaffType(StaffType staffType);
+	UUID createSupplier(StaffDTO entityDTO);
+	UUID createPharmacyAdmin(StaffDTO entityDTO);
+	UUID createDermatologist(StaffDTO entityDTO);
+	UUID createAdmin(StaffDTO entityDTO);
 
 }
