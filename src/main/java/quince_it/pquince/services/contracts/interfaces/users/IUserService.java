@@ -22,7 +22,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	boolean addAllergen(AllergenUserDTO allergenUserDTO);
 	boolean removeAllergen(AllergenUserDTO allergenUserDTO);
 	void updatePatient(UUID patientId,UserInfoChangeDTO patientInfoChangeDTO);
-	
+	List<IdentifiableDTO<UserDTO>> findByNameAndSurname(String name, String surname);
 	List<IdentifiableStaffGradeDTO> findAllStaffWithAvgGradeByStaffType(StaffType staffType);
 	void deleteAllPatientsPenalties();
 
