@@ -48,6 +48,17 @@ class Header extends Component {
 								</ul>
 							</li>
 							<li className="drop-down">
+								<a href="#">Pharmacy</a>
+								<ul>
+									<li>
+										<a href="/pharmacy">Profile</a>
+									</li>
+									<li>
+										<a href="/dermatologists">Dermatologist</a>
+									</li>
+								</ul>
+							</li>
+							<li className="drop-down">
 								<a href="#" className="appointment-btn scrollto" style={myStyle}>
 									Make an Appointment
 								</a>

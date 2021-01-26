@@ -14,5 +14,4 @@ public class IdentifiableStaffGradeDTO extends IdentifiableDTO<StaffGradeDTO> {
 	public IdentifiableStaffGradeDTO(UUID id, String email, String name, String surname, Address address, String phoneNumber, double grade) {
 		super(id, new StaffGradeDTO(email, name, surname, address, phoneNumber, grade));
 	}
-
 }

@@ -40,8 +40,6 @@ class PharmacyProfilePage extends Component {
                 y:response.data.EntityDTO.address.longitude,
                 grade:response.data.EntityDTO.grade
             });    
-            
-   
 
         }).catch((err) => {console.log(err);});
     }
