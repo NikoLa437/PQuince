@@ -12,12 +12,9 @@ import PharmacyProfilePage from "./pages/PharmacyProfilePage";
 import Appointments from "./pages/dermatologist-appointment/Appointments";
 import PatientsAppointments from "./pages/dermatologist-appointment/PatientsAppointments";
 import HistoryDermatologistAppointments from "./pages/appointment-history/HistoryDermatologistAppointments";
-<<<<<<< HEAD
 import PatientsDrugReservationHistory from "./pages/drug-reservation/PatientsDrugReservationHistory";
-=======
 import DermatologistsPage from "./pages/dermatologist/DermatologistsPage";
 import ObservePatientsPage from "./pages/ObservePatientsPage";
->>>>>>> develop
 
 function App() {
 	return (
@@ -27,7 +24,12 @@ function App() {
 				<Link exact to="/login" path="/login" component={LoginPage} />
 				<Link exact to="/registration" path="/registration" component={RegisterPage} />
 				<Link exact to="/profile" path="/profile" component={UserProfilePage} />
-				<Link exact to="/staff-profile" path="/staff-profile" component={StaffProfilePage} />
+				<Link
+					exact
+					to="/staff-profile"
+					path="/staff-profile"
+					component={StaffProfilePage}
+				/>
 				<Link exact to="/pharmacies" path="/pharmacies" component={PharmaciesPage} />
 				<Link
 					exact
@@ -65,7 +67,7 @@ function App() {
 					exact
 					to="/dermatologists"
 					path="/dermatologists"
-					component={DermatologistsPage}		
+					component={DermatologistsPage}
 				/>
 				<Link exact to="/patients" path="/patients" component={ObservePatientsPage} />
 			</Switch>
