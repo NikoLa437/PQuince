@@ -11,6 +11,7 @@ import PharmacyProfilePage from "./pages/PharmacyProfilePage";
 import Appointments from "./pages/dermatologist-appointment/Appointments";
 import PatientsAppointments from "./pages/dermatologist-appointment/PatientsAppointments";
 import HistoryDermatologistAppointments from "./pages/appointment-history/HistoryDermatologistAppointments";
+import DermatologistsPage from "./pages/dermatologist/DermatologistsPage";
 
 function App() {
 	return (
@@ -46,6 +47,12 @@ function App() {
 					to="/dermatologist-history"
 					path="/dermatologist-history"
 					component={HistoryDermatologistAppointments}
+				/>
+				<Link
+					exact
+					to="/dermatologists"
+					path="/dermatologists"
+					component={DermatologistsPage}		
 				/>
 			</Switch>
 		</Router>

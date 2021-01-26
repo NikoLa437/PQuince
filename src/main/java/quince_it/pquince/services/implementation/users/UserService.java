@@ -13,15 +13,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.Allergen;
+import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
+import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
@@ -48,6 +52,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private DermatologistRepository dermatologistRepository;
 	
 	@Autowired
 	private AllergenService allergenService;
@@ -204,5 +211,33 @@ public class UserService implements IUserService{
 		} catch (Exception e) {
 		}
 	}
+	
+	@Override
+	public List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologistForPharmacy(UUID pharmacyId) {
+		
+		List<Dermatologist> dermatologists = dermatologistRepository.findAll();
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retDermatologist = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(Dermatologist dermatologist : dermatologists) {
+			if(IsDermatogistWorkInPharmacy(dermatologist,pharmacyId))
+				retDermatologist.add(MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(dermatologist));
+		}
+		
+		return retDermatologist;
+	}
+
+	private IdentifiableDermatologistForPharmacyGradeDTO MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(
+			Dermatologist dermatologist) {
+		return new IdentifiableDermatologistForPharmacyGradeDTO(dermatologist.getId(),dermatologist.getEmail(),dermatologist.getName(),dermatologist.getSurname(),dermatologist.getPhoneNumber(),staffFeedbackService.findAvgGradeForStaff(dermatologist.getId()));
+	}
+
+	private boolean IsDermatogistWorkInPharmacy(Dermatologist dermatologist, UUID pharmacyId) {
+		for(Pharmacy pharmacy : dermatologist.getPharmacies()) {
+			if(pharmacy.getId().equals(pharmacyId))
+				return true;
+		}
+		return false;
+	}
+
 
 }
