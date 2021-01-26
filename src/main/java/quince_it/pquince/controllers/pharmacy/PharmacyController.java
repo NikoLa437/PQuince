@@ -50,9 +50,21 @@ public class PharmacyController {
 	}
 	
 	@CrossOrigin
+	@GetMapping("/find-by-drug-in-pharmacy")
+	public ResponseEntity<IdentifiablePharmacyDrugPriceAmountDTO> findPharnaciesWithPriceForDrug(@RequestParam UUID drugId,@RequestParam UUID pharmacyId) {
+		return new ResponseEntity<>(drugService.findByDrugInPharmacy(drugId, pharmacyId),HttpStatus.OK);
+	}
+	
+	
+	@CrossOrigin
 	@GetMapping("/get-pharmacy-profile")
-	public ResponseEntity<IdentifiableDTO<PharmacyDTO>> findPharmacyProfile(@RequestParam UUID pharmacyId) {
-		return new ResponseEntity<>(pharmacyService.findById(pharmacyId),HttpStatus.OK);
+	public ResponseEntity<IdentifiableDTO<PharmacyGradeDTO>> findPharmacyProfile(@RequestParam UUID pharmacyId) {
+		try {
+			return new ResponseEntity<>(pharmacyService.findByIdWithGrade(pharmacyId),HttpStatus.OK);
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@GetMapping("/search")

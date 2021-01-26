@@ -6,17 +6,19 @@ import {BASE_URL} from '../constants.js';
 
 class PharmacyDermatologistModal extends Component {
     state = {
-        dermatologist:''
+        dermatologists:[]
     }
 
     componentDidMount() {
-        Axios
-        .get(BASE_URL + "/api/pharmacy/get-dermatologist?pharmacyId=" + this.props.pharmacyId).then((response) =>{
-            this.setState(
-            {
-                dermatologist : response.data,
-            });          
-        }).catch((err) => {console.log(err);});
+
+		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202")
+			.then((res) => {
+				this.setState({ dermatologists: res.data });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
     }
 
     render() { 
@@ -35,26 +37,40 @@ class PharmacyDermatologistModal extends Component {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <form className="ml-3">
-                            <div className="control-group">
-                                    <div className="form-group controls" style={{color: "#6c757d",opacity: 1}}>
-                                        <div className="form-row" width="130em">
-                                            <div className="form-col" >
-                                                <img className="img-fluid" src={DermatologistLogo} width="60em"/>
-                                            </div>                        
-                                            <div className="form-col" style={{marginLeft:'10%'}}>
-                                                <div><b>Name:</b> Petar</div>
-                                                <div><b>Surname:</b> Djuric</div>
-                                                <div><b>Email:</b> petardjuric1998@hotmail.com</div>
+                <table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+                            <tbody>
+                                {this.state.dermatologists.map((dermatologist) => (
+                                    <tr id={dermatologist.Id} key={dermatologist.Id}>
+                                        <td width="130em">
+                                            <img
+                                                className="img-fluid"
+                                                src={DermatologistLogo}
+                                                width="70em"
+                                            />
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <b>Name: </b> {dermatologist.EntityDTO.name}
                                             </div>
-                                            <div className="form-col" style={{marginLeft:'15%'}}>
-                                                <Button  className="mt-3">Create appointment</Button>
+                                            <div>
+                                                <b>Surname: </b> {dermatologist.EntityDTO.surname}
                                             </div>
-                                        </div>
-                                    </div>
-                                
-                                </div>
-                   </form>
+                                            <div>
+                                                <b>Email: </b> {dermatologist.EntityDTO.email}
+                                            </div>
+                                            <div>
+                                                <b>Phone number: </b> {dermatologist.EntityDTO.phoneNumber}
+                                            </div>
+                                        </td>
+                                        <td >
+                                            <div style={{marginLeft:'25%'}}>
+                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'17%'}} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Zakazi pregled</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={this.props.onCloseModal}>Close</Button>
