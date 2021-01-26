@@ -20,4 +20,7 @@ public interface PharmacyFeedbackRepository extends JpaRepository<PharmacyFeedba
 				 + "HAVING AVG(p.grade) >= ?2 AND AVG(p.grade) <= ?3 ")
 	List<PharmacyFiltrationRepositoryDTO> findByNameCityAndGrade(String name, double gradeFrom, double gradeTo, String city);
 	
+	
+	@Query(value = "SELECT p FROM PharmacyFeedback p WHERE p.pharmacy.id = ?2 AND p.patient.id = ?1")
+	PharmacyFeedback findByPatientAndPharmacy(UUID patientId, UUID pharmacyId);
 }

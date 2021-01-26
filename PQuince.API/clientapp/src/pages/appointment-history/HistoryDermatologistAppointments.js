@@ -4,11 +4,19 @@ import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
+import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 
 class HistoryDermatologistAppointments extends Component {
 	state = {
 		appointments: [],
 		showingSorted: false,
+		showFeedbackModal: false,
+		showModifyFeedbackModal: false,
+		selectedStaffId: "",
+		StaffName: "",
+		StaffSurame: "",
+		grade: 0,
+		feedbackId: "",
 	};
 
 	componentDidMount() {
@@ -97,6 +105,90 @@ class HistoryDermatologistAppointments extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
+	};
+
+	handleFeedbackClick = (staff) => {
+		console.log(staff);
+		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true })
+			.then((res) => {
+				console.log(res.data);
+				if (res.status === 404) {
+					this.setState({
+						selectedStaffId: staff.Id,
+						showFeedbackModal: true,
+						StaffName: staff.EntityDTO.name,
+						StaffSurame: staff.EntityDTO.surname,
+						grade: 0,
+					});
+				} else {
+					this.setState({
+						selectedStaffId: staff.Id,
+						showModifyFeedbackModal: true,
+						StaffName: staff.EntityDTO.name,
+						StaffSurame: staff.EntityDTO.surname,
+						grade: res.data.grade,
+					});
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleFeedbackModalClose = () => {
+		this.setState({ showFeedbackModal: false });
+	};
+
+	handleModifyFeedbackModalClose = () => {
+		this.setState({ showModifyFeedbackModal: false });
+	};
+
+	handleFeedback = () => {
+		let entityDTO = {
+			staffId: this.state.selectedStaffId,
+			date: new Date(),
+			grade: this.state.grade,
+		};
+		Axios.post(BASE_URL + "/api/staff/feedback", entityDTO)
+			.then((resp) => {
+				Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+					.then((res) => {
+						this.setState({ appointments: res.data, showFeedbackModal: false });
+						console.log(res.data);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleModifyFeedback = () => {
+		let entityDTO = {
+			staffId: this.state.selectedStaffId,
+			date: new Date(),
+			grade: this.state.grade,
+		};
+		Axios.put(BASE_URL + "/api/staff/feedback", entityDTO)
+			.then((resp) => {
+				Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+					.then((res) => {
+						this.setState({ appointments: res.data, showModifyFeedbackModal: false });
+						console.log(res.data);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleClickIcon = (grade) => {
+		this.setState({ grade });
 	};
 
 	render() {
@@ -199,20 +291,18 @@ class HistoryDermatologistAppointments extends Component {
 					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.appointments.map((appointment) => (
-								<tr
-									id={appointment.Id}
-									key={appointment.Id}
-									onClick={() => this.handleAppointmentClick(appointment.Id)}
-									className="rounded"
-								>
-									<td width="190em">
+								<tr id={appointment.Id} key={appointment.Id} className="rounded">
+									<td
+										width="190em"
+										onClick={() => this.handleAppointmentClick(appointment.Id)}
+									>
 										<img
 											className="img-fluid"
 											src={AppointmentIcon}
 											width="150em"
 										/>
 									</td>
-									<td>
+									<td onClick={() => this.handleAppointmentClick(appointment.Id)}>
 										<div>
 											<b>Date: </b>{" "}
 											{new Date(
@@ -259,11 +349,47 @@ class HistoryDermatologistAppointments extends Component {
 											></i>
 										</div>
 									</td>
+									<td className="align-middle">
+										<button
+											type="button"
+											onClick={() =>
+												this.handleFeedbackClick(
+													appointment.EntityDTO.staff
+												)
+											}
+											className="btn btn-outline-secondary"
+										>
+											Give feedback
+										</button>
+									</td>
 								</tr>
 							))}
 						</tbody>
 					</table>
 				</div>
+
+				<FeedbackCreateModal
+					buttonName="Give feedback"
+					grade={this.state.grade}
+					header="Give feedback"
+					show={this.state.showFeedbackModal}
+					onCloseModal={this.handleFeedbackModalClose}
+					giveFeedback={this.handleFeedback}
+					name={this.state.StaffName + " " + this.state.StaffSurame}
+					forWho="dermatologist"
+					handleClickIcon={this.handleClickIcon}
+				/>
+				<FeedbackCreateModal
+					buttonName="Modify feedback"
+					grade={this.state.grade}
+					header="Modify feedback"
+					show={this.state.showModifyFeedbackModal}
+					onCloseModal={this.handleModifyFeedbackModalClose}
+					giveFeedback={this.handleModifyFeedback}
+					name={this.state.StaffName + " " + this.state.StaffSurame}
+					forWho="dermatologist"
+					handleClickIcon={this.handleClickIcon}
+				/>
 			</React.Fragment>
 		);
 	}

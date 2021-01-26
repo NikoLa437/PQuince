@@ -28,25 +28,21 @@ public class PharmacyFeedback implements Serializable{
 	@Column(name = "grade")
 	private int grade;
 	
-	@Column(name = "comment")
-	private String comment;
-	
 	@Column(name = "date")
 	private Date date;
 	
 	public PharmacyFeedback() {}
 	
-	public PharmacyFeedback(Pharmacy pharmacy, int grade, String comment, Patient patient, Date date) {
+	public PharmacyFeedback(Pharmacy pharmacy, int grade, Patient patient, Date date) {
 		super();
 		this.pharmacy = pharmacy;
 		this.grade = grade;
-		this.comment = comment;
 		this.date = date;
 		this.patient = patient;
 	}
 
-	public PharmacyFeedback(Pharmacy pharmacy, int grade, String comment, Patient patient) {
-		this(pharmacy, grade, comment, patient, new Date());
+	public PharmacyFeedback(Pharmacy pharmacy, int grade, Patient patient) {
+		this(pharmacy, grade, patient, new Date());
 	}
 	
 
@@ -54,13 +50,6 @@ public class PharmacyFeedback implements Serializable{
 		this.grade = grade;
 	}
 
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
 
 	public Date getDate() {
 		return date;
@@ -76,6 +65,10 @@ public class PharmacyFeedback implements Serializable{
 
 	public Pharmacy getPharmacy() {
 		return pharmacy;
+	}
+
+	public int getGrade() {
+		return grade;
 	}
         
 }
