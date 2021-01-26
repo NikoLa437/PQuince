@@ -13,4 +13,6 @@ public interface IDrugStorageService extends IService<DrugStorageDTO, Identifiab
 	boolean reduceAmountOfReservedDrug(UUID drugId, UUID pharmacyId, int amount);
 
 	boolean hasDrugInPharmacy(UUID drugId, UUID pharmacyId);	
+	
+	boolean addAmountOfCanceledDrug(UUID drugId, UUID pharmacyId, int amount);	
 }

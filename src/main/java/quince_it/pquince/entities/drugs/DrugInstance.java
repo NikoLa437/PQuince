@@ -27,6 +27,10 @@ public class DrugInstance extends Drug {
 	@Column(name = "drugFormat", nullable = false)
 	private FormatDrug drugFormat;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "drugKind", nullable = false)
+	private DrugKind drugKind;
+	
 	@Column(name = "quantity", nullable = false)
 	private double quantity;
 	
@@ -66,7 +70,7 @@ public class DrugInstance extends Drug {
 
 	public DrugInstance(String name, String code, String drugInstanceName, Manufacturer manufacturer, FormatDrug drugFormat, double quantity,
 			String sideEffects, String recommendedAmount, List<DrugInstance> replacingDrugs, List<Allergen> allergens,
-			List<Ingredient> ingredients, int loyalityPoints, boolean onReciept) {
+			List<Ingredient> ingredients, int loyalityPoints, boolean onReciept, DrugKind drugKind) {
 		super(UUID.randomUUID(),name, code);
 		this.drugInstanceName = drugInstanceName;
 		this.manufacturer = manufacturer;
@@ -79,11 +83,12 @@ public class DrugInstance extends Drug {
 		this.ingredients = ingredients;
 		this.loyalityPoints = loyalityPoints;
 		this.onReciept = onReciept;
+		this.drugKind = drugKind;
 	}
 
 	public DrugInstance(UUID id, String name, String code, String drugInstanceName, Manufacturer manufacturer, FormatDrug drugFormat, double quiantity,
 			String sideEffects, String recommendedAmount, List<DrugInstance> replacingDrugs, List<Allergen> allergens,
-			List<Ingredient> ingredients, int loyalityPoints, boolean onReciept) {
+			List<Ingredient> ingredients, int loyalityPoints, boolean onReciept, DrugKind drugKind) {
 		super(id, name, code);
 		this.drugInstanceName = drugInstanceName;
 		this.manufacturer = manufacturer;
@@ -96,6 +101,7 @@ public class DrugInstance extends Drug {
 		this.ingredients = ingredients;
 		this.loyalityPoints = loyalityPoints;
 		this.onReciept = onReciept;
+		this.drugKind = drugKind;
 	}
 
 	public String getDrugInstanceName() {
@@ -189,6 +195,14 @@ public class DrugInstance extends Drug {
 			this.replacingDrugs = new ArrayList<DrugInstance>();
 		
 		this.replacingDrugs.add(drug);
+	}
+
+	public DrugKind getDrugKind() {
+		return drugKind;
+	}
+
+	public void setDrugKind(DrugKind drugKind) {
+		this.drugKind = drugKind;
 	}
 	
 }

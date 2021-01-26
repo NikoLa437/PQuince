@@ -1,6 +1,6 @@
 package quince_it.pquince.services.contracts.dto.users;
 
-import java.util.UUID;
+import quince_it.pquince.entities.users.Address;
 
 public class UserRequestDTO {
 
@@ -12,12 +12,9 @@ public class UserRequestDTO {
 
 	private String surname;
 
-	private String address;
+	private Address address;
 	
 	private String phoneNumber;
-
-	private UUID cityId;
-	
 
 	public String getPassword() {
 		return password;
@@ -51,11 +48,11 @@ public class UserRequestDTO {
 		this.email = email;
 	}
 
-	public String getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 
@@ -66,13 +63,4 @@ public class UserRequestDTO {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
-	public UUID getCityId() {
-		return cityId;
-	}
-
-	public void setCityId(UUID cityId) {
-		this.cityId = cityId;
-	}
-
 }

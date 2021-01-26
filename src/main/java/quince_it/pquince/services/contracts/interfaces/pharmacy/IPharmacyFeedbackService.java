@@ -11,5 +11,6 @@ public interface IPharmacyFeedbackService {
 	
 	double findAvgGradeForPharmacy(UUID pharmacyId);
 	
-	List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(PharmacyFiltrationDTO pharmacyFiltrationDTO);
+	List<IdentifiableDTO<PharmacyGradeDTO>> findByNameCityAndGrade(PharmacyFiltrationDTO pharmacyFiltrationDTO);
+	
 }

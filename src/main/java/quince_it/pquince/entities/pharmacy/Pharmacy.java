@@ -3,8 +3,11 @@ package quince_it.pquince.entities.pharmacy;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
+import quince_it.pquince.entities.users.Address;
 
 @Entity
 public class Pharmacy {
@@ -15,15 +18,15 @@ public class Pharmacy {
 	@Column(name = "name", nullable = false)
 	private String name;
 	
-	@Column(name = "address")
-	private String address;
+	@Embedded
+	private Address address;
 	
 	@Column(name = "description", nullable = false)
 	private String description;
 	
 	public Pharmacy() {}
 	
-	public Pharmacy(UUID id, String name, String description, String address) {
+	public Pharmacy(UUID id, String name, String description, Address address) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -31,7 +34,7 @@ public class Pharmacy {
 		this.address = address;
 	}
 	
-	public Pharmacy(String name, String description, String address) {
+	public Pharmacy(String name, String description, Address address) {
 		this(UUID.randomUUID(), name, description, address);
 	}
 
@@ -55,11 +58,11 @@ public class Pharmacy {
 		this.description = description;
 	}
 
-	public String getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 	

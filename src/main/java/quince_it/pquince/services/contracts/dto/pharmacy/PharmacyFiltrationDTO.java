@@ -4,6 +4,8 @@ public class PharmacyFiltrationDTO {
 
 	private String name;
 	
+	private String city;
+	
 	private double gradeFrom;
 	
 	private double gradeTo;
@@ -11,18 +13,27 @@ public class PharmacyFiltrationDTO {
 	private double distanceFrom;
 	
 	private double distanceTo;
+	
+	private double latitude;
+	
+	private double longitude;
 
 	public PharmacyFiltrationDTO() {}
-		
-	public PharmacyFiltrationDTO(String name, double gradeFrom, double gradeTo, double distanceFrom,
-			double distanceTo) {
+
+	public PharmacyFiltrationDTO(String name, String city, double gradeFrom, double gradeTo, double distanceFrom,
+			double distanceTo, double latitude, double longitude) {
 		super();
 		this.name = name;
+		this.city = city;
 		this.gradeFrom = gradeFrom;
 		this.gradeTo = gradeTo;
 		this.distanceFrom = distanceFrom;
 		this.distanceTo = distanceTo;
+		this.latitude = latitude;
+		this.longitude = longitude;
 	}
+
+
 
 	public String getName() {
 		return name;
@@ -62,6 +73,34 @@ public class PharmacyFiltrationDTO {
 
 	public void setDistanceTo(double distanceTo) {
 		this.distanceTo = distanceTo;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+
+
+	public String getCity() {
+		return city;
+	}
+
+
+
+	public void setCity(String city) {
+		this.city = city;
 	}
 	
 	

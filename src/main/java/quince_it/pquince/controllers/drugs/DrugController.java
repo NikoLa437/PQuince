@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -50,5 +52,18 @@ public class DrugController {
 	@GetMapping("/find-drug-by-pharmacy")
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findDrugsFromPharmacy(@RequestParam UUID pharmacyId) {
 		return new ResponseEntity<>(drugInstanceService.findDrugsByPharmacy(pharmacyId),HttpStatus.OK);
+	}
+	//NECE TREBATI ID KAD BUDE ULOGOVAN
+	@GetMapping("/reservations/find-by/{patientId}")
+	public ResponseEntity<List<IdentifiableDTO<DrugReservationDTO>>> findAllDrugReservationByPatientId(@PathVariable UUID patientId) {
+		
+		return new ResponseEntity<>(drugReservationService.findAllByPatientId(patientId) ,HttpStatus.OK);
+	}
+	
+	@PutMapping("/reservations/cancel/{reservationId}")
+	@CrossOrigin
+	public ResponseEntity<?> cancelReservation(@PathVariable UUID reservationId) {
+		drugReservationService.cancelDrugReservation(reservationId);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

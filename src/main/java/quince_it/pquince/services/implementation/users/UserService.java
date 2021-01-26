@@ -13,27 +13,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.Allergen;
-import quince_it.pquince.entities.users.City;
-import quince_it.pquince.entities.users.Country;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.Staff;
+import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
-import quince_it.pquince.services.contracts.dto.users.CityDTO;
-import quince_it.pquince.services.contracts.dto.users.CountryDTO;
+import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-import quince_it.pquince.services.contracts.interfaces.ICityService;
-import quince_it.pquince.services.contracts.interfaces.ICountryService;
-import quince_it.pquince.services.contracts.interfaces.IUserService;
+import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
-import quince_it.pquince.services.implementation.util.UserMapper;
+import quince_it.pquince.services.implementation.util.users.UserMapper;
 
 @Service
 public class UserService implements IUserService{
@@ -42,16 +41,16 @@ public class UserService implements IUserService{
 	private UserRepository userRepository;
 	
 	@Autowired
+	private IStaffFeedbackService staffFeedbackService;
+	
+	@Autowired
+	private StaffRepository staffRepository;
+	
+	@Autowired
 	private PatientRepository patientRepository;
 	
 	@Autowired
-	private ICityService cityService;
-	
-	@Autowired
 	private AllergenService allergenService;
-	
-	@Autowired
-	private ICountryService countryService;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -114,13 +113,8 @@ public class UserService implements IUserService{
 		return patient.getId();
 	}
 	
-
 	private Patient CreatePatientFromDTO(UserRequestDTO patientDTO) {
-		IdentifiableDTO<CityDTO> cityDTO = cityService.findById(patientDTO.getCityId());
-		IdentifiableDTO<CountryDTO> countryDTO = countryService.findById(cityDTO.EntityDTO.getCountryId());
-		
-		City city = new City(cityDTO.Id, cityDTO.EntityDTO.getName(), new Country(countryDTO.Id, countryDTO.EntityDTO.getName()));
-		return new Patient(patientDTO.getEmail(), passwordEncoder.encode(patientDTO.getPassword()), patientDTO.getName(), patientDTO.getSurname(), patientDTO.getAddress(), city, patientDTO.getPhoneNumber());
+		return new Patient(patientDTO.getEmail(), passwordEncoder.encode(patientDTO.getPassword()), patientDTO.getName(), patientDTO.getSurname(), patientDTO.getAddress(), patientDTO.getPhoneNumber());
 	}
 
 	@Override
@@ -176,14 +170,25 @@ public class UserService implements IUserService{
 		patient.setPhoneNumber(patientInfoChangeDTO.getPhoneNumber());
 		patient.setSurname(patientInfoChangeDTO.getSurname());
 		
-		System.out.println("City ID" + patientInfoChangeDTO.getCityId());
-		IdentifiableDTO<CityDTO> city = cityService.findById(patientInfoChangeDTO.getCityId());
-		IdentifiableDTO<CountryDTO> country = countryService.findById(city.EntityDTO.getCountryId());
-
-		patient.setCity(new City(city.Id, city.EntityDTO.getName(), new Country(country.Id, country.EntityDTO.getName())));
-		
 		patientRepository.save(patient);
 	}
 
+	@Override
+	public List<IdentifiableStaffGradeDTO> findAllStaffWithAvgGradeByStaffType(StaffType staffType) {
+		
+		List<Staff> staffs = staffRepository.findAllStaffByStaffType(staffType);
+		List<IdentifiableStaffGradeDTO> retStaffs = new ArrayList<IdentifiableStaffGradeDTO>();
+		
+		staffs.forEach((s) -> retStaffs.add(MapStaffPersistenceToStaffGradeIdentifiableDTO(s)));
+		return retStaffs;
+	}
+
+	
+	public IdentifiableStaffGradeDTO MapStaffPersistenceToStaffGradeIdentifiableDTO(Staff staff){
+		if(staff == null) throw new IllegalArgumentException();
+		
+		return new IdentifiableStaffGradeDTO(staff.getId(), staff.getEmail(), staff.getName(), staff.getSurname(),
+											 staff.getAddress(), staff.getPhoneNumber(), staffFeedbackService.findAvgGradeForStaff(staff.getId()));
+	}
 
 }

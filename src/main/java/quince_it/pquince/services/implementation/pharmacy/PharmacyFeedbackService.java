@@ -30,21 +30,23 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 	}
 
 	@Override
-	public List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findByNameCityAndGrade(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
 		
 		pharmacyFiltrationDTO = validateFiltrationDTO(pharmacyFiltrationDTO);
-		
+
 		List<PharmacyFiltrationRepositoryDTO> pharmacyFiltrationDTOs = pharmacyFeedbackRepository
-																		.findByNameGradeAndDistance(pharmacyFiltrationDTO.getName().toLowerCase(),
+																		.findByNameCityAndGrade(pharmacyFiltrationDTO.getName().toLowerCase(),
 																									pharmacyFiltrationDTO.getGradeFrom(),
-																									pharmacyFiltrationDTO.getGradeTo());
+																									pharmacyFiltrationDTO.getGradeTo(),
+																									pharmacyFiltrationDTO.getCity().toLowerCase());
 		List<IdentifiableDTO<PharmacyGradeDTO>> returnedPharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
 		pharmacyFiltrationDTOs.forEach((p) -> returnedPharmacies.add(MapPharmacyFiltrationDTOToIdentifiablePharmacyGradeDTO(p)));
 		return returnedPharmacies;
 	}
 
 	private PharmacyFiltrationDTO validateFiltrationDTO(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
-		if(pharmacyFiltrationDTO.getGradeFrom() > pharmacyFiltrationDTO.getDistanceTo() && pharmacyFiltrationDTO.getGradeTo() == 0)
+		
+		if(pharmacyFiltrationDTO.getGradeFrom() > pharmacyFiltrationDTO.getGradeTo() || pharmacyFiltrationDTO.getGradeTo() == 0)
 			pharmacyFiltrationDTO.setGradeTo(MAX_GRADE);
 		else if (pharmacyFiltrationDTO.getGradeFrom() == 0 && pharmacyFiltrationDTO.getGradeTo() == 0) {
 			pharmacyFiltrationDTO.setGradeFrom(MIN_GRADE);
@@ -58,4 +60,5 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 		
 		return new IdentifiableDTO<PharmacyGradeDTO>(pharmacy.getPharmacyId(), new PharmacyGradeDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(), pharmacy.getGrade()));
 	}
+
 }

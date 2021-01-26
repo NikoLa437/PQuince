@@ -12,7 +12,7 @@ import quince_it.pquince.repository.users.AbsenceRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.services.contracts.dto.users.AbsenceDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-import quince_it.pquince.services.contracts.interfaces.IAbsenceService;
+import quince_it.pquince.services.contracts.interfaces.users.IAbsenceService;
 
 @Service
 public class AbsenceService implements IAbsenceService{
