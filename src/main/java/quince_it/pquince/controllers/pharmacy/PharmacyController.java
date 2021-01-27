@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,21 +19,26 @@ import org.springframework.web.bind.annotation.RestController;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
-import quince_it.pquince.services.implementation.pharmacy.PharmacyService;
+import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
+import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 
 @RestController
 @RequestMapping(value = "api/pharmacy")
 public class PharmacyController {
 
 	@Autowired
-	private PharmacyService pharmacyService;
+	private IPharmacyService pharmacyService;
 	
 	@Autowired
 	private IDrugInstanceService drugService;
+	
+	@Autowired
+	private IPharmacyFeedbackService pharmacyFeedbackService;
 		
 	@GetMapping
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAll() {
@@ -51,9 +57,21 @@ public class PharmacyController {
 	}
 	
 	@CrossOrigin
+	@GetMapping("/find-by-drug-in-pharmacy")
+	public ResponseEntity<IdentifiablePharmacyDrugPriceAmountDTO> findPharnaciesWithPriceForDrug(@RequestParam UUID drugId,@RequestParam UUID pharmacyId) {
+		return new ResponseEntity<>(drugService.findByDrugInPharmacy(drugId, pharmacyId),HttpStatus.OK);
+	}
+	
+	
+	@CrossOrigin
 	@GetMapping("/get-pharmacy-profile")
-	public ResponseEntity<IdentifiableDTO<PharmacyDTO>> findPharmacyProfile(@RequestParam UUID pharmacyId) {
-		return new ResponseEntity<>(pharmacyService.findById(pharmacyId),HttpStatus.OK);
+	public ResponseEntity<IdentifiableDTO<PharmacyGradeDTO>> findPharmacyProfile(@RequestParam UUID pharmacyId) {
+		try {
+			return new ResponseEntity<>(pharmacyService.findByIdWithGrade(pharmacyId),HttpStatus.OK);
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@GetMapping("/search")
@@ -68,5 +86,32 @@ public class PharmacyController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	@GetMapping("/feedback/{pharmacyId}")
+	public ResponseEntity<PharmacyFeedbackDTO> findByPatientAndPharmacy(@PathVariable UUID pharmacyId) {
+		try {
+			return new ResponseEntity<>(pharmacyFeedbackService.findByPatientAndPharmacy(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"), pharmacyId) ,HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@PostMapping("/feedback")
+	public ResponseEntity<?> createFeedback(@RequestBody PharmacyFeedbackDTO pharmacyFeedbackDTO) {
+		
+		pharmacyFeedbackService.create(pharmacyFeedbackDTO);
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/feedback")
+	@CrossOrigin
+	public ResponseEntity<?> updateFeedback(@RequestBody PharmacyFeedbackDTO pharmacyFeedbackDTO) {
+		
+		System.out.println("LALAL");
+		pharmacyFeedbackService.update(pharmacyFeedbackDTO);
+		
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

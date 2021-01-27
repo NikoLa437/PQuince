@@ -13,19 +13,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.Allergen;
-import quince_it.pquince.entities.users.Address;
+import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
+import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
-import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
+import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
@@ -50,6 +53,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private DermatologistRepository dermatologistRepository;
 	
 	@Autowired
 	private AllergenService allergenService;
@@ -179,7 +185,12 @@ public class UserService implements IUserService{
 	public IdentifiableDTO<PatientDTO> getPatientById(UUID id) {	
 		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(id));
 	}
-
+	
+	@Override
+	public IdentifiableDTO<StaffDTO> getStaffById(UUID id) {	
+		return UserMapper.MapStaffPersistenceToStaffIdentifiableDTO(staffRepository.getOne(id));
+	}
+	
 	@Override
 	public boolean addAllergen(AllergenUserDTO allergenUserDTO) {
 		try {
@@ -220,21 +231,84 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public List<IdentifiableStaffGradeDTO> findAllStaffWithAvgGradeByStaffType(StaffType staffType) {
+	public void updateStaff(UUID staffId, UserInfoChangeDTO staffInfoChangeDTO) {
+		Staff staff = staffRepository.getOne(staffId);		
+		
+		staff.setAddress(staffInfoChangeDTO.getAddress());
+		staff.setName(staffInfoChangeDTO.getName());
+		staff.setPhoneNumber(staffInfoChangeDTO.getPhoneNumber());
+		staff.setSurname(staffInfoChangeDTO.getSurname());
+		
+		staffRepository.save(staff);
+	}
+	
+	@Override
+	public List<IdentifiableDTO<StaffGradeDTO>> findAllStaffWithAvgGradeByStaffType(StaffType staffType) {
 		
 		List<Staff> staffs = staffRepository.findAllStaffByStaffType(staffType);
-		List<IdentifiableStaffGradeDTO> retStaffs = new ArrayList<IdentifiableStaffGradeDTO>();
+		List<IdentifiableDTO<StaffGradeDTO>> retStaffs = new ArrayList<IdentifiableDTO<StaffGradeDTO>>();
 		
 		staffs.forEach((s) -> retStaffs.add(MapStaffPersistenceToStaffGradeIdentifiableDTO(s)));
 		return retStaffs;
 	}
 
 	
-	public IdentifiableStaffGradeDTO MapStaffPersistenceToStaffGradeIdentifiableDTO(Staff staff){
+	public IdentifiableDTO<StaffGradeDTO> MapStaffPersistenceToStaffGradeIdentifiableDTO(Staff staff){
 		if(staff == null) throw new IllegalArgumentException();
 		
-		return new IdentifiableStaffGradeDTO(staff.getId(), staff.getEmail(), staff.getName(), staff.getSurname(),
-											 staff.getAddress(), staff.getPhoneNumber(), staffFeedbackService.findAvgGradeForStaff(staff.getId()));
+		return new IdentifiableDTO<StaffGradeDTO>(staff.getId(), new StaffGradeDTO(staff.getEmail(), staff.getName(), staff.getSurname(),
+											 staff.getAddress(), staff.getPhoneNumber(), staffFeedbackService.findAvgGradeForStaff(staff.getId())));
 	}
+
+	@Override
+	public void deleteAllPatientsPenalties() {
+		try {
+			List<Patient> patients = patientRepository.findAll();
+			for(Patient patient : patients) {
+				if(patient.getPenalty() > 0) {
+					patient.setPenalty(0);
+					patientRepository.save(patient);
+				}
+			}
+		} catch (Exception e) {
+		}
+	}
+	
+	@Override
+	public List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologistForPharmacy(UUID pharmacyId) {
+		
+		List<Dermatologist> dermatologists = dermatologistRepository.findAll();
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retDermatologist = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(Dermatologist dermatologist : dermatologists) {
+			if(IsDermatogistWorkInPharmacy(dermatologist,pharmacyId))
+				retDermatologist.add(MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(dermatologist));
+		}
+		
+		return retDermatologist;
+	}
+
+	private IdentifiableDermatologistForPharmacyGradeDTO MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(
+			Dermatologist dermatologist) {
+		return new IdentifiableDermatologistForPharmacyGradeDTO(dermatologist.getId(),dermatologist.getEmail(),dermatologist.getName(),dermatologist.getSurname(),dermatologist.getPhoneNumber(),staffFeedbackService.findAvgGradeForStaff(dermatologist.getId()));
+	}
+
+	private boolean IsDermatogistWorkInPharmacy(Dermatologist dermatologist, UUID pharmacyId) {
+		for(Pharmacy pharmacy : dermatologist.getPharmacies()) {
+			if(pharmacy.getId().equals(pharmacyId))
+				return true;
+		}
+		return false;
+	}
+
+
+	@Override
+	public List<IdentifiableDTO<UserDTO>> findByNameAndSurname(String name, String surname) {
+		List<IdentifiableDTO<UserDTO>> users = new ArrayList<IdentifiableDTO<UserDTO>>();
+		patientRepository.findByNameAndSurname(name.toLowerCase(), surname.toLowerCase()).forEach((u) -> users.add(UserMapper.MapUserPersistenceToUserIdentifiableDTO(u)));
+		return users;
+	}
+
+	
 
 }

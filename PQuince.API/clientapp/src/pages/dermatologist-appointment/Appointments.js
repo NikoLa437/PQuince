@@ -135,9 +135,9 @@ class Appointments extends Component {
 						<div className="form-group controls mb-0 pb-2">
 							<div className="form-row mt-3">
 								<div className="form-col">
-									<div class="dropdown">
+									<div className="dropdown">
 										<button
-											class="btn btn-primary dropdown-toggle"
+											className="btn btn-primary dropdown-toggle"
 											type="button"
 											id="dropdownMenu2"
 											data-toggle="dropdown"
@@ -146,30 +146,33 @@ class Appointments extends Component {
 										>
 											Sort by
 										</button>
-										<div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+										<div
+											className="dropdown-menu"
+											aria-labelledby="dropdownMenu2"
+										>
 											<button
-												class="dropdown-item"
+												className="dropdown-item"
 												type="button"
 												onClick={this.handleSortByGradeAscending}
 											>
 												Dermatologist grade ascending
 											</button>
 											<button
-												class="dropdown-item"
+												className="dropdown-item"
 												type="button"
 												onClick={this.handleSortByGradeDesscending}
 											>
 												Dermatologist grade descending
 											</button>
 											<button
-												class="dropdown-item"
+												className="dropdown-item"
 												type="button"
 												onClick={this.handleSortByPriceAscending}
 											>
 												Examination price ascending
 											</button>
 											<button
-												class="dropdown-item"
+												className="dropdown-item"
 												type="button"
 												onClick={this.handleSortByPriceDescending}
 											>

@@ -31,19 +31,30 @@ class Header extends Component {
 								<a href="#">My record</a>
 								<ul>
 									<li>
-										<a href="/">Dermatologist visits</a>
+										<a href="/dermatologist-history">Dermatologist visits</a>
 									</li>
 									<li>
 										<a href="/">Consultations with a pharmacist</a>
 									</li>
 									<li>
-										<a href="/">Observe appointments</a>
+										<a href="/patients-appointments">Observe appointments</a>
 									</li>
 									<li>
 										<a href="/">eReciepts</a>
 									</li>
 									<li>
 										<a href="/">Reserved medicines</a>
+									</li>
+								</ul>
+							</li>
+							<li className="drop-down">
+								<a href="#">Pharmacy</a>
+								<ul>
+									<li>
+										<a href="/pharmacy">Profile</a>
+									</li>
+									<li>
+										<a href="/dermatologists">Dermatologist</a>
 									</li>
 								</ul>
 							</li>

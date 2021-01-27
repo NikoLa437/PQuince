@@ -2,11 +2,12 @@ package quince_it.pquince.services.contracts.dto.appointment;
 
 import java.util.Date;
 
-import quince_it.pquince.services.contracts.dto.users.IdentifiableStaffGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public class DermatologistAppointmentDTO {
 
-	private IdentifiableStaffGradeDTO staff;
+	private IdentifiableDTO<StaffGradeDTO> staff;
 	
     private Date startDateTime;
     
@@ -16,7 +17,7 @@ public class DermatologistAppointmentDTO {
     
     public DermatologistAppointmentDTO() {}
 
-	public DermatologistAppointmentDTO(IdentifiableStaffGradeDTO staff, Date startDateTime, Date endDateTime, double price) {
+	public DermatologistAppointmentDTO(IdentifiableDTO<StaffGradeDTO> staff, Date startDateTime, Date endDateTime, double price) {
 		super();
 		this.staff = staff;
 		this.startDateTime = startDateTime;
@@ -24,11 +25,11 @@ public class DermatologistAppointmentDTO {
 		this.price = price;
 	}
 
-	public IdentifiableStaffGradeDTO getStaff() {
+	public IdentifiableDTO<StaffGradeDTO> getStaff() {
 		return staff;
 	}
 
-	public void setStaff(IdentifiableStaffGradeDTO staff) {
+	public void setStaff(IdentifiableDTO<StaffGradeDTO> staff) {
 		this.staff = staff;
 	}
 

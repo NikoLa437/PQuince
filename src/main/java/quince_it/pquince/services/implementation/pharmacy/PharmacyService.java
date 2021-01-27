@@ -38,10 +38,17 @@ public class PharmacyService implements IPharmacyService {
 	
 		return pharmacies;
 	}
+	
+
 
 	@Override
 	public IdentifiableDTO<PharmacyDTO> findById(UUID id) {
 		return PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(pharmacyRepository.getOne(id));
+	}
+	
+	@Override
+	public IdentifiableDTO<PharmacyGradeDTO> findByIdWithGrade(UUID id) {
+		return MapPharmacyPersistenceToPharmacyGradeIdentifiableDTO(pharmacyRepository.getOne(id));
 	}
 
 	@Override

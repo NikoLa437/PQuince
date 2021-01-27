@@ -1,6 +1,7 @@
 package quince_it.pquince.services.contracts.interfaces.pharmacy;
 
 import java.util.List;
+import java.util.UUID;
 
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
@@ -13,5 +14,7 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	List<IdentifiableDTO<PharmacyGradeDTO>> findAllPharmaciesWithGrades();
 	
 	List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(PharmacyFiltrationDTO pharmacyFiltrationDTO);
+
+	IdentifiableDTO<PharmacyGradeDTO> findByIdWithGrade(UUID id);
 
 }

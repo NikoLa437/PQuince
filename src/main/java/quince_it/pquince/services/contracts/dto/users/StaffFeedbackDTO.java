@@ -4,36 +4,27 @@ import java.util.Date;
 import java.util.UUID;
 
 public class StaffFeedbackDTO {
-
-	private UUID id;
 	
-	private UUID forStaff;
+	private UUID staffId;
 	
 	private Date Date;
     
 	private int grade;
+	
+	public StaffFeedbackDTO() {}
 		
-	public StaffFeedbackDTO(UUID id, UUID forStaff, Date date, int grade) {
-		this.id = id;
-		this.forStaff= forStaff;
+	public StaffFeedbackDTO(UUID staffId, Date date, int grade) {
+		this.staffId= staffId;
 		this.Date=date;
 		this.grade=grade;
 	}
 
-	public UUID getId() {
-		return id;
+	public UUID getStaffId() {
+		return staffId;
 	}
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	public UUID getForStaff() {
-		return forStaff;
-	}
-
-	public void setForStaff(UUID forStaff) {
-		this.forStaff = forStaff;
+	public void setStaffId(UUID staffId) {
+		this.staffId = staffId;
 	}
 
 	public Date getDate() {

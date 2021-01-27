@@ -15,11 +15,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.users.DermatologistForPharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -63,6 +69,19 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/search") 
+	public ResponseEntity<List<IdentifiableDTO<UserDTO>>> findByNameAndSurname(@RequestParam String name,@RequestParam String surname) {
+		
+		try {
+			List<IdentifiableDTO<UserDTO>> users = userService.findByNameAndSurname(name, surname);
+			return new ResponseEntity<>(users,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 	@PutMapping("/{patientId}") 
 	@CrossOrigin
 	public ResponseEntity<?> updatePatientInformation(@PathVariable UUID patientId,@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
@@ -77,6 +96,19 @@ public class UsersController {
 		}
 	}
 	
+	@PutMapping("/staff/{staffId}") 
+	@CrossOrigin
+	public ResponseEntity<?> updateStaffInformation(@PathVariable UUID staffId,@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
+	  
+		try {
+			userService.updateStaff(staffId, userInfoChangeDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
 	
 	@GetMapping("/patient/{patientId}") 
 	public ResponseEntity<IdentifiableDTO<PatientDTO>> getPatientById(@PathVariable UUID patientId) {
@@ -92,6 +124,19 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/staff/{staffId}") 
+	public ResponseEntity<IdentifiableDTO<StaffDTO>> getStaffById(@PathVariable UUID staffId) {
+	  
+		try {
+			IdentifiableDTO<StaffDTO> staff = userService.getStaffById(staffId);
+			return new ResponseEntity<>(staff,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} 
+		catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
 	
 	@GetMapping("/patient-allergens/{patientId}") 
 	public ResponseEntity<List<IdentifiableDTO<AllergenDTO>>> getAllergensForPatient(@PathVariable UUID patientId) {
@@ -128,6 +173,20 @@ public class UsersController {
 				return new ResponseEntity<>(HttpStatus.OK); 
 			
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/dermatologist-for-pharmacy/{pharmacyId}") 
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getDermatologistForPharmacy(@PathVariable UUID pharmacyId) {
+	  
+		try {
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findAllDermatologistForPharmacy(pharmacyId);
+			return new ResponseEntity<>(dermatologist,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
