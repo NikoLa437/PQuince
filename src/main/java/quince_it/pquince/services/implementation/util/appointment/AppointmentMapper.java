@@ -11,6 +11,7 @@ import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppoint
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
+import quince_it.pquince.services.implementation.util.users.UserMapper;
 
 public class AppointmentMapper {
 
@@ -74,6 +75,6 @@ public class AppointmentMapper {
 	public static IdentifiableDTO<AppointmentDTO> MapAppointmentPersistenceToAppointmentIdentifiableDTO(Appointment appointment){
 		if(appointment == null) throw new IllegalArgumentException();
 		
-		return new IdentifiableDTO<AppointmentDTO>(appointment.getId(), new AppointmentDTO(appointment.getStartDateTime(), appointment.getEndDateTime(), appointment.getPrice()));
+		return new IdentifiableDTO<AppointmentDTO>(appointment.getId(), new AppointmentDTO(UserMapper.MapStaffPersistenceToStaffIdentifiableDTO(appointment.getStaff()), appointment.getAppointmentStatus(), appointment.getStartDateTime(), appointment.getEndDateTime(), appointment.getPrice()));
 	}
 }

@@ -15,6 +15,7 @@ import HistoryDermatologistAppointments from "./pages/appointment-history/Histor
 import PatientsDrugReservationHistory from "./pages/drug-reservation/PatientsDrugReservationHistory";
 import DermatologistsPage from "./pages/dermatologist/DermatologistsPage";
 import ObservePatientsPage from "./pages/ObservePatientsPage";
+import PatientProfilePage from "./pages/PatientProfilePage";
 import ScheduleAppointmentPage from "./pages/dermatologist-appointment/ScheduleAppointmentPage";
 import DermatologistComplaints from "./pages/complaints/DermatologistComplaint";
 import PharmacyComplaints from "./pages/complaints/ComplaintsForPharmacy";
@@ -27,6 +28,7 @@ function App() {
 				<Link exact to="/login" path="/login" component={LoginPage} />
 				<Link exact to="/registration" path="/registration" component={RegisterPage} />
 				<Link exact to="/profile" path="/profile" component={UserProfilePage} />
+				<Link exact to="/patient-profile" path="/patient-profile" component={PatientProfilePage} />
 				<Link
 					exact
 					to="/staff-profile"
