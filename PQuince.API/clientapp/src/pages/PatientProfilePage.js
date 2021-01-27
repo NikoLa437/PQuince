@@ -49,7 +49,15 @@ class PatientProfilePage extends Component {
     
     handleExamine = (appointmentId) => {
 		console.log(appointmentId)
-	};
+    };
+
+    handleNotShowUp = (appointmentId) => {
+		console.log(appointmentId)
+    };    
+    
+    handleSchedule = () => {
+
+    };
 
 	render() {
 		return (
@@ -66,7 +74,6 @@ class PatientProfilePage extends Component {
 						<div className="col-lg-8 mx-auto">
 							<br />
 							<form id="contactForm" name="sentMessage">	
-
                                 <img
                                     style={{float: "left"}}
 									className="img-fluid"
@@ -123,6 +130,17 @@ class PatientProfilePage extends Component {
 										</div>
 									</div>
 								</div>
+                                <br/>
+                                <button
+                                    type="button"
+                                    style={{width: "80%"}}
+									onClick={() =>
+										this.handleSchedule()
+									}
+									className="btn btn-primary"
+								>
+							    	Schedule appointment
+								</button>
 								
 							</form>
 						</div>
@@ -180,9 +198,10 @@ class PatientProfilePage extends Component {
                                             " " + appointment.EntityDTO.staff.EntityDTO.surname}
                                     </div>
                                 </td>
-                                <td className="align-right">
+                                <td className="align-right" style={{ width: "35%"}}>
 										<button
-											type="button"
+                                            type="button"
+                                            style={{ width: "60%", float: "right"}}
 											hidden={
 												appointment.EntityDTO.appointmentStatus != "SCHEDULED" || appointment.EntityDTO.staff.Id != "25345678-52d3-11eb-ae93-0242ac130002"
 											}
@@ -192,6 +211,21 @@ class PatientProfilePage extends Component {
 											className="btn btn-primary"
 										>
 											Examine
+										</button>
+                                        <br/>
+                                        <br/>
+                                        <button
+                                            type="button"
+                                            style={{ width: "60%", float: "right", verticalAlign: "bottom"}}
+											hidden={
+												appointment.EntityDTO.appointmentStatus != "SCHEDULED" || appointment.EntityDTO.staff.Id != "25345678-52d3-11eb-ae93-0242ac130002"
+											}
+											onClick={() =>
+												this.handleNotShowUp(appointment.Id)
+											}
+											className="btn btn-danger"
+										>
+											Did not show up
 										</button>
 									</td>
                             </tr>
