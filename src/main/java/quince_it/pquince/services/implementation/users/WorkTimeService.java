@@ -27,27 +27,49 @@ public class WorkTimeService implements IWorkTimeService{
 	private StaffRepository staffRepository;
 	@Autowired
 	private PharmacyRepository pharmacyRepository;
-	
-	@Override
-	public IdentifiableDTO<WorkTimeDTO> findById(UUID id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
 	public UUID create(WorkTimeDTO workTimeDTO) {
-		if(HasCorrectWorkTime(workTimeDTO)) {
-			Staff forStaff = staffRepository.getOne(workTimeDTO.getForStaff());
-			Pharmacy forPharmacy = pharmacyRepository.getOne(workTimeDTO.getForPharmacy());
-			WorkTime newWorkTime = new WorkTime(forPharmacy,forStaff,workTimeDTO.getStartDate(),workTimeDTO.getEndDate(),workTimeDTO.getStartTime(),workTimeDTO.getEndTime());
-			workTimeRepository.save(newWorkTime);
-			return newWorkTime.getId();
-		}else {
+		// TODO WORKTIME Service:  Implement try catch 
+
+		if(!checkIfStaffHasWorkTimeAtThatTime(workTimeDTO)) {
 			return null;
 		}
+			
+		WorkTime newWorkTime = createWorkTimeFromDTO(workTimeDTO);
+		
+		if(newWorkTime.IsCorrectWorkTimeFormat()) {
+			workTimeRepository.save(newWorkTime);
+			return newWorkTime.getId();
+		}
+		
+		return null;
 	}
 
-	private boolean HasCorrectWorkTime(WorkTimeDTO workTimeDTO) {
+
+	
+
+	@Override
+	public List<IdentifiableDTO<WorkTimeDTO>> findWorkTimeForStaff(UUID staffId) {
+		// TODO WORKTIME Service: Implement try catch 
+		List<IdentifiableDTO<WorkTimeDTO>> retWorkTimes = new ArrayList<IdentifiableDTO<WorkTimeDTO>>();
+		
+		for(WorkTime workTime : workTimeRepository.findAll()) {
+			if(workTime.getForStaff().getId().equals(staffId))
+				retWorkTimes.add(WorkTimeMapper.MapWorkTimePersistenceToWorkTimeIdentifiableDTO(workTime));
+		}
+		
+		return retWorkTimes;
+	}
+
+	private WorkTime createWorkTimeFromDTO(WorkTimeDTO workTimeDTO) {
+		Staff forStaff = staffRepository.getOne(workTimeDTO.getForStaff());
+		Pharmacy forPharmacy = pharmacyRepository.getOne(workTimeDTO.getForPharmacy());
+		return new WorkTime(forPharmacy,forStaff,workTimeDTO.getStartDate(),workTimeDTO.getEndDate(),workTimeDTO.getStartTime(),workTimeDTO.getEndTime());
+	}
+
+	private boolean checkIfStaffHasWorkTimeAtThatTime(WorkTimeDTO workTimeDTO) {
 		List<WorkTime> workTimes= workTimeRepository.findAll();
 		
 		for(WorkTime workTime : workTimes) {
@@ -66,32 +88,20 @@ public class WorkTimeService implements IWorkTimeService{
 	    }
 	    return false;
 	}  
-
+	
+	@Override
+	public IdentifiableDTO<WorkTimeDTO> findById(UUID id) {
+		return null;
+	}
+	
 	@Override
 	public void update(WorkTimeDTO workTimeDTO, UUID id) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean delete(UUID id) {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
-	@Override
-	public List<IdentifiableDTO<WorkTimeDTO>> findWorkTimeForStaff(UUID staffId) {
-		
-		List<IdentifiableDTO<WorkTimeDTO>> retWorkTimes = new ArrayList<IdentifiableDTO<WorkTimeDTO>>();
-		
-		for(WorkTime workTime : workTimeRepository.findAll()) {
-			if(workTime.getForStaff().getId().equals(staffId))
-				retWorkTimes.add(WorkTimeMapper.MapWorkTimePersistenceToWorkTimeIdentifiableDTO(workTime));
-		}
-		
-		return retWorkTimes;
-	}
-
-
 
 }

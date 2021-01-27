@@ -108,4 +108,19 @@ public class WorkTime {
 	public void setEndTime(int endTime) {
 		this.endTime = endTime;
 	}
+	
+	public boolean IsWorkTimesOverlap(WorkTime workTime) {
+		 if(this.startDate.before(workTime.getEndDate()) && workTime.getStartDate().before(this.endDate)) {
+		    	if(this.startTime<workTime.getEndTime() && workTime.getStartTime()<this.endTime) {
+		    		return true;
+		    	}
+		    }
+		    return false;
+	}
+	
+	public boolean IsCorrectWorkTimeFormat() {
+		if(this.endDate.before(this.startDate) || this.startTime>=this.endTime)
+			return false;
+		return true;
+	}
 }

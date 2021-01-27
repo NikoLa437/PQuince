@@ -66,7 +66,8 @@ class WorkTimesModal extends Component {
             startTime: this.state.timeFrom, 
             endTime:this.state.timeTo
         };
-                Axios
+
+        Axios
         .post(BASE_URL + "/api/worktime/", workTimeDTO).then((res) =>{
             console.log(res.data);
             this.setState({showAddWorkTime: false, modalSize:'lg'});
