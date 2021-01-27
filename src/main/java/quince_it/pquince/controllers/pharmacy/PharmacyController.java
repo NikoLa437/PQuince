@@ -20,8 +20,10 @@ import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDru
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
+import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 
@@ -31,6 +33,9 @@ public class PharmacyController {
 
 	@Autowired
 	private IPharmacyService pharmacyService;
+	
+	@Autowired
+	private IPharmacyComplaintService pharmacyComplaintService;
 	
 	@Autowired
 	private IDrugInstanceService drugService;
@@ -93,6 +98,14 @@ public class PharmacyController {
 	public ResponseEntity<?> createFeedback(@RequestBody PharmacyFeedbackDTO pharmacyFeedbackDTO) {
 		
 		pharmacyFeedbackService.create(pharmacyFeedbackDTO);
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/complaint-pharmacy")
+	public ResponseEntity<?> createFeedback(@RequestBody ComplaintPharmacyDTO complaintPharmacyDTO) {
+		
+		pharmacyComplaintService.create(complaintPharmacyDTO);
 		
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
