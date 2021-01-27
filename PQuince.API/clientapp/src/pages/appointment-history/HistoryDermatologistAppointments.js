@@ -43,8 +43,8 @@ class HistoryDermatologistAppointments extends Component {
 	handleSortByDateAscending = () => {
 		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-date-ascending")
 			.then((res) => {
-				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
+				this.setState({ appointments: res.data, showingSorted: true });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -54,8 +54,8 @@ class HistoryDermatologistAppointments extends Component {
 	handleSortByDateDescending = () => {
 		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-date-descending")
 			.then((res) => {
-				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
+				this.setState({ appointments: res.data, showingSorted: true });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -197,9 +197,7 @@ class HistoryDermatologistAppointments extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">
-						Dermatologist Appointment History
-					</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Dermatologist Appointment History</h5>
 
 					<div className="form-group">
 						<div className="form-group controls mb-0 pb-2">
@@ -216,70 +214,32 @@ class HistoryDermatologistAppointments extends Component {
 										>
 											Sort by
 										</button>
-										<div
-											className="dropdown-menu"
-											aria-labelledby="dropdownMenu2"
-										>
-											<button
-												className="dropdown-item"
-												type="button"
-												onClick={this.handleSortByDateAscending}
-											>
+										<div className="dropdown-menu" aria-labelledby="dropdownMenu2">
+											<button className="dropdown-item" type="button" onClick={this.handleSortByDateAscending}>
 												Date ascending
 											</button>
-											<button
-												className="dropdown-item"
-												type="button"
-												onClick={this.handleSortByDateDescending}
-											>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByDateDescending}>
 												Date descending
 											</button>
-											<button
-												className="dropdown-item"
-												type="button"
-												onClick={this.handleSortByPriceAscending}
-											>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByPriceAscending}>
 												Price ascending
 											</button>
-											<button
-												className="dropdown-item"
-												type="button"
-												onClick={this.handleSortByPriceDescending}
-											>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByPriceDescending}>
 												Price descending
 											</button>
-											<button
-												className="dropdown-item"
-												type="button"
-												onClick={this.handleSortByDurationAscending}
-											>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByDurationAscending}>
 												Appointment duration ascending
 											</button>
-											<button
-												className="dropdown-item"
-												type="button"
-												onClick={this.handleSortByDurationDescending}
-											>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByDurationDescending}>
 												Appointment duration descending
 											</button>
 										</div>
 									</div>
 								</div>
 								<div className="form-col ml-3">
-									<div
-										className={
-											this.state.showingSorted
-												? "form-group"
-												: "form-group collapse"
-										}
-									>
-										<button
-											type="button"
-											className="btn btn-outline-secondary"
-											onClick={this.handleResetSort}
-										>
-											<i className="icofont-close-line mr-1"></i>Reset
-											criteria
+									<div className={this.state.showingSorted ? "form-group" : "form-group collapse"}>
+										<button type="button" className="btn btn-outline-secondary" onClick={this.handleResetSort}>
+											<i className="icofont-close-line mr-1"></i>Reset criteria
 										</button>
 									</div>
 								</div>
@@ -291,22 +251,13 @@ class HistoryDermatologistAppointments extends Component {
 						<tbody>
 							{this.state.appointments.map((appointment) => (
 								<tr id={appointment.Id} key={appointment.Id} className="rounded">
-									<td
-										width="190em"
-										onClick={() => this.handleAppointmentClick(appointment.Id)}
-									>
-										<img
-											className="img-fluid"
-											src={AppointmentIcon}
-											width="150em"
-										/>
+									<td width="190em">
+										<img className="img-fluid" src={AppointmentIcon} width="150em" />
 									</td>
-									<td onClick={() => this.handleAppointmentClick(appointment.Id)}>
+									<td>
 										<div>
 											<b>Date: </b>{" "}
-											{new Date(
-												appointment.EntityDTO.startDateTime
-											).toLocaleDateString("en-US", {
+											{new Date(appointment.EntityDTO.startDateTime).toLocaleDateString("en-US", {
 												day: "2-digit",
 												month: "2-digit",
 												year: "numeric",
@@ -314,18 +265,14 @@ class HistoryDermatologistAppointments extends Component {
 										</div>
 										<div>
 											<b>Time from: </b>{" "}
-											{new Date(
-												appointment.EntityDTO.startDateTime
-											).toLocaleTimeString("en-US", {
+											{new Date(appointment.EntityDTO.startDateTime).toLocaleTimeString("en-US", {
 												hour: "2-digit",
 												minute: "2-digit",
 											})}
 										</div>
 										<div>
 											<b>Time to: </b>{" "}
-											{new Date(
-												appointment.EntityDTO.endDateTime
-											).toLocaleTimeString("en-US", {
+											{new Date(appointment.EntityDTO.endDateTime).toLocaleTimeString("en-US", {
 												hour: "2-digit",
 												minute: "2-digit",
 											})}
@@ -335,27 +282,17 @@ class HistoryDermatologistAppointments extends Component {
 										</div>
 										<div>
 											<b>Dermatologist: </b>{" "}
-											{appointment.EntityDTO.staff.EntityDTO.name +
-												" " +
-												appointment.EntityDTO.staff.EntityDTO.surname}
+											{appointment.EntityDTO.staff.EntityDTO.name + " " + appointment.EntityDTO.staff.EntityDTO.surname}
 										</div>
 										<div>
-											<b>Dermatologist grade: </b>{" "}
-											{appointment.EntityDTO.staff.EntityDTO.grade}
-											<i
-												className="icofont-star"
-												style={{ color: "#1977cc" }}
-											></i>
+											<b>Dermatologist grade: </b> {appointment.EntityDTO.staff.EntityDTO.grade}
+											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 									</td>
 									<td className="align-middle">
 										<button
 											type="button"
-											onClick={() =>
-												this.handleFeedbackClick(
-													appointment.EntityDTO.staff
-												)
-											}
+											onClick={() => this.handleFeedbackClick(appointment.EntityDTO.staff)}
 											className="btn btn-outline-secondary"
 										>
 											Give feedback
