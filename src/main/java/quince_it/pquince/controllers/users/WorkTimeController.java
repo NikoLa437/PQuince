@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import quince_it.pquince.services.contracts.dto.users.AbsenceDTO;
-import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
-import quince_it.pquince.services.implementation.users.AbsenceService;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.implementation.users.WorkTimeService;
 
 @RestController
@@ -38,10 +36,10 @@ public class WorkTimeController {
 	
 	@GetMapping("/worktime-for-staff/{staffId}") 
 	@CrossOrigin
-	public ResponseEntity<List<WorkTimeDTO>> getDermatologistForPharmacy(@PathVariable UUID staffId) {
+	public ResponseEntity<List<IdentifiableDTO<WorkTimeDTO>>> getDermatologistForPharmacy(@PathVariable UUID staffId) {
 	  
 		try {
-			List<WorkTimeDTO> workTimes = workTimeService.findWorkTimeForStaff(staffId);
+			List<IdentifiableDTO<WorkTimeDTO>> workTimes = workTimeService.findWorkTimeForStaff(staffId);
 			return new ResponseEntity<>(workTimes,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 

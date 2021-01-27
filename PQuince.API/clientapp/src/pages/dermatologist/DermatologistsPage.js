@@ -11,7 +11,9 @@ class DermatologistsPage extends Component {
         dermatologists: [],
         staffIdForWorkTimes:'',
         showWorkTimesModal: false,
-        workTimes:[]
+        workTimes:[],
+        forPharmacy:'cafeddee-56cb-11eb-ae93-0242ac130202',
+        forStaff:''
     };
 
     componentDidMount() {
@@ -35,7 +37,7 @@ class DermatologistsPage extends Component {
         
 		Axios.get(BASE_URL + "/api/worktime/worktime-for-staff/" + id)
         .then((res) => {
-            this.setState({ workTimes: res.data });
+            this.setState({ workTimes: res.data , forStaff:id});
             console.log(res.data);
         })
         .catch((err) => {
@@ -108,7 +110,7 @@ class DermatologistsPage extends Component {
 
                     </div>
                     <div>
-                        <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} header="WorkTimes" />
+                        <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} forPharmacy={this.state.forPharmacy} forStaff={this.state.forStaff} header="WorkTimes" />
                     </div>
                 </React.Fragment>
 		);

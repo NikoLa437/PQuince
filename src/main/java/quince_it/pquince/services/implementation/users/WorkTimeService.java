@@ -1,5 +1,6 @@
 package quince_it.pquince.services.implementation.users;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.users.IWorkTimeService;
+import quince_it.pquince.services.implementation.util.users.WorkTimeMapper;
 
 @Service
 public class WorkTimeService implements IWorkTimeService{
@@ -34,12 +36,36 @@ public class WorkTimeService implements IWorkTimeService{
 
 	@Override
 	public UUID create(WorkTimeDTO workTimeDTO) {
-		Staff forStaff = staffRepository.getOne(workTimeDTO.getForStaff());
-		Pharmacy forPharmacy = pharmacyRepository.getOne(workTimeDTO.getForPharmacy());
-		WorkTime newWorkTime = new WorkTime(forStaff,workTimeDTO.getStartDate(),workTimeDTO.getEndDate(),workTimeDTO.getStartTime(),workTimeDTO.getEndTime(),forPharmacy);
-		workTimeRepository.save(newWorkTime);
-		return newWorkTime.getId();
+		if(HasCorrectWorkTime(workTimeDTO)) {
+			Staff forStaff = staffRepository.getOne(workTimeDTO.getForStaff());
+			Pharmacy forPharmacy = pharmacyRepository.getOne(workTimeDTO.getForPharmacy());
+			WorkTime newWorkTime = new WorkTime(forPharmacy,forStaff,workTimeDTO.getStartDate(),workTimeDTO.getEndDate(),workTimeDTO.getStartTime(),workTimeDTO.getEndTime());
+			workTimeRepository.save(newWorkTime);
+			return newWorkTime.getId();
+		}else {
+			return null;
+		}
 	}
+
+	private boolean HasCorrectWorkTime(WorkTimeDTO workTimeDTO) {
+		List<WorkTime> workTimes= workTimeRepository.findAll();
+		
+		for(WorkTime workTime : workTimes) {
+			if(workTime.getForStaff().getId().equals(workTimeDTO.getForStaff()) && isDateOverlap(workTime,workTimeDTO))
+				return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean isDateOverlap(WorkTime workTime, WorkTimeDTO workTimeDTO){
+	    if(workTime.getStartDate().before(workTimeDTO.getEndDate()) && workTimeDTO.getStartDate().before(workTime.getEndDate())) {
+	    	if(workTime.getStartTime()<workTimeDTO.getEndTime() && workTimeDTO.getStartTime()<workTime.getEndTime()) {
+	    		return true;
+	    	}
+	    }
+	    return false;
+	}  
 
 	@Override
 	public void update(WorkTimeDTO workTimeDTO, UUID id) {
@@ -54,8 +80,18 @@ public class WorkTimeService implements IWorkTimeService{
 	}
 
 	@Override
-	public List<WorkTimeDTO> findWorkTimeForStaff(UUID staffId) {
-		return workTimeRepository.findWorkTimeForStaff(staffId);
+	public List<IdentifiableDTO<WorkTimeDTO>> findWorkTimeForStaff(UUID staffId) {
+		
+		List<IdentifiableDTO<WorkTimeDTO>> retWorkTimes = new ArrayList<IdentifiableDTO<WorkTimeDTO>>();
+		
+		for(WorkTime workTime : workTimeRepository.findAll()) {
+			if(workTime.getForStaff().getId().equals(staffId))
+				retWorkTimes.add(WorkTimeMapper.MapWorkTimePersistenceToWorkTimeIdentifiableDTO(workTime));
+		}
+		
+		return retWorkTimes;
 	}
+
+
 
 }

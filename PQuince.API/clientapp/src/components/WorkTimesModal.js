@@ -14,14 +14,15 @@ class WorkTimesModal extends Component {
         selectedEndDate:new Date(),
         timeFrom:1,
         timeTo:1,
+        modalSize:'lg',        
     }
 
     handleBack = (event) =>{
-        this.setState({showAddWorkTime: false});
+        this.setState({showAddWorkTime: false, modalSize:'lg'});
     }
 
     handleAddFeedbackModal = (event) =>{
-        this.setState({showAddWorkTime: true});
+        this.setState({showAddWorkTime: true, modalSize:'sm'});
     }
 
     handleStartDateChange = (date) => {
@@ -56,14 +57,27 @@ class WorkTimesModal extends Component {
     }
 
     handleAdd = () => {
-        alert('test')
+        let workTimeDTO = {
+            forPharmacy : this.props.forPharmacy,
+            forStaff: this.props.forStaff, 
+            pharmacyName: '', 
+            startDate: this.state.selectedStartDate, 
+            endDate:this.state.selectedEndDate,
+            startTime: this.state.timeFrom, 
+            endTime:this.state.timeTo
+        };
+                Axios
+        .post(BASE_URL + "/api/worktime/", workTimeDTO).then((res) =>{
+            console.log(res.data);
+            this.setState({showAddWorkTime: false, modalSize:'lg'});
+        }).catch((err) => {console.log(err);});
     }
 
     render() { 
         return ( 
             <Modal
                 show = {this.props.show}
-                size = "lg"
+                size = {this.state.modalSize}
                 dialogClassName="modal-80w-100h"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
@@ -78,30 +92,32 @@ class WorkTimesModal extends Component {
                 </Modal.Header>
                 <Modal.Body>
                     <div hidden={this.state.showAddWorkTime}>
-                    <Button style={{marginBottom:'3%'}} onClick = {() => this.handleAddFeedbackModal()}>Add worktime</Button>
+                        <Button style={{marginBottom:'3%'}} onClick = {() => this.handleAddFeedbackModal()}>Add worktime</Button>
 
-                        <table  border='1' style={{width:'100%'}}>
-                            <tr>
-                                <th>StartDate</th>
-                                <th>EndDate</th>
-                                <th>StartTime</th>
-                                <th>EndTime</th>
-                            </tr>
-                            {this.props.workTimesForStaff.map((workTime) => (
-                            
-                            <tr>
-                                <td>{new Date(workTime.startDate).toDateString()}</td>
-                                <td>{new Date(workTime.endDate).toDateString()}</td>
-                                <td>{workTime.startTime}</td>
-                                <td>{workTime.endTime}</td>
-                            </tr>
-                        ))}
-                        </table>
-                    </div>
+                            <table  border='1' style={{width:'100%'}}>
+                                <tr>
+                                    <th>Pharmacy</th>
+                                    <th>StartDate</th>
+                                    <th>EndDate</th>
+                                    <th>StartTime</th>
+                                    <th>EndTime</th>
+                                </tr>
+                                {this.props.workTimesForStaff.map((workTime) => (
+                                
+                                <tr>
+                                    <td>{workTime.EntityDTO.pharmacyName}</td>
+                                    <td>{new Date(workTime.EntityDTO.startDate).toDateString()}</td>
+                                    <td>{new Date(workTime.EntityDTO.endDate).toDateString()}</td>
+                                    <td>{workTime.EntityDTO.startTime}</td>
+                                    <td>{workTime.EntityDTO.endTime}</td>
+                                </tr>
+                            ))}
+                            </table>
+                        </div>
                     
                     
                     <div hidden={!this.state.showAddWorkTime}>
-                    <form className="ml-3">
+                    <form >
                                     <div  className="control-group">
                                         <div className="form-row">
                                             <button  onClick = {() => this.handleBack()} className="btn btn-link btn-xl" type="button">
@@ -109,28 +125,28 @@ class WorkTimesModal extends Component {
                                                 Back
                                             </button>                   
                                         </div>
-                                        <div className="form-row mt-3">                        
+                                        <div >                        
                                             <div className="form-col" style={{color: "#6c757d",opacity: 1}}>
-                                                <label>Date from:</label>
+                                                <label style={{marginRight:'2%'}}>Date from:</label>
                                                 <DatePicker className="form-control mr-3"  minDate={new Date()} onChange={date => this.handleStartDateChange(date)} selected={this.state.selectedStartDate}/>
                                             </div>
                                         </div>
-                                        <div className="form-row mt-3">                        
+                                        <div>                        
                                             <div className="form-col" style={{color: "#6c757d",opacity: 1}}>
-                                                <label >Date to:</label>
+                                                <label style={{marginRight:'2%'}}>Date to:</label>
                                                 <DatePicker style={{marginLeft:'15px'}} className="form-control mr-3"  minDate={this.state.selectedStartDate} onChange={date => this.handleEndDateChange(date)} selected={this.state.selectedEndDate}/>
                                             </div>
                                         </div>
-                                        <div className="form-row">
+                                        <div >
                                             <div className="form-col">
-                                                <label>Time from:</label>
-                                                    <input placeholder="Time from" className="form-control mr-3" style={{width: "9em"}} type="number" min="1" max="24" onChange={this.handleTimeFromChange} value={this.state.timeFrom} />
+                                                <label >Time from:</label>
+                                                 <input placeholder="Time from" className="form-control mr-3" style={{width: "9em"}} type="number" min="1" max="24" onChange={this.handleTimeFromChange} value={this.state.timeFrom} />
                                             </div>
                                         </div>
-                                        <div className="form-row">
+                                        <div>
                                             <div className="form-col">
-                                                <label>Time to:</label>
-                                                    <input placeholder="Time to" className="form-control mr-3" style={{width: "9em"}} type="number" min="1" max="24" onChange={this.handleTimeToChange} value={this.state.timeTo} />
+                                                <label style={{marginRight:'2%'}}>Time to:</label>
+                                                <input placeholder="Time to" className="form-control mr-3" style={{width: "9em"}} type="number" min="1" max="24" onChange={this.handleTimeToChange} value={this.state.timeTo} />
                                             </div>
                                         </div>
                                         <div  className="form-group text-center">

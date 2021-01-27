@@ -3,6 +3,7 @@ package quince_it.pquince.services.contracts.interfaces.users;
 import java.util.List;
 import java.util.UUID;
 
+import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
@@ -11,5 +12,5 @@ public interface IWorkTimeService {
 	UUID create(WorkTimeDTO workTimeDTO);
 	void update(WorkTimeDTO workTimeDTO, UUID id);
     boolean delete(UUID id);
-    List<WorkTimeDTO> findWorkTimeForStaff(UUID staffId);
+    List<IdentifiableDTO<WorkTimeDTO>> findWorkTimeForStaff(UUID staffId);
 }

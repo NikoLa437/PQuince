@@ -38,7 +38,7 @@ public class WorkTime {
     
     public WorkTime() {}
 	
-	public WorkTime(Staff forStaff, Date startDate, Date endDate, int startTime, int endTime,Pharmacy forPharmacy) {
+	public WorkTime(Pharmacy forPharmacy,Staff forStaff, Date startDate, Date endDate, int startTime, int endTime) {
 		this(UUID.randomUUID(), forStaff,startDate,endDate,startTime,endTime,forPharmacy);
 	}
 	
@@ -95,6 +95,14 @@ public class WorkTime {
 
 	public int getEndTime() {
 		return endTime;
+	}
+
+	public Pharmacy getForPharmacy() {
+		return forPharmacy;
+	}
+
+	public void setForPharmacy(Pharmacy forPharmacy) {
+		this.forPharmacy = forPharmacy;
 	}
 
 	public void setEndTime(int endTime) {
