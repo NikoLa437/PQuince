@@ -38,11 +38,11 @@ public class WorkTime {
     
     public WorkTime() {}
 	
-	public WorkTime(Staff forStaff, Date startDate, Date endDate, int startTime, int endTime) {
-		this(UUID.randomUUID(), forStaff,startDate,endDate,startTime,endTime);
+	public WorkTime(Staff forStaff, Date startDate, Date endDate, int startTime, int endTime,Pharmacy forPharmacy) {
+		this(UUID.randomUUID(), forStaff,startDate,endDate,startTime,endTime,forPharmacy);
 	}
 	
-	public WorkTime(UUID id, Staff forStaff, Date startDate, Date endDate, int startTime, int endTime) {
+	public WorkTime(UUID id, Staff forStaff, Date startDate, Date endDate, int startTime, int endTime,Pharmacy forPharmacy) {
 		super();
 		this.id = id;
 		this.forStaff= forStaff;
@@ -50,6 +50,7 @@ public class WorkTime {
 		this.endDate= endDate;
 		this.startTime=startTime;
 		this.endTime=endTime;
+		this.forPharmacy=forPharmacy;
 	}
 
 	public UUID getId() {

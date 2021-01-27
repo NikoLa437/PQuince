@@ -5,8 +5,7 @@ import java.util.UUID;
 
 public class WorkTimeDTO {
 	
-	
-	//TODO: dodati deo za apoteku
+	private UUID forPharmacy;
 	
 	private UUID forStaff;
 	
@@ -20,8 +19,9 @@ public class WorkTimeDTO {
     
     public WorkTimeDTO() {}
 	
-	public WorkTimeDTO(UUID forStaff, Date startDate, Date endDate, int startTime, int endTime) {
+	public WorkTimeDTO(UUID forPharmacy,UUID forStaff, Date startDate, Date endDate, int startTime, int endTime) {
 		super();
+		this.forPharmacy= forPharmacy;
 		this.forStaff= forStaff;
 		this.startDate= startDate;
 		this.endDate= endDate;
@@ -29,6 +29,14 @@ public class WorkTimeDTO {
 		this.endTime=endTime;
 	}
 
+
+	public UUID getForPharmacy() {
+		return forPharmacy;
+	}
+
+	public void setForPharmacy(UUID forPharmacy) {
+		this.forPharmacy = forPharmacy;
+	}
 
 	public UUID getForStaff() {
 		return forStaff;

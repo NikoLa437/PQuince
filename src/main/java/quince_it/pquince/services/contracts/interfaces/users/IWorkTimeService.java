@@ -11,5 +11,5 @@ public interface IWorkTimeService {
 	UUID create(WorkTimeDTO workTimeDTO);
 	void update(WorkTimeDTO workTimeDTO, UUID id);
     boolean delete(UUID id);
-    List<IdentifiableDTO<WorkTimeDTO>> findWorkTimeForStaff(UUID staffId);
+    List<WorkTimeDTO> findWorkTimeForStaff(UUID staffId);
 }

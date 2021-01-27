@@ -4,10 +4,14 @@ import Header from "../../components/Header"
 import Axios from "axios";
 import { BASE_URL } from "../../constants.js";
 import dermatologistLogo from "../../static/dermatologistLogo.png";
+import WorkTimesModal from "../../components/WorkTimesModal";
 
 class DermatologistsPage extends Component {
 	state = {
-        dermatologists: []
+        dermatologists: [],
+        staffIdForWorkTimes:'',
+        showWorkTimesModal: false,
+        workTimes:[]
     };
 
     componentDidMount() {
@@ -15,15 +19,40 @@ class DermatologistsPage extends Component {
 		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202")
 			.then((res) => {
 				this.setState({ dermatologists: res.data });
-				console.log(res.data);
+                console.log(res.data);
+            
 			})
 			.catch((err) => {
 				console.log(err);
 			});
     }
+
+    handleModalClose = () => {
+        this.setState({showWorkTimesModal: false});
+    }
+
+    onWorkTimeClick = (id) =>{
+        
+		Axios.get(BASE_URL + "/api/worktime/worktime-for-staff/" + id)
+        .then((res) => {
+            this.setState({ workTimes: res.data });
+            console.log(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+        this.setState({
+            showWorkTimesModal: true
+        });
+    }
+
     render() {
 		return (
         <React.Fragment>
+            <div>
+
+            </div>
+
                     <TopBar />
                     <Header />
 
@@ -41,6 +70,7 @@ class DermatologistsPage extends Component {
                                                 width="70em"
                                             />
                                         </td>
+
                                         <td>
                                             <div>
                                                 <b>Name: </b> {dermatologist.EntityDTO.name}
@@ -64,17 +94,21 @@ class DermatologistsPage extends Component {
                                         </td>
                                         <td >
                                             <div style={{marginLeft:'55%'}}>
-                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Dodaj radno vreme</button>
+                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-primary btn-xl" onClick={() => this.onWorkTimeClick(dermatologist.Id)} type="button"><i className="icofont-subscribe mr-1"></i>WorkTimes</button>
                                                 <br></br>
                                                 <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Remove dermatologist</button>
                                             </div>
                                                
-
                                         </td>
                                     </tr>
+
                                 ))}
                             </tbody>
                         </table>
+
+                    </div>
+                    <div>
+                        <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} header="WorkTimes" />
                     </div>
                 </React.Fragment>
 		);

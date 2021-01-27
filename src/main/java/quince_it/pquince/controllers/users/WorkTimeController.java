@@ -1,15 +1,23 @@
 package quince_it.pquince.controllers.users;
 
+import java.util.List;
+import java.util.UUID;
+
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.users.AbsenceDTO;
+import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.implementation.users.AbsenceService;
 import quince_it.pquince.services.implementation.users.WorkTimeService;
@@ -23,8 +31,22 @@ public class WorkTimeController {
 	
 	@CrossOrigin
 	@PostMapping 
-	public ResponseEntity<?>addAllergensForPatient(@RequestBody WorkTimeDTO workTimeDTO) {
+	public ResponseEntity<?>addWorkTimeForPatient(@RequestBody WorkTimeDTO workTimeDTO) {
 		workTimeService.create(workTimeDTO);
 		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	@GetMapping("/worktime-for-staff/{staffId}") 
+	@CrossOrigin
+	public ResponseEntity<List<WorkTimeDTO>> getDermatologistForPharmacy(@PathVariable UUID staffId) {
+	  
+		try {
+			List<WorkTimeDTO> workTimes = workTimeService.findWorkTimeForStaff(staffId);
+			return new ResponseEntity<>(workTimes,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
 	}
 }
