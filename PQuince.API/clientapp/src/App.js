@@ -18,6 +18,7 @@ import HistoryDermatologistAppointments from "./pages/appointment-history/Histor
 import PatientsDrugReservationHistory from "./pages/drug-reservation/PatientsDrugReservationHistory";
 import DermatologistsPage from "./pages/dermatologist/DermatologistsPage";
 import ObservePatientsPage from "./pages/ObservePatientsPage";
+import ScheduleAppointmentPage from "./pages/dermatologist-appointment/ScheduleAppointmentPage";
 
 function App() {
 	return (
@@ -76,6 +77,13 @@ function App() {
 					component={DermatologistsPage}
 				/>
 				<Link exact to="/patients" path="/patients" component={ObservePatientsPage} />
+				<Link
+					exact
+					to="/schedule-appointment"
+					path="/schedule-appointment"
+					component={ScheduleAppointmentPage}
+				/>
+				
 			</Switch>
 		</Router>
 	);

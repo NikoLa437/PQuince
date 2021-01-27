@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -82,6 +83,11 @@ public class AppointmentController {
 		//TODO : URADITI SA ULOGOVANIM
 
 		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+	}
+	
+	@GetMapping("/dermatologist/{dermatologistId}")
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAllAppointmentsByDermatologist(@PathVariable UUID dermatologistId) {
+		return new ResponseEntity<>(appointmentService.getCreatedAppointmentsByDermatologist(dermatologistId),HttpStatus.OK);
 	}
 	
 	@GetMapping("/dermatologist/find-by-pharmacy/{pharmacyId}")
