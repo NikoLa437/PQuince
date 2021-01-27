@@ -140,7 +140,7 @@ public class AppointmentController {
 	}
 	
 	@GetMapping("/patient/{patientId}")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> getAppointmentsByPatient(@PathVariable UUID patientId) {
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatient(@PathVariable UUID patientId) {
 		return new ResponseEntity<>(appointmentService.getDermatologistAppointmentsByPatient(patientId),HttpStatus.OK);
 	}
 }

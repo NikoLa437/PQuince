@@ -45,7 +45,11 @@ class PatientProfilePage extends Component {
         .catch((err) => {
             console.log(err);
         });
-	}
+    }
+    
+    handleExamine = (appointmentId) => {
+		console.log(appointmentId)
+	};
 
 	render() {
 		return (
@@ -123,14 +127,14 @@ class PatientProfilePage extends Component {
 							</form>
 						</div>
 
-                    <table className="table table-hover" style={{ width: "70%", marginTop: "3rem" }}>
+                    <table className="table" style={{ width: "70%", marginTop: "3rem" }}>
                     <tbody>
                         {this.state.appointments.map((appointment) => (
                             <tr
                                 id={appointment.Id}
                                 key={appointment.Id}
                                 className="rounded"
-                                style={{ cursor: "pointer" }}
+                                style={{ background: appointment.EntityDTO.appointmentStatus == "SCHEDULED" && appointment.EntityDTO.staff.Id == "25345678-52d3-11eb-ae93-0242ac130002" ? "#93c2aa" : "" }}
                             >
                                 <td
                                     width="190em"
@@ -171,23 +175,25 @@ class PatientProfilePage extends Component {
                                         })}
                                     </div>
                                     <div>
-                                        <b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
-                                    </div>
-                                    <div>
                                         <b>Dermatologist: </b>{" "}
                                         {appointment.EntityDTO.staff.EntityDTO.name +
-                                            " " +
-                                            appointment.EntityDTO.staff.EntityDTO.surname}
-                                    </div>
-                                    <div>
-                                        <b>Dermatologist grade: </b>{" "}
-                                        {appointment.EntityDTO.staff.EntityDTO.grade}
-                                        <i
-                                            className="icofont-star"
-                                            style={{ color: "#1977cc" }}
-                                        ></i>
+                                            " " + appointment.EntityDTO.staff.EntityDTO.surname}
                                     </div>
                                 </td>
+                                <td className="align-right">
+										<button
+											type="button"
+											hidden={
+												appointment.EntityDTO.appointmentStatus != "SCHEDULED" || appointment.EntityDTO.staff.Id != "25345678-52d3-11eb-ae93-0242ac130002"
+											}
+											onClick={() =>
+												this.handleExamine(appointment.Id)
+											}
+											className="btn btn-primary"
+										>
+											Examine
+										</button>
+									</td>
                             </tr>
                         ))}
                     </tbody>

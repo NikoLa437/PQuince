@@ -288,11 +288,10 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId) {
+	public List<IdentifiableDTO<AppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId) {
 		List<Appointment> appointments = appointmentRepository.getDermatologistAppointmentsByPatient(patientId);
-		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
 		
 		return returnAppointments;
 	}
