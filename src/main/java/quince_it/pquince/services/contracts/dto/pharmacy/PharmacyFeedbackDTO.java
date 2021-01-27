@@ -10,6 +10,8 @@ public class PharmacyFeedbackDTO {
 	private Date Date;
     
 	private int grade;
+	
+	public PharmacyFeedbackDTO() {}
 
 	public PharmacyFeedbackDTO(UUID pharmacyId, java.util.Date date, int grade) {
 		super();

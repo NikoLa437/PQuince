@@ -115,17 +115,19 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 		// TODO get logged patient
 		
 		try {
+
 			Patient patient = patientRepository.findById(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")).get();
 			Pharmacy pharmacy = pharmacyRepository.findById(entityDTO.getPharmacyId()).get();
-			
+						
 			PharmacyFeedback pharmacyFeedback = pharmacyFeedbackRepository.findById(new PharmacyFeedbackId(pharmacy, patient)).get();
+			
 			pharmacyFeedback.setDate(new Date());
 			pharmacyFeedback.setGrade(entityDTO.getGrade());
 			
 			pharmacyFeedbackRepository.save(pharmacyFeedback);
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 	}
 

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
-import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
@@ -84,7 +83,7 @@ public class PharmacyController {
 	@GetMapping("/feedback/{pharmacyId}")
 	public ResponseEntity<PharmacyFeedbackDTO> findByPatientAndPharmacy(@PathVariable UUID pharmacyId) {
 		try {
-			return new ResponseEntity<>(pharmacyFeedbackService.findByPatientAndPharmacy(pharmacyId, UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")) ,HttpStatus.OK);
+			return new ResponseEntity<>(pharmacyFeedbackService.findByPatientAndPharmacy(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"), pharmacyId) ,HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -102,6 +101,7 @@ public class PharmacyController {
 	@CrossOrigin
 	public ResponseEntity<?> updateFeedback(@RequestBody PharmacyFeedbackDTO pharmacyFeedbackDTO) {
 		
+		System.out.println("LALAL");
 		pharmacyFeedbackService.update(pharmacyFeedbackDTO);
 		
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
