@@ -10,6 +10,8 @@ public class WorkTimeDTO {
 	
 	private UUID forStaff;
 	
+	private UUID pharmacyId;
+	
 	private Date startDate;
 	
 	private Date endDate;
@@ -20,9 +22,10 @@ public class WorkTimeDTO {
     
     public WorkTimeDTO() {}
 	
-	public WorkTimeDTO(UUID forStaff, Date startDate, Date endDate, int startTime, int endTime) {
+	public WorkTimeDTO(UUID forStaff, UUID pharmacyId, Date startDate, Date endDate, int startTime, int endTime) {
 		super();
 		this.forStaff= forStaff;
+		this.pharmacyId = pharmacyId;
 		this.startDate= startDate;
 		this.endDate= endDate;
 		this.startTime=startTime;
@@ -68,5 +71,13 @@ public class WorkTimeDTO {
 
 	public void setEndTime(int endTime) {
 		this.endTime = endTime;
+	}
+
+	public UUID getPharmacyId() {
+		return pharmacyId;
+	}
+
+	public void setPharmacyId(UUID pharmacyId) {
+		this.pharmacyId = pharmacyId;
 	}
 }

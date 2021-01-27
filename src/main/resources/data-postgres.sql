@@ -6,6 +6,11 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345678-52d3-11eb-ae93-0242ac130002',true, 'example8@example.com','Nemanja','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 
 
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-11eb-ae93-0242ac130002',true, 'exampla11@example.com','Vidoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-12eb-ac93-0242ac130002',true, 'exampla21@example.com','Sredoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Mikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-13eb-ae93-0242ac130002',true, 'exampla31@example.com','Radoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Bikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
+
+
 insert into patient (id, penalty, points, loyality_category) values ('22793162-52d3-11eb-ae93-0242ac130002',0,2, 'REGULAR');
 insert into patient (id, penalty, points, loyality_category) values ('23793162-52d3-11eb-ae93-0242ac130002',0,2, 'REGULAR');
 
@@ -21,19 +26,26 @@ insert into allergen (id, name) values ('c7bd9b04-58c7-11eb-ae93-0242ac130002', 
 
 insert into patient_allergen (patient_id, allergen_id) values('22793162-52d3-11eb-ae93-0242ac130002','3b27db4c-48bb-4f78-a3da-745d9c9458ba');
 
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude) values ('cafeddee-56cb-11eb-ae93-0242ac130002', 'Benu', 'Benu apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude) values ('cafeddee-56cb-11eb-ae93-0242ac111002', 'Ivancic i sinovi', 'Ivancic i sinovi','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Zdravlje apoteka','gradska opština Zemun','Serbia','Šilerova ulica',44.845752,20.387903);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude) values ('cafeddee-56cb-11eb-ae93-0242ac131302', 'Kopriva', 'Kopriva apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac130002', 'Benu', 'Benu apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 450);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac111002', 'Ivancic i sinovi', 'Ivancic i sinovi','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 729);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Zdravlje apoteka','gradska opština Zemun','Serbia','Šilerova ulica',44.845752,20.387903, 999);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac131302', 'Kopriva', 'Kopriva apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 650);
 
 insert into staff (id, staff_type) values ('11355678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
 insert into staff (id, staff_type) values ('22345678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
 insert into staff (id, staff_type) values ('25345678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
+insert into staff (id, staff_type) values ('25345278-52d3-11eb-ae93-0242ac130002','PHARMACIST');
+insert into staff (id, staff_type) values ('25345278-52d3-12eb-ac93-0242ac130002','PHARMACIST');
+insert into staff (id, staff_type) values ('25345278-52d3-13eb-ae93-0242ac130002','PHARMACIST');
+
 
 insert into dermatologist (id) values ('11355678-52d3-11eb-ae93-0242ac130002');
 insert into dermatologist (id) values ('22345678-52d3-11eb-ae93-0242ac130002');
 insert into dermatologist (id) values ('25345678-52d3-11eb-ae93-0242ac130002');
 
+insert into pharmacist (id, pharmacy_id) values ('25345278-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into pharmacist (id, pharmacy_id) values ('25345278-52d3-12eb-ac93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202');
+insert into pharmacist (id, pharmacy_id) values ('25345278-52d3-13eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202');
 
 insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('11355678-52d3-11eb-ae93-0242ac130002' ,'cafeddee-56cb-11eb-ae93-0242ac130002');
 insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('22345678-52d3-11eb-ae93-0242ac130002' ,'cafeddee-56cb-11eb-ae93-0242ac130202');
@@ -88,9 +100,17 @@ insert into appointment (id, appointment_status, appointment_type, start_date_ti
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id, patient_id) values ('2bc86116-5c40-11eb-ae93-0242ac130002','SCHEDULED','EXAMINATION', '2021-02-15 11:00:00', '2021-02-15 11:16:00', 1800, 'cafeddee-56cb-11eb-ae93-0242ac130002', '25345678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002');
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id, patient_id) values ('2bc86117-5c40-11eb-ae93-0242ac130002','SCHEDULED','EXAMINATION', '2021-02-17 11:00:00', '2021-02-17 11:16:00', 1800, 'cafeddee-56cb-11eb-ae93-0242ac130002', '22345678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002');
 
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, staff_id, pharmacy_id, patient_id) values ('2bc86117-5c40-11ab-ae93-0242ac130002','SCHEDULED','CONSULTATION', '2021-02-17 11:00:00', '2021-02-17 11:15:00', 450, '25345278-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002');
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, staff_id, pharmacy_id, patient_id) values ('2bc86117-5c40-12ab-ae93-0242ac130002','SCHEDULED','CONSULTATION', '2021-02-18 11:00:00', '2021-02-18 11:15:00', 999, '25345278-52d3-12eb-ac93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','22793162-52d3-11eb-ae93-0242ac130002');
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, staff_id, pharmacy_id, patient_id) values ('2bc86117-5c40-13ab-ae93-0242ac130002','SCHEDULED','CONSULTATION', '2021-02-19 11:00:00', '2021-02-19 11:15:00', 999, '25345278-52d3-13eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','22793162-52d3-11eb-ae93-0242ac130002');
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, staff_id, pharmacy_id, patient_id) values ('2cc86117-5c40-13ab-ae93-0242ac130002','SCHEDULED','CONSULTATION', '2021-01-29 11:55:00', '2021-01-29 12:10:00', 999, '25345278-52d3-12eb-ac93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','22793162-52d3-11eb-ae93-0242ac130002');
+
 
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2ba86116-5f40-11eb-ae93-0242ac130002','CREATED','EXAMINATION', '2021-02-11 11:00:00', '2021-02-11 11:30:00', 1400, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002');
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2ba86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-11 11:30:00', '2021-02-11 12:00:00', 1300, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002');
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2ca86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-13 11:30:00', '2021-02-13 12:00:00', 1500, 'cafeddee-56cb-11eb-ae93-0242ac130202', '22345678-52d3-11eb-ae93-0242ac130002');
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2da86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-13 11:30:00', '2021-02-13 12:00:00', 1500, 'cafeddee-56cb-11eb-ae93-0242ac130002', '25345678-52d3-11eb-ae93-0242ac130002');
 
+insert into work_time (id, start_date, start_time, end_date, end_time, staff_id, pharmacy_id) values ('8fb41318-60d4-11eb-ae93-0242ac130002', '2021-01-20', 8, '2021-02-20', 17, '25345278-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into work_time (id, start_date, start_time, end_date, end_time, staff_id, pharmacy_id) values ('8fc41318-60d4-12db-ae93-0242ac130002', '2021-01-23', 13, '2021-03-20', 20, '25345278-52d3-12eb-ac93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202');
+insert into work_time (id, start_date, start_time, end_date, end_time, staff_id, pharmacy_id) values ('8fa41318-60d4-13eb-ae93-0242ac130002', '2021-01-28', 12, '2021-02-23', 21, '25345278-52d3-13eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202');

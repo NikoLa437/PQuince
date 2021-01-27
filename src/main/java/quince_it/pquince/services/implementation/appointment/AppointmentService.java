@@ -2,6 +2,7 @@ package quince_it.pquince.services.implementation.appointment;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -9,16 +10,18 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.StaffType;
+import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
@@ -40,6 +43,9 @@ public class AppointmentService implements IAppointmentService{
 	
 	@Autowired
 	private AppointmentRepository appointmentRepository;
+	
+	@Autowired
+	private WorkTimeRepository workTimeRepository;
 	
 	@Autowired
 	private EmailService emailService;
@@ -302,5 +308,55 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
 		
 		return returnAppointments;
+	}
+
+	@Override
+	@SuppressWarnings("deprecation")
+	public List<Pharmacy> findAllDistinctPharmaciesForAppointmentTime(Date startDateTime, Date endDateTime) {
+
+		List<WorkTime> workTimeInRange = workTimeRepository.findWorkTimesByDesiredConsultationTime(new Date(endDateTime.getYear(), endDateTime.getMonth(), endDateTime.getDate(),0,0,0),
+				endDateTime.getMinutes() == 0 ? endDateTime.getHours() : endDateTime.getHours() + 1);
+		
+		List<Appointment> overlappingAppointmentsWithRange = appointmentRepository.findAllConsultationsByAppointmentTime(startDateTime, endDateTime);
+		List<Pharmacy> distinctPharmacies = findDistinctPharmaciesInRange(workTimeInRange, overlappingAppointmentsWithRange);
+
+		return distinctPharmacies;
+	}
+
+	private List<Pharmacy> findDistinctPharmaciesInRange(List<WorkTime> workTimeInRange,List<Appointment> overlappingAppointmentsWithRange) {
+		List<Pharmacy> pharmacies = new ArrayList<Pharmacy>();
+		
+		for(WorkTime workTime : workTimeInRange) {
+			boolean busy = false;
+			for(Appointment appointment : overlappingAppointmentsWithRange) {
+				if(workTime.getStaff().getId().equals(appointment.getStaff().getId())) {
+					busy = true;
+					break;
+				}
+			}
+			
+			if(!busy) pharmacies.add(workTime.getPharmacy());
+		}
+		
+		List<Pharmacy> returnPharmacies = getDistinctPharmacies(pharmacies);
+		
+		return returnPharmacies;
+	}
+
+	private List<Pharmacy> getDistinctPharmacies(List<Pharmacy> pharmacies) {
+		List<Pharmacy> returnPharmacies = new ArrayList<Pharmacy>();
+		
+		for(Pharmacy pharmacy : pharmacies) {
+			boolean added = false;
+			for(Pharmacy rePharmacy : returnPharmacies) {
+				if(pharmacy.getId().equals(rePharmacy.getId())) {
+					added = true;
+					break;
+				}
+			}
+			
+			if(!added) returnPharmacies.add(pharmacy);
+		}
+		return returnPharmacies;
 	}
 }

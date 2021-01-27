@@ -1,5 +1,6 @@
 package quince_it.pquince.controllers.pharmacy;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDru
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
@@ -62,6 +64,17 @@ public class PharmacyController {
 			return new ResponseEntity<>(pharmacyService.findByIdWithGrade(pharmacyId),HttpStatus.OK);
 
 		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/get-pharmacy-by-appointment-time/{startDateTime}")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPrice(@PathVariable long startDateTime){
+	
+		try {
+			return new ResponseEntity<>(pharmacyService.findAllPharmaciesFreeForPeriodWithGradesAndPrice(new Date(startDateTime)),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
