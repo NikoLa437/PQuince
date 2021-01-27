@@ -41,4 +41,6 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	
 	boolean cancelAppointment(UUID appointmentId);
 
+	List<IdentifiableDTO<DermatologistAppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId);
+
 }

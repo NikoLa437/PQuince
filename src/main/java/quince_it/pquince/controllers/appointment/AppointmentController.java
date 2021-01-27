@@ -132,4 +132,9 @@ public class AppointmentController {
 		
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
+	
+	@GetMapping("/patient/{patientId}")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> getAppointmentsByPatient(@PathVariable UUID patientId) {
+		return new ResponseEntity<>(appointmentService.getDermatologistAppointmentsByPatient(patientId),HttpStatus.OK);
+	}
 }

@@ -4,6 +4,7 @@ import TopBar from "../components/TopBar";
 import { BASE_URL } from "../constants.js";
 import Axios from "axios";
 import PatientLogo from "../static/patientLogo.png";
+import AppointmentIcon from "../static/appointment-icon.jpg";
 
 
 class PatientProfilePage extends Component {
@@ -35,6 +36,15 @@ class PatientProfilePage extends Component {
 			.catch((err) => {
 				console.log(err);
             });
+
+        Axios.get(BASE_URL + "/api/appointment/patient/22793162-52d3-11eb-ae93-0242ac130002")
+        .then((res) => {
+            this.setState({ appointments: res.data });
+            console.log(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 	}
 
 	render() {
@@ -112,6 +122,77 @@ class PatientProfilePage extends Component {
 								
 							</form>
 						</div>
+
+                    <table className="table table-hover" style={{ width: "70%", marginTop: "3rem" }}>
+                    <tbody>
+                        {this.state.appointments.map((appointment) => (
+                            <tr
+                                id={appointment.Id}
+                                key={appointment.Id}
+                                className="rounded"
+                                style={{ cursor: "pointer" }}
+                            >
+                                <td
+                                    width="190em"
+                                >
+                                    <img
+                                        className="img-fluid"
+                                        src={AppointmentIcon}
+                                        width="100em"
+                                    />
+                                </td>
+                                <td>
+                                    <div>
+                                        <b>Date: </b>{" "}
+                                        {new Date(
+                                            appointment.EntityDTO.startDateTime
+                                        ).toLocaleDateString("en-US", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                        })}
+                                    </div>
+                                    <div>
+                                        <b>Time from: </b>{" "}
+                                        {new Date(
+                                            appointment.EntityDTO.startDateTime
+                                        ).toLocaleTimeString("en-US", {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
+                                    </div>
+                                    <div>
+                                        <b>Time to: </b>{" "}
+                                        {new Date(
+                                            appointment.EntityDTO.endDateTime
+                                        ).toLocaleTimeString("en-US", {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
+                                    </div>
+                                    <div>
+                                        <b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
+                                    </div>
+                                    <div>
+                                        <b>Dermatologist: </b>{" "}
+                                        {appointment.EntityDTO.staff.EntityDTO.name +
+                                            " " +
+                                            appointment.EntityDTO.staff.EntityDTO.surname}
+                                    </div>
+                                    <div>
+                                        <b>Dermatologist grade: </b>{" "}
+                                        {appointment.EntityDTO.staff.EntityDTO.grade}
+                                        <i
+                                            className="icofont-star"
+                                            style={{ color: "#1977cc" }}
+                                        ></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
 					</div>
 				</div>
 			</React.Fragment>
