@@ -4,49 +4,36 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.ManyToOne;
 
 import quince_it.pquince.entities.users.Patient;
 
 @Entity
-@IdClass(PharmacyFeedbackId.class)
 public class PharmacyFeedback implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@ManyToOne
-	private Pharmacy pharmacy;
-	
-	@Id
-    @ManyToOne
-	private Patient patient;
+	@EmbeddedId
+	private PharmacyFeedbackId pharmacyId;
 	
 	@Column(name = "grade")
 	private int grade;
-	
-	@Column(name = "comment")
-	private String comment;
 	
 	@Column(name = "date")
 	private Date date;
 	
 	public PharmacyFeedback() {}
 	
-	public PharmacyFeedback(Pharmacy pharmacy, int grade, String comment, Patient patient, Date date) {
+	public PharmacyFeedback(Pharmacy pharmacy, int grade, Patient patient, Date date) {
 		super();
-		this.pharmacy = pharmacy;
+		this.pharmacyId = new PharmacyFeedbackId(pharmacy, patient);
 		this.grade = grade;
-		this.comment = comment;
 		this.date = date;
-		this.patient = patient;
 	}
 
-	public PharmacyFeedback(Pharmacy pharmacy, int grade, String comment, Patient patient) {
-		this(pharmacy, grade, comment, patient, new Date());
+	public PharmacyFeedback(Pharmacy pharmacy, int grade, Patient patient) {
+		this(pharmacy, grade, patient, new Date());
 	}
 	
 
@@ -54,13 +41,6 @@ public class PharmacyFeedback implements Serializable{
 		this.grade = grade;
 	}
 
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
 
 	public Date getDate() {
 		return date;
@@ -71,11 +51,15 @@ public class PharmacyFeedback implements Serializable{
 	}
 
 	public Patient getPatient() {
-		return patient;
+		return pharmacyId.getPatient();
 	}
 
 	public Pharmacy getPharmacy() {
-		return pharmacy;
+		return pharmacyId.getPharmacy();
+	}
+
+	public int getGrade() {
+		return grade;
 	}
         
 }

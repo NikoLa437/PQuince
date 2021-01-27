@@ -168,6 +168,18 @@ public class DrugReservationService implements IDrugReservationService{
 		
 		
 	}
+
+	@Override
+	public List<IdentifiableDTO<DrugReservationDTO>> findAllFutureReservationsByPatientId(UUID patientId) {
+		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findAllFutureReservationsByPatientId(patientId));
+
+	}
+
+	@Override
+	public List<IdentifiableDTO<DrugReservationDTO>> findProcessedDrugReservationsForPatient(UUID patientId) {
+		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findProcessedDrugReservationsForPatient(patientId));
+
+	}
 	
 
 
