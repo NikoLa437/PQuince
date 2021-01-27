@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import quince_it.pquince.entities.appointment.Appointment;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
@@ -59,5 +60,20 @@ public class AppointmentMapper {
 		appointments.forEach((a) -> appointmentListDTO.add(MapAppointmentPersistenceToAppointmentWithPharmacyIdentifiableDTO(a, findAppropriateStaff(a.getStaff().getId(), staffWithGrades))));
 
 		return appointmentListDTO;
+	}
+
+	public static List<IdentifiableDTO<AppointmentDTO>> MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(
+			List<Appointment> appointments) {
+		
+		List<IdentifiableDTO<AppointmentDTO>> appointmentDTOList = new ArrayList<IdentifiableDTO<AppointmentDTO>>();
+		appointments.forEach((a) -> appointmentDTOList.add(MapAppointmentPersistenceToAppointmentIdentifiableDTO(a)));
+
+		return appointmentDTOList;
+	}
+	
+	public static IdentifiableDTO<AppointmentDTO> MapAppointmentPersistenceToAppointmentIdentifiableDTO(Appointment appointment){
+		if(appointment == null) throw new IllegalArgumentException();
+		
+		return new IdentifiableDTO<AppointmentDTO>(appointment.getId(), new AppointmentDTO(appointment.getStartDateTime(), appointment.getEndDateTime(), appointment.getPrice()));
 	}
 }
