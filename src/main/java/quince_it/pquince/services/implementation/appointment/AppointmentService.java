@@ -17,15 +17,20 @@ import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.StaffType;
+import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
+import quince_it.pquince.services.implementation.users.WorkTimeService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.appointment.AppointmentMapper;
 
@@ -42,6 +47,9 @@ public class AppointmentService implements IAppointmentService{
 	private AppointmentRepository appointmentRepository;
 	
 	@Autowired
+	private WorkTimeRepository workTimeRepository;
+	
+	@Autowired
 	private EmailService emailService;
 	
 	@Autowired
@@ -49,34 +57,35 @@ public class AppointmentService implements IAppointmentService{
 	
 	@Override
 	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAll() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public IdentifiableDTO<DermatologistAppointmentDTO> findById(UUID id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public UUID create(DermatologistAppointmentDTO entityDTO) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void update(DermatologistAppointmentDTO entityDTO, UUID id) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean delete(UUID id) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@Override
+	public List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO) {
+		WorkTime workTime = workTimeRepository.getWorkTimeForDermatologistForDate(appointmentRequestDTO.getDermatologistId(),appointmentRequestDTO.getDate());
+		return null;
+	}
+	
 	@Override
 	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentType(UUID pharmacyId,
 			AppointmentType appointmentType) {

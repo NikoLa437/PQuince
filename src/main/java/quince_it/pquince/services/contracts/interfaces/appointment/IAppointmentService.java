@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -47,5 +49,7 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	boolean cancelAppointment(UUID appointmentId);
 
 	List<IdentifiableDTO<AppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId);
+
+	List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO);
 
 }
