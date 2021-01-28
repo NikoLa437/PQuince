@@ -19,6 +19,7 @@ import PatientProfilePage from "./pages/PatientProfilePage";
 import ScheduleAppointmentPage from "./pages/dermatologist-appointment/ScheduleAppointmentPage";
 import DermatologistComplaints from "./pages/complaints/DermatologistComplaint";
 import PharmacyComplaints from "./pages/complaints/ComplaintsForPharmacy";
+import TreatmentReportPage from "./pages/TreatmentReportPage";
 
 function App() {
 	return (
@@ -83,6 +84,13 @@ function App() {
 					path="/schedule-appointment"
 					component={ScheduleAppointmentPage}
 				/>
+				<Link
+					exact
+					to="/treatment-report"
+					path="/treatment-report"
+					component={TreatmentReportPage}
+				/>
+				
 				
 			</Switch>
 		</Router>
