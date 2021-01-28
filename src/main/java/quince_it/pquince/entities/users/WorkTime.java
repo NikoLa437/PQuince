@@ -3,10 +3,8 @@ package quince_it.pquince.entities.users;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
@@ -18,11 +16,11 @@ public class WorkTime {
     @Column(name = "id")
 	private UUID id;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Pharmacy forPharmacy;
+	@ManyToOne
+	private Pharmacy pharmacy;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Staff forStaff;
+	@ManyToOne
+	private Staff staff;
 	
 	@Column(name = "startDate")
 	private Date startDate;
@@ -38,19 +36,20 @@ public class WorkTime {
     
     public WorkTime() {}
 	
-	public WorkTime(Pharmacy forPharmacy,Staff forStaff, Date startDate, Date endDate, int startTime, int endTime) {
-		this(UUID.randomUUID(), forStaff,startDate,endDate,startTime,endTime,forPharmacy);
+	public WorkTime(Pharmacy pharmacy,Staff staff, Date startDate, Date endDate, int startTime, int endTime) {
+		this(UUID.randomUUID(), staff,startDate,endDate,startTime,endTime,pharmacy);
 	}
 	
-	public WorkTime(UUID id, Staff forStaff, Date startDate, Date endDate, int startTime, int endTime,Pharmacy forPharmacy) {
+	public WorkTime(UUID id, Staff staff, Date startDate, Date endDate, int startTime, int endTime,Pharmacy pharmacy) {
 		super();
 		this.id = id;
-		this.forStaff= forStaff;
+		this.staff= staff;
 		this.startDate= startDate;
 		this.endDate= endDate;
 		this.startTime=startTime;
 		this.endTime=endTime;
-		this.forPharmacy=forPharmacy;
+		this.pharmacy = pharmacy;
+
 	}
 
 	public UUID getId() {
@@ -61,12 +60,12 @@ public class WorkTime {
 		this.id = id;
 	}
 
-	public Staff getForStaff() {
-		return forStaff;
+	public Staff getStaff() {
+		return staff;
 	}
 
-	public void setForStaff(Staff forStaff) {
-		this.forStaff = forStaff;
+	public void setStaff(Staff staff) {
+		this.staff = staff;
 	}
 
 	public Date getStartDate() {
@@ -97,16 +96,12 @@ public class WorkTime {
 		return endTime;
 	}
 
-	public Pharmacy getForPharmacy() {
-		return forPharmacy;
-	}
-
-	public void setForPharmacy(Pharmacy forPharmacy) {
-		this.forPharmacy = forPharmacy;
-	}
-
 	public void setEndTime(int endTime) {
 		this.endTime = endTime;
+	}
+
+	public Pharmacy getPharmacy() {
+		return pharmacy;
 	}
 	
 	public boolean IsWorkTimesOverlap(WorkTime workTime) {

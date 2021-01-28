@@ -12,6 +12,8 @@ public class PharmacyGradeDTO {
 
 	private double grade;
 	
+	public PharmacyGradeDTO() {}
+	
 	public PharmacyGradeDTO(String name, Address address, String description, double grade) {
 		super();
 		this.name = name;

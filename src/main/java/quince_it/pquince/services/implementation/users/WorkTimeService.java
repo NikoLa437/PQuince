@@ -23,11 +23,12 @@ public class WorkTimeService implements IWorkTimeService{
 
 	@Autowired
 	private WorkTimeRepository workTimeRepository;
+	
 	@Autowired
 	private StaffRepository staffRepository;
+	
 	@Autowired
 	private PharmacyRepository pharmacyRepository;
-
 
 	@Override
 	public UUID create(WorkTimeDTO workTimeDTO) {
@@ -56,7 +57,7 @@ public class WorkTimeService implements IWorkTimeService{
 		List<IdentifiableDTO<WorkTimeDTO>> retWorkTimes = new ArrayList<IdentifiableDTO<WorkTimeDTO>>();
 		
 		for(WorkTime workTime : workTimeRepository.findAll()) {
-			if(workTime.getForStaff().getId().equals(staffId))
+			if(workTime.getStaff().getId().equals(staffId))
 				retWorkTimes.add(WorkTimeMapper.MapWorkTimePersistenceToWorkTimeIdentifiableDTO(workTime));
 		}
 		
@@ -73,7 +74,7 @@ public class WorkTimeService implements IWorkTimeService{
 		List<WorkTime> workTimes= workTimeRepository.findAll();
 		
 		for(WorkTime workTime : workTimes) {
-			if(workTime.getForStaff().getId().equals(workTimeDTO.getForStaff()) && isDateOverlap(workTime,workTimeDTO))
+			if(workTime.getStaff().getId().equals(workTimeDTO.getForStaff()) && isDateOverlap(workTime,workTimeDTO))
 				return false;
 		}
 		

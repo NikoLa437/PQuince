@@ -1,7 +1,8 @@
 package quince_it.pquince.services.implementation.users;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,12 +32,14 @@ import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
+import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
@@ -71,6 +75,12 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private IAppointmentService appointmentService;
+	
+	@Autowired
+	private Environment env;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -365,6 +375,44 @@ public class UserService implements IUserService{
 		List<IdentifiableDTO<UserDTO>> users = new ArrayList<IdentifiableDTO<UserDTO>>();
 		patientRepository.findByNameAndSurname(name.toLowerCase(), surname.toLowerCase()).forEach((u) -> users.add(UserMapper.MapUserPersistenceToUserIdentifiableDTO(u)));
 		return users;
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacy(Date startDateTime, UUID pharmacyId) {
+		
+		long time = startDateTime.getTime();
+		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
+				
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+		appointmentService.findAllDistinctPharmacistsForAppointmentTimeForPharmacy(startDateTime, endDateTime, pharmacyId).forEach((p) -> pharmacists.add(MapStaffPersistenceToPharmacistGradeIdentifiableDTO(p)));
+		
+		return pharmacists;
+	}
+	
+	public  IdentifiableDTO<PharmacistForPharmacyGradeDTO> MapStaffPersistenceToPharmacistGradeIdentifiableDTO(Staff staff){
+		if(staff == null) throw new IllegalArgumentException();
+		
+		double avgGrade = staffFeedbackService.findAvgGradeForStaff(staff.getId());
+		return new IdentifiableDTO<PharmacistForPharmacyGradeDTO>(staff.getId(), new PharmacistForPharmacyGradeDTO(staff.getName(), staff.getSurname(), avgGrade));
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacySortByGradeAscending(Date startDateTime, UUID pharmacyId) {
+		
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = findAllFreePharmacistForPharmacy(startDateTime, pharmacyId);
+		Collections.sort(pharmacists, (s1, s2) -> Double.compare(s1.EntityDTO.getGrade(), s2.EntityDTO.getGrade()));
+
+		return pharmacists;
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacySortByGradeDescending(Date startDateTime, UUID pharmacyId) {
+		
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = findAllFreePharmacistForPharmacy(startDateTime, pharmacyId);
+		Collections.sort(pharmacists, (s1, s2) -> Double.compare(s1.EntityDTO.getGrade(), s2.EntityDTO.getGrade()));
+		Collections.reverse(pharmacists);
+
+		return pharmacists;
 	}
 
 }
