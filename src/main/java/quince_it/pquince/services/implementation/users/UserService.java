@@ -1,6 +1,7 @@
 package quince_it.pquince.services.implementation.users;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.Allergen;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
@@ -25,6 +27,7 @@ import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
@@ -59,6 +62,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private AllergenService allergenService;
+
+	@Autowired
+	private AuthorityService authorityService;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -77,7 +83,13 @@ public class UserService implements IUserService{
 	public IdentifiableDTO<UserDTO> findById(UUID id) {
 		return UserMapper.MapUserPersistenceToUserIdentifiableDTO(userRepository.getOne(id));
 	}
-
+	
+	@Override
+	public List<Authority> getAuthorityById(UUID id) {
+		 User user = userRepository.getOne(id);
+		 return user.getUserAuthorities();
+	}
+	
 	@Override
 	public UUID create(UserDTO entityDTO) {
 		// TODO Auto-generated method stub
@@ -107,6 +119,11 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createPatient(UserRequestDTO entityDTO) {
 		Patient patient = CreatePatientFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("PATIENT");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		patient.setUserAuthorities(authorities);
+		
 		patientRepository.save(patient);
 		try {
 			emailService.sendSignUpNotificaitionAsync(patient);

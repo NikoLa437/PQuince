@@ -4,6 +4,7 @@ package quince_it.pquince.services.contracts.dto.users;
 public class UserTokenStateDTO {
 	
     private String accessToken;
+    private String role;
     private Long expiresIn;
 
     public UserTokenStateDTO() {
@@ -11,13 +12,22 @@ public class UserTokenStateDTO {
         this.expiresIn = null;
     }
 
-    public UserTokenStateDTO(String accessToken, long expiresIn) {
+    public UserTokenStateDTO(String accessToken, long expiresIn, String role) {
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
+        this.role = role;
     }
 
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+    
+    public String getRole() {
+        return role;
     }
 
     public void setAccessToken(String accessToken) {

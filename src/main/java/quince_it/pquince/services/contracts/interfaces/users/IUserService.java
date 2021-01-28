@@ -3,6 +3,7 @@ package quince_it.pquince.services.contracts.interfaces.users;
 import java.util.List;
 import java.util.UUID;
 
+import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
@@ -42,6 +43,8 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	void deleteAllPatientsPenalties();
 	
 	List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologistForPharmacy(UUID pharmacyId);
+
+	List<Authority> getAuthorityById(UUID id);
 
 
 }

@@ -1,6 +1,12 @@
 import React from 'react';
 
 class TopBar extends React.Component{
+
+	handleLogout = () => {
+       localStorage.removeItem('keyToken');
+       localStorage.removeItem('keyRole');
+    }
+    
     render(){
         const myStyle = {
             margin: 10
@@ -17,6 +23,7 @@ class TopBar extends React.Component{
                     <div className="register-login">
                         <a href="/registration">Register</a>
                         <a href="/login">LogIn</a>
+                        <a onClick = {this.handleLogout} href="/login">LogOut</a>
                         <a href="/profile" style={myStyle} className="profile"><i className="icofont-user"></i>Profile</a>
                     </div>
                 </div>
