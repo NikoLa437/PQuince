@@ -29,15 +29,15 @@ public class Staff extends User {
 	}
 
 	public Staff(String email, String password, String name, String surname, Address address, String phoneNumber, StaffType staffType) {
-		super(email, password, name, surname, address, phoneNumber, false);
+		super(email, password, name, surname, address, phoneNumber, true);
 		
 		this.absences = new ArrayList<Absence>();
 		this.staffType = staffType;
 	}
 
 	public Staff(UUID id, String email, String password, String name, String surname, Address address,
-			String phoneNumber, boolean active, int penalty, List<Absence> absences,int points,LoyalityCategory loyalityCategory, StaffType staffType) {
-		super(id, email, password, name, surname, address, phoneNumber, active);
+			String phoneNumber, List<Absence> absences,StaffType staffType) {
+		super(id, email, password, name, surname, address, phoneNumber, true);
 
 		this.absences = absences;
 		this.staffType = staffType;
