@@ -1,5 +1,6 @@
 package quince_it.pquince.controllers.users;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,11 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
-import quince_it.pquince.services.contracts.dto.users.DermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
-import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
-import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
@@ -189,6 +188,39 @@ public class UsersController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/get-pharmacists")
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPrice(@RequestParam UUID pharmacyId, @RequestParam long startDateTime){
+	
+		try {
+			return new ResponseEntity<>(userService.findAllFreePharmacistForPharmacy(new Date(startDateTime), pharmacyId),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/get-pharmacists/sort-by-grade-ascending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeAscending(@RequestParam UUID pharmacyId, @RequestParam long startDateTime){
+	
+		try {
+			return new ResponseEntity<>(userService.findAllFreePharmacistForPharmacySortByGradeAscending(new Date(startDateTime), pharmacyId),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/get-pharmacists/sort-by-grade-descending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeDescending(@RequestParam UUID pharmacyId, @RequestParam long startDateTime){
+	
+		try {
+			return new ResponseEntity<>(userService.findAllFreePharmacistForPharmacySortByGradeDescending(new Date(startDateTime), pharmacyId),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 	

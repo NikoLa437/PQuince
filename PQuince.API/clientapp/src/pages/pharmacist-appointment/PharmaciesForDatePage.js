@@ -6,7 +6,7 @@ class PharmaciesForDatePage extends Component {
 		return (
 			<div hidden={this.props.hiddenPharmacies}>
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Pharmacies</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Available Pharmacies</h5>
 
 					<div className="form-group">
 						<div className="form-group controls mb-0 pb-2">
@@ -16,6 +16,16 @@ class PharmaciesForDatePage extends Component {
 									Back
 								</button>
 							</div>
+							<p className="mt-2 text-uppercase" style={{ fontSize: "1.5em" }}>
+								Consultation date:{" "}
+								{new Date(this.props.consultationDate).toLocaleDateString("en-US", {
+									day: "2-digit",
+									month: "2-digit",
+									year: "numeric",
+									hour: "2-digit",
+									minute: "2-digit",
+								})}
+							</p>
 							<div className="form-row mt-3">
 								<div className="form-col">
 									<div className="dropdown">
@@ -56,10 +66,15 @@ class PharmaciesForDatePage extends Component {
 						</div>
 					</div>
 
-					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.props.pharmacies.map((pharmacy) => (
-								<tr id={pharmacy.Id} key={pharmacy.Id} onClick={this.handle}>
+								<tr
+									id={pharmacy.Id}
+									key={pharmacy.Id}
+									onClick={() => this.props.onPharmacyClick(pharmacy)}
+									style={{ cursor: "pointer" }}
+								>
 									<td width="150em">
 										<img className="img-fluid" src={PharmacyLogo} width="90em" />
 									</td>
@@ -76,7 +91,7 @@ class PharmaciesForDatePage extends Component {
 											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 										<div>
-											<b>Consultation price: </b> {pharmacy.EntityDTO.price}
+											<b>Consultation price: </b> {pharmacy.EntityDTO.price} <b> din</b>
 										</div>
 									</td>
 								</tr>

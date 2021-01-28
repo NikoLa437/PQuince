@@ -6,9 +6,13 @@ import { BASE_URL } from "../../constants.js";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import PharmaciesForDatePage from "./PharmaciesForDatePage";
+import PharmacistForPharmacy from "./PharmacistForPharmacy";
+import ModalDialog from "../../components/ModalDialog";
+import { Redirect } from "react-router-dom";
 
 class ConsultationTimeSelectPage extends Component {
 	state = {
+		pharmacists: [],
 		pharmacies: [],
 		showingSorted: false,
 		selectedDate: new Date(),
@@ -16,10 +20,32 @@ class ConsultationTimeSelectPage extends Component {
 		minutes: new Date().getMinutes(),
 		showDateError: "none",
 		hiddenPharmacies: true,
+		hiddenPharmacists: true,
+		pharmacyName: "",
+		pharmacyAddress: "",
+		pharmacyGrade: "",
+		pharmacyPrice: "",
+		consultationDate: new Date(),
+		selectedPharmacyId: "",
+		showingPharmacistSorted: false,
+		redirect: false,
+		openModalSuccess: false,
 	};
 
 	handleSortByGradeAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-date-ascending")
+		Axios.get(
+			BASE_URL +
+				"/api/pharmacy/get-pharmacy-by-appointment-time/sort-by-grade-ascending/" +
+				new Date(
+					this.state.selectedDate.getFullYear(),
+					this.state.selectedDate.getMonth(),
+					this.state.selectedDate.getDate(),
+					this.state.hours,
+					this.state.minutes,
+					0,
+					0
+				).getTime()
+		)
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ pharmacies: res.data, showingSorted: true });
@@ -30,7 +56,19 @@ class ConsultationTimeSelectPage extends Component {
 	};
 
 	handleSortByGradeDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-date-descending")
+		Axios.get(
+			BASE_URL +
+				"/api/pharmacy/get-pharmacy-by-appointment-time/sort-by-grade-descending/" +
+				new Date(
+					this.state.selectedDate.getFullYear(),
+					this.state.selectedDate.getMonth(),
+					this.state.selectedDate.getDate(),
+					this.state.hours,
+					this.state.minutes,
+					0,
+					0
+				).getTime()
+		)
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ pharmacies: res.data, showingSorted: true });
@@ -41,7 +79,19 @@ class ConsultationTimeSelectPage extends Component {
 	};
 
 	handleSortByPriceAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-price-ascending")
+		Axios.get(
+			BASE_URL +
+				"/api/pharmacy/get-pharmacy-by-appointment-time/sort-by-price-ascending/" +
+				new Date(
+					this.state.selectedDate.getFullYear(),
+					this.state.selectedDate.getMonth(),
+					this.state.selectedDate.getDate(),
+					this.state.hours,
+					this.state.minutes,
+					0,
+					0
+				).getTime()
+		)
 			.then((res) => {
 				this.setState({ pharmacies: res.data, showingSorted: true });
 				console.log(res.data);
@@ -52,7 +102,19 @@ class ConsultationTimeSelectPage extends Component {
 	};
 
 	handleSortByPriceDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-price-descending")
+		Axios.get(
+			BASE_URL +
+				"/api/pharmacy/get-pharmacy-by-appointment-time/sort-by-price-descending/" +
+				new Date(
+					this.state.selectedDate.getFullYear(),
+					this.state.selectedDate.getMonth(),
+					this.state.selectedDate.getDate(),
+					this.state.hours,
+					this.state.minutes,
+					0,
+					0
+				).getTime()
+		)
 			.then((res) => {
 				this.setState({ pharmacies: res.data, showingSorted: true });
 				console.log(res.data);
@@ -76,7 +138,18 @@ class ConsultationTimeSelectPage extends Component {
 
 	handleCheckAvailability = () => {
 		let today = new Date();
-		this.setState({ showDateError: "none" });
+		this.setState({
+			showDateError: "none",
+			consultationDate: new Date(
+				this.state.selectedDate.getFullYear(),
+				this.state.selectedDate.getMonth(),
+				this.state.selectedDate.getDate(),
+				this.state.hours,
+				this.state.minutes,
+				0,
+				0
+			).getTime(),
+		});
 
 		if (
 			new Date(this.state.selectedDate.getFullYear(), this.state.selectedDate.getMonth(), this.state.selectedDate.getDate()).getTime() ===
@@ -135,13 +208,186 @@ class ConsultationTimeSelectPage extends Component {
 		this.setState({ hiddenPharmacies: true });
 	};
 
+	handleResetSort = () => {
+		Axios.get(
+			BASE_URL +
+				"/api/pharmacy/get-pharmacy-by-appointment-time/" +
+				new Date(
+					this.state.selectedDate.getFullYear(),
+					this.state.selectedDate.getMonth(),
+					this.state.selectedDate.getDate(),
+					this.state.hours,
+					this.state.minutes,
+					0,
+					0
+				).getTime()
+		)
+			.then((res) => {
+				this.setState({ pharmacies: res.data, showingSorted: false });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handlePhamacyClick = (pharmacy) => {
+		this.setState({
+			selectedPharmacyId: pharmacy.Id,
+			pharmacyName: pharmacy.EntityDTO.name,
+			pharmacyAddress: pharmacy.EntityDTO.address.street + ", " + pharmacy.EntityDTO.address.city + ", " + pharmacy.EntityDTO.address.country,
+			pharmacyGrade: pharmacy.EntityDTO.grade,
+			pharmacyPrice: pharmacy.EntityDTO.price,
+			consultationDate: new Date(
+				this.state.selectedDate.getFullYear(),
+				this.state.selectedDate.getMonth(),
+				this.state.selectedDate.getDate(),
+				this.state.hours,
+				this.state.minutes,
+				0,
+				0
+			).getTime(),
+		});
+		Axios.get(
+			BASE_URL +
+				"/api/users/get-pharmacists?pharmacyId=" +
+				pharmacy.Id +
+				"&startDateTime=" +
+				new Date(
+					this.state.selectedDate.getFullYear(),
+					this.state.selectedDate.getMonth(),
+					this.state.selectedDate.getDate(),
+					this.state.hours,
+					this.state.minutes,
+					0,
+					0
+				).getTime()
+		)
+			.then((res) => {
+				this.setState({ pharmacists: res.data, hiddenPharmacists: false, hiddenPharmacies: true });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handlePharmacistBackIcon = () => {
+		this.setState({ hiddenPharmacists: true, hiddenPharmacies: false });
+	};
+
+	handleSortPharmacstByGradeAscending = () => {
+		Axios.get(
+			BASE_URL +
+				"/api/users/get-pharmacists/sort-by-grade-ascending?pharmacyId=" +
+				this.state.selectedPharmacyId +
+				"&startDateTime=" +
+				new Date(
+					this.state.selectedDate.getFullYear(),
+					this.state.selectedDate.getMonth(),
+					this.state.selectedDate.getDate(),
+					this.state.hours,
+					this.state.minutes,
+					0,
+					0
+				).getTime()
+		)
+			.then((res) => {
+				this.setState({ pharmacists: res.data, showingPharmacistSorted: true });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleSortPharmacstByGradeDescending = () => {
+		Axios.get(
+			BASE_URL +
+				"/api/users/get-pharmacists/sort-by-grade-descending?pharmacyId=" +
+				this.state.selectedPharmacyId +
+				"&startDateTime=" +
+				new Date(
+					this.state.selectedDate.getFullYear(),
+					this.state.selectedDate.getMonth(),
+					this.state.selectedDate.getDate(),
+					this.state.hours,
+					this.state.minutes,
+					0,
+					0
+				).getTime()
+		)
+			.then((res) => {
+				this.setState({ pharmacists: res.data, showingPharmacistSorted: true });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleResetPharmacistSort = () => {
+		Axios.get(
+			BASE_URL +
+				"/api/users/get-pharmacists?pharmacyId=" +
+				this.state.selectedPharmacyId +
+				"&startDateTime=" +
+				new Date(
+					this.state.selectedDate.getFullYear(),
+					this.state.selectedDate.getMonth(),
+					this.state.selectedDate.getDate(),
+					this.state.hours,
+					this.state.minutes,
+					0,
+					0
+				).getTime()
+		)
+			.then((res) => {
+				this.setState({ pharmacists: res.data, showingPharmacistSorted: false });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleModalSuccessClose = () => {
+		this.setState({ openModalSuccess: false, redirect: true });
+	};
+
+	handlePharmacistClick = (pharmacistId) => {
+		let EntityDTO = {
+			pharmacistId: pharmacistId,
+			startDateTime: new Date(
+				this.state.selectedDate.getFullYear(),
+				this.state.selectedDate.getMonth(),
+				this.state.selectedDate.getDate(),
+				this.state.hours,
+				this.state.minutes,
+				0,
+				0
+			),
+		};
+
+		Axios.post(BASE_URL + "/api/appointment/reserve-appointment", EntityDTO)
+			.then((res) => {
+				this.setState({ openModalSuccess: true });
+				console.log(res);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
 	render() {
+		if (this.state.redirect) return <Redirect push to="/" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
 				<Header />
 
-				<div hidden={!this.state.hiddenPharmacies} className="container" style={{ marginTop: "8%" }}>
+				<div hidden={!this.state.hiddenPharmacies || !this.state.hiddenPharmacists} className="container" style={{ marginTop: "8%" }}>
 					<h3
 						className="text-center mb-0 text-uppercase"
 						style={{ letterSpacing: "0.1em", fontWight: "bold", color: "#1977cc", marginTop: "2rem" }}
@@ -210,14 +456,38 @@ class ConsultationTimeSelectPage extends Component {
 				</div>
 
 				<PharmaciesForDatePage
+					consultationDate={this.state.consultationDate}
+					onPharmacyClick={this.handlePhamacyClick}
 					onPharmaciesBackIcon={this.handlePharmaciesBackIcon}
 					hiddenPharmacies={this.state.hiddenPharmacies}
 					pharmacies={this.state.pharmacies}
 					showingSorted={this.state.showingSorted}
+					handleResetSort={this.handleResetSort}
 					handleSortByGradeAscending={this.handleSortByGradeAscending}
 					handleSortByGradeDescending={this.handleSortByGradeDescending}
 					handleSortByPriceAscending={this.handleSortByPriceAscending}
 					handleSortByPriceDescending={this.handleSortByPriceDescending}
+				/>
+				<PharmacistForPharmacy
+					onPharmacistClick={this.handlePharmacistClick}
+					showingPharmacistSorted={this.state.showingPharmacistSorted}
+					handleSortPharmacstByGradeAscending={this.handleSortPharmacstByGradeAscending}
+					handleSortPharmacstByGradeDescending={this.handleSortPharmacstByGradeDescending}
+					handleResetPharmacistSort={this.handleResetPharmacistSort}
+					consultationDate={this.state.consultationDate}
+					pharmacists={this.state.pharmacists}
+					pharmacyName={this.state.pharmacyName}
+					pharmacyAddress={this.state.pharmacyAddress}
+					pharmacyGrade={this.state.pharmacyGrade}
+					pharmacyPrice={this.state.pharmacyPrice}
+					hidden={this.state.hiddenPharmacists}
+					onPharmacistBackIcon={this.handlePharmacistBackIcon}
+				/>
+				<ModalDialog
+					show={this.state.openModalSuccess}
+					onCloseModal={this.handleModalSuccessClose}
+					header="Successfully reserved"
+					text="Your reserved pharmacist consultation. Further details are sent to your email address."
 				/>
 			</React.Fragment>
 		);

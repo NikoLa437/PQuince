@@ -6,9 +6,12 @@ import java.util.UUID;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.IService;
 
@@ -49,6 +52,10 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	List<IdentifiableDTO<AppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId);
 	
 	List<Pharmacy> findAllDistinctPharmaciesForAppointmentTime(Date startDateTime, Date endDateTime);
+
+	List<Staff> findAllDistinctPharmacistsForAppointmentTimeForPharmacy(Date startDateTime, Date endDateTime, UUID pharmacyId);
+	
+	UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException;
 
 
 }

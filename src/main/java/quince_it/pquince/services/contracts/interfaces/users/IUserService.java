@@ -1,5 +1,6 @@
 package quince_it.pquince.services.contracts.interfaces.users;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -7,6 +8,7 @@ import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
@@ -42,6 +44,12 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	void deleteAllPatientsPenalties();
 	
 	List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologistForPharmacy(UUID pharmacyId);
+	
+	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacy(Date startDateTime, UUID pharmacyId);
+
+	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacySortByGradeAscending(Date startDateTime, UUID pharmacyId);
+	
+	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacySortByGradeDescending(Date startDateTime, UUID pharmacyId);
 
 
 }

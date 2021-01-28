@@ -1,6 +1,7 @@
 package quince_it.pquince.services.implementation.pharmacy;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -165,6 +166,52 @@ public class PharmacyService implements IPharmacyService {
 				
 		List<IdentifiableDTO<PharmacyGradePriceDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradePriceDTO>>();
 		appointmentService.findAllDistinctPharmaciesForAppointmentTime(startDateTime, endDateTime).forEach((p) -> pharmacies.add(MapPharmacyPersistenceToPharmacyGradePriceIdentifiableDTO(p)));
+		
+		return pharmacies;
+	}
+
+
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeAscending(Date startDateTime) {
+
+		List<IdentifiableDTO<PharmacyGradePriceDTO>> pharmacies = findAllPharmaciesFreeForPeriodWithGradesAndPrice(startDateTime);
+		Collections.sort(pharmacies, (s1, s2) -> Double.compare(s1.EntityDTO.getGrade(), s2.EntityDTO.getGrade()));
+
+		return pharmacies;
+	}
+
+
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeDescending(Date startDateTime) {
+
+		List<IdentifiableDTO<PharmacyGradePriceDTO>> pharmacies = findAllPharmaciesFreeForPeriodWithGradesAndPrice(startDateTime);
+		Collections.sort(pharmacies, (s1, s2) -> Double.compare(s1.EntityDTO.getGrade(), s2.EntityDTO.getGrade()));
+		Collections.reverse(pharmacies);
+		
+		return pharmacies;
+	}
+
+
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceAscending(Date startDateTime) {
+		
+		List<IdentifiableDTO<PharmacyGradePriceDTO>> pharmacies = findAllPharmaciesFreeForPeriodWithGradesAndPrice(startDateTime);
+		Collections.sort(pharmacies, (s1, s2) -> Double.compare(s1.EntityDTO.getPrice(), s2.EntityDTO.getPrice()));
+		
+		return pharmacies;
+	}
+
+
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceDescending(Date startDateTime) {
+		
+		List<IdentifiableDTO<PharmacyGradePriceDTO>> pharmacies = findAllPharmaciesFreeForPeriodWithGradesAndPrice(startDateTime);
+		Collections.sort(pharmacies, (s1, s2) -> Double.compare(s1.EntityDTO.getPrice(), s2.EntityDTO.getPrice()));
+		Collections.reverse(pharmacies);
 		
 		return pharmacies;
 	}

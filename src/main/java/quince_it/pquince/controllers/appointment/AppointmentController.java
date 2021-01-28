@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -125,6 +127,20 @@ public class AppointmentController {
 		
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
+	
+	@PostMapping("/reserve-appointment")
+	@CrossOrigin
+	public ResponseEntity<UUID> reserveConsultationAppointment(@RequestBody ConsultationRequestDTO requestDTO) {
+		//TODO : URADITI SA ULOGOVANIM
+		try {
+			UUID appointmentId = appointmentService.createConsultation(requestDTO);
+			return new ResponseEntity<>(appointmentId, HttpStatus.CREATED);
+		} catch (Exception e) {
+			 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
 	
 	@PutMapping("/cancel-appointment/{appointmentId}")
 	@CrossOrigin
