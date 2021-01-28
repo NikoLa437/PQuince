@@ -12,7 +12,7 @@ public class WorkTimeMapper {
 	public static IdentifiableDTO<WorkTimeDTO> MapWorkTimePersistenceToWorkTimeIdentifiableDTO(WorkTime workTime){
 		if(workTime == null) throw new IllegalArgumentException();
 		
-		return new IdentifiableDTO<WorkTimeDTO>(workTime.getId(), new WorkTimeDTO(workTime.getForStaff().getId(), workTime.getStartDate(), workTime.getEndDate(), workTime.getStartTime(),workTime.getEndTime()));
+		return new IdentifiableDTO<WorkTimeDTO>(workTime.getId(), new WorkTimeDTO(workTime.getForPharmacy().getId(),workTime.getForStaff().getId(), workTime.getStartDate(), workTime.getEndDate(), workTime.getStartTime(),workTime.getEndTime(),workTime.getForPharmacy().getName()));
 	}
 	
 	public static List<IdentifiableDTO<WorkTimeDTO>> MapWorkTimePersistenceListToWorkTimeIdentifiableDTOList(List<WorkTime> workTimes){

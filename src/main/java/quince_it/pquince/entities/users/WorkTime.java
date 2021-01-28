@@ -38,11 +38,11 @@ public class WorkTime {
     
     public WorkTime() {}
 	
-	public WorkTime(Staff forStaff, Date startDate, Date endDate, int startTime, int endTime) {
-		this(UUID.randomUUID(), forStaff,startDate,endDate,startTime,endTime);
+	public WorkTime(Pharmacy forPharmacy,Staff forStaff, Date startDate, Date endDate, int startTime, int endTime) {
+		this(UUID.randomUUID(), forStaff,startDate,endDate,startTime,endTime,forPharmacy);
 	}
 	
-	public WorkTime(UUID id, Staff forStaff, Date startDate, Date endDate, int startTime, int endTime) {
+	public WorkTime(UUID id, Staff forStaff, Date startDate, Date endDate, int startTime, int endTime,Pharmacy forPharmacy) {
 		super();
 		this.id = id;
 		this.forStaff= forStaff;
@@ -50,6 +50,7 @@ public class WorkTime {
 		this.endDate= endDate;
 		this.startTime=startTime;
 		this.endTime=endTime;
+		this.forPharmacy=forPharmacy;
 	}
 
 	public UUID getId() {
@@ -96,7 +97,30 @@ public class WorkTime {
 		return endTime;
 	}
 
+	public Pharmacy getForPharmacy() {
+		return forPharmacy;
+	}
+
+	public void setForPharmacy(Pharmacy forPharmacy) {
+		this.forPharmacy = forPharmacy;
+	}
+
 	public void setEndTime(int endTime) {
 		this.endTime = endTime;
+	}
+	
+	public boolean IsWorkTimesOverlap(WorkTime workTime) {
+		 if(this.startDate.before(workTime.getEndDate()) && workTime.getStartDate().before(this.endDate)) {
+		    	if(this.startTime<workTime.getEndTime() && workTime.getStartTime()<this.endTime) {
+		    		return true;
+		    	}
+		    }
+		    return false;
+	}
+	
+	public boolean IsCorrectWorkTimeFormat() {
+		if(this.endDate.before(this.startDate) || this.startTime>=this.endTime)
+			return false;
+		return true;
 	}
 }
