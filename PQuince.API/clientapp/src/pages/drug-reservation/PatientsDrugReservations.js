@@ -6,6 +6,7 @@ import TopBar from "../../components/TopBar";
 import Header from "../../components/Header";
 import ModalDialog from "../../components/ModalDialog";
 import ReservationModalInfo from "../../components/ReservationInfoModal";
+import { NavLink } from "react-router-dom";
 
 class PatientsDrugReservations extends Component {
 	state = {
@@ -24,9 +25,7 @@ class PatientsDrugReservations extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(
-			BASE_URL + "/api/drug/reservations/find-by/" + "22793162-52d3-11eb-ae93-0242ac130002"
-		)
+		Axios.get(BASE_URL + "/api/drug/future-reservations")
 			.then((res) => {
 				this.setState({ drugReservations: res.data });
 				console.log(res.data);
@@ -94,11 +93,25 @@ class PatientsDrugReservations extends Component {
 
 				<div className="container" style={{ marginTop: "10%" }}>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">My drug reservations</h5>
-
-					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
+						<NavLink className="nav-link active" exact to="/drugs-reservation">
+							Future reservations
+						</NavLink>
+						<NavLink className="nav-link" exact to="/drugs-reservation-history">
+							Reservation history
+						</NavLink>
+					</nav>
+					<table
+						className="table table-hover"
+						style={{ width: "100%", marginTop: "3rem" }}
+					>
 						<tbody>
 							{this.state.drugReservations.map((drugReservation) => (
-								<tr id={drugReservation.Id} key={drugReservation.Id}>
+								<tr
+									id={drugReservation.Id}
+									key={drugReservation.Id}
+									style={{ cursor: "pointer" }}
+								>
 									<td
 										width="130em"
 										onClick={() =>
@@ -143,12 +156,6 @@ class PatientsDrugReservations extends Component {
 												hour: "2-digit",
 												minute: "2-digit",
 											})}
-										</div>
-										<div>
-											<b>Reservation status: </b>
-											<span style={{ color: "#1977cc" }}>
-												{drugReservation.EntityDTO.reservationStatus}
-											</span>
 										</div>
 									</td>
 									<td class="align-middle">

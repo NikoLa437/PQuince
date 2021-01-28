@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -84,6 +85,11 @@ public class AppointmentController {
 		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
 	}
 	
+	@GetMapping("/dermatologist/{dermatologistId}")
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAllAppointmentsByDermatologist(@PathVariable UUID dermatologistId) {
+		return new ResponseEntity<>(appointmentService.getCreatedAppointmentsByDermatologist(dermatologistId),HttpStatus.OK);
+	}
+	
 	@GetMapping("/dermatologist/find-by-pharmacy/{pharmacyId}")
 	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllFreeAppointmentsByPharmacyAndAppointmentType(@PathVariable UUID pharmacyId) {
 		return new ResponseEntity<>(appointmentService.findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, AppointmentType.EXAMINATION),HttpStatus.OK);
@@ -131,5 +137,10 @@ public class AppointmentController {
 		if(isSuccesfull) return new ResponseEntity<>(appointmentId,HttpStatus.NO_CONTENT);
 		
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@GetMapping("/patient/{patientId}")
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatient(@PathVariable UUID patientId) {
+		return new ResponseEntity<>(appointmentService.getDermatologistAppointmentsByPatient(patientId),HttpStatus.OK);
 	}
 }

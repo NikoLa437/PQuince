@@ -3,7 +3,10 @@ package quince_it.pquince.services.contracts.interfaces.appointment;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.ResponseEntity;
+
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -37,8 +40,12 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	
 	List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByTimeDescending(UUID patientId, AppointmentType appointmentType);
 	
+	List<IdentifiableDTO<AppointmentDTO>> getCreatedAppointmentsByDermatologist(UUID dermatologistId);
+	
 	boolean reserveAppointment(UUID appointmentId, UUID patientId);
 	
 	boolean cancelAppointment(UUID appointmentId);
+
+	List<IdentifiableDTO<AppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId);
 
 }

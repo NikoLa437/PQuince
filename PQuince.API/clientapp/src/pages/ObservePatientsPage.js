@@ -38,7 +38,18 @@ class ObservePatientsPage extends Component {
             .catch((err) => {
                 console.log(err);
             });
+    };
+    
+    handlePatientClick = (patientId) => {
+		Axios.get(BASE_URL + "/api/users/patient/" + patientId)
+			.then((res) => {
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
+
     render() { 
         return ( 
         <React.Fragment>
@@ -86,10 +97,10 @@ class ObservePatientsPage extends Component {
                         </div>
                     </div>
 
-                    <table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+                    <table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.patients.map((patient) => (
-								<tr id={patient.Id} key={patient.Id} onClick={this.handle}>
+								<tr id={patient.Id} key={patient.Id} onClick={() => this.handlePatientClick(patient.Id)} className="rounded" style={{ cursor: "pointer" }}>
                                     <td width="130em">
 										<img
 											className="img-fluid"

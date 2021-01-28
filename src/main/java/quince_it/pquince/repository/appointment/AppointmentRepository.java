@@ -24,6 +24,14 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 	List<Appointment> findAllPreviousAppointmentsForPatient(UUID patientId, AppointmentType appointmentType);
 	
 	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+			+ " AND a.appointmentStatus = 'FINISHED' AND a.staff.id = ?2")
+	List<Appointment> findAllPreviousAppointmentsForPatientForStaff(UUID patientId, UUID staffId);
+	
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+			+ " AND a.appointmentStatus = 'FINISHED' AND a.pharmacy.id = ?2 AND a.appointmentType = ?3")
+	List<Appointment> findAllPreviousAppointmentsForPatientForPharmacy(UUID patientId, UUID pharmacyId, AppointmentType appointmentType);
+	
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = ?2 ORDER BY a.startDateTime ASC")
 	List<Appointment> findAllPreviousAppointmentsForPatientSortByDateAscending(UUID patientId, AppointmentType appointmentType);
 	
@@ -54,4 +62,14 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 	@Query(value = "SELECT a FROM Appointment a WHERE a.pharmacy.id = ?1 AND a.startDateTime > CURRENT_TIMESTAMP"
 			+ " AND (a.appointmentStatus = 'CREATED' OR a.appointmentStatus = 'CANCELED') AND a.appointmentType = ?2 ORDER BY a.price DESC")
 	List<Appointment> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceDescending(UUID pharmacyId, AppointmentType appointmentType);
+	
+
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
+			+ " AND a.appointmentStatus = 'FINISHED' OR a.appointmentStatus = 'SCHEDULED' AND a.appointmentType = 'EXAMINATION' ORDER BY a.startDateTime DESC")
+	List<Appointment> getDermatologistAppointmentsByPatient(UUID patientId);
+
+	@Query(value = "SELECT a FROM Appointment a WHERE a.staff.id = ?1 AND a.startDateTime > CURRENT_TIMESTAMP"
+			+ " AND (a.appointmentStatus = 'CREATED') AND a.appointmentType = 'EXAMINATION'  ORDER BY a.endDateTime - a.startDateTime ASC")
+	List<Appointment> getCreatedAppointmentsByDermatologist(UUID dermatologistId);
+
 }
