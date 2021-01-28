@@ -1,6 +1,8 @@
 package quince_it.pquince.services.implementation.users;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,12 @@ import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.users.ComplaintRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.StaffRepository;
+import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintStaffDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.users.IComplaintService;
+import quince_it.pquince.services.implementation.util.drugs.DrugInstanceMapper;
 import quince_it.pquince.services.implementation.util.users.ComplaintStaffMapper;
 
 @Service
@@ -54,6 +59,15 @@ public class ComplaintService implements IComplaintService{
 		
 	}
 
+	@Override
+	public List<IdentifiableDTO<ComplaintStaffDTO>> findAll() {
+		
+		List<IdentifiableDTO<ComplaintStaffDTO>> complaints = new ArrayList<IdentifiableDTO<ComplaintStaffDTO>>();
+		complaintRepository.findAll().forEach((d) -> complaints.add(ComplaintStaffMapper.MapComplaintStaffPersistenceToComplaintStaffIdentifiableDTO(d)));
+		
+		return complaints;
+	}
+	
 	@Override
 	public boolean CanPatientGiveComplaint(UUID patientId, UUID staffId) {
 		

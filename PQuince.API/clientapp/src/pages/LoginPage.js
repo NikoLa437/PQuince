@@ -24,6 +24,7 @@ class LoginPage extends Component {
         Axios.post(BASE_URL + "/auth/login", loginDTO).then((res) =>{
             console.log("Success");
             console.log(res.data);
+            console.log('AAAA');
             localStorage.setItem('keyToken', res.data.accessToken);
         }).catch((err) => {console.log(err);});
     }

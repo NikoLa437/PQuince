@@ -18,7 +18,7 @@ import ObservePatientsPage from "./pages/ObservePatientsPage";
 import PatientProfilePage from "./pages/PatientProfilePage";
 import ScheduleAppointmentPage from "./pages/dermatologist-appointment/ScheduleAppointmentPage";
 import DermatologistComplaints from "./pages/complaints/DermatologistComplaint";
-import PharmacyComplaints from "./pages/complaints/ComplaintsForPharmacy";
+import AdminComplaints from "./pages/complaints/AdminComplaints";
 
 function App() {
 	return (
@@ -50,7 +50,7 @@ function App() {
 				/>
 				<Link exact to="/drugs" path="/drugs" component={DrugReservation} />
 				<Link exact to="/dermatologist-complaints" path="/dermatologist-complaints" component={DermatologistComplaints} />
-				<Link exact to="/pharmacy-complaints" path="/pharmacy-complaints" component={PharmacyComplaints} />
+				<Link exact to="/admin-complaints" path="/admin-complaints" component={AdminComplaints} />
 				<Link exact to="/pharmacy" path="/pharmacy" component={PharmacyProfilePage} />
 				<Link
 					exact

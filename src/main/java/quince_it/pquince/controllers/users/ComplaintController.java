@@ -1,5 +1,6 @@
 package quince_it.pquince.controllers.users;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintStaffDTO;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IComplaintService;
@@ -32,6 +35,11 @@ public class ComplaintController {
 	
 	@Autowired
 	private IPharmacyComplaintService pharmacyComplaintService;
+
+	@GetMapping
+	public ResponseEntity<List<IdentifiableDTO<ComplaintStaffDTO>>> findAll() {
+		return new ResponseEntity<>(complaintService.findAll(),HttpStatus.OK);
+	}
 	
 	@GetMapping("/{staffId}")
 	public ResponseEntity<ComplaintStaffDTO> findByStaffIdAndPatientId(@PathVariable UUID staffId) {
