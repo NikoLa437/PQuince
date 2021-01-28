@@ -36,11 +36,11 @@ public class WorkTime {
     
     public WorkTime() {}
 	
-	public WorkTime(Staff staff, Pharmacy pharmacy, Date startDate, Date endDate, int startTime, int endTime) {
-		this(UUID.randomUUID(), staff, pharmacy, startDate,endDate,startTime,endTime);
+	public WorkTime(Pharmacy pharmacy,Staff staff, Date startDate, Date endDate, int startTime, int endTime) {
+		this(UUID.randomUUID(), staff,startDate,endDate,startTime,endTime,pharmacy);
 	}
 	
-	public WorkTime(UUID id, Staff staff, Pharmacy pharmacy, Date startDate, Date endDate, int startTime, int endTime) {
+	public WorkTime(UUID id, Staff staff, Date startDate, Date endDate, int startTime, int endTime,Pharmacy pharmacy) {
 		super();
 		this.id = id;
 		this.staff= staff;
@@ -49,6 +49,7 @@ public class WorkTime {
 		this.startTime=startTime;
 		this.endTime=endTime;
 		this.pharmacy = pharmacy;
+
 	}
 
 	public UUID getId() {
@@ -101,5 +102,20 @@ public class WorkTime {
 
 	public Pharmacy getPharmacy() {
 		return pharmacy;
+	}
+	
+	public boolean IsWorkTimesOverlap(WorkTime workTime) {
+		 if(this.startDate.before(workTime.getEndDate()) && workTime.getStartDate().before(this.endDate)) {
+		    	if(this.startTime<workTime.getEndTime() && workTime.getStartTime()<this.endTime) {
+		    		return true;
+		    	}
+		    }
+		    return false;
+	}
+	
+	public boolean IsCorrectWorkTimeFormat() {
+		if(this.endDate.before(this.startDate) || this.startTime>=this.endTime)
+			return false;
+		return true;
 	}
 }

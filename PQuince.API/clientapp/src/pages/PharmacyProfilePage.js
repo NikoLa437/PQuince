@@ -7,6 +7,7 @@ import { YMaps, Map, GeoObject, Placemark } from "react-yandex-maps";
 import PharmacyDermatologistModal from "../components/PharmacyDermatologistModal";
 import DrugsInPharmacyModal from "../components/DrugsInPharmacyModal";
 import FeedbackCreateModal from "../components/FeedbackCreateModal";
+import ComplaintCreateModal from "../components/ComplaintCreateModal";
 
 class PharmacyProfilePage extends Component {
 	state = {
@@ -22,6 +23,7 @@ class PharmacyProfilePage extends Component {
 		y: "",
 		showDermatologistModal: false,
 		showDrugsInPharmacy: false,
+		complaint: "",
 	};
 
 	componentDidMount() {
@@ -50,6 +52,10 @@ class PharmacyProfilePage extends Component {
 		});
 	};
 
+	handleComplaintChange = (event) => {
+		this.setState({ complaint: event.target.value });
+	};
+	
 	handleOurDrugs = () => {
 		this.setState({
 			showDrugsInPharmacy: true,
@@ -58,6 +64,11 @@ class PharmacyProfilePage extends Component {
 
 	handleModalClose = () => {
 		this.setState({ showDermatologistModal: false });
+	};
+	
+	
+	handleComplaintModalClose = () => {
+		this.setState({ showComplaintModal: false });
 	};
 
 	handleShowDrugsInPharmacyClose = () => {
@@ -84,9 +95,34 @@ class PharmacyProfilePage extends Component {
 				console.log(err);
 			});
 	};
+	
+	handleComplaintClick = () => {
+		Axios.get(BASE_URL + "/api/pharmacy/feedback/" + this.state.pharmacyId, { validateStatus: () => true })
+			.then((res) => {
+				console.log(res.data);
+				if (res.status === 404) {
+					this.setState({
+						showComplaintModal: true,
+						patientsGrade: 0,
+					});
+				} else {
+					this.setState({
+						showComplaintModal: true,
+						patientsGrade: res.data.grade,
+					});
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
 
 	handleFeedbackModalClose = () => {
 		this.setState({ showFeedbackModal: false });
+	};
+	
+	handleComplaintModalClose = () => {
+		this.setState({ showComplaintModal: false });
 	};
 
 	handleModifyFeedbackModalClose = () => {
@@ -106,6 +142,30 @@ class PharmacyProfilePage extends Component {
 						this.setState({
 							grade: response.data.EntityDTO.grade,
 							showFeedbackModal: false,
+						});
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleComaplaint = () => {
+		let entityDTO = {
+			pharmacyId: this.state.pharmacyId,
+			date: new Date(),
+			text: this.state.complaint,
+		};
+		Axios.post(BASE_URL + "/api/pharmacy/complaint-pharmacy", entityDTO)
+			.then((resp) => {
+				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=cafeddee-56cb-11eb-ae93-0242ac130002")
+					.then((response) => {
+						this.setState({
+							grade: response.data.EntityDTO.grade,
+							showComplaintModal: false,
 						});
 					})
 					.catch((err) => {
@@ -234,6 +294,10 @@ class PharmacyProfilePage extends Component {
 							<button type="button" onClick={this.handleFeedbackClick} className="btn btn-outline-secondary mt-3">
 								Give feedback
 							</button>
+							<br></br>
+							<button type="button" onClick={this.handleComplaintClick} className="btn btn-outline-secondary mt-3">
+								Make complaint
+							</button>
 						</div>
 						<div className="col-xs-8">
 							<YMaps>
@@ -291,6 +355,18 @@ class PharmacyProfilePage extends Component {
 					name={this.state.pharmacyName}
 					forWho="pharmacy"
 					handleClickIcon={this.handleClickIcon}
+				/>
+				<ComplaintCreateModal
+					buttonName="Send complaint"
+					header="Make complaint"
+					handleComplaintChange={this.handleComplaintChange}
+					show={this.state.showComplaintModal}
+					onCloseModal={this.handleComplaintModalClose}
+					giveFeedback={this.handleComaplaint}
+					name={this.state.pharmacyName}
+					forWho="pharmacy"
+					handleClickIcon={this.handleClickIcon}
+					complaint={this.state.complaint}
 				/>
 			</React.Fragment>
 		);

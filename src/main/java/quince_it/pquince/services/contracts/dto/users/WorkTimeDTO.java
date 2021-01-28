@@ -5,12 +5,11 @@ import java.util.UUID;
 
 public class WorkTimeDTO {
 	
-	
-	//TODO: dodati deo za apoteku
+	private UUID forPharmacy;
 	
 	private UUID forStaff;
-	
-	private UUID pharmacyId;
+		
+	private String pharmacyName;
 	
 	private Date startDate;
 	
@@ -21,17 +20,26 @@ public class WorkTimeDTO {
     private int endTime;
     
     public WorkTimeDTO() {}
-	
-	public WorkTimeDTO(UUID forStaff, UUID pharmacyId, Date startDate, Date endDate, int startTime, int endTime) {
+    
+    public WorkTimeDTO(UUID forPharmacy,UUID forStaff, Date startDate, Date endDate, int startTime, int endTime,String pharmacyName) {
 		super();
+		this.forPharmacy= forPharmacy;
 		this.forStaff= forStaff;
-		this.pharmacyId = pharmacyId;
 		this.startDate= startDate;
 		this.endDate= endDate;
 		this.startTime=startTime;
 		this.endTime=endTime;
+		this.pharmacyName=pharmacyName;
 	}
 
+
+	public UUID getForPharmacy() {
+		return forPharmacy;
+	}
+
+	public void setForPharmacy(UUID forPharmacy) {
+		this.forPharmacy = forPharmacy;
+	}
 
 	public UUID getForStaff() {
 		return forStaff;
@@ -73,11 +81,13 @@ public class WorkTimeDTO {
 		this.endTime = endTime;
 	}
 
-	public UUID getPharmacyId() {
-		return pharmacyId;
+
+	public String getPharmacyName() {
+		return pharmacyName;
 	}
 
-	public void setPharmacyId(UUID pharmacyId) {
-		this.pharmacyId = pharmacyId;
+	public void setPharmacyName(String pharmacyName) {
+		this.pharmacyName = pharmacyName;
 	}
+	
 }
