@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import quince_it.pquince.entities.users.WorkTime;
 
 public interface WorkTimeRepository extends JpaRepository<WorkTime, UUID>{
-	
 	@Query(value = "SELECT wt FROM WorkTime wt")
 	WorkTime getWorkTimeForDermatologistForDate(UUID dermatologistId, Date date);
+
 
 }
