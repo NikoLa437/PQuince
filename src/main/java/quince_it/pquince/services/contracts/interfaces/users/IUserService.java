@@ -46,5 +46,15 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 
 	List<Authority> getAuthorityById(UUID id);
 
+	UUID createSupplier(UserRequestDTO entityDTO);
+
+	UUID createDermathologist(UserRequestDTO entityDTO);
+
+	UUID createPharmacist(UserRequestDTO entityDTO);
+
+	UUID createPharmacyAdmin(UserRequestDTO entityDTO);
+
+	UUID createAdmin(UserRequestDTO entityDTO);
+
 
 }

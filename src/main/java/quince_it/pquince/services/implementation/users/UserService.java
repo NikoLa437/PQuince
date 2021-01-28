@@ -138,10 +138,95 @@ public class UserService implements IUserService{
 		return patient.getId();
 	}
 	
+	@Override
+	public UUID createSupplier(UserRequestDTO entityDTO) {
+		Staff staff = CreateSupplierFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("SUPPLIER");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreateSupplierFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.SUPPLIER);
+	}
+	
 	private Patient CreatePatientFromDTO(UserRequestDTO patientDTO) {
 		return new Patient(patientDTO.getEmail(), passwordEncoder.encode(patientDTO.getPassword()), patientDTO.getName(), patientDTO.getSurname(), patientDTO.getAddress(), patientDTO.getPhoneNumber());
 	}
+	
+	@Override
+	public UUID createDermathologist(UserRequestDTO entityDTO) {
+		Staff staff = CreateDermathologistFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("DERMATHOLOGIST");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreateDermathologistFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.DERMATOLOGIST);
+	}
 
+	@Override
+	public UUID createPharmacist(UserRequestDTO entityDTO) {
+		Staff staff = CreatePharmacistFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("PHARMACIST");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreatePharmacistFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.PHARMACIST);
+	}
+	
+	@Override
+	public UUID createPharmacyAdmin(UserRequestDTO entityDTO) {
+		Staff staff = CreatePharmacyAdminFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("PHARMACYADMIN");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreatePharmacyAdminFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.PHARMACYADMIN);
+	}
+	
+	@Override
+	public UUID createAdmin(UserRequestDTO entityDTO) {
+		Staff staff = CreateAdminFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("SYSADMIN");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreateAdminFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.SYSADMIN);
+	}
+	
 	@Override
 	public boolean activatePatientAccount(UUID id) {
 		try {
