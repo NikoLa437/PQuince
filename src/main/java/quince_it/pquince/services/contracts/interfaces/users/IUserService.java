@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
@@ -50,6 +51,18 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacySortByGradeAscending(Date startDateTime, UUID pharmacyId);
 	
 	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacySortByGradeDescending(Date startDateTime, UUID pharmacyId);
+
+	List<Authority> getAuthorityById(UUID id);
+
+	UUID createSupplier(UserRequestDTO entityDTO);
+
+	UUID createDermathologist(UserRequestDTO entityDTO);
+
+	UUID createPharmacist(UserRequestDTO entityDTO);
+
+	UUID createPharmacyAdmin(UserRequestDTO entityDTO);
+
+	UUID createAdmin(UserRequestDTO entityDTO);
 
 
 }

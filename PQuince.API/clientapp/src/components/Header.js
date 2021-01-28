@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 
 class Header extends Component {
+
+	handleLogout = () => {
+       localStorage.setItem('keyToken');
+       localStorage.setItem('keyRole');
+    };
+    
 	render() {
 		const myStyle = {
 			color: "white",
@@ -17,6 +23,9 @@ class Header extends Component {
 						<ul>
 							<li className="active">
 								<a href="/">Home</a>
+							</li>
+							<li className="active">
+								<a onClick={this.handleLogout} href="/">Log out</a>
 							</li>
 							<li>
 								<a href="/pharmacies">Pharmacies</a>

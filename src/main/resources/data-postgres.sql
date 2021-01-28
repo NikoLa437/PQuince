@@ -1,5 +1,12 @@
-insert into authority(id, name) values('bfe2c90c-616b-11eb-ae93-0242ac130002', 'PATIENT');
+insert into authority (id, name) values ('7852aa5e-7040-4d99-8255-537a0b226c75','PATIENT');
+insert into authority (id, name) values ('563e9925-cff6-42b7-99fa-6b1235f67655','SYSADMIN');
+insert into authority (id, name) values ('09af8857-2f78-4eec-970f-059d3ed4589f','DERMATHOLOGIST');
+insert into authority (id, name) values ('ef9a3723-a72e-44ec-83ac-9d748fd0240f','SUPPLIER');
+insert into authority (id, name) values ('a1e3bac1-6093-4705-b835-eed75c3e5f21','PHARMACIST');
+insert into authority (id, name) values ('ea16767c-2c1f-49fb-ac98-c7739c0036e8','PHARMACYADMIN');
 
+
+--password - 123
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('22793162-52d3-11eb-ae93-0242ac130002',true, 'example@example.com','Stefan','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('23793162-52d3-11eb-ae93-0242ac130002',true, 'example1@example.com','Nikola','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 
@@ -16,6 +23,12 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 
 insert into patient (id, penalty, points, loyality_category) values ('22793162-52d3-11eb-ae93-0242ac130002',0,2, 'REGULAR');
 insert into patient (id, penalty, points, loyality_category) values ('23793162-52d3-11eb-ae93-0242ac130002',0,2, 'REGULAR');
+
+insert into user_authority (user_id, authority_id) values ('22793162-52d3-11eb-ae93-0242ac130002', '7852aa5e-7040-4d99-8255-537a0b226c75');
+insert into user_authority (user_id, authority_id) values ('23793162-52d3-11eb-ae93-0242ac130002', '7852aa5e-7040-4d99-8255-537a0b226c75');
+insert into user_authority (user_id, authority_id) values ('11355678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
+insert into user_authority (user_id, authority_id) values ('22345678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
+insert into user_authority (user_id, authority_id) values ('25345678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
 
 insert into allergen (id, name) values ('3b27db4c-48bb-4f78-a3da-745d9c9458ba', 'Penicilin');
 insert into allergen (id, name) values ('062d319f-f393-464c-98fb-b3db29e77626', 'Amoxicilin');

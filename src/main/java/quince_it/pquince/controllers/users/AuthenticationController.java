@@ -29,6 +29,7 @@ import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.dto.users.UserTokenStateDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
+import quince_it.pquince.services.implementation.users.AuthorityService;
 import quince_it.pquince.services.implementation.users.CustomUserDetailsService;
 import quince_it.pquince.services.implementation.users.UserService;
 
@@ -47,6 +48,9 @@ public class AuthenticationController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private AuthorityService authorityService;
 
 
 	@PostMapping("/login")
@@ -64,8 +68,8 @@ public class AuthenticationController {
 		User user = (User) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getUsername());
 		int expiresIn = tokenUtils.getExpiredIn();
-
-		return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn));
+		String role = user.getUserAuthorities().get(0).getName();
+		return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn,role));
 	}
 
 	@PostMapping("/signup")
@@ -88,12 +92,14 @@ public class AuthenticationController {
 		String token = tokenUtils.getToken(request);
 		String username = this.tokenUtils.getUsernameFromToken(token);
 		User user = (User) this.userDetailsService.loadUserByUsername(username);
+		
+		String role = user.getUserAuthorities().get(0).getName();//user.getUserAuthorities().get(0).getName();
 
 		if (this.tokenUtils.canTokenBeRefreshed(token, new Date())) {
 			String refreshedToken = tokenUtils.refreshToken(token);
 			int expiresIn = tokenUtils.getExpiredIn();
 
-			return ResponseEntity.ok(new UserTokenStateDTO(refreshedToken, expiresIn));
+			return ResponseEntity.ok(new UserTokenStateDTO(refreshedToken, expiresIn,role));
 		} else {
 			UserTokenStateDTO userTokenState = new UserTokenStateDTO();
 			return ResponseEntity.badRequest().body(userTokenState);

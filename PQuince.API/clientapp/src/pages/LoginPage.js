@@ -16,7 +16,7 @@ class LoginPage extends Component {
 	handlePasswordChange = (event) => {
 		this.setState({ password: event.target.value });
 	};
-
+	
 	handleLogin = () => {
 		let loginDTO = { username: this.state.email, password: this.state.password };
 		console.log(loginDTO);
@@ -25,6 +25,7 @@ class LoginPage extends Component {
 				console.log("Success");
 				console.log(res.data);
 				localStorage.setItem("keyToken", res.data.accessToken);
+           	    localStorage.setItem("keyRole", res.data.role);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -74,7 +75,6 @@ class LoginPage extends Component {
 								<div className="form-group">
 									<Button
 										style={{ background: "#1977cc", marginTop: "15px", marginLeft: "40%", width: "20%" }}
-										href="/"
 										onClick={this.handleLogin}
 										className="btn btn-primary btn-xl"
 										id="sendMessageButton"
