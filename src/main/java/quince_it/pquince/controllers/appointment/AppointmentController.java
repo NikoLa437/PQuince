@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
@@ -38,6 +39,13 @@ public class AppointmentController {
 		return new ResponseEntity<>(appointmentService.findAllFutureAppointmentsForPatient(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
 	}
 	
+	@GetMapping("/pharmacist/pending/find-by-patient")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>>> findAllFuturePatientsConsultations() {
+		//TODO : URADITI SA ULOGOVANIM
+		
+		return new ResponseEntity<>(appointmentService.findAllFutureAppointmentsForPatient(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.CONSULTATION),HttpStatus.OK);
+	}
+	
 	@GetMapping("/dermatologist-history")
 	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatient() {
 		//TODO : URADITI SA ULOGOVANIM
@@ -45,46 +53,53 @@ public class AppointmentController {
 		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatient(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-price-ascending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByPriceAscending() {
+	@GetMapping("/pharmacist-history")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousConsultationsForPatient() {
 		//TODO : URADITI SA ULOGOVANIM
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByPriceAscending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatient(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.CONSULTATION),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-price-descending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByPriceDescending() {
+	@GetMapping("/appointment-history/sort-by-price-ascending")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByPriceAscending(@RequestParam AppointmentType appointmentType) {
 		//TODO : URADITI SA ULOGOVANIM
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByPriceDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByPriceAscending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-date-descending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByDateDescending() {
+	@GetMapping("/appointment-history/sort-by-price-descending")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByPriceDescending(@RequestParam AppointmentType appointmentType) {
 		//TODO : URADITI SA ULOGOVANIM
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByDateDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByPriceDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-date-ascending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByDateAscending() {
+	@GetMapping("/appointment-history/sort-by-date-descending")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByDateDescending(@RequestParam AppointmentType appointmentType) {
 		//TODO : URADITI SA ULOGOVANIM
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByDateAscending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByDateDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-time-ascending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByTimeAscending() {
+	@GetMapping("/appointment-history/sort-by-date-ascending")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByDateAscending(@RequestParam AppointmentType appointmentType) {
 		//TODO : URADITI SA ULOGOVANIM
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeAscending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByDateAscending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-time-descending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByTimeDescending() {
+	@GetMapping("/appointment-history/sort-by-time-ascending")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByTimeAscending(@RequestParam AppointmentType appointmentType) {
 		//TODO : URADITI SA ULOGOVANIM
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeAscending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),appointmentType),HttpStatus.OK);
+	}
+	
+	@GetMapping("/appointment-history/sort-by-time-descending")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByTimeDescending(@RequestParam AppointmentType appointmentType) {
+		//TODO : URADITI SA ULOGOVANIM
+
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),appointmentType),HttpStatus.OK);
 	}
 	
 	@GetMapping("/dermatologist/{dermatologistId}")

@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 
 class Header extends Component {
-
 	handleLogout = () => {
-       localStorage.setItem('keyToken');
-       localStorage.setItem('keyRole');
-    };
-    
+		localStorage.setItem("keyToken");
+		localStorage.setItem("keyRole");
+	};
+
 	render() {
 		const myStyle = {
 			color: "white",
@@ -25,7 +24,9 @@ class Header extends Component {
 								<a href="/">Home</a>
 							</li>
 							<li className="active">
-								<a onClick={this.handleLogout} href="/">Log out</a>
+								<a onClick={this.handleLogout} href="/">
+									Log out
+								</a>
 							</li>
 							<li>
 								<a href="/pharmacies">Pharmacies</a>
@@ -40,13 +41,10 @@ class Header extends Component {
 								<a href="#">My record</a>
 								<ul>
 									<li>
-										<a href="/dermatologist-history">Dermatologist visits</a>
+										<a href="/patients-appointments">Dermatologist visits</a>
 									</li>
 									<li>
-										<a href="/">Consultations with a pharmacist</a>
-									</li>
-									<li>
-										<a href="/patients-appointments">Observe appointments</a>
+										<a href="/observe-consultations">Consultations with a pharmacist</a>
 									</li>
 									<li>
 										<a href="/">eReciepts</a>

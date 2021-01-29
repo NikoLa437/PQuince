@@ -8,7 +8,7 @@ import Axios from "axios";
 import ModalDialog from "../../components/ModalDialog";
 import { NavLink } from "react-router-dom";
 
-class PatientsAppointments extends Component {
+class ObservePatientsCosultation extends Component {
 	state = {
 		appointments: [],
 		openModalSuccess: false,
@@ -26,7 +26,7 @@ class PatientsAppointments extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/pending/find-by-patient")
+		Axios.get(BASE_URL + "/api/appointment/pharmacist/pending/find-by-patient")
 			.then((res) => {
 				this.setState({ appointments: res.data });
 				console.log(res.data);
@@ -84,15 +84,16 @@ class PatientsAppointments extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">EXAMINATIONS</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Consultations</h5>
 					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
-						<NavLink className="nav-link active" exact to="/patients-appointments">
-							Future examinations
+						<NavLink className="nav-link active" exact to="/observe-consultations">
+							Future consultations
 						</NavLink>
-						<NavLink className="nav-link" exact to="/dermatologist-history">
-							Examination history
+						<NavLink className="nav-link" exact to="/observe-consultations-history">
+							Consultations history
 						</NavLink>
 					</nav>
+
 					<p className="mb-0 mt-2 text-uppercase">Click on appointment to see further details</p>
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
@@ -128,11 +129,11 @@ class PatientsAppointments extends Component {
 											<b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
 										</div>
 										<div>
-											<b>Dermatologist: </b>{" "}
+											<b>Pharmacist: </b>{" "}
 											{appointment.EntityDTO.staff.EntityDTO.name + " " + appointment.EntityDTO.staff.EntityDTO.surname}
 										</div>
 										<div>
-											<b>Dermatologist grade: </b> {appointment.EntityDTO.staff.EntityDTO.grade}
+											<b>Pharmacist grade: </b> {appointment.EntityDTO.staff.EntityDTO.grade}
 											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 									</td>
@@ -156,7 +157,7 @@ class PatientsAppointments extends Component {
 					href="/"
 					onCloseModal={this.handleModalSuccessClose}
 					header="Successfully canceled"
-					text="Your appointment is successfully canceled."
+					text="Your consultation is successfully canceled."
 				/>
 				<AppointmentDetailsModal
 					header="Appointment information"
@@ -178,4 +179,4 @@ class PatientsAppointments extends Component {
 	}
 }
 
-export default PatientsAppointments;
+export default ObservePatientsCosultation;

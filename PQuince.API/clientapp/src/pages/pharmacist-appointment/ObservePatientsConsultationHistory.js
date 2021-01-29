@@ -4,10 +4,10 @@ import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
-import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 import { NavLink } from "react-router-dom";
+import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 
-class HistoryDermatologistAppointments extends Component {
+class ObservePatientsCosultationHistory extends Component {
 	state = {
 		appointments: [],
 		showingSorted: false,
@@ -20,10 +20,11 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+		Axios.get(BASE_URL + "/api/appointment/pharmacist-history")
 			.then((res) => {
-				this.setState({ appointments: res.data });
 				console.log(res.data);
+
+				this.setState({ appointments: res.data });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -31,7 +32,7 @@ class HistoryDermatologistAppointments extends Component {
 	}
 
 	handleResetSort = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+		Axios.get(BASE_URL + "/api/appointment/pharmacist-history")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: false });
 				console.log(res.data);
@@ -42,7 +43,7 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByDateAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-ascending?appointmentType=EXAMINATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-ascending?appointmentType=CONSULTATION")
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ appointments: res.data, showingSorted: true });
@@ -53,7 +54,7 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByDateDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-descending?appointmentType=EXAMINATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-descending?appointmentType=CONSULTATION")
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ appointments: res.data, showingSorted: true });
@@ -64,7 +65,7 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByPriceAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-ascending?appointmentType=EXAMINATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-ascending?appointmentType=CONSULTATION")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -75,7 +76,7 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByPriceDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-descending?appointmentType=EXAMINATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-descending?appointmentType=CONSULTATION")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -86,7 +87,7 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByDurationAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-ascending?appointmentType=EXAMINATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-ascending?appointmentType=CONSULTATION")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -97,7 +98,7 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByDurationDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-descending?appointmentType=EXAMINATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-descending?appointmentType=CONSULTATION")
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -151,7 +152,7 @@ class HistoryDermatologistAppointments extends Component {
 		};
 		Axios.post(BASE_URL + "/api/staff/feedback", entityDTO)
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+				Axios.get(BASE_URL + "/api/appointment/pharmacist-history")
 					.then((res) => {
 						this.setState({ appointments: res.data, showFeedbackModal: false });
 						console.log(res.data);
@@ -173,7 +174,7 @@ class HistoryDermatologistAppointments extends Component {
 		};
 		Axios.put(BASE_URL + "/api/staff/feedback", entityDTO)
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+				Axios.get(BASE_URL + "/api/appointment/pharmacist-history")
 					.then((res) => {
 						this.setState({ appointments: res.data, showModifyFeedbackModal: false });
 						console.log(res.data);
@@ -198,13 +199,13 @@ class HistoryDermatologistAppointments extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">EXAMINATIONS</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Consultations</h5>
 					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
-						<NavLink className="nav-link" exact to="/patients-appointments">
-							Future examinations
+						<NavLink className="nav-link " exact to="/observe-consultations">
+							Future consultations
 						</NavLink>
-						<NavLink className="nav-link active" exact to="/dermatologist-history">
-							Examination history
+						<NavLink className="nav-link active" exact to="/observe-consultations-history">
+							Consultations history
 						</NavLink>
 					</nav>
 					<div className="form-group">
@@ -289,11 +290,11 @@ class HistoryDermatologistAppointments extends Component {
 											<b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
 										</div>
 										<div>
-											<b>Dermatologist: </b>{" "}
+											<b>Pharmacst: </b>{" "}
 											{appointment.EntityDTO.staff.EntityDTO.name + " " + appointment.EntityDTO.staff.EntityDTO.surname}
 										</div>
 										<div>
-											<b>Dermatologist grade: </b> {appointment.EntityDTO.staff.EntityDTO.grade}
+											<b>Pharmacst grade: </b> {appointment.EntityDTO.staff.EntityDTO.grade}
 											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 									</td>
@@ -320,7 +321,7 @@ class HistoryDermatologistAppointments extends Component {
 					onCloseModal={this.handleFeedbackModalClose}
 					giveFeedback={this.handleFeedback}
 					name={this.state.StaffName + " " + this.state.StaffSurame}
-					forWho="dermatologist"
+					forWho="pharmacist"
 					handleClickIcon={this.handleClickIcon}
 				/>
 				<FeedbackCreateModal
@@ -331,7 +332,7 @@ class HistoryDermatologistAppointments extends Component {
 					onCloseModal={this.handleModifyFeedbackModalClose}
 					giveFeedback={this.handleModifyFeedback}
 					name={this.state.StaffName + " " + this.state.StaffSurame}
-					forWho="dermatologist"
+					forWho="pharmacist"
 					handleClickIcon={this.handleClickIcon}
 				/>
 			</React.Fragment>
@@ -339,4 +340,4 @@ class HistoryDermatologistAppointments extends Component {
 	}
 }
 
-export default HistoryDermatologistAppointments;
+export default ObservePatientsCosultationHistory;
