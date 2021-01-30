@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,6 +75,7 @@ public class PharmacyController {
 	}
 	
 	@GetMapping("/get-pharmacy-by-appointment-time/{startDateTime}")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPrice(@PathVariable long startDateTime){
 	
 		try {
@@ -85,6 +87,7 @@ public class PharmacyController {
 	}
 	
 	@GetMapping("/get-pharmacy-by-appointment-time/sort-by-grade-ascending/{startDateTime}")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeAscending(@PathVariable long startDateTime){
 	
 		try {
@@ -96,6 +99,7 @@ public class PharmacyController {
 	}
 	
 	@GetMapping("/get-pharmacy-by-appointment-time/sort-by-grade-descending/{startDateTime}")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeDescending(@PathVariable long startDateTime){
 	
 		try {
@@ -107,6 +111,7 @@ public class PharmacyController {
 	}
 	
 	@GetMapping("/get-pharmacy-by-appointment-time/sort-by-price-ascending/{startDateTime}")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceAscending(@PathVariable long startDateTime){
 	
 		try {
@@ -118,6 +123,7 @@ public class PharmacyController {
 	}
 	
 	@GetMapping("/get-pharmacy-by-appointment-time/sort-by-price-descending/{startDateTime}")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceDescending(@PathVariable long startDateTime){
 	
 		try {
@@ -143,15 +149,17 @@ public class PharmacyController {
 	}
 	
 	@GetMapping("/feedback/{pharmacyId}")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<PharmacyFeedbackDTO> findByPatientAndPharmacy(@PathVariable UUID pharmacyId) {
 		try {
-			return new ResponseEntity<>(pharmacyFeedbackService.findByPatientAndPharmacy(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"), pharmacyId) ,HttpStatus.OK);
+			return new ResponseEntity<>(pharmacyFeedbackService.findByPatientAndPharmacy(pharmacyId) ,HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	
 	@PostMapping("/feedback")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> createFeedback(@RequestBody PharmacyFeedbackDTO pharmacyFeedbackDTO) {
 		
 		pharmacyFeedbackService.create(pharmacyFeedbackDTO);
@@ -169,10 +177,121 @@ public class PharmacyController {
 	
 	@PutMapping("/feedback")
 	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> updateFeedback(@RequestBody PharmacyFeedbackDTO pharmacyFeedbackDTO) {
 		
 		pharmacyFeedbackService.update(pharmacyFeedbackDTO);
 		
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
+	
+	@GetMapping("/search/sort-by/name-ascending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(@RequestParam String name,@RequestParam String city, @RequestParam double gradeFrom, @RequestParam double gradeTo,
+			@RequestParam double distanceFrom, @RequestParam double distanceTo, @RequestParam double latitude, @RequestParam double longitude){
+		
+		PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, city, gradeFrom, gradeTo, distanceFrom, distanceTo, latitude, longitude);
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(pharmacyFiltrationDTO);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/search/sort-by/name-descending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameDescending(@RequestParam String name,@RequestParam String city, @RequestParam double gradeFrom, @RequestParam double gradeTo,
+			@RequestParam double distanceFrom, @RequestParam double distanceTo, @RequestParam double latitude, @RequestParam double longitude){
+		
+		PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, city, gradeFrom, gradeTo, distanceFrom, distanceTo, latitude, longitude);
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameDescending(pharmacyFiltrationDTO);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/search/sort-by/city-name-ascending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameAscending(@RequestParam String name,@RequestParam String city, @RequestParam double gradeFrom, @RequestParam double gradeTo,
+			@RequestParam double distanceFrom, @RequestParam double distanceTo, @RequestParam double latitude, @RequestParam double longitude){
+		
+		PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, city, gradeFrom, gradeTo, distanceFrom, distanceTo, latitude, longitude);
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameAscending(pharmacyFiltrationDTO);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/search/sort-by/city-name-descending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameDescending(@RequestParam String name,@RequestParam String city, @RequestParam double gradeFrom, @RequestParam double gradeTo,
+			@RequestParam double distanceFrom, @RequestParam double distanceTo, @RequestParam double latitude, @RequestParam double longitude){
+		
+		PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, city, gradeFrom, gradeTo, distanceFrom, distanceTo, latitude, longitude);
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameDescending(pharmacyFiltrationDTO);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+
+	@GetMapping("/search/sort-by/grade-ascending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeAscending(@RequestParam String name,@RequestParam String city, @RequestParam double gradeFrom, @RequestParam double gradeTo,
+			@RequestParam double distanceFrom, @RequestParam double distanceTo, @RequestParam double latitude, @RequestParam double longitude){
+		
+		PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, city, gradeFrom, gradeTo, distanceFrom, distanceTo, latitude, longitude);
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeAscending(pharmacyFiltrationDTO);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/search/sort-by/grade-descending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeDescending(@RequestParam String name,@RequestParam String city, @RequestParam double gradeFrom, @RequestParam double gradeTo,
+			@RequestParam double distanceFrom, @RequestParam double distanceTo, @RequestParam double latitude, @RequestParam double longitude){
+		
+		PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, city, gradeFrom, gradeTo, distanceFrom, distanceTo, latitude, longitude);
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeDescending(pharmacyFiltrationDTO);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by/name-ascending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(){
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(null);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by/name-descending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameDescending(){
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameDescending(null);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by/city-name-ascending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameAscending(){
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameAscending(null);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by/city-name-descending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameDescending(){
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameDescending(null);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+
+	@GetMapping("/sort-by/grade-ascending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeAscending(){
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeAscending(null);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by/grade-descending")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeDescending(){
+	
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeDescending(null);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	
 }

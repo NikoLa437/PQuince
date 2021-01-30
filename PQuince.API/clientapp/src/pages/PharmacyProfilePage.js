@@ -8,6 +8,7 @@ import PharmacyDermatologistModal from "../components/PharmacyDermatologistModal
 import DrugsInPharmacyModal from "../components/DrugsInPharmacyModal";
 import FeedbackCreateModal from "../components/FeedbackCreateModal";
 import ComplaintCreateModal from "../components/ComplaintCreateModal";
+import getAuthHeader from "../GetHeader";
 
 class PharmacyProfilePage extends Component {
 	state = {
@@ -55,7 +56,7 @@ class PharmacyProfilePage extends Component {
 	handleComplaintChange = (event) => {
 		this.setState({ complaint: event.target.value });
 	};
-	
+
 	handleOurDrugs = () => {
 		this.setState({
 			showDrugsInPharmacy: true,
@@ -65,8 +66,7 @@ class PharmacyProfilePage extends Component {
 	handleModalClose = () => {
 		this.setState({ showDermatologistModal: false });
 	};
-	
-	
+
 	handleComplaintModalClose = () => {
 		this.setState({ showComplaintModal: false });
 	};
@@ -76,7 +76,10 @@ class PharmacyProfilePage extends Component {
 	};
 
 	handleFeedbackClick = () => {
-		Axios.get(BASE_URL + "/api/pharmacy/feedback/" + this.state.pharmacyId, { validateStatus: () => true })
+		Axios.get(BASE_URL + "/api/pharmacy/feedback/" + this.state.pharmacyId, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				console.log(res.data);
 				if (res.status === 404) {
@@ -95,9 +98,12 @@ class PharmacyProfilePage extends Component {
 				console.log(err);
 			});
 	};
-	
+
 	handleComplaintClick = () => {
-		Axios.get(BASE_URL + "/api/pharmacy/feedback/" + this.state.pharmacyId, { validateStatus: () => true })
+		Axios.get(BASE_URL + "/api/pharmacy/feedback/" + this.state.pharmacyId, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				console.log(res.data);
 				if (res.status === 404) {
@@ -120,7 +126,7 @@ class PharmacyProfilePage extends Component {
 	handleFeedbackModalClose = () => {
 		this.setState({ showFeedbackModal: false });
 	};
-	
+
 	handleComplaintModalClose = () => {
 		this.setState({ showComplaintModal: false });
 	};
@@ -135,7 +141,7 @@ class PharmacyProfilePage extends Component {
 			date: new Date(),
 			grade: this.state.patientsGrade,
 		};
-		Axios.post(BASE_URL + "/api/pharmacy/feedback", entityDTO)
+		Axios.post(BASE_URL + "/api/pharmacy/feedback", entityDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
 				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=cafeddee-56cb-11eb-ae93-0242ac130002")
 					.then((response) => {
@@ -183,7 +189,7 @@ class PharmacyProfilePage extends Component {
 			date: new Date(),
 			grade: this.state.patientsGrade,
 		};
-		Axios.put(BASE_URL + "/api/pharmacy/feedback", entityDTO)
+		Axios.put(BASE_URL + "/api/pharmacy/feedback", entityDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
 				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=cafeddee-56cb-11eb-ae93-0242ac130002")
 					.then((response) => {
@@ -203,6 +209,20 @@ class PharmacyProfilePage extends Component {
 
 	handleClickIcon = (grade) => {
 		this.setState({ patientsGrade: grade });
+	};
+
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+		console.log(roles);
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
 	};
 
 	render() {
@@ -291,7 +311,12 @@ class PharmacyProfilePage extends Component {
 							</button>
 							<br></br>
 
-							<button type="button" onClick={this.handleFeedbackClick} className="btn btn-outline-secondary mt-3">
+							<button
+								type="button"
+								hidden={!this.hasRole("ROLE_PATIENT")}
+								onClick={this.handleFeedbackClick}
+								className="btn btn-outline-secondary mt-3"
+							>
 								Give feedback
 							</button>
 							<br></br>

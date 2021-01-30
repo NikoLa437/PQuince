@@ -144,7 +144,9 @@ public class PharmacyService implements IPharmacyService {
 	
 
 
-	private boolean isDistanceInRange(double distance, double distanceFrom, double distanceTo) {
+	private boolean isDistanceInRange(double distance, double distanceFrom, double distanceTo) {		
+		if(distanceTo == 0) distanceTo = Double.MAX_VALUE;
+		
 		return distance >= distanceFrom && distance <= distanceTo;
 	}
 	
@@ -213,6 +215,85 @@ public class PharmacyService implements IPharmacyService {
 		Collections.sort(pharmacies, (s1, s2) -> Double.compare(s1.EntityDTO.getPrice(), s2.EntityDTO.getPrice()));
 		Collections.reverse(pharmacies);
 		
+		return pharmacies;
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
+
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+		pharmacies = pharmacyFiltrationDTO == null ? findAllPharmaciesWithGrades() : findByNameGradeAndDistance(pharmacyFiltrationDTO);
+		
+		Collections.sort(pharmacies, (p1, p2) -> (p1.EntityDTO.getName().compareTo(p2.EntityDTO.getName())));
+		
+		return pharmacies;
+	}
+
+
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameDescending(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+		pharmacies = pharmacyFiltrationDTO == null ? findAllPharmaciesWithGrades() : findByNameGradeAndDistance(pharmacyFiltrationDTO);
+		
+		Collections.sort(pharmacies, (p1, p2) -> (p1.EntityDTO.getName().compareTo(p2.EntityDTO.getName())));
+		Collections.reverse(pharmacies);
+		
+		return pharmacies;
+	}
+
+
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameAscending(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+		pharmacies = pharmacyFiltrationDTO == null ? findAllPharmaciesWithGrades() : findByNameGradeAndDistance(pharmacyFiltrationDTO);
+		
+		Collections.sort(pharmacies, (p1, p2) -> (p1.EntityDTO.getAddress().getCity().compareTo(p2.EntityDTO.getAddress().getCity())));
+		
+		return pharmacies;
+	}
+
+
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByCityNameDescending(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+		pharmacies = pharmacyFiltrationDTO == null ? findAllPharmaciesWithGrades() : findByNameGradeAndDistance(pharmacyFiltrationDTO);
+		
+		Collections.sort(pharmacies, (p1, p2) -> (p1.EntityDTO.getAddress().getCity().compareTo(p2.EntityDTO.getAddress().getCity())));
+		Collections.reverse(pharmacies);
+	
+		return pharmacies;
+	}
+
+
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeAscending(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+		pharmacies = pharmacyFiltrationDTO == null ? findAllPharmaciesWithGrades() : findByNameGradeAndDistance(pharmacyFiltrationDTO);
+		
+		Collections.sort(pharmacies, (p1, p2) -> Double.compare(p1.EntityDTO.getGrade(), p2.EntityDTO.getGrade()));
+		
+		return pharmacies;
+	}
+
+
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByGradeDescending(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
+		
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+		pharmacies = pharmacyFiltrationDTO == null ? findAllPharmaciesWithGrades() : findByNameGradeAndDistance(pharmacyFiltrationDTO);
+		
+		Collections.sort(pharmacies, (p1, p2) -> Double.compare(p1.EntityDTO.getGrade(), p2.EntityDTO.getGrade()));
+		Collections.reverse(pharmacies);
+	
 		return pharmacies;
 	}
 	

@@ -18,6 +18,6 @@ public interface IPharmacyFeedbackService {
 	
 	void update(PharmacyFeedbackDTO entityDTO);
 	
-	PharmacyFeedbackDTO findByPatientAndPharmacy(UUID patientId, UUID pharmacyId);
+	PharmacyFeedbackDTO findByPatientAndPharmacy(UUID pharmacyId);
 
 }
