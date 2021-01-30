@@ -171,50 +171,9 @@ public class UserService implements IUserService{
 		return new Patient(patientDTO.getEmail(), passwordEncoder.encode(patientDTO.getPassword()), patientDTO.getName(), patientDTO.getSurname(), patientDTO.getAddress(), patientDTO.getPhoneNumber());
 	}
 	
-	@Override
-	public UUID createSupplier(StaffDTO entityDTO) {
-		Staff staff = CreateSupplierFromDTO(entityDTO);
-		staffRepository.save(staff);
-		return staff.getId();
-	}
-	
-	private Staff CreateSupplierFromDTO(StaffDTO staffDTO) {
-		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.SUPPLIER);
-	}
-	
-	@Override
-	public UUID createPharmacyAdmin(StaffDTO entityDTO) {
-		Staff staff = CreatePharmacyAdminFromDTO(entityDTO);
-		staffRepository.save(staff);
-		return staff.getId();
-	}
-	
-	private Staff CreatePharmacyAdminFromDTO(StaffDTO staffDTO) {
-		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.PHARMACYADMIN);
-	}
-	
-	@Override
-	public UUID createDermatologist(StaffDTO entityDTO) {
-		Staff staff = CreateDermatologistFromDTO(entityDTO);
-		staffRepository.save(staff);
-		return staff.getId();
-	}
-	
-	private Staff CreateDermatologistFromDTO(StaffDTO staffDTO) {
-		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.DERMATOLOGIST);
-	}
 
 	@Override
-	public UUID createAdmin(StaffDTO entityDTO) {
-		Staff staff = CreateAdminFromDTO(entityDTO);
-		staffRepository.save(staff);
-		return staff.getId();
-	}
-	
-	private Staff CreateAdminFromDTO(StaffDTO staffDTO) {
-		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.SYSADMIN);
-	}
-	public UUID createDermathologist(UserRequestDTO entityDTO) {
+	public UUID createDermatologist(UserRequestDTO entityDTO) {
 		Staff staff = CreateDermathologistFromDTO(entityDTO);
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_DERMATHOLOGIST");
 		List<Authority> authorities = new ArrayList<Authority>();
@@ -225,6 +184,7 @@ public class UserService implements IUserService{
 		
 		return staff.getId();
 	}
+	
 	
 	private Staff CreateDermathologistFromDTO(UserRequestDTO staffDTO) {
 		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.DERMATOLOGIST);
@@ -469,5 +429,8 @@ public class UserService implements IUserService{
 		
 		return user.getId();
 	}
+
+
+
 
 }

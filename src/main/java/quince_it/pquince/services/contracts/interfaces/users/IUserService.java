@@ -38,10 +38,6 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	void updatePatient(UUID patientId,UserInfoChangeDTO patientInfoChangeDTO);
 	
-	UUID createSupplier(StaffDTO entityDTO);
-	UUID createPharmacyAdmin(StaffDTO entityDTO);
-	UUID createDermatologist(StaffDTO entityDTO);
-	UUID createAdmin(StaffDTO entityDTO);
 	List<IdentifiableDTO<StaffGradeDTO>> findAllStaffWithAvgGradeByStaffType(StaffType staffType);
 	
 	void updateStaff(UUID staffId, UserInfoChangeDTO staffInfoChangeDTO);
@@ -60,15 +56,16 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 
 	List<Authority> getAuthorityById(UUID id);
 
-	UUID createSupplier(UserRequestDTO entityDTO);
-
-	UUID createDermathologist(UserRequestDTO entityDTO);
-
-	UUID createPharmacist(UserRequestDTO entityDTO);
+	UUID createAdmin(UserRequestDTO entityDTO);
 
 	UUID createPharmacyAdmin(UserRequestDTO entityDTO);
 
-	UUID createAdmin(UserRequestDTO entityDTO);
+	UUID createPharmacist(UserRequestDTO entityDTO);
+
+	UUID createDermatologist(UserRequestDTO userRequest);
+
+	UUID createSupplier(UserRequestDTO entityDTO);
+
 
 
 }

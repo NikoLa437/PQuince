@@ -88,6 +88,57 @@ public class AuthenticationController {
 		//headers.setLocation(ucBuilder.path("/api/user/{userId}").buildAndExpand(user.getId()).toUri());
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}
+	
+	@PostMapping("/signup-dermathologist")
+	public ResponseEntity<UUID> addDermathologist(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
+
+		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
+		if (existUser != null) {
+			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
+		}
+
+		UUID userId = userService.createDermatologist(userRequest);
+		
+		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+	}
+	@PostMapping("/signup-pharmacyadmin")
+	public ResponseEntity<UUID> addPharmacyAdmin(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
+
+		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
+		if (existUser != null) {
+			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
+		}
+
+		UUID userId = userService.createPharmacyAdmin(userRequest);
+		
+		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+	}
+	@PostMapping("/signup-sysadmin")
+	public ResponseEntity<UUID> addSysadmin(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
+
+		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
+		if (existUser != null) {
+			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
+		}
+
+		UUID userId = userService.createAdmin(userRequest);
+		
+		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+	}
+	@PostMapping("/signup-supplier")
+	public ResponseEntity<UUID> addSupplier(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
+
+		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
+		if (existUser != null) {
+			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
+		}
+
+		UUID userId = userService.createSupplier(userRequest);
+		
+		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+	}
+	
+	
 
 	// VRV NE TREBA METODA
 	/*
