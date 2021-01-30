@@ -45,13 +45,29 @@ class DrugReservation extends Component {
 			});
 	};
 
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+		console.log(roles);
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
+	};
+
 	handlePharmacyClick = (pharmacyId, price, count) => {
-		this.setState({
-			reservationModalShow: true,
-			maxDrugAmount: count,
-			drugPrice: price,
-			pharmacyId: pharmacyId,
-		});
+		if (this.hasRole("ROLE_PATIENT")) {
+			this.setState({
+				reservationModalShow: true,
+				maxDrugAmount: count,
+				drugPrice: price,
+				pharmacyId: pharmacyId,
+			});
+		}
 	};
 
 	handleModalClose = () => {

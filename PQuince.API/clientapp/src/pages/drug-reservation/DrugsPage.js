@@ -28,20 +28,12 @@ class DrugsPage extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Choose drug</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Drugs</h5>
 
-					<table
-						className="table table-hover"
-						style={{ width: "100%", marginTop: "3rem" }}
-					>
+					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.drugs.map((drug) => (
-								<tr
-									id={drug.Id}
-									key={drug.Id}
-									onClick={() => this.props.onDrugSelect(drug)}
-									style={{ cursor: "pointer" }}
-								>
+								<tr id={drug.Id} key={drug.Id} onClick={() => this.props.onDrugSelect(drug)} style={{ cursor: "pointer" }}>
 									<td width="130em">
 										<img className="img-fluid" src={CapsuleLogo} width="70em" />
 									</td>
@@ -50,8 +42,7 @@ class DrugsPage extends Component {
 											<b>Name:</b> {drug.EntityDTO.drugInstanceName}
 										</div>
 										<div>
-											<b>Manufacturer:</b>{" "}
-											{drug.EntityDTO.manufacturer.EntityDTO.name}
+											<b>Manufacturer:</b> {drug.EntityDTO.manufacturer.EntityDTO.name}
 										</div>
 										<div>
 											<b>Quantity:</b> {drug.EntityDTO.quantity} <b>mg</b>
