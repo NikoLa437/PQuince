@@ -85,20 +85,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	// Generalna bezbednost aplikacije
+	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		// TokenAuthenticationFilter ce ignorisati sve ispod navedene putanje
 		web.ignoring().antMatchers(HttpMethod.POST, "/auth/signup");
-		web.ignoring().antMatchers(HttpMethod.GET, "/api/**");
-		web.ignoring().antMatchers(HttpMethod.POST, "/api/**");
+		web.ignoring().antMatchers(HttpMethod.POST, "/auth/login");
+		web.ignoring().antMatchers(HttpMethod.GET, "/api/drug");
+		web.ignoring().antMatchers(HttpMethod.GET, "/api/loyalty-program/**");
+		//web.ignoring().antMatchers(HttpMethod.GET, "/api/**");
+		//web.ignoring().antMatchers(HttpMethod.POST, "/api/**");
 		web.ignoring().antMatchers(HttpMethod.PUT, "/api/users/**");
-		web.ignoring().antMatchers(HttpMethod.PUT, "/api/drug/**");
-		web.ignoring().antMatchers(HttpMethod.PUT, "/api/appointment/**");
+		//web.ignoring().antMatchers(HttpMethod.PUT, "/api/drug/**");
+		//web.ignoring().antMatchers(HttpMethod.PUT, "/api/appointment/**");
 		web.ignoring().antMatchers(HttpMethod.POST, "/api/absence/**");
 		web.ignoring().antMatchers(HttpMethod.GET, "/api/pharmacy/**");
-		web.ignoring().antMatchers(HttpMethod.PUT, "/api/staff/**");
-		web.ignoring().antMatchers(HttpMethod.GET, "/api/drug/**");
+		//web.ignoring().antMatchers(HttpMethod.GET, "/api/drug/**");
 		web.ignoring().antMatchers(HttpMethod.PUT, "/api/pharmacy/**");
+		web.ignoring().antMatchers(HttpMethod.PUT, "/api/loyalty-program/**");
 
 
 		web.ignoring().antMatchers(HttpMethod.GET, "/api/users/activate-patient/**");

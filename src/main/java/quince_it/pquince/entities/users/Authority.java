@@ -17,9 +17,18 @@ public class Authority implements GrantedAuthority {
     @Column(name = "id")
 	private UUID id;
 
-    @Column(name="name")
+    @Column(name="name", unique=true)
     String name;
 
+
+	public Authority() {}
+	
+	public Authority(UUID id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+    
     @Override
     public String getAuthority() {
         return name;

@@ -1,5 +1,6 @@
 package quince_it.pquince.controllers.pharmacy;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,8 +23,11 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
+import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
+import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 
@@ -33,6 +37,9 @@ public class PharmacyController {
 
 	@Autowired
 	private IPharmacyService pharmacyService;
+	
+	@Autowired
+	private IPharmacyComplaintService pharmacyComplaintService;
 	
 	@Autowired
 	private IDrugInstanceService drugService;
@@ -74,6 +81,61 @@ public class PharmacyController {
 		}
 	}
 	
+	@GetMapping("/get-pharmacy-by-appointment-time/{startDateTime}")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPrice(@PathVariable long startDateTime){
+	
+		try {
+			return new ResponseEntity<>(pharmacyService.findAllPharmaciesFreeForPeriodWithGradesAndPrice(new Date(startDateTime)),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/get-pharmacy-by-appointment-time/sort-by-grade-ascending/{startDateTime}")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeAscending(@PathVariable long startDateTime){
+	
+		try {
+			return new ResponseEntity<>(pharmacyService.findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeAscending(new Date(startDateTime)),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/get-pharmacy-by-appointment-time/sort-by-grade-descending/{startDateTime}")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeDescending(@PathVariable long startDateTime){
+	
+		try {
+			return new ResponseEntity<>(pharmacyService.findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeDescending(new Date(startDateTime)),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/get-pharmacy-by-appointment-time/sort-by-price-ascending/{startDateTime}")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceAscending(@PathVariable long startDateTime){
+	
+		try {
+			return new ResponseEntity<>(pharmacyService.findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceAscending(new Date(startDateTime)),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/get-pharmacy-by-appointment-time/sort-by-price-descending/{startDateTime}")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradePriceDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceDescending(@PathVariable long startDateTime){
+	
+		try {
+			return new ResponseEntity<>(pharmacyService.findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceDescending(new Date(startDateTime)),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	@GetMapping("/search")
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findByNameGradeAndDistance(@RequestParam String name,@RequestParam String city, @RequestParam double gradeFrom, @RequestParam double gradeTo,
 			@RequestParam double distanceFrom, @RequestParam double distanceTo, @RequestParam double latitude, @RequestParam double longitude) {
@@ -105,11 +167,18 @@ public class PharmacyController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
+	@PostMapping("/complaint-pharmacy")
+	public ResponseEntity<?> createFeedback(@RequestBody ComplaintPharmacyDTO complaintPharmacyDTO) {
+		
+		pharmacyComplaintService.create(complaintPharmacyDTO);
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+	
 	@PutMapping("/feedback")
 	@CrossOrigin
 	public ResponseEntity<?> updateFeedback(@RequestBody PharmacyFeedbackDTO pharmacyFeedbackDTO) {
 		
-		System.out.println("LALAL");
 		pharmacyFeedbackService.update(pharmacyFeedbackDTO);
 		
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);

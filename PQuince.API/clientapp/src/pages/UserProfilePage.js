@@ -7,6 +7,7 @@ import AllergensModal from "../components/AllergensModal";
 import PasswordChangeModal from "../components/PasswordChangeModal";
 import ModalDialog from "../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
+import getAuthHeader from "../GetHeader";
 
 const mapState = {
 	center: [44, 21],
@@ -54,9 +55,7 @@ class UserProfilePage extends Component {
 			})
 			.then(function (res) {
 				var firstGeoObject = res.geoObjects.get(0);
-				document
-					.getElementById("suggest")
-					.setAttribute("value", firstGeoObject.getAddressLine());
+				document.getElementById("suggest").setAttribute("value", firstGeoObject.getAddressLine());
 				console.log(firstGeoObject.getAddressLine());
 			});
 
@@ -70,7 +69,7 @@ class UserProfilePage extends Component {
 	componentDidMount() {
 		this.addressInput = React.createRef();
 
-		Axios.get(BASE_URL + "/api/users/patient/22793162-52d3-11eb-ae93-0242ac130002")
+		Axios.get(BASE_URL + "/api/users/patient", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({
@@ -85,10 +84,8 @@ class UserProfilePage extends Component {
 					loyalityCategory: res.data.EntityDTO.category,
 				});
 
-				if (this.state.loyalityCategory === "SILVER")
-					this.setState({ loyalityCategoryColor: "#808080" });
-				else if (this.state.loyalityCategory === "GOLD")
-					this.setState({ loyalityCategoryColor: "#FFCC00" });
+				if (this.state.loyalityCategory === "SILVER") this.setState({ loyalityCategoryColor: "#808080" });
+				else if (this.state.loyalityCategory === "GOLD") this.setState({ loyalityCategoryColor: "#FFCC00" });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -179,7 +176,7 @@ class UserProfilePage extends Component {
 
 				if (this.validateForm(userDTO)) {
 					console.log(userDTO);
-					Axios.put(BASE_URL + "/api/users/" + this.state.id, userDTO)
+					Axios.put(BASE_URL + "/api/users/" + this.state.id, userDTO, { headers: { Authorization: getAuthHeader() } })
 						.then((res) => {
 							console.log("Success");
 							this.setState({ openSuccessModal: true });
@@ -202,7 +199,7 @@ class UserProfilePage extends Component {
 	handleAlergenRemove = (allergen) => {
 		let patientUserDTO = { allergenId: allergen.Id, patientId: this.state.id };
 		console.log(patientUserDTO);
-		Axios.put(BASE_URL + "/api/users/patient-allergens", patientUserDTO)
+		Axios.put(BASE_URL + "/api/users/patient-allergens", patientUserDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				let allergens = [];
 				console.log(allergens);
@@ -222,7 +219,7 @@ class UserProfilePage extends Component {
 	handleAllergenAdd = (allergen) => {
 		let patientUserDTO = { allergenId: allergen.Id, patientId: this.state.id };
 		console.log(patientUserDTO);
-		Axios.post(BASE_URL + "/api/users/patient-allergens", patientUserDTO)
+		Axios.post(BASE_URL + "/api/users/patient-allergens", patientUserDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				let allergens = [...this.state.userAllergens];
 				allergens.push(allergen);
@@ -268,10 +265,7 @@ class UserProfilePage extends Component {
 							<br />
 							<form id="contactForm" name="sentMessage">
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<div className="form-row">
 											<div className="form-col" style={{ fontSize: "1.5em" }}>
 												Loyality category:{" "}
@@ -292,10 +286,7 @@ class UserProfilePage extends Component {
 								</div>
 								<br />
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<div className="form-row">
 											<div className="form-col" style={{ fontSize: "1.5em" }}>
 												Number of points:{" "}
@@ -316,10 +307,7 @@ class UserProfilePage extends Component {
 								</div>
 								<br />
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Email address:</label>
 										<input
 											readOnly
@@ -333,10 +321,7 @@ class UserProfilePage extends Component {
 									</div>
 								</div>
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Name:</label>
 										<input
 											placeholder="Name"
@@ -346,18 +331,12 @@ class UserProfilePage extends Component {
 											value={this.state.name}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.nameError }}
-									>
+									<div className="text-danger" style={{ display: this.state.nameError }}>
 										Name must be entered.
 									</div>
 								</div>
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Surname:</label>
 										<input
 											placeholder="Surname"
@@ -367,25 +346,14 @@ class UserProfilePage extends Component {
 											value={this.state.surname}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.surnameError }}
-									>
+									<div className="text-danger" style={{ display: this.state.surnameError }}>
 										Surname must be entered.
 									</div>
 								</div>
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Address:</label>
-										<input
-											className="form-control"
-											id="suggest"
-											ref={this.addressInput}
-											placeholder="Address"
-										/>
+										<input className="form-control" id="suggest" ref={this.addressInput} placeholder="Address" />
 									</div>
 									<YMaps
 										query={{
@@ -402,18 +370,12 @@ class UserProfilePage extends Component {
 											modules={["coordSystem.geo", "geocode", "util.bounds"]}
 										></Map>
 									</YMaps>
-									<div
-										className="text-danger"
-										style={{ display: this.state.addressError }}
-									>
+									<div className="text-danger" style={{ display: this.state.addressError }}>
 										Address must be entered.
 									</div>
 								</div>
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Phone number:</label>
 										<input
 											placeholder="Phone number"
@@ -423,10 +385,7 @@ class UserProfilePage extends Component {
 											value={this.state.phoneNumber}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.phoneError }}
-									>
+									<div className="text-danger" style={{ display: this.state.phoneError }}>
 										Phone number must be entered.
 									</div>
 								</div>

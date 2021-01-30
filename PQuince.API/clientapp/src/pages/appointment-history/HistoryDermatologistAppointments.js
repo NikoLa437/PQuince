@@ -5,6 +5,8 @@ import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import FeedbackCreateModal from "../../components/FeedbackCreateModal";
+import { NavLink } from "react-router-dom";
+import getAuthHeader from "../../GetHeader";
 
 class HistoryDermatologistAppointments extends Component {
 	state = {
@@ -19,7 +21,7 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ appointments: res.data });
 				console.log(res.data);
@@ -30,7 +32,7 @@ class HistoryDermatologistAppointments extends Component {
 	}
 
 	handleResetSort = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: false });
 				console.log(res.data);
@@ -41,7 +43,9 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByDateAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-date-ascending")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-ascending?appointmentType=EXAMINATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ appointments: res.data, showingSorted: true });
@@ -52,7 +56,9 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByDateDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-date-descending")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-descending?appointmentType=EXAMINATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ appointments: res.data, showingSorted: true });
@@ -63,7 +69,9 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByPriceAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-price-ascending")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-ascending?appointmentType=EXAMINATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -74,7 +82,9 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByPriceDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-price-descending")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-descending?appointmentType=EXAMINATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -85,7 +95,9 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByDurationAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-time-ascending")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-ascending?appointmentType=EXAMINATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -96,7 +108,9 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	handleSortByDurationDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history/sort-by-time-descending")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-descending?appointmentType=EXAMINATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -108,7 +122,7 @@ class HistoryDermatologistAppointments extends Component {
 
 	handleFeedbackClick = (staff) => {
 		console.log(staff);
-		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true })
+		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				if (res.status === 404) {
@@ -148,9 +162,13 @@ class HistoryDermatologistAppointments extends Component {
 			date: new Date(),
 			grade: this.state.grade,
 		};
-		Axios.post(BASE_URL + "/api/staff/feedback", entityDTO)
+		Axios.post(BASE_URL + "/api/staff/feedback", entityDTO, {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+				Axios.get(BASE_URL + "/api/appointment/dermatologist-history", {
+					headers: { Authorization: getAuthHeader() },
+				})
 					.then((res) => {
 						this.setState({ appointments: res.data, showFeedbackModal: false });
 						console.log(res.data);
@@ -170,9 +188,13 @@ class HistoryDermatologistAppointments extends Component {
 			date: new Date(),
 			grade: this.state.grade,
 		};
-		Axios.put(BASE_URL + "/api/staff/feedback", entityDTO)
+		Axios.put(BASE_URL + "/api/staff/feedback", entityDTO, {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+				Axios.get(BASE_URL + "/api/appointment/dermatologist-history", {
+					headers: { Authorization: getAuthHeader() },
+				})
 					.then((res) => {
 						this.setState({ appointments: res.data, showModifyFeedbackModal: false });
 						console.log(res.data);
@@ -197,8 +219,15 @@ class HistoryDermatologistAppointments extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Dermatologist Appointment History</h5>
-
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">EXAMINATIONS</h5>
+					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
+						<NavLink className="nav-link" exact to="/patients-appointments">
+							Future examinations
+						</NavLink>
+						<NavLink className="nav-link active" exact to="/dermatologist-history">
+							Examination history
+						</NavLink>
+					</nav>
 					<div className="form-group">
 						<div className="form-group controls mb-0 pb-2">
 							<div className="form-row mt-3">

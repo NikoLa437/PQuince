@@ -9,11 +9,11 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface IDrugReservationService{
 	
-	List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId(UUID patientId);
+	List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId();
 	
-	List<IdentifiableDTO<DrugReservationDTO>> findAllFutureReservationsByPatientId(UUID patientId);
+	List<IdentifiableDTO<DrugReservationDTO>> findAllFutureReservationsByPatientId();
 	
-	List<IdentifiableDTO<DrugReservationDTO>> findProcessedDrugReservationsForPatient(UUID patientId);
+	List<IdentifiableDTO<DrugReservationDTO>> findProcessedDrugReservationsForPatient();
 
 	IdentifiableDTO<DrugReservationDTO> findById(UUID id);
 

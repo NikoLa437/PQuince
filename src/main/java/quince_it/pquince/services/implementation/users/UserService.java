@@ -1,6 +1,8 @@
 package quince_it.pquince.services.implementation.users;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,12 +10,16 @@ import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.Allergen;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
@@ -25,14 +31,17 @@ import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
+import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
@@ -59,12 +68,21 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private AllergenService allergenService;
+
+	@Autowired
+	private AuthorityService authorityService;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private IAppointmentService appointmentService;
+	
+	@Autowired
+	private Environment env;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -77,7 +95,13 @@ public class UserService implements IUserService{
 	public IdentifiableDTO<UserDTO> findById(UUID id) {
 		return UserMapper.MapUserPersistenceToUserIdentifiableDTO(userRepository.getOne(id));
 	}
-
+	
+	@Override
+	public List<Authority> getAuthorityById(UUID id) {
+		 User user = userRepository.getOne(id);
+		 return user.getUserAuthorities();
+	}
+	
 	@Override
 	public UUID create(UserDTO entityDTO) {
 		// TODO Auto-generated method stub
@@ -107,6 +131,11 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createPatient(UserRequestDTO entityDTO) {
 		Patient patient = CreatePatientFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PATIENT");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		patient.setUserAuthorities(authorities);
+		
 		patientRepository.save(patient);
 		try {
 			emailService.sendSignUpNotificaitionAsync(patient);
@@ -120,7 +149,24 @@ public class UserService implements IUserService{
 		
 		return patient.getId();
 	}
-
+	
+	@Override
+	public UUID createSupplier(UserRequestDTO entityDTO) {
+		Staff staff = CreateSupplierFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_SUPPLIER");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreateSupplierFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.SUPPLIER);
+	}
+	
 	private Patient CreatePatientFromDTO(UserRequestDTO patientDTO) {
 		return new Patient(patientDTO.getEmail(), passwordEncoder.encode(patientDTO.getPassword()), patientDTO.getName(), patientDTO.getSurname(), patientDTO.getAddress(), patientDTO.getPhoneNumber());
 	}
@@ -168,7 +214,73 @@ public class UserService implements IUserService{
 	private Staff CreateAdminFromDTO(StaffDTO staffDTO) {
 		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.SYSADMIN);
 	}
+	public UUID createDermathologist(UserRequestDTO entityDTO) {
+		Staff staff = CreateDermathologistFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_DERMATHOLOGIST");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreateDermathologistFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.DERMATOLOGIST);
+	}
 
+	@Override
+	public UUID createPharmacist(UserRequestDTO entityDTO) {
+		Staff staff = CreatePharmacistFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACIST");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreatePharmacistFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.PHARMACIST);
+	}
+	
+	@Override
+	public UUID createPharmacyAdmin(UserRequestDTO entityDTO) {
+		Staff staff = CreatePharmacyAdminFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACYADMIN");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreatePharmacyAdminFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.PHARMACYADMIN);
+	}
+	
+	@Override
+	public UUID createAdmin(UserRequestDTO entityDTO) {
+		Staff staff = CreateAdminFromDTO(entityDTO);
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_SYSADMIN");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		userRepository.save(staff);
+		
+		return staff.getId();
+	}
+	
+	private Staff CreateAdminFromDTO(UserRequestDTO staffDTO) {
+		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.SYSADMIN);
+	}
+	
 	@Override
 	public boolean activatePatientAccount(UUID id) {
 		try {
@@ -182,8 +294,9 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public IdentifiableDTO<PatientDTO> getPatientById(UUID id) {	
-		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(id));
+	public IdentifiableDTO<PatientDTO> getPatientById() {	
+		UUID patientId = getLoggedUserId();
+		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(patientId));
 	}
 	
 	@Override
@@ -309,6 +422,52 @@ public class UserService implements IUserService{
 		return users;
 	}
 
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacy(Date startDateTime, UUID pharmacyId) {
+		
+		long time = startDateTime.getTime();
+		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
+				
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+		appointmentService.findAllDistinctPharmacistsForAppointmentTimeForPharmacy(startDateTime, endDateTime, pharmacyId).forEach((p) -> pharmacists.add(MapStaffPersistenceToPharmacistGradeIdentifiableDTO(p)));
+		
+		return pharmacists;
+	}
 	
+	public  IdentifiableDTO<PharmacistForPharmacyGradeDTO> MapStaffPersistenceToPharmacistGradeIdentifiableDTO(Staff staff){
+		if(staff == null) throw new IllegalArgumentException();
+		
+		double avgGrade = staffFeedbackService.findAvgGradeForStaff(staff.getId());
+		return new IdentifiableDTO<PharmacistForPharmacyGradeDTO>(staff.getId(), new PharmacistForPharmacyGradeDTO(staff.getName(), staff.getSurname(), avgGrade));
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacySortByGradeAscending(Date startDateTime, UUID pharmacyId) {
+		
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = findAllFreePharmacistForPharmacy(startDateTime, pharmacyId);
+		Collections.sort(pharmacists, (s1, s2) -> Double.compare(s1.EntityDTO.getGrade(), s2.EntityDTO.getGrade()));
+
+		return pharmacists;
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllFreePharmacistForPharmacySortByGradeDescending(Date startDateTime, UUID pharmacyId) {
+		
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = findAllFreePharmacistForPharmacy(startDateTime, pharmacyId);
+		Collections.sort(pharmacists, (s1, s2) -> Double.compare(s1.EntityDTO.getGrade(), s2.EntityDTO.getGrade()));
+		Collections.reverse(pharmacists);
+
+		return pharmacists;
+	}
+
+	@Override
+	public UUID getLoggedUserId() {
+		
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		String email = currentUser.getName();
+		User user = userRepository.findByEmail(email);
+		
+		return user.getId();
+	}
 
 }
