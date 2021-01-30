@@ -4,6 +4,7 @@ import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import ModalDialog from "../../components/ModalDialog";
 import Axios from "axios";
+import getAuthHeader from "../../GetHeader";
 
 class LoyaltyProgram extends Component {
 state = {
@@ -26,7 +27,7 @@ state = {
 	
 	componentDidMount() {
 	
-		Axios.get(BASE_URL + "/api/loyaltyProgram/791fee27-bb12-4340-9b0a-a7c9ef575278")
+		Axios.get(BASE_URL + "/api/loyaltyProgram/791fee27-bb12-4340-9b0a-a7c9ef575278", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({
@@ -105,7 +106,7 @@ state = {
 				};
 				console.log(loyaltyProgramDTO);
 
-				Axios.put(BASE_URL + "/api/loyaltyProgram/" + this.state.id, loyaltyProgramDTO)
+				Axios.put(BASE_URL + "/api/loyaltyProgram/" + this.state.id, loyaltyProgramDTO, { headers: { Authorization: getAuthHeader()}})
 					.then((res) => {
 						console.log("Success");
 						this.setState({ openSuccessModal: true });

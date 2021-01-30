@@ -8,7 +8,7 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface IAllergenService {
 	
-	List<IdentifiableDTO<AllergenDTO>> getPatientAllergens(UUID patientId);
+	List<IdentifiableDTO<AllergenDTO>> getPatientAllergens();
 	List<IdentifiableDTO<AllergenDTO>> findAll();
 	IdentifiableDTO<AllergenDTO> findById(UUID id);
 }

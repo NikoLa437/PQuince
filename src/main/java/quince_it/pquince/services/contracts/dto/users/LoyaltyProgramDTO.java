@@ -13,6 +13,8 @@ public class LoyaltyProgramDTO {
 
 	private int pointsToEnterGoldCathegory;
 
+	public LoyaltyProgramDTO() {}
+	
 	public LoyaltyProgramDTO(int pointsForAppointment, int pointsForConsulting, int pointsToEnterRegularCathegory,
 			int pointsToEnterSilverCathegory, int pointsToEnterGoldCathegory) {
 		super();

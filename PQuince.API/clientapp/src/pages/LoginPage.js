@@ -4,11 +4,13 @@ import TopBar from "../components/TopBar";
 import Axios from "axios";
 import { BASE_URL } from "../constants.js";
 import { Button } from "react-bootstrap";
+import { Redirect } from "react-router-dom";
 
 class LoginPage extends Component {
 	state = {
 		email: "",
 		password: "",
+		redirect: false,
 	};
 	handleEmailChange = (event) => {
 		this.setState({ email: event.target.value });
@@ -16,7 +18,7 @@ class LoginPage extends Component {
 	handlePasswordChange = (event) => {
 		this.setState({ password: event.target.value });
 	};
-	
+
 	handleLogin = () => {
 		let loginDTO = { username: this.state.email, password: this.state.password };
 		console.log(loginDTO);
@@ -25,13 +27,15 @@ class LoginPage extends Component {
 				console.log("Success");
 				console.log(res.data);
 				localStorage.setItem("keyToken", res.data.accessToken);
-           	    localStorage.setItem("keyRole", res.data.role);
+				localStorage.setItem("keyRole", JSON.stringify(res.data.roles));
+				this.setState({ redirect: true });
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	};
 	render() {
+		if (this.state.redirect) return <Redirect push to="/" />;
 		return (
 			<React.Fragment>
 				<TopBar />

@@ -7,6 +7,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,8 @@ public class LoyaltyProgramController {
 	private LoyaltyProgramService loyaltyProgramService;
 	
 	@GetMapping("/{loyaltyProgramId}")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<IdentifiableDTO<LoyaltyProgramDTO>> getLoyaltyProgramById(@PathVariable UUID loyaltyProgramId) {
 		
 		try {
@@ -43,6 +46,7 @@ public class LoyaltyProgramController {
 	
 	@PutMapping("/{loyaltyProgramId}") 
 	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> updateLoyaltyProgramInformation(@PathVariable UUID loyaltyProgramId,@RequestBody LoyaltyProgramDTO loyaltyProgramDTO ) {
 	  
 		try {

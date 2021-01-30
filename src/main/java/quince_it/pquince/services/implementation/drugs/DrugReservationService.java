@@ -25,6 +25,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugReservationService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.drugs.DrugReservationMapper;
 
@@ -51,6 +52,9 @@ public class DrugReservationService implements IDrugReservationService{
 	
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private IUserService userService;
 
 	@Override
 	public IdentifiableDTO<DrugReservationDTO> findById(UUID id) {
@@ -65,7 +69,9 @@ public class DrugReservationService implements IDrugReservationService{
 	@Override
 	public UUID create(DrugReservationRequestDTO entityDTO) {
 		//TODO : NOT HARDCODED ID
-		Patient patient = patientRepository.getOne(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"));
+		
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.getOne(patientId);
 		DrugReservation drugReservation = new DrugReservation(pharmacyRepository.getOne(entityDTO.getPharmacyId()),
 															  drugInstanceRepository.getOne(entityDTO.getDrugId()),
 															  patient,
@@ -144,7 +150,8 @@ public class DrugReservationService implements IDrugReservationService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId(UUID patientId) {
+	public List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId() {
+		UUID patientId = userService.getLoggedUserId();
 		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findAllByPatientId(patientId));
 	}
 
@@ -170,13 +177,15 @@ public class DrugReservationService implements IDrugReservationService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DrugReservationDTO>> findAllFutureReservationsByPatientId(UUID patientId) {
+	public List<IdentifiableDTO<DrugReservationDTO>> findAllFutureReservationsByPatientId() {
+		UUID patientId = userService.getLoggedUserId();
 		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findAllFutureReservationsByPatientId(patientId));
 
 	}
 
 	@Override
-	public List<IdentifiableDTO<DrugReservationDTO>> findProcessedDrugReservationsForPatient(UUID patientId) {
+	public List<IdentifiableDTO<DrugReservationDTO>> findProcessedDrugReservationsForPatient() {
+		UUID patientId = userService.getLoggedUserId();
 		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findProcessedDrugReservationsForPatient(patientId));
 
 	}

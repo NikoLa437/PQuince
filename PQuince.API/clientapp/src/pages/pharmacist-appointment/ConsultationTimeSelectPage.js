@@ -9,6 +9,7 @@ import PharmaciesForDatePage from "./PharmaciesForDatePage";
 import PharmacistForPharmacy from "./PharmacistForPharmacy";
 import ModalDialog from "../../components/ModalDialog";
 import { Redirect } from "react-router-dom";
+import getAuthHeader from "../../GetHeader";
 
 class ConsultationTimeSelectPage extends Component {
 	state = {
@@ -44,7 +45,8 @@ class ConsultationTimeSelectPage extends Component {
 					this.state.minutes,
 					0,
 					0
-				).getTime()
+				).getTime(),
+			{ headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
 				console.log(res.data);
@@ -67,7 +69,8 @@ class ConsultationTimeSelectPage extends Component {
 					this.state.minutes,
 					0,
 					0
-				).getTime()
+				).getTime(),
+			{ headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
 				console.log(res.data);
@@ -90,7 +93,8 @@ class ConsultationTimeSelectPage extends Component {
 					this.state.minutes,
 					0,
 					0
-				).getTime()
+				).getTime(),
+			{ headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
 				this.setState({ pharmacies: res.data, showingSorted: true });
@@ -113,7 +117,8 @@ class ConsultationTimeSelectPage extends Component {
 					this.state.minutes,
 					0,
 					0
-				).getTime()
+				).getTime(),
+			{ headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
 				this.setState({ pharmacies: res.data, showingSorted: true });
@@ -170,7 +175,8 @@ class ConsultationTimeSelectPage extends Component {
 							this.state.minutes,
 							0,
 							0
-						).getTime()
+						).getTime(),
+					{ headers: { Authorization: getAuthHeader() } }
 				)
 					.then((res) => {
 						this.setState({ pharmacies: res.data, hiddenPharmacies: false });
@@ -192,7 +198,8 @@ class ConsultationTimeSelectPage extends Component {
 						this.state.minutes,
 						0,
 						0
-					).getTime()
+					).getTime(),
+				{ headers: { Authorization: getAuthHeader() } }
 			)
 				.then((res) => {
 					this.setState({ pharmacies: res.data, hiddenPharmacies: false });
@@ -220,7 +227,8 @@ class ConsultationTimeSelectPage extends Component {
 					this.state.minutes,
 					0,
 					0
-				).getTime()
+				).getTime(),
+			{ headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
 				this.setState({ pharmacies: res.data, showingSorted: false });
@@ -261,7 +269,8 @@ class ConsultationTimeSelectPage extends Component {
 					this.state.minutes,
 					0,
 					0
-				).getTime()
+				).getTime(),
+			{ headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
 				this.setState({ pharmacists: res.data, hiddenPharmacists: false, hiddenPharmacies: true });
@@ -290,7 +299,8 @@ class ConsultationTimeSelectPage extends Component {
 					this.state.minutes,
 					0,
 					0
-				).getTime()
+				).getTime(),
+			{ headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
 				this.setState({ pharmacists: res.data, showingPharmacistSorted: true });
@@ -315,7 +325,8 @@ class ConsultationTimeSelectPage extends Component {
 					this.state.minutes,
 					0,
 					0
-				).getTime()
+				).getTime(),
+			{ headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
 				this.setState({ pharmacists: res.data, showingPharmacistSorted: true });
@@ -340,7 +351,8 @@ class ConsultationTimeSelectPage extends Component {
 					this.state.minutes,
 					0,
 					0
-				).getTime()
+				).getTime(),
+			{ headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
 				this.setState({ pharmacists: res.data, showingPharmacistSorted: false });
@@ -369,7 +381,7 @@ class ConsultationTimeSelectPage extends Component {
 			),
 		};
 
-		Axios.post(BASE_URL + "/api/appointment/reserve-appointment", EntityDTO)
+		Axios.post(BASE_URL + "/api/appointment/reserve-appointment", EntityDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ openModalSuccess: true });
 				console.log(res);
