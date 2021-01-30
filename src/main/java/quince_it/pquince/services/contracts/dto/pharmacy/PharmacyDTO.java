@@ -23,12 +23,6 @@ public class PharmacyDTO {
 		this.description = description;
 		this.consultationPrice = consultationPrice;
 	}
-	public PharmacyDTO(String name, Address address, String description) {
-		super();
-		this.name = name;
-		this.address = address;
-		this.description = description;
-	}
 
 	public String getName() {
 		return name;

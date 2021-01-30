@@ -52,7 +52,8 @@ public class PharmacyController {
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAll() {
 		return new ResponseEntity<>(pharmacyService.findAllPharmaciesWithGrades(),HttpStatus.OK);
 	}
-	
+
+	@CrossOrigin
 	@PostMapping
 	public ResponseEntity<UUID> addPharmacy(@RequestBody PharmacyDTO pharmacyDTO) {
 		
