@@ -21,12 +21,10 @@ import ObservePatientsPage from "./pages/ObservePatientsPage";
 import PatientProfilePage from "./pages/PatientProfilePage";
 import ScheduleAppointmentPage from "./pages/dermatologist-appointment/ScheduleAppointmentPage";
 import ConsultationTimeSelectPage from "./pages/pharmacist-appointment/ConsultationTimeSelectPage";
-import DermatologistComplaints from "./pages/complaints/DermatologistComplaint";
-import PharmacyComplaints from "./pages/complaints/ComplaintsForPharmacy";
+import AdminComplaints from "./pages/complaints/AdminComplaints";
 import LoyaltyProgram from "./pages/loyalty-program/LoyaltyProgram";
 import ObservePatientsCosultation from "./pages/pharmacist-appointment/ObservePatientsCosultation";
 import ObservePatientsCosultationHistory from "./pages/pharmacist-appointment/ObservePatientsConsultationHistory";
-
 
 function App() {
 	return (
@@ -57,8 +55,7 @@ function App() {
 				<Link exact to="/drugs-reservation" path="/drugs-reservation" component={PatientsDrugReservations} />
 				<Link exact to="/drugs-reservation-history" path="/drugs-reservation-history" component={PatientsDrugReservationHistory} />
 				<Link exact to="/drugs" path="/drugs" component={DrugReservation} />
-				<Link exact to="/dermatologist-complaints" path="/dermatologist-complaints" component={DermatologistComplaints} />
-				<Link exact to="/pharmacy-complaints" path="/pharmacy-complaints" component={PharmacyComplaints} />
+				<Link exact to="/admin-complaints" path="/admin-complaints" component={AdminComplaints} />
 				<Link exact to="/pharmacy" path="/pharmacy" component={PharmacyProfilePage} />
 				<Link exact to="/reserve-appointment" path="/reserve-appointment" component={Appointments} />
 				<Link exact to="/patients-appointments" path="/patients-appointments" component={PatientsAppointments} />

@@ -7,6 +7,7 @@ import Axios from "axios";
 import { NavLink } from "react-router-dom";
 import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 import getAuthHeader from "../../GetHeader";
+import ComplaintCreateModal from "../../components/ComplaintCreateModal";
 
 class ObservePatientsCosultationHistory extends Component {
 	state = {
@@ -15,6 +16,8 @@ class ObservePatientsCosultationHistory extends Component {
 		showFeedbackModal: false,
 		showModifyFeedbackModal: false,
 		selectedStaffId: "",
+		showComplaintModal: false,
+		complaint: "",
 		StaffName: "",
 		StaffSurame: "",
 		grade: 0,
@@ -31,6 +34,41 @@ class ObservePatientsCosultationHistory extends Component {
 				console.log(err);
 			});
 	}
+	handleComplaintClick = (staff) => {
+		console.log(staff);
+		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true })
+			.then((res) => {
+				console.log(res.data);
+				if (res.status === 404) {
+					this.setState({
+						selectedStaffId: staff.Id,
+						showComplaintModal: true,
+						StaffName: staff.EntityDTO.name,
+						StaffSurame: staff.EntityDTO.surname,
+						grade: 0,
+					});
+				} else {
+					this.setState({
+						selectedStaffId: staff.Id,
+						showComplaintModal: true,
+						StaffName: staff.EntityDTO.name,
+						StaffSurame: staff.EntityDTO.surname,
+						grade: res.data.grade,
+					});
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+	
+	handleComplaintChange = (event) => {
+		this.setState({ complaint: event.target.value });
+	};
+	
+	handleComplaintModalClose = () => {
+		this.setState({ showComplaintModal: false });
+	};
 
 	handleResetSort = () => {
 		Axios.get(BASE_URL + "/api/appointment/pharmacist-history", { headers: { Authorization: getAuthHeader() } })
@@ -183,6 +221,31 @@ class ObservePatientsCosultationHistory extends Component {
 			});
 	};
 
+	handleComaplaint = () => {
+		let entityDTO = {
+			staffId: this.state.selectedStaffId,
+			date: new Date(),
+			text: this.state.complaint,
+		};
+		Axios.post(BASE_URL + "/api/staff/complaint", entityDTO)
+			.then((resp) => {
+				Axios.get(BASE_URL + "/api/appointment/pharmacist-history", {
+					headers: { Authorization: getAuthHeader() },
+				})
+					.then((res) => {
+						this.setState({ appointments: res.data, showComplaintModal: false });
+						console.log(res.data);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+	
+
 	handleModifyFeedback = () => {
 		let entityDTO = {
 			staffId: this.state.selectedStaffId,
@@ -327,6 +390,15 @@ class ObservePatientsCosultationHistory extends Component {
 										>
 											Give feedback
 										</button>
+										<br></br>
+										<br></br>
+										<button
+											type="button"
+											onClick={() => this.handleComplaintClick(appointment.EntityDTO.staff)}
+											className="btn btn-outline-secondary"
+										>
+											Make complaint
+										</button>
 									</td>
 								</tr>
 							))}
@@ -355,6 +427,18 @@ class ObservePatientsCosultationHistory extends Component {
 					name={this.state.StaffName + " " + this.state.StaffSurame}
 					forWho="pharmacist"
 					handleClickIcon={this.handleClickIcon}
+				/>
+				<ComplaintCreateModal
+					buttonName="Send complaint"
+					header="Give complaint"
+					handleComplaintChange={this.handleComplaintChange}
+					show={this.state.showComplaintModal}
+					onCloseModal={this.handleComplaintModalClose}
+					giveFeedback={this.handleComaplaint}
+					name={this.state.StaffName + " " + this.state.StaffSurame}
+					forWho="consultant"
+					handleClickIcon={this.handleClickIcon}
+					complaint={this.state.complaint}
 				/>
 			</React.Fragment>
 		);

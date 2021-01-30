@@ -65,7 +65,6 @@ public class AuthenticationController {
 		
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		
 		User user = (User) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getUsername());
 		int expiresIn = tokenUtils.getExpiredIn();

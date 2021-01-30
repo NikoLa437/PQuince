@@ -165,7 +165,7 @@ class PharmacyProfilePage extends Component {
 			date: new Date(),
 			text: this.state.complaint,
 		};
-		Axios.post(BASE_URL + "/api/pharmacy/complaint-pharmacy", entityDTO)
+		Axios.post(BASE_URL + "/api/pharmacy/complaint-pharmacy", entityDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
 				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=cafeddee-56cb-11eb-ae93-0242ac130002")
 					.then((response) => {
