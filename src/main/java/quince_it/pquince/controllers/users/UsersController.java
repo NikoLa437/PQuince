@@ -9,6 +9,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,7 +56,8 @@ public class UsersController {
 	}
 	
 	
-	@GetMapping("/{userId}") 
+	@GetMapping("/{userId}")
+	@PreAuthorize("hasRole('PATIENT')") //Nadovezuje se sa 'or hasRole('...') or hasRole....'
 	public ResponseEntity<IdentifiableDTO<UserDTO>> getUserById(@PathVariable UUID userId) {
 		
 		try {
@@ -109,11 +111,12 @@ public class UsersController {
 		}
 	}
 	
-	@GetMapping("/patient/{patientId}") 
-	public ResponseEntity<IdentifiableDTO<PatientDTO>> getPatientById(@PathVariable UUID patientId) {
+	@GetMapping("/patient")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<IdentifiableDTO<PatientDTO>> getPatientById() {
 	  
 		try {
-			IdentifiableDTO<PatientDTO> patient = userService.getPatientById(patientId);
+			IdentifiableDTO<PatientDTO> patient = userService.getPatientById();
 			return new ResponseEntity<>(patient,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
@@ -137,11 +140,12 @@ public class UsersController {
 		}
 	}
 	
-	@GetMapping("/patient-allergens/{patientId}") 
-	public ResponseEntity<List<IdentifiableDTO<AllergenDTO>>> getAllergensForPatient(@PathVariable UUID patientId) {
+	@GetMapping("/patient-allergens") 
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<AllergenDTO>>> getAllergensForPatient() {
 	  
 		try {
-			List<IdentifiableDTO<AllergenDTO>> allergens = allergenService.getPatientAllergens(patientId);
+			List<IdentifiableDTO<AllergenDTO>> allergens = allergenService.getPatientAllergens();
 			return new ResponseEntity<>(allergens,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
@@ -192,6 +196,8 @@ public class UsersController {
 	}
 	
 	@GetMapping("/get-pharmacists")
+	@PreAuthorize("hasRole('PATIENT')")
+	@CrossOrigin
 	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPrice(@RequestParam UUID pharmacyId, @RequestParam long startDateTime){
 	
 		try {
@@ -203,6 +209,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/get-pharmacists/sort-by-grade-ascending")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeAscending(@RequestParam UUID pharmacyId, @RequestParam long startDateTime){
 	
 		try {
@@ -214,6 +221,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/get-pharmacists/sort-by-grade-descending")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeDescending(@RequestParam UUID pharmacyId, @RequestParam long startDateTime){
 	
 		try {

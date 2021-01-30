@@ -12,6 +12,8 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -250,8 +252,9 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public IdentifiableDTO<PatientDTO> getPatientById(UUID id) {	
-		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(id));
+	public IdentifiableDTO<PatientDTO> getPatientById() {	
+		UUID patientId = getLoggedUserId();
+		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(patientId));
 	}
 	
 	@Override
@@ -413,6 +416,16 @@ public class UserService implements IUserService{
 		Collections.reverse(pharmacists);
 
 		return pharmacists;
+	}
+
+	@Override
+	public UUID getLoggedUserId() {
+		
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		String email = currentUser.getName();
+		User user = userRepository.findByEmail(email);
+		
+		return user.getId();
 	}
 
 }

@@ -6,6 +6,7 @@ import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import { NavLink } from "react-router-dom";
 import FeedbackCreateModal from "../../components/FeedbackCreateModal";
+import getAuthHeader from "../../GetHeader";
 
 class ObservePatientsCosultationHistory extends Component {
 	state = {
@@ -20,7 +21,7 @@ class ObservePatientsCosultationHistory extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/pharmacist-history")
+		Axios.get(BASE_URL + "/api/appointment/pharmacist-history", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 
@@ -32,7 +33,7 @@ class ObservePatientsCosultationHistory extends Component {
 	}
 
 	handleResetSort = () => {
-		Axios.get(BASE_URL + "/api/appointment/pharmacist-history")
+		Axios.get(BASE_URL + "/api/appointment/pharmacist-history", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: false });
 				console.log(res.data);
@@ -43,7 +44,9 @@ class ObservePatientsCosultationHistory extends Component {
 	};
 
 	handleSortByDateAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-ascending?appointmentType=CONSULTATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-ascending?appointmentType=CONSULTATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ appointments: res.data, showingSorted: true });
@@ -54,7 +57,9 @@ class ObservePatientsCosultationHistory extends Component {
 	};
 
 	handleSortByDateDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-descending?appointmentType=CONSULTATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-descending?appointmentType=CONSULTATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ appointments: res.data, showingSorted: true });
@@ -65,7 +70,9 @@ class ObservePatientsCosultationHistory extends Component {
 	};
 
 	handleSortByPriceAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-ascending?appointmentType=CONSULTATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-ascending?appointmentType=CONSULTATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -76,7 +83,9 @@ class ObservePatientsCosultationHistory extends Component {
 	};
 
 	handleSortByPriceDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-descending?appointmentType=CONSULTATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-price-descending?appointmentType=CONSULTATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -87,7 +96,9 @@ class ObservePatientsCosultationHistory extends Component {
 	};
 
 	handleSortByDurationAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-ascending?appointmentType=CONSULTATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-ascending?appointmentType=CONSULTATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -98,7 +109,9 @@ class ObservePatientsCosultationHistory extends Component {
 	};
 
 	handleSortByDurationDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-descending?appointmentType=CONSULTATION")
+		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-time-descending?appointmentType=CONSULTATION", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ appointments: res.data, showingSorted: true });
 				console.log(res.data);
@@ -110,7 +123,7 @@ class ObservePatientsCosultationHistory extends Component {
 
 	handleFeedbackClick = (staff) => {
 		console.log(staff);
-		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true })
+		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				if (res.status === 404) {
@@ -150,9 +163,13 @@ class ObservePatientsCosultationHistory extends Component {
 			date: new Date(),
 			grade: this.state.grade,
 		};
-		Axios.post(BASE_URL + "/api/staff/feedback", entityDTO)
+		Axios.post(BASE_URL + "/api/staff/feedback", entityDTO, {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/pharmacist-history")
+				Axios.get(BASE_URL + "/api/appointment/pharmacist-history", {
+					headers: { Authorization: getAuthHeader() },
+				})
 					.then((res) => {
 						this.setState({ appointments: res.data, showFeedbackModal: false });
 						console.log(res.data);
@@ -172,9 +189,13 @@ class ObservePatientsCosultationHistory extends Component {
 			date: new Date(),
 			grade: this.state.grade,
 		};
-		Axios.put(BASE_URL + "/api/staff/feedback", entityDTO)
+		Axios.put(BASE_URL + "/api/staff/feedback", entityDTO, {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/pharmacist-history")
+				Axios.get(BASE_URL + "/api/appointment/pharmacist-history", {
+					headers: { Authorization: getAuthHeader() },
+				})
 					.then((res) => {
 						this.setState({ appointments: res.data, showModifyFeedbackModal: false });
 						console.log(res.data);

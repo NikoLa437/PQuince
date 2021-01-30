@@ -17,6 +17,7 @@ import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.services.contracts.dto.users.StaffFeedbackDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.util.users.StaffFeedbackMapper;
 
 
@@ -34,6 +35,10 @@ public class StaffFeedbackService implements IStaffFeedbackService{
 	
 	@Autowired
 	private AppointmentRepository appointmentRepository;
+	
+	@Autowired
+	private IUserService userService;
+	
 	
 	@Override
 	public double findAvgGradeForStaff(UUID staffId) {
@@ -90,7 +95,8 @@ public class StaffFeedbackService implements IStaffFeedbackService{
 	}
 
 	@Override
-	public StaffFeedbackDTO findByStaffIdAndPatientId(UUID staffId, UUID patientId) {
+	public StaffFeedbackDTO findByStaffIdAndPatientId(UUID staffId) {
+		UUID patientId = userService.getLoggedUserId();
 		return StaffFeedbackMapper.MapStaffFeedbackPersistenceToStaffFeedbackDTO(staffFeedbackRepository.findByStaffIdAndPatientId(staffId, patientId));
 	}
 

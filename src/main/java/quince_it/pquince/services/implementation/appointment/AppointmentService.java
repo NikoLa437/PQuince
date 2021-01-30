@@ -109,9 +109,11 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public boolean reserveAppointment(UUID appointmentId, UUID patientId) {
+	public boolean reserveAppointment(UUID appointmentId) {
 		
 		try {
+			UUID patientId = userService.getLoggedUserId();
+			
 			Appointment appointment = appointmentRepository.findById(appointmentId).get();
 			Patient patient = patientRepository.findById(patientId).get();
 
@@ -210,8 +212,9 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>> findAllFutureAppointmentsForPatient(UUID patientId, AppointmentType appointmentType) {
+	public List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>> findAllFutureAppointmentsForPatient(AppointmentType appointmentType) {
 		
+		UUID patientId = userService.getLoggedUserId();
 		List<Appointment> appointments = appointmentRepository.findAllFutureAppointmentsForPatient(patientId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(appointmentType.equals(AppointmentType.EXAMINATION) 
 																											  ? StaffType.DERMATOLOGIST :
@@ -225,9 +228,9 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByDateAscending(UUID patientId,
-			AppointmentType appointmentType) {
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByDateAscending(AppointmentType appointmentType) {
 		
+		UUID patientId = userService.getLoggedUserId();
 		List<Appointment> appointments = appointmentRepository.findAllPreviousAppointmentsForPatientSortByDateAscending(patientId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(appointmentType.equals(AppointmentType.EXAMINATION) 
 																											  ? StaffType.DERMATOLOGIST :
@@ -239,9 +242,9 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByDateDescending(UUID patientId,
-			AppointmentType appointmentType) {
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByDateDescending(AppointmentType appointmentType) {
 		
+		UUID patientId = userService.getLoggedUserId();
 		List<Appointment> appointments = appointmentRepository.findAllPreviousAppointmentsForPatientSortByDateDescending(patientId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(appointmentType.equals(AppointmentType.EXAMINATION) ? 
 																																		StaffType.DERMATOLOGIST :
@@ -253,9 +256,9 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByPriceAscending(UUID patientId,
-			AppointmentType appointmentType) {
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByPriceAscending(AppointmentType appointmentType) {
 		
+		UUID patientId = userService.getLoggedUserId();
 		List<Appointment> appointments = appointmentRepository.findAllPreviousAppointmentsForPatientSortByPriceAscending(patientId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(appointmentType.equals(AppointmentType.EXAMINATION) ? 
 																																		StaffType.DERMATOLOGIST :
@@ -267,9 +270,9 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByPriceDescending(UUID patientId,
-			AppointmentType appointmentType) {
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByPriceDescending(AppointmentType appointmentType) {
 		
+		UUID patientId = userService.getLoggedUserId();
 		List<Appointment> appointments = appointmentRepository.findAllPreviousAppointmentsForPatientSortByPriceDescending(patientId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(appointmentType.equals(AppointmentType.EXAMINATION) ? 
 																													StaffType.DERMATOLOGIST :
@@ -281,9 +284,9 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByTimeAscending(UUID patientId,
-			AppointmentType appointmentType) {
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByTimeAscending(AppointmentType appointmentType) {
 		
+		UUID patientId = userService.getLoggedUserId();
 		List<Appointment> appointments = appointmentRepository.findAllPreviousAppointmentsForPatientSortByTimeAscending(patientId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(appointmentType.equals(AppointmentType.EXAMINATION) ? 
 																																		StaffType.DERMATOLOGIST :
@@ -294,9 +297,9 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByTimeDescending(UUID patientId,
-			AppointmentType appointmentType) {
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByTimeDescending(AppointmentType appointmentType) {
 		
+		UUID patientId = userService.getLoggedUserId();
 		List<Appointment> appointments = appointmentRepository.findAllPreviousAppointmentsForPatientSortByTimeDescending(patientId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(appointmentType.equals(AppointmentType.EXAMINATION) ? 
 																												StaffType.DERMATOLOGIST :
@@ -308,9 +311,9 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatient(UUID patientId,
-			AppointmentType appointmentType) {
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatient(AppointmentType appointmentType) {
 		
+		UUID patientId = userService.getLoggedUserId();
 		List<Appointment> appointments = appointmentRepository.findAllPreviousAppointmentsForPatient(patientId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(appointmentType.equals(AppointmentType.EXAMINATION) ? 
 																													StaffType.DERMATOLOGIST :
@@ -458,11 +461,12 @@ public class AppointmentService implements IAppointmentService{
 	}
 	
 	private Appointment createConsultationAppointmentFromDTO(ConsultationRequestDTO requestDTO, Date endDateTime) {
-		//TODO DULE: get Logged patient
+		
+		UUID patientId = userService.getLoggedUserId();
 		
 		Staff staff = staffRepository.findById(requestDTO.getPharmacistId()).get();
 		Pharmacy pharmacy = pharmacistRepository.findPharmacyByPharmacistId(requestDTO.getPharmacistId());
-		Patient patient = patientRepository.findById(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")).get();
+		Patient patient = patientRepository.findById(patientId).get();
 
 		return new Appointment(pharmacy, staff, patient, requestDTO.getStartDateTime(), endDateTime, pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, AppointmentStatus.SCHEDULED);
 	}

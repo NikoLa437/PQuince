@@ -1,9 +1,9 @@
 package quince_it.pquince.controllers.users;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,14 +62,17 @@ public class AuthenticationController {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
 						authenticationRequest.getPassword()));
+		
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-
+		
 		User user = (User) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getUsername());
 		int expiresIn = tokenUtils.getExpiredIn();
-		String role = user.getUserAuthorities().get(0).getName();
-		return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn,role));
+		List<String> roles = new ArrayList<String>();
+		user.getUserAuthorities().forEach((a) -> roles.add(a.getName()));
+
+		return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn,roles));
 	}
 
 	@PostMapping("/signup")
@@ -86,24 +89,27 @@ public class AuthenticationController {
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}
 
-	@PostMapping(value = "/refresh")
-	public ResponseEntity<UserTokenStateDTO> refreshAuthenticationToken(HttpServletRequest request) {
-
-		String token = tokenUtils.getToken(request);
-		String username = this.tokenUtils.getUsernameFromToken(token);
-		User user = (User) this.userDetailsService.loadUserByUsername(username);
-		
-		String role = user.getUserAuthorities().get(0).getName();//user.getUserAuthorities().get(0).getName();
-
-		if (this.tokenUtils.canTokenBeRefreshed(token, new Date())) {
-			String refreshedToken = tokenUtils.refreshToken(token);
-			int expiresIn = tokenUtils.getExpiredIn();
-
-			return ResponseEntity.ok(new UserTokenStateDTO(refreshedToken, expiresIn,role));
-		} else {
-			UserTokenStateDTO userTokenState = new UserTokenStateDTO();
-			return ResponseEntity.badRequest().body(userTokenState);
-		}
-	}
+	// VRV NE TREBA METODA
+	/*
+	 * @PostMapping(value = "/refresh") public ResponseEntity<UserTokenStateDTO>
+	 * refreshAuthenticationToken(HttpServletRequest request) {
+	 * 
+	 * String token = tokenUtils.getToken(request); String username =
+	 * this.tokenUtils.getUsernameFromToken(token); User user = (User)
+	 * this.userDetailsService.loadUserByUsername(username);
+	 * 
+	 * String role =
+	 * user.getUserAuthorities().get(0).getName();//user.getUserAuthorities().get(0)
+	 * .getName();
+	 * 
+	 * if (this.tokenUtils.canTokenBeRefreshed(token, new Date())) { String
+	 * refreshedToken = tokenUtils.refreshToken(token); int expiresIn =
+	 * tokenUtils.getExpiredIn();
+	 * 
+	 * return ResponseEntity.ok(new UserTokenStateDTO(refreshedToken,
+	 * expiresIn,role)); } else { UserTokenStateDTO userTokenState = new
+	 * UserTokenStateDTO(); return ResponseEntity.badRequest().body(userTokenState);
+	 * } }
+	 */
 
 }

@@ -1,9 +1,9 @@
-insert into authority (id, name) values ('7852aa5e-7040-4d99-8255-537a0b226c75','PATIENT');
-insert into authority (id, name) values ('563e9925-cff6-42b7-99fa-6b1235f67655','SYSADMIN');
-insert into authority (id, name) values ('09af8857-2f78-4eec-970f-059d3ed4589f','DERMATHOLOGIST');
-insert into authority (id, name) values ('ef9a3723-a72e-44ec-83ac-9d748fd0240f','SUPPLIER');
-insert into authority (id, name) values ('a1e3bac1-6093-4705-b835-eed75c3e5f21','PHARMACIST');
-insert into authority (id, name) values ('ea16767c-2c1f-49fb-ac98-c7739c0036e8','PHARMACYADMIN');
+insert into authority (id, name) values ('7852aa5e-7040-4d99-8255-537a0b226c75','ROLE_PATIENT');
+insert into authority (id, name) values ('563e9925-cff6-42b7-99fa-6b1235f67655','ROLE_SYSADMIN');
+insert into authority (id, name) values ('09af8857-2f78-4eec-970f-059d3ed4589f','ROLE_DERMATHOLOGIST');
+insert into authority (id, name) values ('ef9a3723-a72e-44ec-83ac-9d748fd0240f','ROLE_SUPPLIER');
+insert into authority (id, name) values ('a1e3bac1-6093-4705-b835-eed75c3e5f21','ROLE_PHARMACIST');
+insert into authority (id, name) values ('ea16767c-2c1f-49fb-ac98-c7739c0036e8','ROLE_PHARMACYADMIN');
 
 
 --password - 123

@@ -7,6 +7,7 @@ import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import ModalDialog from "../../components/ModalDialog";
 import { NavLink } from "react-router-dom";
+import getAuthHeader from "../../GetHeader";
 
 class PatientsAppointments extends Component {
 	state = {
@@ -26,7 +27,7 @@ class PatientsAppointments extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/pending/find-by-patient")
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/pending/find-by-patient", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ appointments: res.data });
 				console.log(res.data);
@@ -51,7 +52,7 @@ class PatientsAppointments extends Component {
 	};
 
 	handleCancelAppointment = (appointmentId) => {
-		Axios.put(BASE_URL + "/api/appointment/cancel-appointment/" + appointmentId)
+		Axios.put(BASE_URL + "/api/appointment/cancel-appointment", { id: appointmentId }, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ openModalSuccess: true });
 				console.log(res.data);
