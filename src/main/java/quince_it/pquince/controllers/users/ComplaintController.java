@@ -40,7 +40,8 @@ public class ComplaintController {
 	public ResponseEntity<List<IdentifiableDTO<ComplaintStaffDTO>>> findAll() {
 		return new ResponseEntity<>(complaintService.findAll(),HttpStatus.OK);
 	}
-	
+
+	@CrossOrigin
 	@GetMapping("/{staffId}")
 	public ResponseEntity<ComplaintStaffDTO> findByStaffIdAndPatientId(@PathVariable UUID staffId) {
 		try {

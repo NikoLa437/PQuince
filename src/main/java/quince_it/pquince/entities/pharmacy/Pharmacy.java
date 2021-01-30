@@ -24,18 +24,22 @@ public class Pharmacy {
 	@Column(name = "description", nullable = false)
 	private String description;
 	
+	@Column(name = "consultationPrice")
+    private double consultationPrice;
+	
 	public Pharmacy() {}
 	
-	public Pharmacy(UUID id, String name, String description, Address address) {
+	public Pharmacy(UUID id, String name, String description, Address address, double consultationPrice) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.address = address;
+		this.consultationPrice = consultationPrice;
 	}
 	
-	public Pharmacy(String name, String description, Address address) {
-		this(UUID.randomUUID(), name, description, address);
+	public Pharmacy(String name, String description, Address address, double consultationPrice) {
+		this(UUID.randomUUID(), name, description, address, consultationPrice);
 	}
 
 	public UUID getId() {
@@ -64,6 +68,14 @@ public class Pharmacy {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public double getConsultationPrice() {
+		return consultationPrice;
+	}
+
+	public void setConsultationPrice(double consultationPrice) {
+		this.consultationPrice = consultationPrice;
 	}
 	
 }

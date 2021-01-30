@@ -5,6 +5,7 @@ import { BASE_URL } from "../../constants.js";
 import PharmacyPage from "./PharmacyPage";
 import DrugReservationModal from "../../components/DrugReservationModal";
 import ModalDialog from "../../components/ModalDialog";
+import getAuthHeader from "../../GetHeader";
 
 class DrugReservation extends Component {
 	state = {
@@ -34,7 +35,7 @@ class DrugReservation extends Component {
 			drugPrice: this.state.drugPrice,
 			endDate: date,
 		};
-		Axios.post(BASE_URL + "/api/drug/reserve", reservationDTO)
+		Axios.post(BASE_URL + "/api/drug/reserve", reservationDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ reservationModalShow: false, openModal: true });
@@ -44,13 +45,29 @@ class DrugReservation extends Component {
 			});
 	};
 
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+		console.log(roles);
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
+	};
+
 	handlePharmacyClick = (pharmacyId, price, count) => {
-		this.setState({
-			reservationModalShow: true,
-			maxDrugAmount: count,
-			drugPrice: price,
-			pharmacyId: pharmacyId,
-		});
+		if (this.hasRole("ROLE_PATIENT")) {
+			this.setState({
+				reservationModalShow: true,
+				maxDrugAmount: count,
+				drugPrice: price,
+				pharmacyId: pharmacyId,
+			});
+		}
 	};
 
 	handleModalClose = () => {
@@ -82,10 +99,7 @@ class DrugReservation extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<DrugsPage
-					hidden={this.state.drugsPageHidden}
-					onDrugSelect={this.handleDrugSelect}
-				/>
+				<DrugsPage hidden={this.state.drugsPageHidden} onDrugSelect={this.handleDrugSelect} />
 				<PharmacyPage
 					onBackIcon={this.handleBackIcon}
 					onPharmacyClick={this.handlePharmacyClick}

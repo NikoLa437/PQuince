@@ -14,6 +14,6 @@ public interface IStaffFeedbackService {
 
 	boolean CanPatientGiveFeedback(UUID patientId, UUID staffId);
 
-	StaffFeedbackDTO findByStaffIdAndPatientId(UUID staffId, UUID patientId);
+	StaffFeedbackDTO findByStaffIdAndPatientId(UUID staffId);
 
 }

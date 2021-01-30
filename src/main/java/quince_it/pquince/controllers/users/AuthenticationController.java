@@ -1,9 +1,9 @@
 package quince_it.pquince.controllers.users;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.dto.users.UserTokenStateDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
+import quince_it.pquince.services.implementation.users.AuthorityService;
 import quince_it.pquince.services.implementation.users.CustomUserDetailsService;
 import quince_it.pquince.services.implementation.users.UserService;
 
@@ -46,9 +48,13 @@ public class AuthenticationController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private AuthorityService authorityService;
 
 
 	@PostMapping("/login")
+	@CrossOrigin
 	public ResponseEntity<UserTokenStateDTO> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest,
 			HttpServletResponse response) {
 
@@ -56,14 +62,16 @@ public class AuthenticationController {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
 						authenticationRequest.getPassword()));
+		
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		System.out.println("aaaa");
 		User user = (User) authentication.getPrincipal();
 		String jwt = tokenUtils.generateToken(user.getUsername());
 		int expiresIn = tokenUtils.getExpiredIn();
+		List<String> roles = new ArrayList<String>();
+		user.getUserAuthorities().forEach((a) -> roles.add(a.getName()));
 
-		return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn));
+		return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn,roles));
 	}
 
 	@PostMapping("/signup")
@@ -79,23 +87,79 @@ public class AuthenticationController {
 		//headers.setLocation(ucBuilder.path("/api/user/{userId}").buildAndExpand(user.getId()).toUri());
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}
+	
+	@PostMapping("/signup-dermathologist")
+	public ResponseEntity<UUID> addDermathologist(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
 
-	@PostMapping(value = "/refresh")
-	public ResponseEntity<UserTokenStateDTO> refreshAuthenticationToken(HttpServletRequest request) {
-
-		String token = tokenUtils.getToken(request);
-		String username = this.tokenUtils.getUsernameFromToken(token);
-		User user = (User) this.userDetailsService.loadUserByUsername(username);
-
-		if (this.tokenUtils.canTokenBeRefreshed(token, new Date())) {
-			String refreshedToken = tokenUtils.refreshToken(token);
-			int expiresIn = tokenUtils.getExpiredIn();
-
-			return ResponseEntity.ok(new UserTokenStateDTO(refreshedToken, expiresIn));
-		} else {
-			UserTokenStateDTO userTokenState = new UserTokenStateDTO();
-			return ResponseEntity.badRequest().body(userTokenState);
+		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
+		if (existUser != null) {
+			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
 		}
+
+		UUID userId = userService.createDermatologist(userRequest);
+		
+		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}
+	@PostMapping("/signup-pharmacyadmin")
+	public ResponseEntity<UUID> addPharmacyAdmin(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
+
+		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
+		if (existUser != null) {
+			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
+		}
+
+		UUID userId = userService.createPharmacyAdmin(userRequest);
+		
+		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+	}
+	@PostMapping("/signup-sysadmin")
+	public ResponseEntity<UUID> addSysadmin(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
+
+		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
+		if (existUser != null) {
+			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
+		}
+
+		UUID userId = userService.createAdmin(userRequest);
+		
+		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+	}
+	@PostMapping("/signup-supplier")
+	public ResponseEntity<UUID> addSupplier(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
+
+		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
+		if (existUser != null) {
+			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
+		}
+
+		UUID userId = userService.createSupplier(userRequest);
+		
+		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+	}
+	
+	
+
+	// VRV NE TREBA METODA
+	/*
+	 * @PostMapping(value = "/refresh") public ResponseEntity<UserTokenStateDTO>
+	 * refreshAuthenticationToken(HttpServletRequest request) {
+	 * 
+	 * String token = tokenUtils.getToken(request); String username =
+	 * this.tokenUtils.getUsernameFromToken(token); User user = (User)
+	 * this.userDetailsService.loadUserByUsername(username);
+	 * 
+	 * String role =
+	 * user.getUserAuthorities().get(0).getName();//user.getUserAuthorities().get(0)
+	 * .getName();
+	 * 
+	 * if (this.tokenUtils.canTokenBeRefreshed(token, new Date())) { String
+	 * refreshedToken = tokenUtils.refreshToken(token); int expiresIn =
+	 * tokenUtils.getExpiredIn();
+	 * 
+	 * return ResponseEntity.ok(new UserTokenStateDTO(refreshedToken,
+	 * expiresIn,role)); } else { UserTokenStateDTO userTokenState = new
+	 * UserTokenStateDTO(); return ResponseEntity.badRequest().body(userTokenState);
+	 * } }
+	 */
 
 }
