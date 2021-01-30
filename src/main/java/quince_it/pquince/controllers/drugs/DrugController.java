@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
@@ -46,6 +48,7 @@ public class DrugController {
 	}
 	
 	@PostMapping("/reserve")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<UUID> reserveDrug(@RequestBody DrugReservationRequestDTO drugReservationRequestDTO) {
 		
 		UUID reservationId = drugReservationService.create(drugReservationRequestDTO);
@@ -60,28 +63,32 @@ public class DrugController {
 	}
 	//NECE TREBATI ID KAD BUDE ULOGOVAN
 	@GetMapping("/future-reservations")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<DrugReservationDTO>>> findAllFutureDrugReservationByPatientId() {
 		
-		return new ResponseEntity<>(drugReservationService.findAllFutureReservationsByPatientId(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")) ,HttpStatus.OK);
+		return new ResponseEntity<>(drugReservationService.findAllFutureReservationsByPatientId() ,HttpStatus.OK);
 	}
 	
 	
 	@GetMapping("/processed-reservations")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<DrugReservationDTO>>> findProcessedDrugReservationsForPatient() {
 		
-		return new ResponseEntity<>(drugReservationService.findProcessedDrugReservationsForPatient(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")) ,HttpStatus.OK);
+		return new ResponseEntity<>(drugReservationService.findProcessedDrugReservationsForPatient() ,HttpStatus.OK);
 	}
 	
 	@GetMapping("/feedback/{drugId}")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<DrugFeedbackDTO> findByPatientAndDrug(@PathVariable UUID drugId) {
 		try {
-			return new ResponseEntity<>(drugFeedbackService.findByPatientAndDrug(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"), drugId) ,HttpStatus.OK);
+			return new ResponseEntity<>(drugFeedbackService.findByPatientAndDrug(drugId) ,HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	
 	@PostMapping("/feedback")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> createFeedback(@RequestBody DrugFeedbackDTO drugFeedbackDTO) {
 		
 		drugFeedbackService.create(drugFeedbackDTO);
@@ -91,6 +98,7 @@ public class DrugController {
 	
 	@PutMapping("/feedback")
 	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> updateFeedback(@RequestBody DrugFeedbackDTO drugFeedbackDTO) {
 		
 		drugFeedbackService.update(drugFeedbackDTO);
@@ -99,10 +107,11 @@ public class DrugController {
 	}
 	
 	
-	@PutMapping("/reservations/cancel/{reservationId}")
+	@PutMapping("/reservations/cancel")
 	@CrossOrigin
-	public ResponseEntity<?> cancelReservation(@PathVariable UUID reservationId) {
-		drugReservationService.cancelDrugReservation(reservationId);
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> cancelReservation(@RequestBody EntityIdDTO reservationId) {
+		drugReservationService.cancelDrugReservation(reservationId.getId());
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

@@ -5,6 +5,7 @@ import { BASE_URL } from "../../constants.js";
 import PharmacyPage from "./PharmacyPage";
 import DrugReservationModal from "../../components/DrugReservationModal";
 import ModalDialog from "../../components/ModalDialog";
+import getAuthHeader from "../../GetHeader";
 
 class DrugReservation extends Component {
 	state = {
@@ -34,7 +35,7 @@ class DrugReservation extends Component {
 			drugPrice: this.state.drugPrice,
 			endDate: date,
 		};
-		Axios.post(BASE_URL + "/api/drug/reserve", reservationDTO)
+		Axios.post(BASE_URL + "/api/drug/reserve", reservationDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ reservationModalShow: false, openModal: true });
@@ -82,10 +83,7 @@ class DrugReservation extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<DrugsPage
-					hidden={this.state.drugsPageHidden}
-					onDrugSelect={this.handleDrugSelect}
-				/>
+				<DrugsPage hidden={this.state.drugsPageHidden} onDrugSelect={this.handleDrugSelect} />
 				<PharmacyPage
 					onBackIcon={this.handleBackIcon}
 					onPharmacyClick={this.handlePharmacyClick}

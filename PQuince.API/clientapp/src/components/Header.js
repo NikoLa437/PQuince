@@ -1,12 +1,20 @@
 import React, { Component } from "react";
 
 class Header extends Component {
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+		console.log(roles);
 
-	handleLogout = () => {
-       localStorage.setItem('keyToken');
-       localStorage.setItem('keyRole');
-    };
-    
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
+	};
+
 	render() {
 		const myStyle = {
 			color: "white",
@@ -24,35 +32,26 @@ class Header extends Component {
 							<li className="active">
 								<a href="/">Home</a>
 							</li>
-							<li className="active">
-								<a onClick={this.handleLogout} href="/">Log out</a>
-							</li>
 							<li>
 								<a href="/pharmacies">Pharmacies</a>
 							</li>
 							<li>
 								<a href="/drugs">Drugs</a>
 							</li>
-							<li>
-								<a href="/drugs-reservation">Drugs reservations</a>
-							</li>
-							<li className="drop-down">
+							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#">My record</a>
 								<ul>
 									<li>
-										<a href="/dermatologist-history">Dermatologist visits</a>
+										<a href="/patients-appointments">Dermatologist visits</a>
 									</li>
 									<li>
-										<a href="/">Consultations with a pharmacist</a>
-									</li>
-									<li>
-										<a href="/patients-appointments">Observe appointments</a>
+										<a href="/observe-consultations">Consultations with a pharmacist</a>
 									</li>
 									<li>
 										<a href="/">eReciepts</a>
 									</li>
 									<li>
-										<a href="/">Reserved medicines</a>
+										<a href="/drugs-reservation">Reserved medicines</a>
 									</li>
 								</ul>
 							</li>
@@ -67,7 +66,7 @@ class Header extends Component {
 									</li>
 								</ul>
 							</li>
-							<li className="drop-down">
+							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#" className="appointment-btn scrollto" style={myStyle}>
 									Make an Appointment
 								</a>

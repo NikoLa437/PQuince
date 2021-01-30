@@ -10,6 +10,6 @@ public interface IDrugFeedbackService {
 	
 	void update(DrugFeedbackDTO entityDTO);
 	
-	DrugFeedbackDTO findByPatientAndDrug(UUID patientId, UUID drugId);
+	DrugFeedbackDTO findByPatientAndDrug(UUID drugId);
 
 }

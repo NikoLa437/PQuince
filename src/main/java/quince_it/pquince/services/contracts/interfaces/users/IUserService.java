@@ -24,7 +24,9 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	UUID createPatient(UserRequestDTO entityDTO);
 	
-	IdentifiableDTO<PatientDTO> getPatientById(UUID id);
+	UUID getLoggedUserId();
+	
+	IdentifiableDTO<PatientDTO> getPatientById();
 	
 	IdentifiableDTO<StaffDTO> getStaffById(UUID id);
 	

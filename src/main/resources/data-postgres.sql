@@ -1,9 +1,9 @@
-insert into authority (id, name) values ('7852aa5e-7040-4d99-8255-537a0b226c75','PATIENT');
-insert into authority (id, name) values ('563e9925-cff6-42b7-99fa-6b1235f67655','SYSADMIN');
-insert into authority (id, name) values ('09af8857-2f78-4eec-970f-059d3ed4589f','DERMATHOLOGIST');
-insert into authority (id, name) values ('ef9a3723-a72e-44ec-83ac-9d748fd0240f','SUPPLIER');
-insert into authority (id, name) values ('a1e3bac1-6093-4705-b835-eed75c3e5f21','PHARMACIST');
-insert into authority (id, name) values ('ea16767c-2c1f-49fb-ac98-c7739c0036e8','PHARMACYADMIN');
+insert into authority (id, name) values ('7852aa5e-7040-4d99-8255-537a0b226c75','ROLE_PATIENT');
+insert into authority (id, name) values ('563e9925-cff6-42b7-99fa-6b1235f67655','ROLE_SYSADMIN');
+insert into authority (id, name) values ('09af8857-2f78-4eec-970f-059d3ed4589f','ROLE_DERMATHOLOGIST');
+insert into authority (id, name) values ('ef9a3723-a72e-44ec-83ac-9d748fd0240f','ROLE_SUPPLIER');
+insert into authority (id, name) values ('a1e3bac1-6093-4705-b835-eed75c3e5f21','ROLE_PHARMACIST');
+insert into authority (id, name) values ('ea16767c-2c1f-49fb-ac98-c7739c0036e8','ROLE_PHARMACYADMIN');
 
 
 --password - 123
@@ -124,7 +124,7 @@ insert into appointment (id, appointment_status, appointment_type, start_date_ti
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, staff_id, pharmacy_id, patient_id) values ('2bc86117-5c40-11ab-ae93-0242ac130002','SCHEDULED','CONSULTATION', '2021-02-17 11:00:00', '2021-02-17 11:15:00', 450, '25345278-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002');
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, staff_id, pharmacy_id, patient_id) values ('2bc86117-5c40-12ab-ae93-0242ac130002','SCHEDULED','CONSULTATION', '2021-02-18 11:00:00', '2021-02-18 11:15:00', 999, '25345278-52d3-12eb-ac93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','22793162-52d3-11eb-ae93-0242ac130002');
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, staff_id, pharmacy_id, patient_id) values ('2bc86117-5c40-13ab-ae93-0242ac130002','SCHEDULED','CONSULTATION', '2021-02-19 11:00:00', '2021-02-19 11:15:00', 999, '25345278-52d3-13eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','22793162-52d3-11eb-ae93-0242ac130002');
-insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, staff_id, pharmacy_id, patient_id) values ('2cc86117-5c40-13ab-ae93-0242ac130002','SCHEDULED','CONSULTATION', '2021-01-29 11:55:00', '2021-01-29 12:10:00', 999, '25345278-52d3-12eb-ac93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','22793162-52d3-11eb-ae93-0242ac130002');
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, staff_id, pharmacy_id, patient_id) values ('2cc86117-5c40-13ab-ae93-0242ac130002','FINISHED','CONSULTATION', '2021-01-29 11:55:00', '2021-01-29 12:10:00', 999, '25345278-52d3-12eb-ac93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','22793162-52d3-11eb-ae93-0242ac130002');
 
 
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, pharmacy_id, staff_id) values ('2ba86116-5f40-11eb-ae93-0242ac130002','CREATED','EXAMINATION', '2021-02-11 11:00:00', '2021-02-11 11:30:00', 1400, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002');
