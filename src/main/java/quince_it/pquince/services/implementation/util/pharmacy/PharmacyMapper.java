@@ -9,7 +9,7 @@ public class PharmacyMapper {
 	public static IdentifiableDTO<PharmacyDTO> MapPharmacyPersistenceToPharmacyIdentifiableDTO(Pharmacy pharmacy){
 		if(pharmacy == null) throw new IllegalArgumentException();
 
-		return new IdentifiableDTO<PharmacyDTO>(pharmacy.getId(), new PharmacyDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription()));
+		return new IdentifiableDTO<PharmacyDTO>(pharmacy.getId(), new PharmacyDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(), pharmacy.getConsultationPrice()));
 
 	}
 }

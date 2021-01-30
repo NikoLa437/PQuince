@@ -10,6 +10,9 @@ import DrugReservation from "./pages/drug-reservation/DrugReservation";
 import PatientsDrugReservations from "./pages/drug-reservation/PatientsDrugReservations";
 import PharmacyProfilePage from "./pages/PharmacyProfilePage";
 import Appointments from "./pages/dermatologist-appointment/Appointments";
+import AdminRegisterStaff from "./pages/admin-registration/RegisterStaff";
+import AdminRegisterDrug from "./pages/admin-registration/RegisterDrug";
+import AdminRegisterPharmacies from "./pages/admin-registration/RegisterPharmacies";
 import PatientsAppointments from "./pages/dermatologist-appointment/PatientsAppointments";
 import HistoryDermatologistAppointments from "./pages/appointment-history/HistoryDermatologistAppointments";
 import PatientsDrugReservationHistory from "./pages/drug-reservation/PatientsDrugReservationHistory";
@@ -36,6 +39,21 @@ function App() {
 				<Link exact to="/patient-profile" path="/patient-profile" component={PatientProfilePage} />
 				<Link exact to="/staff-profile" path="/staff-profile" component={StaffProfilePage} />
 				<Link exact to="/pharmacies" path="/pharmacies" component={PharmaciesPage} />
+				<Link exact to="/admin-register-staff" path="/admin-register-staff" component={AdminRegisterStaff} />
+				<Link exact to="/admin-register-drug" path="/admin-register-drug" component={AdminRegisterDrug} />
+				<Link exact to="/admin-register-pharmacies" path="/admin-register-pharmacies" component={AdminRegisterPharmacies} />
+				<Link
+					exact
+					to="/drugs-reservation"
+					path="/drugs-reservation"
+					component={PatientsDrugReservations}
+				/>
+				<Link
+					exact
+					to="/drugs-reservation-history"
+					path="/drugs-reservation-history"
+					component={PatientsDrugReservationHistory}
+				/>
 				<Link exact to="/drugs-reservation" path="/drugs-reservation" component={PatientsDrugReservations} />
 				<Link exact to="/drugs-reservation-history" path="/drugs-reservation-history" component={PatientsDrugReservationHistory} />
 				<Link exact to="/drugs" path="/drugs" component={DrugReservation} />

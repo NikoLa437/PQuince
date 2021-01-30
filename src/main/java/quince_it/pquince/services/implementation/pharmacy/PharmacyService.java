@@ -6,11 +6,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.mail.MessagingException;
+
 import org.springframework.aop.AopInvocationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
@@ -62,7 +66,12 @@ public class PharmacyService implements IPharmacyService {
 	@Override
 	public UUID create(PharmacyDTO entityDTO) {
 		// TODO Auto-generated method stub
-		return null;
+		Pharmacy pharmacy = new Pharmacy(entityDTO.getName(), entityDTO.getDescription(),
+						entityDTO.getAddress(), entityDTO.getConsultationPrice());
+
+		pharmacyRepository.save(pharmacy);
+		
+		return pharmacy.getId();
 	}
 
 	@Override

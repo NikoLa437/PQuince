@@ -3,8 +3,6 @@ package quince_it.pquince.services.contracts.interfaces;
 import java.util.List;
 import java.util.UUID;
 
-import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
-
 public interface IService<T, IdentifiableT> {
 
 	List<IdentifiableT> findAll();
