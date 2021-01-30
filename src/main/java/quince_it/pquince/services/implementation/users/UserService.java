@@ -131,7 +131,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createPatient(UserRequestDTO entityDTO) {
 		Patient patient = CreatePatientFromDTO(entityDTO);
-		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("PATIENT");
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PATIENT");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
 		patient.setUserAuthorities(authorities);
@@ -153,7 +153,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createSupplier(UserRequestDTO entityDTO) {
 		Staff staff = CreateSupplierFromDTO(entityDTO);
-		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("SUPPLIER");
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_SUPPLIER");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
 		staff.setUserAuthorities(authorities);
@@ -174,7 +174,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createDermathologist(UserRequestDTO entityDTO) {
 		Staff staff = CreateDermathologistFromDTO(entityDTO);
-		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("DERMATHOLOGIST");
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_DERMATHOLOGIST");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
 		staff.setUserAuthorities(authorities);
@@ -191,7 +191,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createPharmacist(UserRequestDTO entityDTO) {
 		Staff staff = CreatePharmacistFromDTO(entityDTO);
-		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("PHARMACIST");
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACIST");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
 		staff.setUserAuthorities(authorities);
@@ -208,7 +208,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createPharmacyAdmin(UserRequestDTO entityDTO) {
 		Staff staff = CreatePharmacyAdminFromDTO(entityDTO);
-		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("PHARMACYADMIN");
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACYADMIN");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
 		staff.setUserAuthorities(authorities);
@@ -225,7 +225,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createAdmin(UserRequestDTO entityDTO) {
 		Staff staff = CreateAdminFromDTO(entityDTO);
-		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("SYSADMIN");
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_SYSADMIN");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
 		staff.setUserAuthorities(authorities);
