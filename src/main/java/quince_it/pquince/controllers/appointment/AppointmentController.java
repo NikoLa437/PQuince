@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
+import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
@@ -34,7 +37,6 @@ import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentS
 @RequestMapping(value = "api/appointment")
 public class AppointmentController {
 
-	
 	@Autowired
 	private IAppointmentService appointmentService;
 	
@@ -47,59 +49,73 @@ public class AppointmentController {
 	}
 	
 	@GetMapping("/dermatologist/pending/find-by-patient")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>>> findAllFuturePatientsAppointments() {
-		//TODO : URADITI SA ULOGOVANIM
 		
-		return new ResponseEntity<>(appointmentService.findAllFutureAppointmentsForPatient(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllFutureAppointmentsForPatient(AppointmentType.EXAMINATION),HttpStatus.OK);
+	}
+	
+	@GetMapping("/pharmacist/pending/find-by-patient")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>>> findAllFuturePatientsConsultations() {
+		
+		return new ResponseEntity<>(appointmentService.findAllFutureAppointmentsForPatient(AppointmentType.CONSULTATION),HttpStatus.OK);
 	}
 	
 	@GetMapping("/dermatologist-history")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatient() {
-		//TODO : URADITI SA ULOGOVANIM
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatient(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatient(AppointmentType.EXAMINATION),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-price-ascending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByPriceAscending() {
-		//TODO : URADITI SA ULOGOVANIM
+	@GetMapping("/pharmacist-history")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousConsultationsForPatient() {
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByPriceAscending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatient(AppointmentType.CONSULTATION),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-price-descending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByPriceDescending() {
-		//TODO : URADITI SA ULOGOVANIM
+	@GetMapping("/appointment-history/sort-by-price-ascending")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByPriceAscending(@RequestParam AppointmentType appointmentType) {
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByPriceDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByPriceAscending(appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-date-descending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByDateDescending() {
-		//TODO : URADITI SA ULOGOVANIM
+	@GetMapping("/appointment-history/sort-by-price-descending")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByPriceDescending(@RequestParam AppointmentType appointmentType) {
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByDateDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByPriceDescending(appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-date-ascending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByDateAscending() {
-		//TODO : URADITI SA ULOGOVANIM
+	@GetMapping("/appointment-history/sort-by-date-descending")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByDateDescending(@RequestParam AppointmentType appointmentType) {
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByDateAscending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByDateDescending(appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-time-ascending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByTimeAscending() {
-		//TODO : URADITI SA ULOGOVANIM
+	@GetMapping("/appointment-history/sort-by-date-ascending")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByDateAscending(@RequestParam AppointmentType appointmentType) {
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeAscending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByDateAscending(appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist-history/sort-by-time-descending")
-	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByTimeDescending() {
-		//TODO : URADITI SA ULOGOVANIM
+	@GetMapping("/appointment-history/sort-by-time-ascending")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByTimeAscending(@RequestParam AppointmentType appointmentType) {
 
-		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeDescending(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"),AppointmentType.EXAMINATION),HttpStatus.OK);
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeAscending(appointmentType),HttpStatus.OK);
+	}
+	
+	@GetMapping("/appointment-history/sort-by-time-descending")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllPreviousAppointmentsForPatientSortByTimeDescending(@RequestParam AppointmentType appointmentType) {
+
+		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeDescending(appointmentType),HttpStatus.OK);
 	}
 	
 	@GetMapping("/dermatologist/{dermatologistId}")
@@ -132,26 +148,41 @@ public class AppointmentController {
 		return new ResponseEntity<>(appointmentService.findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeDescending(pharmacyId, AppointmentType.EXAMINATION),HttpStatus.OK);
 	}
 	
-	@PostMapping("/reserve-appointment/{appointmentId}")
+	@PostMapping("/reserve-dermatologist-appointment")
+	@PreAuthorize("hasRole('PATIENT')")
 	@CrossOrigin
-	public ResponseEntity<?> reserveAppointment(@PathVariable UUID appointmentId) {
-		//TODO : URADITI SA ULOGOVANIM
-		boolean isSuccesfull = appointmentService.reserveAppointment(appointmentId, UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"));
+	public ResponseEntity<?> reserveAppointment(@RequestBody EntityIdDTO appointmentId) {
+		boolean isSuccesfull = appointmentService.reserveAppointment(appointmentId.getId());
 		
 		if(isSuccesfull) return new ResponseEntity<>(appointmentId,HttpStatus.CREATED);
 		
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
-	@PutMapping("/cancel-appointment/{appointmentId}")
+	@PostMapping("/reserve-appointment")
+	@PreAuthorize("hasRole('PATIENT')")
 	@CrossOrigin
-	public ResponseEntity<?> cancelAppointment(@PathVariable UUID appointmentId) {
+	public ResponseEntity<UUID> reserveConsultationAppointment(@RequestBody ConsultationRequestDTO requestDTO) {
+		try {
+			UUID appointmentId = appointmentService.createConsultation(requestDTO);
+			return new ResponseEntity<>(appointmentId, HttpStatus.CREATED);
+		} catch (Exception e) {
+			 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
+	
+	@PutMapping("/cancel-appointment")
+	@PreAuthorize("hasRole('PATIENT')")
+	@CrossOrigin
+	public ResponseEntity<?> cancelAppointment(@RequestBody EntityIdDTO appointmentId) {
 		
 		
 		//TODO : PROVERA JEL PACIJENTOV APPOINTMENT
-		boolean isSuccesfull = appointmentService.cancelAppointment(appointmentId);
+		boolean isSuccesfull = appointmentService.cancelAppointment(appointmentId.getId());
 		
-		if(isSuccesfull) return new ResponseEntity<>(appointmentId,HttpStatus.NO_CONTENT);
+		if(isSuccesfull) return new ResponseEntity<>(appointmentId.getId(),HttpStatus.NO_CONTENT);
 		
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}

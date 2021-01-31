@@ -51,7 +51,8 @@ public class AppointmentMapper {
 																			new IdentifiableDTO<PharmacyDTO>(appointment.getPharmacy().getId(),
 																					new PharmacyDTO(appointment.getPharmacy().getName(),
 																									appointment.getPharmacy().getAddress(),
-																									appointment.getPharmacy().getDescription()))));
+																									appointment.getPharmacy().getDescription(),
+																									appointment.getPharmacy().getConsultationPrice()))));
 	}
 
 	public static List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>> MapAppointmentPersistenceListToAppointmentWithPharmacyIdentifiableDTOList(

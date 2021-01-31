@@ -6,22 +6,23 @@ import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import ComplaintCreateModal from "../../components/ComplaintCreateModal";
 
-class DermatologistComplaint extends Component {
+class AdminComplaints extends Component {
 	state = {
-		appointments: [],
+		complaints: [],
 		showingSorted: false,
 		showFeedbackModal: false,
 		selectedStaffId: "",
 		StaffName: "",
 		StaffSurame: "",
 		complaint: "",
+		text: "",
 		grade: 0,
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+		Axios.get(BASE_URL + "api/staff/complaint")
 			.then((res) => {
-				this.setState({ appointments: res.data });
+				this.setState({ complaints: res.data });
 				console.log(res.data);
 			})
 			.catch((err) => {
@@ -35,26 +36,20 @@ class DermatologistComplaint extends Component {
 	};
 	
 	
-	handleFeedbackClick = (staff) => {
-		console.log(staff);
-		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true })
+	handleFeedbackClick = (complaint) => {
+		console.log(complaint);
+		Axios.get(BASE_URL + "/api/staff/feedback/" + complaint.Id, { validateStatus: () => true })
 			.then((res) => {
 				console.log(res.data);
 				if (res.status === 404) {
 					this.setState({
-						selectedStaffId: staff.Id,
-						showFeedbackModal: true,
-						StaffName: staff.EntityDTO.name,
-						StaffSurame: staff.EntityDTO.surname,
-						grade: 0,
+						selectedStaffId: complaint.Id,
+						showFeedbackModal: true
 					});
 				} else {
 					this.setState({
-						selectedStaffId: staff.Id,
-						showFeedbackModal: true,
-						StaffName: staff.EntityDTO.name,
-						StaffSurame: staff.EntityDTO.surname,
-						grade: res.data.grade,
+						selectedStaffId: complaint.Id,
+						showFeedbackModal: true
 					});
 				}
 			})
@@ -75,9 +70,9 @@ class DermatologistComplaint extends Component {
 		};
 		Axios.post(BASE_URL + "/api/staff/complaint", entityDTO)
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/dermatologist-history")
+				Axios.get(BASE_URL + "api/staff/complaint")
 					.then((res) => {
-						this.setState({ appointments: res.data, showFeedbackModal: false });
+						this.setState({ complaints: res.data, showFeedbackModal: false });
 						console.log(res.data);
 					})
 					.catch((err) => {
@@ -99,56 +94,31 @@ class DermatologistComplaint extends Component {
 				<div className="container" style={{ marginTop: "10%" }}>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Dermatologist Appointment History</h5>
 
-
 					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
-							{this.state.appointments.map((appointment) => (
-								<tr id={appointment.Id} key={appointment.Id} className="rounded">
+							{this.state.complaints.map((complaint) => (
+								<tr id={complaint.Id} key={complaint.Id} className="rounded">
 									<td width="190em">
 										<img className="img-fluid" src={AppointmentIcon} width="150em" />
 									</td>
 									<td>
+										
+										sdsadasd
 										<div>
-											<b>Date: </b>{" "}
-											{new Date(appointment.EntityDTO.startDateTime).toLocaleDateString("en-US", {
-												day: "2-digit",
-												month: "2-digit",
-												year: "numeric",
-											})}
+											<b>Complant text: </b>{" "}
+											{complaint.EntityDTO.text}
 										</div>
 										<div>
-											<b>Time from: </b>{" "}
-											{new Date(appointment.EntityDTO.startDateTime).toLocaleTimeString("en-US", {
-												hour: "2-digit",
-												minute: "2-digit",
-											})}
-										</div>
-										<div>
-											<b>Time to: </b>{" "}
-											{new Date(appointment.EntityDTO.endDateTime).toLocaleTimeString("en-US", {
-												hour: "2-digit",
-												minute: "2-digit",
-											})}
-										</div>
-										<div>
-											<b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
-										</div>
-										<div>
-											<b>Dermatologist: </b>{" "}
-											{appointment.EntityDTO.staff.EntityDTO.name + " " + appointment.EntityDTO.staff.EntityDTO.surname}
-										</div>
-										<div>
-											<b>Dermatologist grade: </b> {appointment.EntityDTO.staff.EntityDTO.grade}
-											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
+											<b>Complant reply: </b>{" "}
+											{complaint.EntityDTO.reply}
 										</div>
 									</td>
 									<td className="align-middle">
 										<button
 											type="button"
-											onClick={() => this.handleFeedbackClick(appointment.EntityDTO.staff)}
 											className="btn btn-outline-secondary"
 										>
-											Make complaint
+											Reply to complaint
 										</button>
 									</td>
 								</tr>
@@ -158,8 +128,8 @@ class DermatologistComplaint extends Component {
 				</div>
 
 				<ComplaintCreateModal
-					buttonName="Send complaint"
-					header="Give complaint"
+					buttonName="Reply to complaint"
+					header="Reply to complaint"
 					handleComplaintChange={this.handleComplaintChange}
 					show={this.state.showFeedbackModal}
 					onCloseModal={this.handleFeedbackModalClose}
@@ -174,4 +144,4 @@ class DermatologistComplaint extends Component {
 	}
 }
 
-export default DermatologistComplaint;
+export default AdminComplaints;

@@ -48,7 +48,7 @@ public class EmailService {
 	}
 	
 	@Async
-	public void sendDermatologistAppointmentReservation(Appointment appointment) throws MessagingException {
+	public void sendAppointmentReservationNotificationAsync(Appointment appointment, String atWho) throws MessagingException {
 		
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		DateFormat formatterTime = new SimpleDateFormat("HH:mm");
@@ -56,7 +56,7 @@ public class EmailService {
 		
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-		String htmlMsg = "<p>Hello " + appointment.getPatient().getName() + ",</p>" + "<p>You successfully reserved appointment at dr. " + appointment.getStaff().getName() + " "
+		String htmlMsg = "<p>Hello " + appointment.getPatient().getName() + ",</p>" + "<p>You successfully reserved appointment at " + atWho + " " + appointment.getStaff().getName() + " "
 						+ appointment.getStaff().getSurname() + ", for date " + formatter.format(appointment.getStartDateTime()) + ", at " + formatterTime.format(appointment.getStartDateTime()) + " o'clock."+
 						"</p> <p>Kind Regards, PQuince</p>";
 
@@ -90,5 +90,5 @@ public class EmailService {
 
 		System.out.println("Email poslat!");
 	}
-
+	
 }

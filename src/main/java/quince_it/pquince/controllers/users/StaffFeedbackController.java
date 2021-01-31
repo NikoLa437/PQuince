@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,15 +27,18 @@ public class StaffFeedbackController {
 	private IStaffFeedbackService staffFeedbackService;
 	
 	@GetMapping("/{staffId}")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<StaffFeedbackDTO> findByStaffIdAndPatientId(@PathVariable UUID staffId) {
 		try {
-			return new ResponseEntity<>(staffFeedbackService.findByStaffIdAndPatientId(staffId, UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")) ,HttpStatus.OK);
+			return new ResponseEntity<>(staffFeedbackService.findByStaffIdAndPatientId(staffId) ,HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> createFeedback(@RequestBody StaffFeedbackDTO staffFeedbackDTO) {
 		
 		staffFeedbackService.create(staffFeedbackDTO);
@@ -44,6 +48,7 @@ public class StaffFeedbackController {
 	
 	@PutMapping
 	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> updateFeedback(@RequestBody StaffFeedbackDTO staffFeedbackDTO) {
 		
 		staffFeedbackService.update(staffFeedbackDTO);

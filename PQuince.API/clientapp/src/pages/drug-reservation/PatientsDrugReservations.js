@@ -7,6 +7,7 @@ import Header from "../../components/Header";
 import ModalDialog from "../../components/ModalDialog";
 import ReservationModalInfo from "../../components/ReservationInfoModal";
 import { NavLink } from "react-router-dom";
+import getAuthHeader from "../../GetHeader";
 
 class PatientsDrugReservations extends Component {
 	state = {
@@ -25,7 +26,7 @@ class PatientsDrugReservations extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/drug/future-reservations")
+		Axios.get(BASE_URL + "/api/drug/future-reservations", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ drugReservations: res.data });
 				console.log(res.data);
@@ -42,7 +43,7 @@ class PatientsDrugReservations extends Component {
 	};
 
 	handleCancelDrugReservation = (reservationId) => {
-		Axios.put(BASE_URL + "/api/drug/reservations/cancel/" + reservationId)
+		Axios.put(BASE_URL + "/api/drug/reservations/cancel", { id: reservationId }, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				let reservations = [...this.state.drugReservations];
 				for (let reservation of reservations) {
@@ -73,8 +74,7 @@ class PatientsDrugReservations extends Component {
 		this.setState({
 			showInfoModal: true,
 			drugName: drugReservation.EntityDTO.drugInstance.EntityDTO.drugInstanceName,
-			drugManufacturer:
-				drugReservation.EntityDTO.drugInstance.EntityDTO.manufacturer.EntityDTO.name,
+			drugManufacturer: drugReservation.EntityDTO.drugInstance.EntityDTO.manufacturer.EntityDTO.name,
 			drugQuantity: drugReservation.EntityDTO.drugInstance.EntityDTO.quantity,
 			drugPrice: drugReservation.EntityDTO.drugPeacePrice,
 			pharmacyName: drugReservation.EntityDTO.pharmacy.EntityDTO.name,
@@ -101,55 +101,27 @@ class PatientsDrugReservations extends Component {
 							Reservation history
 						</NavLink>
 					</nav>
-					<table
-						className="table table-hover"
-						style={{ width: "100%", marginTop: "3rem" }}
-					>
+					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.drugReservations.map((drugReservation) => (
-								<tr
-									id={drugReservation.Id}
-									key={drugReservation.Id}
-									style={{ cursor: "pointer" }}
-								>
-									<td
-										width="130em"
-										onClick={() =>
-											this.handleSelectReservation(drugReservation)
-										}
-									>
-										<img
-											className="img-fluid"
-											src={CapsuleLogo}
-											width="110em"
-										/>
+								<tr id={drugReservation.Id} key={drugReservation.Id} style={{ cursor: "pointer" }}>
+									<td width="130em" onClick={() => this.handleSelectReservation(drugReservation)}>
+										<img className="img-fluid" src={CapsuleLogo} width="110em" />
 									</td>
-									<td
-										onClick={() =>
-											this.handleSelectReservation(drugReservation)
-										}
-									>
+									<td onClick={() => this.handleSelectReservation(drugReservation)}>
 										<div>
-											<b>Name:</b>{" "}
-											{
-												drugReservation.EntityDTO.drugInstance.EntityDTO
-													.drugInstanceName
-											}
+											<b>Name:</b> {drugReservation.EntityDTO.drugInstance.EntityDTO.drugInstanceName}
 										</div>
 										<div>
 											<b>Amount:</b> {drugReservation.EntityDTO.amount}
 										</div>
 										<div>
-											<b>Total price:</b>{" "}
-											{drugReservation.EntityDTO.drugPeacePrice *
-												drugReservation.EntityDTO.amount}
+											<b>Total price:</b> {drugReservation.EntityDTO.drugPeacePrice * drugReservation.EntityDTO.amount}
 											<b> din</b>
 										</div>
 										<div>
 											<b>Reserved until: </b>
-											{new Date(
-												drugReservation.EntityDTO.endDate
-											).toLocaleDateString("en-US", {
+											{new Date(drugReservation.EntityDTO.endDate).toLocaleDateString("en-US", {
 												day: "2-digit",
 												month: "2-digit",
 												year: "numeric",
@@ -162,20 +134,12 @@ class PatientsDrugReservations extends Component {
 										<button
 											type="button"
 											hidden={
-												this.addDays(
-													new Date(drugReservation.EntityDTO.endDate),
-													-1
-												) <= new Date() ||
-												drugReservation.EntityDTO.reservationStatus ===
-													"CANCELED" ||
-												drugReservation.EntityDTO.reservationStatus ===
-													"PROCESSED" ||
-												drugReservation.EntityDTO.reservationStatus ===
-													"EXPIRED"
+												this.addDays(new Date(drugReservation.EntityDTO.endDate), -1) <= new Date() ||
+												drugReservation.EntityDTO.reservationStatus === "CANCELED" ||
+												drugReservation.EntityDTO.reservationStatus === "PROCESSED" ||
+												drugReservation.EntityDTO.reservationStatus === "EXPIRED"
 											}
-											onClick={() =>
-												this.handleCancelDrugReservation(drugReservation.Id)
-											}
+											onClick={() => this.handleCancelDrugReservation(drugReservation.Id)}
 											class="btn btn-outline-danger"
 										>
 											Cancel
