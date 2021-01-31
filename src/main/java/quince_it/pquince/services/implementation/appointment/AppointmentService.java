@@ -56,17 +56,18 @@ public class AppointmentService implements IAppointmentService{
 	private Environment env;
 	
 	@Override
+	public UUID create(DermatologistAppointmentDTO entityDTO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAll() {
 		return null;
 	}
 
 	@Override
 	public IdentifiableDTO<DermatologistAppointmentDTO> findById(UUID id) {
-		return null;
-	}
-
-	@Override
-	public UUID create(DermatologistAppointmentDTO entityDTO) {
 		return null;
 	}
 
@@ -89,7 +90,7 @@ public class AppointmentService implements IAppointmentService{
 			return new ArrayList<AppointmentPeriodResponseDTO>();
 		}
 		else {
-			AppointmentScheduler scheduler = new AppointmentScheduler(createDateRangeForWorkTimeForDay(workTime,appointmentRequestDTO.getDate()),scheduledAppointments);
+			AppointmentScheduler scheduler = new AppointmentScheduler(createDateRangeForWorkTimeForDay(workTime,appointmentRequestDTO.getDate()),scheduledAppointments,appointmentRequestDTO.getDuration());
 			return scheduler.GetFreeAppointment();
 		}
 	}
@@ -329,4 +330,5 @@ public class AppointmentService implements IAppointmentService{
 		
 		return returnAppointments;
 	}
+
 }

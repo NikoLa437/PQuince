@@ -97,7 +97,12 @@ class WorkTimesModal extends Component {
         Axios
         .post(BASE_URL + "/api/worktime/", workTimeDTO).then((res) =>{
             console.log(res.data);
-            this.setState({showAddWorkTime: false, modalSize:'lg'});
+                
+                
+                this.setState({showAddWorkTime: false, modalSize:'lg'});
+
+                
+
         }).catch((err) => {
             alert('Nije moguce kreirati termin u naznacenom roku');
         });
@@ -148,14 +153,14 @@ class WorkTimesModal extends Component {
                     
                     <div hidden={!this.state.showAddWorkTime}>
                         <form >
-                                    <div  className="control-group">
+                                    <div  className="control-group" >
                                         <div className="form-row">
                                             <button  onClick = {() => this.handleBack()} className="btn btn-link btn-xl" type="button">
                                                 <i className="icofont-rounded-left mr-1"></i>
                                                 Back
                                             </button>                   
                                         </div>
-                                        <table style={{width:'100%'}}>
+                                        <table style={{width:'100%'},{marginLeft:'17%'}}>
                                             <tr>
                                                 <td>
                                                     <label >Date from:</label>

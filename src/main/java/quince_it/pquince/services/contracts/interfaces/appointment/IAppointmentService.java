@@ -52,4 +52,5 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 
 	List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO);
 
+
 }

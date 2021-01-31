@@ -14,12 +14,14 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodRes
 
 public class AppointmentScheduler {
 	private DateRange workTime;
+	private int duration;
 	private List<Appointment> scheduledAppointments;
 	
-	public AppointmentScheduler(DateRange workTime, List<Appointment> scheduledAppointments) {
+	public AppointmentScheduler(DateRange workTime, List<Appointment> scheduledAppointments, int duration) {
 		super();
 		this.workTime = workTime;
 		this.scheduledAppointments = scheduledAppointments;
+		this.duration=duration;
 		//this.scheduledAppointments = SortScheduledAppointment(scheduledAppointments);
 	}
 
@@ -51,9 +53,9 @@ public class AppointmentScheduler {
 	private Collection<? extends AppointmentPeriodResponseDTO> FillFreeInterval(LocalDateTime startTime, LocalDateTime endTime) {
 		List<AppointmentPeriodResponseDTO> freeAppointments = new ArrayList<AppointmentPeriodResponseDTO>();
 		
-		while (Duration.between(startTime, endTime).toMinutes() >= Duration.ofMinutes(30).toMinutes())
+		while (Duration.between(startTime, endTime).toMinutes() >= Duration.ofMinutes(duration).toMinutes())
         {
-            DateRange dateRange = new DateRange(startTime, startTime.plusMinutes(30));
+            DateRange dateRange = new DateRange(startTime, startTime.plusMinutes(duration));
             AppointmentPeriodResponseDTO freeAppointmentPeriod = new AppointmentPeriodResponseDTO(convertToDateViaInstant(dateRange.getStartDateTime()),convertToDateViaInstant(dateRange.getEndDateTime()));
             startTime = convertToLocalDateTimeViaInstant(freeAppointmentPeriod.getEndDate());
             freeAppointments.add(freeAppointmentPeriod);

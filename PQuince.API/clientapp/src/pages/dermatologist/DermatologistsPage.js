@@ -336,7 +336,8 @@ class DermatologistsPage extends Component {
                         <AddDermatologistToPharmacy
 					        show={this.state.showAddDermatologistModal}
 					        onCloseModal={this.handleAddDermatologistModalClose}
-					        pharmacyId={this.state.pharmacyId}
+                            pharmacyId={this.state.pharmacyId}
+                            dermatologists={this.state.dermatologists}
 					        header="Add dermatologist"
 				        />
                         <PharmaciesForDermatologistModal
