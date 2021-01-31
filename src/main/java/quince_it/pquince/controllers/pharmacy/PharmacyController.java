@@ -55,6 +55,7 @@ public class PharmacyController {
 
 	@CrossOrigin
 	@PostMapping
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<UUID> addPharmacy(@RequestBody PharmacyDTO pharmacyDTO) {
 		
 		return new ResponseEntity<>(pharmacyService.create(pharmacyDTO) ,HttpStatus.CREATED);
