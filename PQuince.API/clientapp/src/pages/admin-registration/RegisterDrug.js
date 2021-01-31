@@ -1,103 +1,111 @@
 import React, { Component } from "react";
 import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
-import CapsuleLogo from "../../static/capsuleLogo.png";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
+import ModalDialog from "../../components/ModalDialog";
+
+const mapState = {
+	center: [44, 21],
+	zoom: 8,
+	controls: [],
+};
 
 class RegisterDrug extends Component {
 	state = {
-		drugs: [],
-	};
-
-	state = {
-		email: "",
-		password: "",
 		name: "",
-		surname: "",
-		address: "",
-		phoneNumber: "",
-		emailError: "none",
-		passwordError: "none",
+		description: "",
+		drugCode: "",
+		drugKind: "",
+		sideEffects: "",
+		recommendAmount: "",
 		nameError: "none",
-		surnameError: "none",
-		addressError: "none",
-		phoneError: "none",
-		emailNotValid: "none",
+		consulationPriceError: "none",
 		openModal: false,
 		coords: [],
 	};
 
 	constructor(props) {
 		super(props);
-		this.addressInput = React.createRef();
 	}
-	
-	
-	handleEmailChange = (event) => {
-		this.setState({ email: event.target.value });
-	};
 
-	handlePasswordChange = (event) => {
-		this.setState({ password: event.target.value });
+	handleRecommendAmountChange = (event) => {
+		this.setState({ recommendAmount: event.target.value });
 	};
-
+	
 	handleNameChange = (event) => {
 		this.setState({ name: event.target.value });
 	};
-
-	handleSurnameChange = (event) => {
-		this.setState({ surname: event.target.value });
+	
+	handleSideEffectsChange = (event) => {
+		this.setState({ sideEffects: event.target.value });
 	};
 
-	handleAddressChange = (event) => {
-		this.setState({ address: event.target.value });
+	handleDrugCodeChange = (event) => {
+		this.setState({ drugCode: event.target.value });
 	};
-
-	handlePhoneNumberChange = (event) => {
-		this.setState({ phoneNumber: event.target.value });
+	
+	handleDrugKindChange = (event) => {
+		this.setState({ drugKind: event.target.value });
+	};
+	
+	handleDescriptionChange = (event) => {
+		this.setState({ description: event.target.value });
 	};
 
 	validateForm = (userDTO) => {
 		this.setState({
-			emailError: "none",
-			emailNotValid: "none",
 			nameError: "none",
-			surnameError: "none",
 			addressError: "none",
-			phoneError: "none",
-			passwordError: "none",
+			consulationPriceError: "none",
 		});
 
-		if (userDTO.email === "") {
-			this.setState({ emailError: "initial" });
-			return false;
-		} else if (!userDTO.email.includes("@")) {
-			this.setState({ emailNotValid: "initial" });
-			return false;
-		} else if (userDTO.name === "") {
+		if (userDTO.name === "") {
 			this.setState({ nameError: "initial" });
 			return false;
-		} else if (userDTO.surname === "") {
-			this.setState({ surnameError: "initial" });
-			return false;
-		} else if (this.addressInput.current.value === "") {
-			this.setState({ addressError: "initial" });
-			return false;
-		} else if (userDTO.phoneNumber === "") {
-			this.setState({ phoneError: "initial" });
-			return false;
-		} else if (userDTO.password === "") {
-			this.setState({ passwordError: "initial" });
+		} else if (userDTO.consulationPrice === "") {
+			this.setState({ consulationPriceError: "initial" });
 			return false;
 		}
+		
 		return true;
 	};
 
 	handleModalClose = () => {
 		this.setState({ openModal: false });
 	};
+
+	handleSignUp = () => {
+		let street;
+		let city;
+		let country;
+		let latitude;
+		let longitude;
+
+		
+		let pharmacyDTO = {
+			name: this.state.name,
+			description: this.state.description,
+			address: { street, country, city, latitude, longitude },
+			consultationPrice: this.state.consulationPrice*1,
+		};
+		console.log(pharmacyDTO);
+		if (this.validateForm(pharmacyDTO)) {
+		
+			Axios.post(BASE_URL + "/api/pharmacy", pharmacyDTO)
+				.then((res) => {
+					console.log("Success");
+					this.setState({ openModal: true });
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	};
 	
+	handleSelectChange  = (event) => {
+		this.setState({ selectValue: event.target.value });
+	};
 	
 	render() {
 		return (
@@ -107,7 +115,7 @@ class RegisterDrug extends Component {
 
 				<div className="container" style={{ marginTop: "8%" }}>
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
-						Register drug
+						Registrater drug
 					</h5>
 
 					<div className="row section-design">
@@ -115,38 +123,7 @@ class RegisterDrug extends Component {
 							<br />
 							<form id="contactForm" name="sentMessage" novalidate="novalidate">
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<label>Email address:</label>
-										<input
-											placeholder="Email address"
-											className="form-control"
-											id="email"
-											type="text"
-											onChange={this.handleEmailChange}
-											value={this.state.email}
-										/>
-									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.emailError }}
-									>
-										Email address must be entered.
-									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.emailNotValid }}
-									>
-										Email address is not valid.
-									</div>
-								</div>
-								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Name:</label>
 										<input
 											placeholder="Name"
@@ -157,100 +134,84 @@ class RegisterDrug extends Component {
 											value={this.state.name}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.nameError }}
-									>
+									<div className="text-danger" style={{ display: this.state.nameError }}>
 										Name must be entered.
 									</div>
 								</div>
+								
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<label>Surname:</label>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Drug code:</label>
 										<input
-											placeholder="Surname"
+											placeholder="Drug code"
+											class="form-control"
+											id="consulationPrice"
+											type="text"
+											onChange={this.handleDrugCodeChange}
+											value={this.state.drugCode}
+										/>
+									</div>
+									<div className="text-danger" style={{ display: this.state.consulationPriceError }}>
+										Code must be entered.
+									</div>
+								</div>
+								<div className="control-group">
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Drug kind:</label>
+										<input
+											placeholder="Drug kind"
+											class="form-control"
+											id="consulationPrice"
+											type="text"
+											onChange={this.handleDrugKindChange}
+											value={this.state.drugKind}
+										/>
+										<select
+									       onChange={this.handleDrugKindChange}
+											value={this.state.drugKind}
+									     >
+										  <option value="dermathologist">Dermathologist</option>
+										  <option value="pharmacyadmin">Pharmacy admin</option>
+										  <option value="supplier">Supplier</option>
+										  <option value="sysadmin">System admin</option>
+										</select>	
+									</div>
+									<div className="text-danger" style={{ display: this.state.consulationPriceError }}>
+										Code must be entered.
+									</div>
+								</div>
+								<div className="control-group">
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Side effects:</label>
+										<input
+											placeholder="Side effects"
 											class="form-control"
 											type="text"
-											id="surname"
-											onChange={this.handleSurnameChange}
-											value={this.state.surname}
+											id="name"
+											onChange={this.handleSideEffectsChange}
+											value={this.state.sideEffects}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.surnameError }}
-									>
-										Surname must be entered.
+									<div className="text-danger" style={{ display: this.state.nameError }}>
+										Side effects must be entered.
 									</div>
 								</div>
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<label>Address:</label>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Recommend amount:</label>
 										<input
-											className="form-control"
-											id="suggest"
-											ref={this.addressInput}
-											placeholder="Address"
-										/>
-									</div>
-									
-									<div
-										className="text-danger"
-										style={{ display: this.state.addressError }}
-									>
-										Address must be entered.
-									</div>
-								</div>
-								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<label>Phone number:</label>
-										<input
-											placeholder="Phone number"
+											placeholder="Recommend amount"
 											class="form-control"
-											id="phone"
 											type="text"
-											onChange={this.handlePhoneNumberChange}
-											value={this.state.phoneNumber}
+											id="name"
+											onChange={this.handleRecommendAmountChange}
+											value={this.state.recommendAmount}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.phoneError }}
-									>
-										Phone number must be entered.
+									<div className="text-danger" style={{ display: this.state.nameError }}>
+										Recommend amount must be entered.
 									</div>
 								</div>
-								<div className="control-group">
-									<label>Password:</label>
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<input
-											placeholder="Password"
-											class="form-control"
-											type="password"
-											onChange={this.handlePasswordChange}
-											value={this.state.password}
-										/>
-									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.passwordError }}
-									>
-										Password must be entered.
-									</div>
-								</div>
-
 								<div className="form-group">
 									<button
 										style={{
@@ -271,7 +232,13 @@ class RegisterDrug extends Component {
 						</div>
 					</div>
 				</div>
-				
+				<ModalDialog
+					show={this.state.openModal}
+					href="/"
+					onCloseModal={this.handleModalClose}
+					header="Successful registration"
+					text="You have successfully registered staff."
+				/>
 			</React.Fragment>
 		);
 	}
