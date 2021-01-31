@@ -81,8 +81,20 @@ public class WorkTimeService implements IWorkTimeService{
 	}
 	
 	private boolean isDateOverlap(WorkTime workTime, WorkTimeDTO workTimeDTO){
+		System.out.println("WORKTIME STARTDATE: "+workTime.getStartDate());
+		System.out.println("WORKTIME ENDDATE: "+workTime.getEndDate());
+		System.out.println("WORKTIME STARTTIME: "+workTime.getStartTime());
+		System.out.println("WORKTIME ENDTIME: "+workTime.getEndTime());
+		System.out.println("WORKTIMEDTO STARTDATE: "+workTimeDTO.getStartDate());
+		System.out.println("WORKTIMEDTO ENDDATE: "+workTimeDTO.getEndDate());
+		System.out.println("WORKTIMEDTO STARTTIME: "+workTimeDTO.getStartTime());
+		System.out.println("WORKTIMEDTO ENDTIME: "+workTimeDTO.getEndTime());
+
+
 	    if(workTime.getStartDate().before(workTimeDTO.getEndDate()) && workTimeDTO.getStartDate().before(workTime.getEndDate())) {
-	    	if(workTime.getStartTime()<workTimeDTO.getEndTime() && workTimeDTO.getStartTime()<workTime.getEndTime()) {
+			System.out.println("TESTTTT");
+
+	    	if(workTime.getStartTime()<=workTimeDTO.getEndTime() && workTimeDTO.getStartTime()<=workTime.getEndTime()) {
 	    		return true;
 	    	}
 	    }

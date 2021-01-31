@@ -7,6 +7,8 @@ import java.util.UUID;
 public class AppointmentRequestDTO {
 	
 	private UUID dermatologistId;
+	
+	private UUID pharmacyId;
 
 	private Date date;
     
@@ -16,12 +18,13 @@ public class AppointmentRequestDTO {
         
     public AppointmentRequestDTO() {}
 
-	public AppointmentRequestDTO(UUID dermatologistId, Date date, int duration, boolean forAllDay) {
+	public AppointmentRequestDTO(UUID dermatologistId,UUID pharmacyId, Date date, int duration, boolean forAllDay) {
 		super();
 		this.dermatologistId = dermatologistId;
 		this.date = date;
 		this.duration = duration;
 		this.forAllDay=forAllDay;
+		this.pharmacyId=pharmacyId;
 	}
 
 	public UUID getDermatologistId() {
@@ -30,6 +33,15 @@ public class AppointmentRequestDTO {
 
 	public void setDermatologistId(UUID dermatologistId) {
 		this.dermatologistId = dermatologistId;
+	}
+	
+
+	public UUID getPharmacyId() {
+		return pharmacyId;
+	}
+
+	public void setPharmacyId(UUID pharmacyId) {
+		this.pharmacyId = pharmacyId;
 	}
 
 	public Date getDate() {

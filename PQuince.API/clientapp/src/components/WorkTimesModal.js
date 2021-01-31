@@ -13,20 +13,35 @@ class WorkTimesModal extends Component {
         selectedStartDate:new Date(),
         selectedEndDate:new Date(),
         timeFrom:1,
-        timeTo:1,
+        timeTo:2,
         modalSize:'lg',        
     }
 
     handleBack = (event) =>{
-        this.setState({showAddWorkTime: false, modalSize:'lg'});
+        this.setState({
+            showAddWorkTime: false, 
+            modalSize:'lg',
+            selectedStartDate:new Date(),
+            selectedEndDate:new Date(),
+            timeFrom:1,
+            timeTo:2,
+        });
     }
 
-    handleAddFeedbackModal = (event) =>{
-        this.setState({showAddWorkTime: true, modalSize:'sm'});
+    handleAddWorkTimeModal = (event) =>{
+        this.setState({showAddWorkTime: true, modalSize:'md'});
     }
 
     handleStartDateChange = (date) => {
-        this.setState({selectedStartDate:date});
+        this.setState({
+            selectedStartDate:date,
+        });
+
+        if(date>this.state.selectedEndDate){
+            this.setState({
+                selectedEndDate:date,
+            }); 
+        }
     }
 
 
@@ -35,12 +50,18 @@ class WorkTimesModal extends Component {
     }
 
     handleTimeFromChange= (event) => {
-        if(event.target.value > 24){
-            this.setState({timeFrom:24});
+        if(event.target.value > 23){
+            this.setState({timeFrom:23});
         }else if(event.target.value < 1){
             this.setState({timeFrom:1});
         }
-        else{
+        
+        if(event.target.value >= this.state.timeTo){
+            this.setState({
+                timeFrom:event.target.value,
+                timeTo: event.target.value++
+            });
+        }else{
             this.setState({timeFrom:event.target.value});
         }
     }
@@ -48,12 +69,18 @@ class WorkTimesModal extends Component {
     handleTimeToChange = (event) => {
             if(event.target.value > 24){
                 this.setState({timeTo:24});
-            }else if(event.target.value < 1){
-                this.setState({timeTo:1});
+            }else if(event.target.value < 2){
+                this.setState({timeTo:2});
             }
-            else{
+            
+            if(event.target.value <= this.state.timeFrom){
+                this.setState({
+                    timeTo:event.target.value,
+                    timeFrom: event.target.value--
+                });
+            }else{
                 this.setState({timeTo:event.target.value});
-            } 
+            }
     }
 
     handleAdd = () => {
@@ -71,7 +98,9 @@ class WorkTimesModal extends Component {
         .post(BASE_URL + "/api/worktime/", workTimeDTO).then((res) =>{
             console.log(res.data);
             this.setState({showAddWorkTime: false, modalSize:'lg'});
-        }).catch((err) => {console.log(err);});
+        }).catch((err) => {
+            alert('Nije moguce kreirati termin u naznacenom roku');
+        });
     }
 
     render() { 
@@ -79,7 +108,7 @@ class WorkTimesModal extends Component {
             <Modal
                 show = {this.props.show}
                 size = {this.state.modalSize}
-                dialogClassName="modal-80w-100h"
+                dialogClassName="modal-120w-100h"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
                 onHide={this.props.onCloseModal}
@@ -93,7 +122,7 @@ class WorkTimesModal extends Component {
                 </Modal.Header>
                 <Modal.Body>
                     <div hidden={this.state.showAddWorkTime}>
-                        <Button style={{marginBottom:'3%'}} onClick = {() => this.handleAddFeedbackModal()}>Add worktime</Button>
+                        <Button style={{marginBottom:'3%'}} onClick = {() => this.handleAddWorkTimeModal()}>Add worktime</Button>
 
                             <table  border='1' style={{width:'100%'}}>
                                 <tr>
@@ -118,7 +147,7 @@ class WorkTimesModal extends Component {
                     
                     
                     <div hidden={!this.state.showAddWorkTime}>
-                    <form >
+                        <form >
                                     <div  className="control-group">
                                         <div className="form-row">
                                             <button  onClick = {() => this.handleBack()} className="btn btn-link btn-xl" type="button">
@@ -126,30 +155,41 @@ class WorkTimesModal extends Component {
                                                 Back
                                             </button>                   
                                         </div>
-                                        <div >                        
-                                            <div className="form-col" style={{color: "#6c757d",opacity: 1}}>
-                                                <label style={{marginRight:'2%'}}>Date from:</label>
-                                                <DatePicker className="form-control mr-3"  minDate={new Date()} onChange={date => this.handleStartDateChange(date)} selected={this.state.selectedStartDate}/>
-                                            </div>
-                                        </div>
-                                        <div>                        
-                                            <div className="form-col" style={{color: "#6c757d",opacity: 1}}>
-                                                <label style={{marginRight:'2%'}}>Date to:</label>
-                                                <DatePicker style={{marginLeft:'15px'}} className="form-control mr-3"  minDate={this.state.selectedStartDate} onChange={date => this.handleEndDateChange(date)} selected={this.state.selectedEndDate}/>
-                                            </div>
-                                        </div>
-                                        <div >
-                                            <div className="form-col">
-                                                <label >Time from:</label>
-                                                 <input placeholder="Time from" className="form-control mr-3" style={{width: "9em"}} type="number" min="1" max="24" onChange={this.handleTimeFromChange} value={this.state.timeFrom} />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div className="form-col">
-                                                <label style={{marginRight:'2%'}}>Time to:</label>
-                                                <input placeholder="Time to" className="form-control mr-3" style={{width: "9em"}} type="number" min="1" max="24" onChange={this.handleTimeToChange} value={this.state.timeTo} />
-                                            </div>
-                                        </div>
+                                        <table style={{width:'100%'}}>
+                                            <tr>
+                                                <td>
+                                                    <label >Date from:</label>
+                                                </td>
+                                                <td>
+                                                    <DatePicker className="form-control"  style={{width: "15em"}} minDate={new Date()} onChange={date => this.handleStartDateChange(date)} selected={this.state.selectedStartDate}/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label>Date to:</label>
+                                                </td>
+                                                <td>
+                                                    <DatePicker  className="form-control" style={{width: "15em"}}  minDate={this.state.selectedStartDate} onChange={date => this.handleEndDateChange(date)} selected={this.state.selectedEndDate}/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label>Time from:</label>
+                                                </td>
+                                                <td>
+                                                    <input placeholder="Time from" className="form-control" style={{width: "12.8em"}} type="number" min="1" max="23" onChange={this.handleTimeFromChange} value={this.state.timeFrom} />
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <label>Time to:</label>
+                                                </td>
+                                                <td>
+                                                    <input placeholder="Time to" className="form-control" style={{width: "12.8em"}} type="number" min="2" max="24" onChange={this.handleTimeToChange} value={this.state.timeTo} />
+                                                </td>
+                                            </tr>
+                                        </table>
                                         <div  className="form-group text-center">
                                             <Button className="mt-3"  onClick = {() => this.handleAdd()} >Add worktime</Button>
                                         </div>

@@ -16,5 +16,4 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(PharmacyFiltrationDTO pharmacyFiltrationDTO);
 
 	IdentifiableDTO<PharmacyGradeDTO> findByIdWithGrade(UUID id);
-
 }

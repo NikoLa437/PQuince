@@ -30,13 +30,20 @@ public class WorkTimeController {
 	@CrossOrigin
 	@PostMapping 
 	public ResponseEntity<?>addWorkTimeForPatient(@RequestBody WorkTimeDTO workTimeDTO) {
-		workTimeService.create(workTimeDTO);
-		return new ResponseEntity<>(HttpStatus.OK); 
+		
+		try {
+			if(workTimeService.create(workTimeDTO)!=null)
+				return new ResponseEntity<>(HttpStatus.OK); 
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@GetMapping("/worktime-for-staff/{staffId}") 
 	@CrossOrigin
-	public ResponseEntity<List<IdentifiableDTO<WorkTimeDTO>>> getDermatologistForPharmacy(@PathVariable UUID staffId) {
+	public ResponseEntity<List<IdentifiableDTO<WorkTimeDTO>>> getWorkTimeForStaff(@PathVariable UUID staffId) {
 	  
 		try {
 			List<IdentifiableDTO<WorkTimeDTO>> workTimes = workTimeService.findWorkTimeForStaff(staffId);

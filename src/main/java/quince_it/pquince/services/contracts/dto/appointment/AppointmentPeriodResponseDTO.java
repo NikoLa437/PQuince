@@ -1,5 +1,6 @@
 package quince_it.pquince.services.contracts.dto.appointment;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class AppointmentPeriodResponseDTO {

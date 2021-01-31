@@ -22,8 +22,10 @@ class PharmacyProfilePage extends Component {
 		x: "",
 		y: "",
 		showDermatologistModal: false,
+		showCreateAppointment: false,
 		showDrugsInPharmacy: false,
 		complaint: "",
+		dermatologists:[],
 	};
 
 	componentDidMount() {
@@ -44,11 +46,20 @@ class PharmacyProfilePage extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
+
+		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202")
+			.then((res) => {
+				this.setState({ dermatologists: res.data });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	}
 
 	handleSubscribe = () => {
 		this.setState({
-			showDermatologistModal: true,
+			showCreateAppointment: true,
 		});
 	};
 
@@ -64,6 +75,10 @@ class PharmacyProfilePage extends Component {
 
 	handleModalClose = () => {
 		this.setState({ showDermatologistModal: false });
+	};
+
+	handleCreateAppoitmentClose = () => {
+		this.setState({ showCreateAppointment: false });
 	};
 	
 	
@@ -152,6 +167,18 @@ class PharmacyProfilePage extends Component {
 				console.log(err);
 			});
 	};
+
+	handleListOfDermatologistOpenModal = () => {
+		this.setState({
+			showDermatologistModal:true
+		})
+	}
+
+	handleListOfDermatologistCloseModal = () => {
+		this.setState({
+			showDermatologistModal:false
+		})
+	}
 
 	handleComaplaint = () => {
 		let entityDTO = {
@@ -265,11 +292,11 @@ class PharmacyProfilePage extends Component {
 							<br></br>
 							<button
 								style={({ background: "#1977cc" }, { height: "30px" }, { verticalAlign: "center" }, { marginTop: "5%" })}
-								onClick={this.handleSubscribe}
+								onClick={this.handleListOfDermatologistOpenModal}
 								className="btn btn-primary btn-xl"
 								type="button"
 							>
-								<i className="icofont-subscribe mr-1"></i>Lista dermatologa
+								<i className="icofont-subscribe mr-1"></i>List of dermatologist
 							</button>
 							<br></br>
 							<button
@@ -322,7 +349,7 @@ class PharmacyProfilePage extends Component {
 
 					<PharmacyDermatologistModal
 						show={this.state.showDermatologistModal}
-						onCloseModal={this.handleModalClose}
+						onCloseModal={this.handleListOfDermatologistCloseModal}
 						pharmacyId={this.state.pharmacyId}
 						header="Our dermatologist"
 					/>

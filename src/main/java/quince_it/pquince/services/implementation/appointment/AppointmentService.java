@@ -2,6 +2,7 @@ package quince_it.pquince.services.implementation.appointment;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -9,12 +10,12 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.users.DateRange;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.WorkTime;
@@ -30,7 +31,6 @@ import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
-import quince_it.pquince.services.implementation.users.WorkTimeService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.appointment.AppointmentMapper;
 
@@ -82,10 +82,27 @@ public class AppointmentService implements IAppointmentService{
 
 	@Override
 	public List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO) {
-		WorkTime workTime = workTimeRepository.getWorkTimeForDermatologistForDate(appointmentRequestDTO.getDermatologistId(),appointmentRequestDTO.getDate());
-		return null;
-	}
+		WorkTime workTime = workTimeRepository.getWorkTimeForDermatologistForDateForPharmacy(appointmentRequestDTO.getDermatologistId(),appointmentRequestDTO.getDate(),appointmentRequestDTO.getPharmacyId());
+		List<Appointment> scheduledAppointments = appointmentRepository.getCreatedAppoitntmentsByDermatologistByDate(appointmentRequestDTO.getDermatologistId(),appointmentRequestDTO.getDate(),appointmentRequestDTO.getPharmacyId());
 	
+		if(workTime==null) {
+			return new ArrayList<AppointmentPeriodResponseDTO>();
+		}
+		else {
+			AppointmentScheduler scheduler = new AppointmentScheduler(createDateRangeForWorkTimeForDay(workTime,appointmentRequestDTO.getDate()),scheduledAppointments);
+			return scheduler.GetFreeAppointment();
+		}
+	}
+
+	private DateRange createDateRangeForWorkTimeForDay(WorkTime workTime, Date date) {
+		@SuppressWarnings("deprecation")
+		Date startDate = new Date(date.getYear(),date.getMonth(),date.getDay(),workTime.getStartTime(),0,0);
+		@SuppressWarnings("deprecation")
+		Date endDate = new Date(date.getYear(),date.getMonth(),date.getDay(),workTime.getEndTime(),0,0);
+
+		return new DateRange(startDate,endDate);
+	}
+
 	@Override
 	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllFreeAppointmentsByPharmacyAndAppointmentType(UUID pharmacyId,
 			AppointmentType appointmentType) {

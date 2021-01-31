@@ -47,6 +47,7 @@ public class PharmacyController {
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAll() {
 		return new ResponseEntity<>(pharmacyService.findAllPharmaciesWithGrades(),HttpStatus.OK);
 	}
+
 	
 	@GetMapping("/find-by-drug/{drugId}")
 	public ResponseEntity<List<IdentifiablePharmacyDrugPriceAmountDTO>> findPharnaciesWithPriceForDrug(@PathVariable UUID drugId) {
