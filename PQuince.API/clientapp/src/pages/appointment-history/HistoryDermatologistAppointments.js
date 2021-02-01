@@ -8,6 +8,8 @@ import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 import { NavLink } from "react-router-dom";
 import getAuthHeader from "../../GetHeader";
 import ComplaintCreateModal from "../../components/ComplaintCreateModal";
+import HeadingAlert from "../../components/HeadingAlert";
+import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 
 class HistoryDermatologistAppointments extends Component {
 	state = {
@@ -21,6 +23,12 @@ class HistoryDermatologistAppointments extends Component {
 		StaffName: "",
 		StaffSurame: "",
 		grade: 0,
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
 	};
 
 	componentDidMount() {
@@ -43,8 +51,8 @@ class HistoryDermatologistAppointments extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
-	};			
-				
+	};
+
 	handleComplaintClick = (staff) => {
 		console.log(staff);
 		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
@@ -76,7 +84,7 @@ class HistoryDermatologistAppointments extends Component {
 	handleComplaintChange = (event) => {
 		this.setState({ complaint: event.target.value });
 	};
-	
+
 	handleComplaintModalClose = () => {
 		this.setState({ showComplaintModal: false });
 	};
@@ -104,7 +112,7 @@ class HistoryDermatologistAppointments extends Component {
 				console.log(err);
 			});
 	};
-	
+
 	handleSortByDateAscending = () => {
 		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-ascending?appointmentType=EXAMINATION", {
 			headers: { Authorization: getAuthHeader() },
@@ -196,7 +204,7 @@ class HistoryDermatologistAppointments extends Component {
 						StaffSurame: staff.EntityDTO.surname,
 						grade: 0,
 					});
-				} else {
+				} else if (res.status === 200) {
 					this.setState({
 						selectedStaffId: staff.Id,
 						showModifyFeedbackModal: true,
@@ -229,16 +237,24 @@ class HistoryDermatologistAppointments extends Component {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/dermatologist-history", {
-					headers: { Authorization: getAuthHeader() },
-				})
-					.then((res) => {
-						this.setState({ appointments: res.data, showFeedbackModal: false });
-						console.log(res.data);
+				if (resp.status === 405) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Staff feedback not allowed." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 201) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully saved." });
+					Axios.get(BASE_URL + "/api/appointment/dermatologist-history", {
+						headers: { Authorization: getAuthHeader() },
 					})
-					.catch((err) => {
-						console.log(err);
-					});
+						.then((res) => {
+							this.setState({ appointments: res.data, showFeedbackModal: false });
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				this.setState({ showFeedbackModal: false });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -255,16 +271,24 @@ class HistoryDermatologistAppointments extends Component {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/dermatologist-history", {
-					headers: { Authorization: getAuthHeader() },
-				})
-					.then((res) => {
-						this.setState({ appointments: res.data, showModifyFeedbackModal: false });
-						console.log(res.data);
+				if (resp.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Bad request when modifying feedback." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 204) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully modified." });
+					Axios.get(BASE_URL + "/api/appointment/dermatologist-history", {
+						headers: { Authorization: getAuthHeader() },
 					})
-					.catch((err) => {
-						console.log(err);
-					});
+						.then((res) => {
+							this.setState({ appointments: res.data, showModifyFeedbackModal: false });
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				this.setState({ showModifyFeedbackModal: false });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -275,6 +299,14 @@ class HistoryDermatologistAppointments extends Component {
 		this.setState({ grade });
 	};
 
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
+	handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+	};
+
 	render() {
 		return (
 			<React.Fragment>
@@ -282,6 +314,19 @@ class HistoryDermatologistAppointments extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
+
+					<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">EXAMINATIONS</h5>
 					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
 						<NavLink className="nav-link" exact to="/patients-appointments">
@@ -370,7 +415,7 @@ class HistoryDermatologistAppointments extends Component {
 											})}
 										</div>
 										<div>
-											<b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
+											<b>Price: </b> {(Math.round(appointment.EntityDTO.discountPrice * 100) / 100).toFixed(2)} <b>din</b>
 										</div>
 										<div>
 											<b>Dermatologist: </b>{" "}

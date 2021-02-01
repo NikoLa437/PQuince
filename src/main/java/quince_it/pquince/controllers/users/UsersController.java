@@ -84,12 +84,13 @@ public class UsersController {
 		}
 	}
 	
-	@PutMapping("/{patientId}") 
+	@PutMapping("/patient") 
 	@CrossOrigin
-	public ResponseEntity<?> updatePatientInformation(@PathVariable UUID patientId,@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> updatePatientInformation(@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
 	  
 		try {
-			userService.updatePatient(patientId, userInfoChangeDTO);
+			userService.updatePatient(userInfoChangeDTO);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -156,6 +157,7 @@ public class UsersController {
 	}
 	
 	@PostMapping("/patient-allergens") 
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> addAllergensForPatient(@RequestBody AllergenUserDTO allergenUserDTO) {
 	  
 		try {
@@ -170,6 +172,7 @@ public class UsersController {
 	
 	@PutMapping("/patient-allergens") 
 	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> deleteAllergensForPatient(@RequestBody AllergenUserDTO allergenUserDTO) {
 		
 		try {

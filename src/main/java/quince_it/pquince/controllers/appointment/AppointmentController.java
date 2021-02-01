@@ -1,14 +1,13 @@
 package quince_it.pquince.controllers.appointment;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +28,6 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
-import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
-import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 
@@ -174,7 +171,8 @@ public class AppointmentController {
 			UUID appointmentId = appointmentService.createConsultation(requestDTO);
 			return new ResponseEntity<>(appointmentId, HttpStatus.CREATED);
 		} catch (Exception e) {
-			 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
 	}
@@ -185,13 +183,17 @@ public class AppointmentController {
 	@CrossOrigin
 	public ResponseEntity<?> cancelAppointment(@RequestBody EntityIdDTO appointmentId) {
 		
+		try {
+			appointmentService.cancelAppointment(appointmentId.getId());
+			 return new ResponseEntity<>(appointmentId.getId(),HttpStatus.NO_CONTENT);
+		} catch (AuthorizationServiceException e) {
+			 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		} catch (IllegalArgumentException e) {
+			 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
-		//TODO : PROVERA JEL PACIJENTOV APPOINTMENT
-		boolean isSuccesfull = appointmentService.cancelAppointment(appointmentId.getId());
-		
-		if(isSuccesfull) return new ResponseEntity<>(appointmentId.getId(),HttpStatus.NO_CONTENT);
-		
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
 	@GetMapping("/patient/{patientId}")

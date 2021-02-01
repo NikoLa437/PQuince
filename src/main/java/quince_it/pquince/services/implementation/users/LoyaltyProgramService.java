@@ -6,11 +6,14 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.users.LoyalityCategory;
 import quince_it.pquince.entities.users.LoyaltyProgram;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.repository.users.LoyaltyProgramRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.services.contracts.dto.users.LoyaltyProgramDTO;
+import quince_it.pquince.services.contracts.dto.users.PatientLoyalityProgramDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
@@ -28,6 +31,8 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 	
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	private final UUID LOYALITY_PROGRAM_ID = UUID.fromString("791fee27-bb12-4340-9b0a-a7c9ef575278");
 
 	@Override
 	public IdentifiableDTO<LoyaltyProgramDTO> findById(UUID id) {
@@ -84,13 +89,53 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 
 	@Override
 	public double getDiscountDrugPriceForPatient(double regularPrice) {
-		// TODO DUSAN : SOLVE THIS
-		UUID patientId = userService.getLoggedUserId();
-		Patient patient = patientRepository.findById(patientId).get();
-		//getLoyality
-		//return 100 - getLoyalityDrugDiscount / 100 * regular price
+
+		UUID patientId = userService.getLoggedUserId();		
+		PatientLoyalityProgramDTO patientLoyalityProgramDTO = getLoggedPatientLoyalityProgram(patientId);
+
+		return ((100 - patientLoyalityProgramDTO.getDrugDiscount()) / 100.0 ) * regularPrice;
+	}
+	
+	@Override
+	public PatientLoyalityProgramDTO getLoggedPatientLoyalityProgram(UUID patientId) {
+
+		Patient patient = patientRepository.findById(patientId).get();		
+		LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.findById(LOYALITY_PROGRAM_ID).get();
 		
-		return regularPrice;
+		return createPatientLoyalityProgramDTO(loyaltyProgram, patient.getPoints());
+	}
+
+	private PatientLoyalityProgramDTO createPatientLoyalityProgramDTO(LoyaltyProgram loyaltyProgram, int points) {
+		
+		if(points >= loyaltyProgram.getPointsToEnterGoldCathegory())
+			return new PatientLoyalityProgramDTO(LoyalityCategory.GOLD, loyaltyProgram.getAppointmentDiscountGold(), loyaltyProgram.getConsultationDiscountGold(), loyaltyProgram.getDrugDiscountGold());
+		else if (points >= loyaltyProgram.getPointsToEnterSilverCathegory() && points < loyaltyProgram.getPointsToEnterGoldCathegory())
+			return new PatientLoyalityProgramDTO(LoyalityCategory.SILVER, loyaltyProgram.getAppointmentDiscountSilver(), loyaltyProgram.getConsultationDiscountSilver(), loyaltyProgram.getDrugDiscountSilver());
+		else
+			return new PatientLoyalityProgramDTO(LoyalityCategory.REGULAR, loyaltyProgram.getAppointmentDiscountRegular(), loyaltyProgram.getConsultationDiscountRegular(), loyaltyProgram.getDrugDiscountRegular());
+
+	}
+
+	@Override
+	public double getDiscountAppointmentPriceForPatient(double regularPrice, AppointmentType appointmentType) {
+		
+		UUID patientId = userService.getLoggedUserId();		
+		PatientLoyalityProgramDTO patientLoyalityProgramDTO = getLoggedPatientLoyalityProgram(patientId);
+		if(appointmentType.equals(AppointmentType.EXAMINATION))
+			return ((100 - patientLoyalityProgramDTO.getAppointmentDiscount()) / 100.0) * regularPrice;
+		else
+			return ((100 - patientLoyalityProgramDTO.getConsultationDiscount()) / 100.0) * regularPrice;
+
+	}
+
+	@Override
+	public int getDiscountPercentageForAppointmentForPatient(AppointmentType appointmentType) {
+		UUID patientId = userService.getLoggedUserId();		
+		PatientLoyalityProgramDTO patientLoyalityProgramDTO = getLoggedPatientLoyalityProgram(patientId);
+		if(appointmentType.equals(AppointmentType.EXAMINATION))
+			return patientLoyalityProgramDTO.getAppointmentDiscount();
+		else
+			return patientLoyalityProgramDTO.getConsultationDiscount();
 	}
 
 		
