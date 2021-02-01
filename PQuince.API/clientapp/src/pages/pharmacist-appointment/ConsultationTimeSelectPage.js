@@ -245,7 +245,7 @@ class ConsultationTimeSelectPage extends Component {
 			pharmacyName: pharmacy.EntityDTO.name,
 			pharmacyAddress: pharmacy.EntityDTO.address.street + ", " + pharmacy.EntityDTO.address.city + ", " + pharmacy.EntityDTO.address.country,
 			pharmacyGrade: pharmacy.EntityDTO.grade,
-			pharmacyPrice: pharmacy.EntityDTO.price,
+			pharmacyPrice: pharmacy.EntityDTO.discountPrice,
 			consultationDate: new Date(
 				this.state.selectedDate.getFullYear(),
 				this.state.selectedDate.getMonth(),

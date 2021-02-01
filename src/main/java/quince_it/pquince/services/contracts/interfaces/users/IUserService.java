@@ -42,7 +42,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	boolean removeAllergen(AllergenUserDTO allergenUserDTO);
 	
-	void updatePatient(UUID patientId,UserInfoChangeDTO patientInfoChangeDTO);
+	void updatePatient(UserInfoChangeDTO patientInfoChangeDTO);
 	
 	List<IdentifiableDTO<StaffGradeDTO>> findAllStaffWithAvgGradeByStaffType(StaffType staffType);
 	
@@ -64,8 +64,6 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 
 	UUID createAdmin(UserRequestDTO entityDTO);
 
-	UUID createPharmacyAdmin(UserRequestDTO entityDTO);
-
 	UUID createPharmacist(UserRequestDTO entityDTO);
 
 	UUID createDermatologist(UserRequestDTO userRequest);
@@ -80,6 +78,8 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	List<IdentifiableDTO<PharmacyDTO>> getPharmaciesWhereDermatologistWork(UUID dermatologistId);
 
 	boolean addDermatologistToPharmacy(AddDermatologistToPharmacyDTO addDermatologistToPharmacyDTO);
+
+	UUID createPharmacyAdmin(UserRequestDTO entityDTO, UUID pharmacyDTO);
 
 
 }

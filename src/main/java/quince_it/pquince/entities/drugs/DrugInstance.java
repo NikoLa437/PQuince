@@ -85,6 +85,23 @@ public class DrugInstance extends Drug {
 		this.onReciept = onReciept;
 		this.drugKind = drugKind;
 	}
+	public DrugInstance(String name, String code, String drugInstanceName, FormatDrug drugFormat, double quantity,
+			String sideEffects, String recommendedAmount, 
+			int loyalityPoints, boolean onReciept, DrugKind drugKind) {
+		super(UUID.randomUUID(),name, code);
+		this.drugInstanceName = drugInstanceName;
+		this.manufacturer = null;
+		this.drugFormat = drugFormat;
+		this.quantity = quantity;
+		this.sideEffects = sideEffects;
+		this.recommendedAmount = recommendedAmount;
+		this.replacingDrugs = new ArrayList<DrugInstance>();
+		this.allergens = new ArrayList<Allergen>();
+		this.ingredients = new ArrayList<Ingredient>();
+		this.loyalityPoints = loyalityPoints;
+		this.onReciept = onReciept;
+		this.drugKind = drugKind;
+	}
 
 	public DrugInstance(UUID id, String name, String code, String drugInstanceName, Manufacturer manufacturer, FormatDrug drugFormat, double quiantity,
 			String sideEffects, String recommendedAmount, List<DrugInstance> replacingDrugs, List<Allergen> allergens,

@@ -24,6 +24,7 @@ import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.PharmacyAdmin;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
@@ -50,6 +51,7 @@ import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
+import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
 import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
@@ -70,6 +72,9 @@ public class UserService implements IUserService{
 	private StaffRepository staffRepository;
 	
 	@Autowired
+	private PharmacyRepository pharmacyRepository;
+	
+	@Autowired
 	private PatientRepository patientRepository;
 	
 	@Autowired
@@ -80,9 +85,6 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private AllergenService allergenService;
-	
-	@Autowired
-	private PharmacyRepository pharmacyRepository;
 
 	@Autowired
 	private AuthorityService authorityService;
@@ -101,6 +103,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private ILoyaltyProgramService loyalityProgramService;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -230,8 +235,12 @@ public class UserService implements IUserService{
 	}
 	
 	@Override
-	public UUID createPharmacyAdmin(UserRequestDTO entityDTO) {
-		Staff staff = CreatePharmacyAdminFromDTO(entityDTO);
+	public UUID createPharmacyAdmin(UserRequestDTO entityDTO, UUID pharmacyId) {
+		//Pharmacy pharmacy = CreatePharmacyFromDTO(pharmacyDTO);
+		Pharmacy pharmacy = pharmacyRepository.getOne(pharmacyId);
+		System.out.println(pharmacy.getName() + pharmacy.getId() + "PHARMACY");
+		PharmacyAdmin staff = CreatePharmacyAdminFromDTO(entityDTO, pharmacy);
+		System.out.println(staff.getName() + staff.getEmail() + "STAFF");
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACYADMIN");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -242,8 +251,8 @@ public class UserService implements IUserService{
 		return staff.getId();
 	}
 	
-	private Staff CreatePharmacyAdminFromDTO(UserRequestDTO staffDTO) {
-		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.PHARMACYADMIN);
+	private PharmacyAdmin CreatePharmacyAdminFromDTO(UserRequestDTO staffDTO,Pharmacy pharmacy) {
+		return new PharmacyAdmin(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(),pharmacy);
 	}
 	
 	@Override
@@ -278,7 +287,8 @@ public class UserService implements IUserService{
 	@Override
 	public IdentifiableDTO<PatientDTO> getPatientById() {	
 		UUID patientId = getLoggedUserId();
-		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(patientId));
+		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(patientId),
+																		loyalityProgramService.getLoggedPatientLoyalityProgram(patientId));
 	}
 	
 	@Override
@@ -334,7 +344,9 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public void updatePatient(UUID patientId, UserInfoChangeDTO patientInfoChangeDTO) {
+	public void updatePatient(UserInfoChangeDTO patientInfoChangeDTO) {
+		
+		UUID patientId = getLoggedUserId();
 		Patient patient = patientRepository.getOne(patientId);		
 		
 		patient.setAddress(patientInfoChangeDTO.getAddress());

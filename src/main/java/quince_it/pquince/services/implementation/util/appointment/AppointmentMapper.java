@@ -16,16 +16,18 @@ import quince_it.pquince.services.implementation.util.users.UserMapper;
 public class AppointmentMapper {
 
 	
-	public static IdentifiableDTO<DermatologistAppointmentDTO> MapAppointmentPersistenceToAppointmentIdentifiableDTO(Appointment appointment, IdentifiableDTO<StaffGradeDTO> staff){
+	public static IdentifiableDTO<DermatologistAppointmentDTO> MapAppointmentPersistenceToAppointmentIdentifiableDTO(Appointment appointment, IdentifiableDTO<StaffGradeDTO> staff, int discountPercentage){
 		if(appointment == null) throw new IllegalArgumentException();
 		
-		return new IdentifiableDTO<DermatologistAppointmentDTO>(appointment.getId(), new DermatologistAppointmentDTO(staff, appointment.getStartDateTime(), appointment.getEndDateTime(), appointment.getPrice()));
+		double discountPrice = discountPercentage == 0 ? appointment.getPriceToPay() : ((100 - discountPercentage) / 100.0) * appointment.getPrice();
+		
+		return new IdentifiableDTO<DermatologistAppointmentDTO>(appointment.getId(), new DermatologistAppointmentDTO(staff, appointment.getStartDateTime(), appointment.getEndDateTime(), appointment.getPrice(),discountPrice));
 	}
 	
-	public static List<IdentifiableDTO<DermatologistAppointmentDTO>> MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(List<Appointment> appointments, List<IdentifiableDTO<StaffGradeDTO>> staffs){
+	public static List<IdentifiableDTO<DermatologistAppointmentDTO>> MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(List<Appointment> appointments, List<IdentifiableDTO<StaffGradeDTO>> staffs, int discountPercentage){
 		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> appointmentListDTO = new ArrayList<IdentifiableDTO<DermatologistAppointmentDTO>>();
-		appointments.forEach((a) -> appointmentListDTO.add(MapAppointmentPersistenceToAppointmentIdentifiableDTO(a, findAppropriateStaff(a.getStaff().getId(), staffs))));
+		appointments.forEach((a) -> appointmentListDTO.add(MapAppointmentPersistenceToAppointmentIdentifiableDTO(a, findAppropriateStaff(a.getStaff().getId(), staffs), discountPercentage)));
 		return appointmentListDTO;
 	}
 	
@@ -40,8 +42,10 @@ public class AppointmentMapper {
 	}
 	
 	public static IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO> MapAppointmentPersistenceToAppointmentWithPharmacyIdentifiableDTO
-					(Appointment appointment, IdentifiableDTO<StaffGradeDTO> staff){
+					(Appointment appointment, IdentifiableDTO<StaffGradeDTO> staff, int discountPercentage){
 		if(appointment == null) throw new IllegalArgumentException();
+		
+		double discountPrice = discountPercentage == 0 ? appointment.getPriceToPay() : ((100 - discountPercentage) / 100.0) * appointment.getPrice();
 		
 		return new IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>(appointment.getId(),
 																			new DermatologistAppointmentWithPharmacyDTO(staff,
@@ -52,14 +56,14 @@ public class AppointmentMapper {
 																					new PharmacyDTO(appointment.getPharmacy().getName(),
 																									appointment.getPharmacy().getAddress(),
 																									appointment.getPharmacy().getDescription(),
-																									appointment.getPharmacy().getConsultationPrice()))));
+																									appointment.getPharmacy().getConsultationPrice())),discountPrice));
 	}
 
 	public static List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>> MapAppointmentPersistenceListToAppointmentWithPharmacyIdentifiableDTOList(
-			List<Appointment> appointments, List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades) {
+			List<Appointment> appointments, List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades, int discountPercentage) {
 
 		List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>> appointmentListDTO = new ArrayList<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>>();
-		appointments.forEach((a) -> appointmentListDTO.add(MapAppointmentPersistenceToAppointmentWithPharmacyIdentifiableDTO(a, findAppropriateStaff(a.getStaff().getId(), staffWithGrades))));
+		appointments.forEach((a) -> appointmentListDTO.add(MapAppointmentPersistenceToAppointmentWithPharmacyIdentifiableDTO(a, findAppropriateStaff(a.getStaff().getId(), staffWithGrades), discountPercentage)));
 
 		return appointmentListDTO;
 	}

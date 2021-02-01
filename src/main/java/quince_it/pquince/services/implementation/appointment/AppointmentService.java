@@ -18,9 +18,8 @@ import org.springframework.stereotype.Service;
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
-import quince_it.pquince.entities.users.DateRange;
-import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.DateRange;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
@@ -28,23 +27,24 @@ import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.PharmacistRepository;
+import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
-import quince_it.pquince.repository.users.PharmacistRepository;
-import quince_it.pquince.repository.users.StaffRepository;
-import quince_it.pquince.repository.users.WorkTimeRepository;
-import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
+import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
+import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
+import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.appointment.AppointmentMapper;
@@ -78,6 +78,9 @@ public class AppointmentService implements IAppointmentService{
 	
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private ILoyaltyProgramService loyalityProgramService;
 	
 	@Override
 	public UUID create(DermatologistAppointmentDTO entityDTO) {
@@ -155,7 +158,8 @@ public class AppointmentService implements IAppointmentService{
 		List<Appointment> appointments = appointmentRepository.findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		int discountPercentage = loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, discountPercentage);
 		
 		return returnAppointments;
 	}
@@ -169,27 +173,33 @@ public class AppointmentService implements IAppointmentService{
 			Appointment appointment = appointmentRepository.findById(appointmentId).get();
 			Patient patient = patientRepository.findById(patientId).get();
 
-			if(!CanReserveAppointment(appointment, patient)) return false;
+			CanReserveAppointment(appointment, patient);
 			
 			appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 			appointment.setPatient(patient);
+			appointment.setPriceToPay(loyalityProgramService.getDiscountAppointmentPriceForPatient(appointment.getPrice(), AppointmentType.EXAMINATION));
 			
 			appointmentRepository.save(appointment);
 			emailService.sendAppointmentReservationNotificationAsync(appointment, "dr.");
 			
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
 
-	private boolean CanReserveAppointment(Appointment appointment,Patient patient) {
+	private void CanReserveAppointment(Appointment appointment,Patient patient) throws AppointmentTimeOverlappingWithOtherAppointmentException {
 		
-		if(appointment.getStartDateTime().after(new Date()) && patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count")) &&
-				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED)))
-			return true;
+		if(doesPatientHaveAppointmentInDesiredTime(appointment, patient))
+			throw new AppointmentTimeOverlappingWithOtherAppointmentException("Cannot reserve appointment at same time as other appointment");
 		
-		return false;
+		if(patient.getPenalty() >= Integer.parseInt(env.getProperty("max_penalty_count")))
+			throw new AuthorizationServiceException("Too many penalty points");
+		
+		if (!(appointment.getStartDateTime().after(new Date()) &&
+				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED))))
+			throw new IllegalArgumentException();
 	}
 
 	@Override
@@ -198,7 +208,8 @@ public class AppointmentService implements IAppointmentService{
 		List<Appointment> appointments = appointmentRepository.findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceAscending(pharmacyId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		int discountPercentage = loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, discountPercentage);
 		
 		return returnAppointments;
 	}
@@ -210,7 +221,8 @@ public class AppointmentService implements IAppointmentService{
 		List<Appointment> appointments = appointmentRepository.findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceDescending(pharmacyId, appointmentType);
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		int discountPercentage = loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, discountPercentage);
 		
 		return returnAppointments;
 	}
@@ -237,30 +249,30 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public boolean cancelAppointment(UUID appointmentId) {
+	public void cancelAppointment(UUID appointmentId) throws AuthorizationServiceException {
 		
-		try {
-			Appointment appointment = appointmentRepository.findById(appointmentId).get();
-			if(!canAppointmentBeCanceled(appointment.getStartDateTime())) return false;
-			
-			appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
-			appointment.setPatient(null);
-			appointmentRepository.save(appointment);
-	
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		Appointment appointment = appointmentRepository.findById(appointmentId).get();
+		
+		canAppointmentBeCanceled(appointment);
+		
+		appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
+		appointment.setPriceToPay(appointment.getPrice());
+		appointmentRepository.save(appointment);	
+
 	}
 
-	private boolean canAppointmentBeCanceled(Date appointmentStartDateTime) {
+	private void canAppointmentBeCanceled(Appointment appointment) throws AuthorizationServiceException {
 		
-		LocalDateTime ldt = LocalDateTime.ofInstant(appointmentStartDateTime.toInstant(), ZoneId.systemDefault());
+		LocalDateTime ldt = LocalDateTime.ofInstant(appointment.getStartDateTime().toInstant(), ZoneId.systemDefault());
 		ldt = ldt.minusDays(1);
 		
-		if(ldt.isBefore(LocalDateTime.now())) return false;
+		if(ldt.isBefore(LocalDateTime.now())) 
+			throw new IllegalArgumentException();
 		
-		return true;
+		UUID loggedPatientId = userService.getLoggedUserId();
+		
+		if(!appointment.getPatient().getId().equals(loggedPatientId))
+			throw new AuthorizationServiceException("Unauthorized to cancel appointment");
 	}
 
 	@Override
@@ -274,7 +286,7 @@ public class AppointmentService implements IAppointmentService{
 		
 		List<IdentifiableDTO<DermatologistAppointmentWithPharmacyDTO>> returnAppointments = AppointmentMapper
 																									.MapAppointmentPersistenceListToAppointmentWithPharmacyIdentifiableDTOList
-																									(appointments, staffWithGrades);
+																									(appointments, staffWithGrades, 0);
 		
 		return returnAppointments;
 	}
@@ -288,7 +300,7 @@ public class AppointmentService implements IAppointmentService{
 																											  ? StaffType.DERMATOLOGIST :
 																												StaffType.PHARMACIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
 		
 		return returnAppointments;
 	}
@@ -302,7 +314,7 @@ public class AppointmentService implements IAppointmentService{
 																																		StaffType.DERMATOLOGIST :
 																																		StaffType.PHARMACIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
 		
 		return returnAppointments;
 	}
@@ -316,7 +328,7 @@ public class AppointmentService implements IAppointmentService{
 																																		StaffType.DERMATOLOGIST :
 																																		StaffType.PHARMACIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
 		
 		return returnAppointments;
 	}
@@ -330,7 +342,7 @@ public class AppointmentService implements IAppointmentService{
 																													StaffType.DERMATOLOGIST :
 																													StaffType.PHARMACIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
 		
 		return returnAppointments;
 	}
@@ -343,7 +355,7 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(appointmentType.equals(AppointmentType.EXAMINATION) ? 
 																																		StaffType.DERMATOLOGIST :
 																																		StaffType.PHARMACIST);
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
 		
 		return returnAppointments;
 	}
@@ -357,7 +369,7 @@ public class AppointmentService implements IAppointmentService{
 																												StaffType.DERMATOLOGIST :
 																												StaffType.PHARMACIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
 		
 		return returnAppointments;
 	}
@@ -371,7 +383,7 @@ public class AppointmentService implements IAppointmentService{
 																													StaffType.DERMATOLOGIST :
 																													StaffType.PHARMACIST);
 		
-		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades);
+		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
 		
 		return returnAppointments;
 	}
@@ -494,15 +506,15 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException {
+	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException {
 		
 		long time = requestDTO.getStartDateTime().getTime();
 		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
 		checkIfConsultationTimeIsValid(requestDTO, endDateTime);
 		
 		Appointment appointment = createConsultationAppointmentFromDTO(requestDTO, endDateTime);
-		
-		if(!CanCreateConsultation(appointment)) throw new AuthorizationServiceException("Too many penalty points");
+
+		CanCreateConsultation(appointment);
 		
 		appointmentRepository.save(appointment);
 		try {
@@ -514,8 +526,23 @@ public class AppointmentService implements IAppointmentService{
 		return appointment.getId();
 	}
 	
-	private boolean CanCreateConsultation(Appointment appointment) {
-		return appointment.getPatient().getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"));
+	private void CanCreateConsultation(Appointment appointment) throws AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException {
+		
+		if(doesPatientHaveAppointmentInDesiredTime(appointment, appointment.getPatient()))
+			throw new AppointmentTimeOverlappingWithOtherAppointmentException("Cannot reserve appointment at same time as other appointment");
+		
+		if(appointment.getPatient().getPenalty() >= Integer.parseInt(env.getProperty("max_penalty_count")))
+			throw new AuthorizationServiceException("Too many penalty points");
+
+		if(appointmentRepository.findConsultationsByAppointmentTimePharmacistAndPatient(appointment.getStartDateTime(),
+																						appointment.getStaff().getId(),
+																						appointment.getPatient().getId()) != null)
+			
+			throw new AlreadyBeenScheduledConsultationException("Cannot schedule appointment at same pharmacist at same time more than once");
+	}
+
+	private boolean doesPatientHaveAppointmentInDesiredTime(Appointment appointment, Patient patient) {
+		return appointmentRepository.findAllAppointmentsByAppointmentTimeAndPatient(appointment.getStartDateTime(), appointment.getEndDateTime(), patient.getId()).size() > 0;
 	}
 
 	private Appointment createConsultationAppointmentFromDTO(ConsultationRequestDTO requestDTO, Date endDateTime) {
@@ -525,8 +552,9 @@ public class AppointmentService implements IAppointmentService{
 		Staff staff = staffRepository.findById(requestDTO.getPharmacistId()).get();
 		Pharmacy pharmacy = pharmacistRepository.findPharmacyByPharmacistId(requestDTO.getPharmacistId());
 		Patient patient = patientRepository.findById(patientId).get();
-
-		return new Appointment(pharmacy, staff, patient, requestDTO.getStartDateTime(), endDateTime, pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, AppointmentStatus.SCHEDULED);
+		double discountPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION);
+		
+		return new Appointment(pharmacy, staff, patient, requestDTO.getStartDateTime(), endDateTime, discountPrice, AppointmentType.CONSULTATION, AppointmentStatus.SCHEDULED);
 	}
 
 	@SuppressWarnings("deprecation")

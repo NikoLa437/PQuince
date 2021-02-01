@@ -64,9 +64,11 @@ public class PharmacyController {
 		
 		return new ResponseEntity<>(pharmacyService.create(pharmacyDTO) ,HttpStatus.CREATED);
 	}
-	
+
+	@CrossOrigin
 	@GetMapping("/find-by-drug/{drugId}")
-	public ResponseEntity<List<IdentifiablePharmacyDrugPriceAmountDTO>> findPharnaciesWithPriceForDrug(@PathVariable UUID drugId) {
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiablePharmacyDrugPriceAmountDTO>> findPharmaciesWithPriceForDrug(@PathVariable UUID drugId) {
 		try {
 			return new ResponseEntity<>(drugService.findByDrugId(drugId),HttpStatus.OK);
 		} catch (Exception e) {

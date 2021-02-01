@@ -19,12 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugFormatIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugKindIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
+import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFeedbackService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFormatService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IDrugKindIdService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugReservationService;
 
 
@@ -40,19 +45,40 @@ public class DrugController {
 	
 	@Autowired
 	private IDrugFeedbackService drugFeedbackService;
+
+	@Autowired
+	private IDrugKindIdService drugKindIdService;
+	
+	@Autowired
+	private IDrugFormatService drugFormatService;
 	
 	@GetMapping
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findAll() {
 		return new ResponseEntity<>(drugInstanceService.findAll(),HttpStatus.OK);
 	}
 	
+	@CrossOrigin
+	@PutMapping
+	public ResponseEntity<UUID> addDrugInstance(@RequestBody DrugInstanceDTO drugInstanceDTO) {
+		
+		UUID drugInstanceId = drugInstanceService.create(drugInstanceDTO);
+		
+		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
+	}
+	
+	
 	@PostMapping("/reserve")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<UUID> reserveDrug(@RequestBody DrugReservationRequestDTO drugReservationRequestDTO) {
+		try {
+			UUID reservationId = drugReservationService.create(drugReservationRequestDTO);
+			return new ResponseEntity<>(reservationId ,HttpStatus.CREATED);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
-		UUID reservationId = drugReservationService.create(drugReservationRequestDTO);
-		
-		return new ResponseEntity<>(reservationId ,HttpStatus.CREATED);
 	}
 	
 	@CrossOrigin
@@ -76,34 +102,64 @@ public class DrugController {
 		
 		return new ResponseEntity<>(drugReservationService.findProcessedDrugReservationsForPatient() ,HttpStatus.OK);
 	}
+
+	@CrossOrigin
+	@GetMapping("/drugkind")
+	public ResponseEntity<List<IdentifiableDTO<DrugKindIdDTO>>> findAllDrugKinds() {
+		
+		return new ResponseEntity<>(drugKindIdService.findAll() ,HttpStatus.OK);
+	}
+	
+	@CrossOrigin
+	@PostMapping("/drugkind")
+	public ResponseEntity<?>addDrugKind(@RequestBody DrugKindIdDTO drugKindIdDTO) {
+		drugKindIdService.create(drugKindIdDTO);
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	@CrossOrigin
+	@GetMapping("/drugformat")
+	public ResponseEntity<List<IdentifiableDTO<DrugFormatIdDTO>>> findAllDrugFormats() {
+		
+		return new ResponseEntity<>(drugFormatService.findAll() ,HttpStatus.OK);
+	}
 	
 	@GetMapping("/feedback/{drugId}")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<DrugFeedbackDTO> findByPatientAndDrug(@PathVariable UUID drugId) {
 		try {
 			return new ResponseEntity<>(drugFeedbackService.findByPatientAndDrug(drugId) ,HttpStatus.OK);
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
 	@PostMapping("/feedback")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> createFeedback(@RequestBody DrugFeedbackDTO drugFeedbackDTO) {
-		
-		drugFeedbackService.create(drugFeedbackDTO);
-		
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		try {
+			drugFeedbackService.create(drugFeedbackDTO);
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		} catch (FeedbackNotAllowedException e) {
+			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@PutMapping("/feedback")
 	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> updateFeedback(@RequestBody DrugFeedbackDTO drugFeedbackDTO) {
-		
-		drugFeedbackService.update(drugFeedbackDTO);
-		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		try {
+			drugFeedbackService.update(drugFeedbackDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	
@@ -111,7 +167,13 @@ public class DrugController {
 	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> cancelReservation(@RequestBody EntityIdDTO reservationId) {
-		drugReservationService.cancelDrugReservation(reservationId.getId());
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		try {
+			if(drugReservationService.cancelDrugReservation(reservationId.getId()))
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

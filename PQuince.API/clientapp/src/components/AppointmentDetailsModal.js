@@ -13,70 +13,48 @@ class AppointmentDetailsModal extends Component {
 				onHide={this.props.onCloseModal}
 			>
 				<Modal.Header closeButton>
-					<Modal.Title id="contained-modal-title-vcenter">
-						{this.props.header}
-					</Modal.Title>
+					<Modal.Title id="contained-modal-title-vcenter">{this.props.header}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<form className="ml-3">
 						<div className="control-group">
-							<div
-								className="form-group controls"
-								style={{ color: "#6c757d", opacity: 1 }}
-							>
+							<div className="form-group controls" style={{ color: "#6c757d", opacity: 1 }}>
 								<div className="form-row" width="160em">
 									<div className="form-col">
-										<img
-											className="img-fluid"
-											src={AppointmentIcon}
-											width="130em"
-										/>
+										<img className="img-fluid" src={AppointmentIcon} width="130em" />
 									</div>
 									<div className="form-col ml-3">
 										<div>
 											<b>Date: </b>{" "}
-											{new Date(this.props.startDateTime).toLocaleDateString(
-												"en-US",
-												{
-													day: "2-digit",
-													month: "2-digit",
-													year: "numeric",
-												}
-											)}
+											{new Date(this.props.startDateTime).toLocaleDateString("en-US", {
+												day: "2-digit",
+												month: "2-digit",
+												year: "numeric",
+											})}
 										</div>
 										<div>
 											<b>Time from: </b>{" "}
-											{new Date(this.props.startDateTime).toLocaleTimeString(
-												"en-US",
-												{
-													hour: "2-digit",
-													minute: "2-digit",
-												}
-											)}
+											{new Date(this.props.startDateTime).toLocaleTimeString("en-US", {
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
 										</div>
 										<div>
 											<b>Time to: </b>{" "}
-											{new Date(this.props.endDateTime).toLocaleTimeString(
-												"en-US",
-												{
-													hour: "2-digit",
-													minute: "2-digit",
-												}
-											)}
+											{new Date(this.props.endDateTime).toLocaleTimeString("en-US", {
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
 										</div>
 										<div>
-											<b>Price: </b> {this.props.price} <b>din</b>
+											<b>Price: </b> {(Math.round(this.props.price * 100) / 100).toFixed(2)} <b>din</b>
 										</div>
 										<div>
-											<b>Dermatologist: </b>{" "}
-											{this.props.name + " " + this.props.surname}
+											<b>Dermatologist: </b> {this.props.name + " " + this.props.surname}
 										</div>
 										<div>
 											<b>Dermatologist grade: </b> {this.props.grade}
-											<i
-												className="icofont-star"
-												style={{ color: "#1977cc" }}
-											></i>
+											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 									</div>
 								</div>
@@ -90,8 +68,8 @@ class AppointmentDetailsModal extends Component {
 											{this.props.pharmacyName}
 										</div>
 										<div>
-											<b>Pharmacy address: </b> {this.props.pharmacyStreet},{" "}
-											{this.props.pharmacyCity}, {this.props.pharmacyCountry}
+											<b>Pharmacy address: </b> {this.props.pharmacyStreet}, {this.props.pharmacyCity},{" "}
+											{this.props.pharmacyCountry}
 										</div>
 									</div>
 								</div>

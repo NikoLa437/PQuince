@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { Button, Modal } from 'react-bootstrap';
-import CapsuleLogo from '../static/capsuleLogo.png';
+import React, { Component } from "react";
+import { Button, Modal } from "react-bootstrap";
+import CapsuleLogo from "../static/capsuleLogo.png";
 import DatePicker from "react-datepicker";
 
-import Axios from 'axios';
-import {BASE_URL} from '../constants.js';
+import Axios from "axios";
+import { BASE_URL } from "../constants.js";
 
 class DrugsInPharmacyModal extends Component {
 
@@ -60,5 +60,5 @@ class DrugsInPharmacyModal extends Component {
          );
     }
 }
- 
+
 export default DrugsInPharmacyModal;
