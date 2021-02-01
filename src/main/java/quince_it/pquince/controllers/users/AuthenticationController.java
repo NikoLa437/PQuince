@@ -152,12 +152,16 @@ public class AuthenticationController {
 	public ResponseEntity<?> changePassword(@RequestBody PasswordChanger passwordChanger) {
 		
 		try {
-		userService.changePassword(passwordChanger.oldPassword, passwordChanger.newPassword);
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
+			userService.changePassword(passwordChanger.oldPassword, passwordChanger.newPassword);
+			return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		} catch (BadCredentialsException e){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	static class PasswordChanger {

@@ -9,6 +9,7 @@ import ModalDialog from "../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
 import getAuthHeader from "../GetHeader";
 import { Redirect } from "react-router-dom";
+import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
 
 const mapState = {
 	center: [44, 21],
@@ -46,6 +47,12 @@ class UserProfilePage extends Component {
 		loyalityCategoryColor: "#1977cc",
 		hiddenEditInfo: true,
 		redirect: false,
+		hiddenPasswordErrorAlert: true,
+		errorPasswordHeader: "",
+		errorPasswordMessage: "",
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
 	};
 
 	constructor(props) {
@@ -252,11 +259,17 @@ class UserProfilePage extends Component {
 		console.log(oldPassword, newPassword, newPasswordRetype);
 
 		this.setState({
+			hiddenPasswordErrorAlert: true,
+			errorPasswordHeader: "",
+			errorPasswordMessage: "",
 			hiddenEditInfo: true,
 			oldPasswordEmptyError: "none",
 			newPasswordEmptyError: "none",
 			newPasswordRetypeEmptyError: "none",
 			newPasswordRetypeNotSameError: "none",
+			hiddenSuccessAlert: true,
+			successHeader: "",
+			successMessage: "",
 		});
 
 		if (oldPassword === "") {
@@ -269,9 +282,37 @@ class UserProfilePage extends Component {
 			this.setState({ newPasswordRetypeNotSameError: "initial" });
 		} else {
 			let passwordChangeDTO = { oldPassword, newPassword };
-			Axios.post(BASE_URL + "/auth/change-password", passwordChangeDTO, { headers: { Authorization: getAuthHeader() } })
+			Axios.post(BASE_URL + "/auth/change-password", passwordChangeDTO, {
+				validateStatus: () => true,
+				headers: { Authorization: getAuthHeader() },
+			})
 				.then((res) => {
-					this.setState({ openPasswordModal: false });
+					if (res.status === 403) {
+						this.setState({
+							hiddenPasswordErrorAlert: false,
+							errorPasswordHeader: "Bad credentials",
+							errorPasswordMessage: "You entered wrong password.",
+						});
+					} else if (res.status === 400) {
+						this.setState({
+							hiddenPasswordErrorAlert: false,
+							errorPasswordHeader: "Invalid new password",
+							errorPasswordMessage: "Invalid new password.",
+						});
+					} else if (res.status === 500) {
+						this.setState({
+							hiddenPasswordErrorAlert: false,
+							errorPasswordHeader: "Internal server error",
+							errorPasswordMessage: "Server error.",
+						});
+					} else {
+						this.setState({
+							hiddenSuccessAlert: false,
+							successHeader: "Success",
+							successMessage: "You successfully changed your password.",
+							openPasswordModal: false,
+						});
+					}
 					console.log(res);
 				})
 				.catch((err) => {
@@ -284,6 +325,14 @@ class UserProfilePage extends Component {
 		this.setState({ hiddenEditInfo: false });
 	};
 
+	handleCloseAlertPassword = () => {
+		this.setState({ hiddenPasswordErrorAlert: true });
+	};
+
+	handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+	};
+
 	render() {
 		if (this.state.redirect) return <Redirect push to="/login" />;
 
@@ -293,6 +342,12 @@ class UserProfilePage extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "8%" }}>
+					<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
 						User information
 					</h5>
@@ -566,6 +621,10 @@ class UserProfilePage extends Component {
 					subheader="Add or remove patients allergens"
 				/>
 				<PasswordChangeModal
+					handleCloseAlertPassword={this.handleCloseAlertPassword}
+					hiddenPasswordErrorAlert={this.state.hiddenPasswordErrorAlert}
+					errorPasswordHeader={this.state.errorPasswordHeader}
+					errorPasswordMessage={this.state.errorPasswordMessage}
 					oldPasswordEmptyError={this.state.oldPasswordEmptyError}
 					newPasswordEmptyError={this.state.newPasswordEmptyError}
 					newPasswordRetypeEmptyError={this.state.newPasswordRetypeEmptyError}
