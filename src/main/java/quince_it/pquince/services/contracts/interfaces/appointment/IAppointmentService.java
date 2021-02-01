@@ -7,6 +7,7 @@ import java.util.UUID;
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Staff;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
@@ -61,5 +62,5 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 
 	List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO);
 
-	UUID createTerminForDermatologist(AppointmentDTO appointmentDTO);
+	UUID createTerminForDermatologist(AppointmentCreateDTO appointmentDTO);
 }

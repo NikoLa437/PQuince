@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
@@ -43,7 +44,7 @@ public class AppointmentController {
 	@PostMapping("/create-appointment-for-dermatologist")
 	@CrossOrigin
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
-	public ResponseEntity<?> createAppointment(@RequestBody AppointmentDTO appointmentDTO ) {
+	public ResponseEntity<?> createAppointment(@RequestBody AppointmentCreateDTO appointmentDTO ) {
 		try {
 			if(appointmentService.createTerminForDermatologist(appointmentDTO)!=null)
 				return new ResponseEntity<>(HttpStatus.OK);
