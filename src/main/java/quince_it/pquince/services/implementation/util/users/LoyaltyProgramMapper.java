@@ -11,7 +11,9 @@ public class LoyaltyProgramMapper {
 
 		
 		return new IdentifiableDTO<LoyaltyProgramDTO>(loyaltyProgram.getId(), new LoyaltyProgramDTO(loyaltyProgram.getPointsForAppointment(), loyaltyProgram.getPointsForConsulting(),
-				loyaltyProgram.getPointsToEnterRegularCathegory(), loyaltyProgram.getPointsToEnterSilverCathegory(), loyaltyProgram.getPointsToEnterGoldCathegory()));
+				loyaltyProgram.getPointsToEnterRegularCathegory(), loyaltyProgram.getPointsToEnterSilverCathegory(), loyaltyProgram.getPointsToEnterGoldCathegory(), loyaltyProgram.getAppointmentDiscountRegular(), loyaltyProgram.getDrugDiscountRegular(),
+				loyaltyProgram.getConsultationDiscountRegular(), loyaltyProgram.getAppointmentDiscountSilver(), loyaltyProgram.getDrugDiscountSilver(), loyaltyProgram.getConsultationDiscountSilver(),
+				loyaltyProgram.getAppointmentDiscountGold(), loyaltyProgram.getDrugDiscountGold(), loyaltyProgram.getConsultationDiscountGold()));
 
 	}
 	
