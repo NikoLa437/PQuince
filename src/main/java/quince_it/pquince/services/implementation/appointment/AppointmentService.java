@@ -40,6 +40,7 @@ import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppoint
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
+import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
@@ -166,7 +167,7 @@ public class AppointmentService implements IAppointmentService{
 			Appointment appointment = appointmentRepository.findById(appointmentId).get();
 			Patient patient = patientRepository.findById(patientId).get();
 
-			if(!CanReserveAppointment(appointment, patient)) return false;
+			CanReserveAppointment(appointment, patient);
 			
 			appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 			appointment.setPatient(patient);
@@ -177,17 +178,22 @@ public class AppointmentService implements IAppointmentService{
 			
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
 
-	private boolean CanReserveAppointment(Appointment appointment,Patient patient) {
+	private void CanReserveAppointment(Appointment appointment,Patient patient) throws AppointmentTimeOverlappingWithOtherAppointmentException {
 		
-		if(appointment.getStartDateTime().after(new Date()) && patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count")) &&
-				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED)))
-			return true;
+		if(doesPatientHaveAppointmentInDesiredTime(appointment, patient))
+			throw new AppointmentTimeOverlappingWithOtherAppointmentException("Cannot reserve appointment at same time as other appointment");
 		
-		return false;
+		if(patient.getPenalty() >= Integer.parseInt(env.getProperty("max_penalty_count")))
+			throw new AuthorizationServiceException("Too many penalty points");
+		
+		if (!(appointment.getStartDateTime().after(new Date()) &&
+				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED))))
+			throw new IllegalArgumentException();
 	}
 
 	@Override
@@ -494,7 +500,7 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException {
+	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException {
 		
 		long time = requestDTO.getStartDateTime().getTime();
 		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
@@ -514,7 +520,11 @@ public class AppointmentService implements IAppointmentService{
 		return appointment.getId();
 	}
 	
-	private void CanCreateConsultation(Appointment appointment) throws AlreadyBeenScheduledConsultationException {
+	private void CanCreateConsultation(Appointment appointment) throws AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException {
+		
+		if(doesPatientHaveAppointmentInDesiredTime(appointment, appointment.getPatient()))
+			throw new AppointmentTimeOverlappingWithOtherAppointmentException("Cannot reserve appointment at same time as other appointment");
+		
 		if(appointment.getPatient().getPenalty() >= Integer.parseInt(env.getProperty("max_penalty_count")))
 			throw new AuthorizationServiceException("Too many penalty points");
 
@@ -523,6 +533,10 @@ public class AppointmentService implements IAppointmentService{
 																						appointment.getPatient().getId()) != null)
 			
 			throw new AlreadyBeenScheduledConsultationException("Cannot schedule appointment at same pharmacist at same time more than once");
+	}
+
+	private boolean doesPatientHaveAppointmentInDesiredTime(Appointment appointment, Patient patient) {
+		return appointmentRepository.findAllAppointmentsByAppointmentTimeAndPatient(appointment.getStartDateTime(), appointment.getEndDateTime(), patient.getId()).size() > 0;
 	}
 
 	private Appointment createConsultationAppointmentFromDTO(ConsultationRequestDTO requestDTO, Date endDateTime) {

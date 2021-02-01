@@ -92,4 +92,8 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 			+ " AND a.staff.id = ?2 AND a.patient.id = ?3")
 	Appointment findConsultationsByAppointmentTimePharmacistAndPatient(Date dateTimeFrom, UUID pharmacistId, UUID patientId);
 	
+	@Query(value = "SELECT a FROM Appointment a WHERE NOT (a.startDateTime >= ?2 OR a.endDateTime <= ?1)"
+			+ " AND a.appointmentStatus = 'SCHEDULED' AND a.patient.id = ?3")
+	List<Appointment> findAllAppointmentsByAppointmentTimeAndPatient(Date dateTimeFrom, Date dateTimeTo, UUID patientId);
+	
 }
