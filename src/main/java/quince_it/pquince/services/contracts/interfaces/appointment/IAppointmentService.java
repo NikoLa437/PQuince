@@ -59,8 +59,7 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	
 	UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException;
 
-
 	List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO);
 
-
+	UUID createTerminForDermatologist(AppointmentDTO appointmentDTO);
 }

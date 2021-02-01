@@ -105,7 +105,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers(HttpMethod.POST, "/api/staff/complaint");
 		//web.ignoring().antMatchers(HttpMethod.GET, "/api/**");
 		//web.ignoring().antMatchers(HttpMethod.POST, "/api/**");
-		web.ignoring().antMatchers(HttpMethod.PUT, "/api/users/**");
+		//web.ignoring().antMatchers(HttpMethod.PUT, "/api/users/**");
 		//web.ignoring().antMatchers(HttpMethod.PUT, "/api/drug/**");
 		//web.ignoring().antMatchers(HttpMethod.PUT, "/api/appointment/**");
 		web.ignoring().antMatchers(HttpMethod.POST, "/api/absence/**");
@@ -116,7 +116,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers(HttpMethod.PUT, "/api/loyalty-program/**");
 
 
-		web.ignoring().antMatchers(HttpMethod.GET, "/api/users/activate-patient/**");
+		//web.ignoring().antMatchers(HttpMethod.GET, "/api/users/activate-patient/**");
 		web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
 				"/**/*.css", "/**/*.js");
 	}

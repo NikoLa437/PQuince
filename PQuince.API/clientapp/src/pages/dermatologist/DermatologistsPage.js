@@ -8,6 +8,7 @@ import WorkTimesModal from "../../components/WorkTimesModal";
 import CreateAppointmentForDermatologistModal from "../../components/CreateAppointmentForDermatologistModal";
 import AddDermatologistToPharmacy from "../../components/AddDermatologistToPharmacy";
 import PharmaciesForDermatologistModal from "../../components/PharmaciesForDermatologistModal";
+import getAuthHeader from "../../GetHeader";
 
 class DermatologistsPage extends Component {
 	state = {
@@ -31,7 +32,9 @@ class DermatologistsPage extends Component {
 
     componentDidMount() {
 
-		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202")
+		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202" , {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ dermatologists: res.data });
                 console.log(res.data);
@@ -72,7 +75,9 @@ class DermatologistsPage extends Component {
 
     onWorkTimeClick = (id) =>{
         
-		Axios.get(BASE_URL + "/api/worktime/worktime-for-staff/" + id)
+		Axios.get(BASE_URL + "/api/worktime/worktime-for-staff/" + id, {
+			headers: { Authorization: getAuthHeader() },
+		})
         .then((res) => {
             this.setState({ workTimes: res.data , forStaff:id});
             console.log(res.data);
@@ -107,11 +112,14 @@ class DermatologistsPage extends Component {
         };
 
         Axios
-        .put(BASE_URL + "/api/users/remove-dermatologist-from-pharmacy", removeDermatologistDTO).then((res) =>{
+        .put(BASE_URL + "/api/users/remove-dermatologist-from-pharmacy", removeDermatologistDTO, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) =>{
             console.log(res.data);
             
-            Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202")
-			.then((res) => {
+            Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202", {
+                headers: { Authorization: getAuthHeader() },
+            }).then((res) => {
 				this.setState({ dermatologists: res.data });
                 console.log(res.data);
             

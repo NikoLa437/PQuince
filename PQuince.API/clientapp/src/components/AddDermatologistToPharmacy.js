@@ -4,6 +4,7 @@ import DermatologistLogo from '../static/dermatologistLogo.png';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
+import getAuthHeader from "../GetHeader";
 
 class AddDermatologistToPharmacy extends Component {
     state = {
@@ -13,7 +14,9 @@ class AddDermatologistToPharmacy extends Component {
     }
 
     componentDidMount() {
-		Axios.get(BASE_URL + "/api/users/dermatologist-for-emplooye-in-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202")
+		Axios.get(BASE_URL + "/api/users/dermatologist-for-emplooye-in-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202", {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				this.setState({ dermatologists: res.data });
 				console.log(res.data);

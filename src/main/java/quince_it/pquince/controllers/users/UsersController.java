@@ -183,6 +183,7 @@ public class UsersController {
 	}
 	
 	@PutMapping("/remove-dermatologist-from-pharmacy") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
 	public ResponseEntity<?> RemoveDermatologistFromPharmacy(@RequestBody RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
 		
@@ -197,6 +198,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/dermatologist-for-pharmacy/{pharmacyId}") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
 	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getDermatologistForPharmacy(@PathVariable UUID pharmacyId) {
 	  
@@ -211,6 +213,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/dermatologist-for-emplooye-in-pharmacy/{pharmacyId}") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
 	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getDermatologistForEmplooyeInPharmacy(@PathVariable UUID pharmacyId) {
 	  

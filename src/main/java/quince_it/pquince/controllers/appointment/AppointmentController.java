@@ -40,12 +40,18 @@ public class AppointmentController {
 	@Autowired
 	private IAppointmentService appointmentService;
 	
-	@PostMapping("/create-appointment")
+	@PostMapping("/create-appointment-for-dermatologist")
 	@CrossOrigin
-	public ResponseEntity<?> createAppointment(@RequestBody DermatologistAppointmentDTO dermatologistAppointmentDTO ) {
-		
-		appointmentService.create(dermatologistAppointmentDTO);
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> createAppointment(@RequestBody AppointmentDTO appointmentDTO ) {
+		try {
+			if(appointmentService.createTerminForDermatologist(appointmentDTO)!=null)
+				return new ResponseEntity<>(HttpStatus.OK);
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@GetMapping("/dermatologist/pending/find-by-patient")
@@ -193,6 +199,7 @@ public class AppointmentController {
 	}
 	
 	@GetMapping("/getFreePeriod")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
 	public ResponseEntity<List<AppointmentPeriodResponseDTO>> getFreePeriods(@RequestParam UUID dermatologistId,@RequestParam UUID pharmacyId,@RequestParam Date date,@RequestParam int duration) {
 		AppointmentRequestDTO appointmentRequestDTO = new AppointmentRequestDTO(dermatologistId,pharmacyId,date,duration, false);

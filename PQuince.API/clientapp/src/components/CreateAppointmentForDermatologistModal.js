@@ -3,6 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
+import getAuthHeader from "../GetHeader";
 
 
 class CreateAppointmentForDermatologistModal extends Component {
@@ -11,7 +12,7 @@ class CreateAppointmentForDermatologistModal extends Component {
         dermatologist:'',
         duration:'',
         periods:[],
-        selectedPeriod:'',
+        selectedPeriod: null,
         price:1
 
     }
@@ -21,11 +22,45 @@ class CreateAppointmentForDermatologistModal extends Component {
     }
 
     handleAddAppointment = () => {
-        if(this.state.dermatologist!='' && this.state.duration !='' && this.state.selectedPeriod!='')
-            alert('IMPLEMENT')
+        
+        if(this.state.dermatologist!='' && this.state.duration !='' && this.state.selectedPeriod!=''){
+            let appointmentDTO = {
+                staff : this.state.dermatologist,
+                pharmacy: "cafeddee-56cb-11eb-ae93-0242ac130202", 
+                patient: null, 
+                startDateTime: this.state.selectedPeriod.startDate, 
+                endDateTime:this.state.selectedPeriod.endDate,
+                price: this.state.price, 
+                appointmentStatus: 0
+            };
+
+        Axios
+        .post(BASE_URL + "/api/appointment/create-appointment-for-dermatologist", appointmentDTO, {
+            headers: { Authorization: getAuthHeader() },
+        }).then((res) =>{
+            console.log(res.data);
+                
+                
+                this.setState({showAddWorkTime: false, modalSize:'lg'});
+        }).catch((err) => {
+            alert('Nije moguce kreirati termin u naznacenom roku');
+        });        
+        }
         else{
             alert("MORATE UNETI NEOPHODNE PODATKE")
         }
+    }
+
+    handleCloseAppointment= () => {
+        this.setState({
+            selectedDate:new Date(),
+            duration:'',
+            dermatologist:'',
+            periods:[],
+            selectedPeriod:'',
+            price:1
+        });
+        this.props.onCloseModal();
     }
 
     handleDermatologistChange = (event) => {
@@ -33,7 +68,7 @@ class CreateAppointmentForDermatologistModal extends Component {
     };
 
     handlePeriodsChange = (event) => {
-        this.setState({ selectedPeriod: event.target.value });
+        this.setState({ selectedPeriod: this.state.periods[event.target.value] });
     }
 
     handleDateChange = (date) => {
@@ -73,8 +108,14 @@ class CreateAppointmentForDermatologistModal extends Component {
           Nov: "11",
           Dec: "12"
         };
-        return parts[2] + "/" + months[parts[1]] + "/" + parts[3];
+        return months[parts[1]] + "/" + parts[2] + "/" + parts[3];
       };
+
+    handleCloseModal = () => {
+        this.setState({
+            price:1,
+        });    
+    }
 
     handleSelectDurationChange = (event) => {
         this.setState({
@@ -88,7 +129,9 @@ class CreateAppointmentForDermatologistModal extends Component {
                     pharmacyId:"cafeddee-56cb-11eb-ae93-0242ac130202",
                     date: this.convertDate(this.state.selectedDate),
                     duration: event.target.value
-                }}).then((res) => {
+                },
+                headers: { Authorization: getAuthHeader() }
+            }).then((res) => {
                     this.setState({ periods: res.data });
                     console.log(res.data);
                 })
@@ -101,15 +144,14 @@ class CreateAppointmentForDermatologistModal extends Component {
     render() { 
         return ( 
             <Modal
+                onCloseModal={this.handleCloseModal}
                 show = {this.props.show}
                 size = "md"
                 dialogClassName="modal-80w-100h"
                 aria-labelledby="contained-modal-title-vcenter"
-                centered
-                onHide={this.props.onCloseModal}
-                >
-                <Modal.Header closeButton >
-                    <Modal.Title style={{marginLeft:'37%'}} id="contained-modal-title-vcenter">
+                centered                >
+                <Modal.Header >
+                    <Modal.Title style={{marginLeft:'28%'}} id="contained-modal-title-vcenter">
                         {this.props.header}
                     </Modal.Title>
 
@@ -118,7 +160,7 @@ class CreateAppointmentForDermatologistModal extends Component {
                     <div >
                         <form >
                             <div  className="control-group" >
-                                        <table style={{width:'100%'},{marginLeft:'12%'}}>
+                                        <table style={{width:'100%'},{marginLeft:'7%'}}>
                                             <tr>
                                                 <td>
                                                     <label >Select dermatologist:</label>
@@ -132,7 +174,7 @@ class CreateAppointmentForDermatologistModal extends Component {
                                                     <label>Select date:</label>
                                                 </td>
                                                 <td>
-                                                    <DatePicker className="form-control"  style={{width: "15em"}} minDate={new Date()} onChange={date => this.handleDateChange(date)} selected={this.state.selectedDate}/>
+                                                    <DatePicker className="form-control"  style={{width: "18em"}} minDate={new Date()} onChange={date => this.handleDateChange(date)} selected={this.state.selectedDate}/>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -140,7 +182,7 @@ class CreateAppointmentForDermatologistModal extends Component {
                                                     <label>Select duration:</label>
                                                 </td>
                                                 <td>
-                                                    <input placeholder="Duration" className="form-control" style={{width: "12.8em"}} type="number" min="10" max="60" onChange={this.handleSelectDurationChange} value={this.state.duration} />
+                                                    <input placeholder="Duration" className="form-control" style={{width: "15.8em"}} type="number" min="10" max="60" onChange={this.handleSelectDurationChange} value={this.state.duration} />
                                                 </td>
                                             </tr>
 
@@ -149,7 +191,7 @@ class CreateAppointmentForDermatologistModal extends Component {
                                                     <label>Select period:</label>
                                                 </td>
                                                 <td>
-                                                    <select onChange={this.handlePeriodsChange} className="form-control" ><option key="1" value=""> </option>{this.state.periods.map((period) => <option value={period}>{new Date(period.startDate).toLocaleTimeString()} - {new Date(period.endDate).toLocaleTimeString()}</option>)}</select>
+                                                    <select onChange={this.handlePeriodsChange} className="form-control" ><option key="1" value=""> </option>{this.state.periods.map((period,index) => <option key={index} value={index}>{new Date(period.startDate).toLocaleTimeString()} - {new Date(period.endDate).toLocaleTimeString()}</option>)}</select>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -157,7 +199,7 @@ class CreateAppointmentForDermatologistModal extends Component {
                                                     <label>Price:</label>
                                                 </td>
                                                 <td>
-                                                    <input placeholder="Price" className="form-control" style={{width: "12.8em"}} type="number" min="1" onChange={this.handlePriceChange} value={this.state.price} />
+                                                    <input placeholder="Price" className="form-control" style={{width: "15.8em"}} type="number" min="1" onChange={this.handlePriceChange} value={this.state.price} />
                                                 </td>
                                             </tr>
                                         </table>
@@ -169,7 +211,7 @@ class CreateAppointmentForDermatologistModal extends Component {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={this.props.onCloseModal}>Close</Button>
+                    <Button onClick={() => this.handleCloseAppointment()}>Close</Button>
                 </Modal.Footer>
             </Modal>
          );

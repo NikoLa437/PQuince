@@ -18,12 +18,14 @@ import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.users.DateRange;
+import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
+import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
@@ -69,12 +71,30 @@ public class AppointmentService implements IAppointmentService{
 	private PharmacistRepository pharmacistRepository;
 	
 	@Autowired
+	private PharmacyRepository pharmacyRepository;
+	
+	@Autowired
 	private Environment env;
 	
 	@Override
 	public UUID create(DermatologistAppointmentDTO entityDTO) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public UUID createTerminForDermatologist(AppointmentDTO appointmentDTO) {
+		// TODO NIKOLA : srediti try catch blok
+		try {
+			Pharmacy pharmacy = pharmacyRepository.getOne(appointmentDTO.getPharmacy());
+			Staff dermatologist = staffRepository.getOne(appointmentDTO.getStaff());
+			
+			Appointment newAppointment = new Appointment(pharmacy,dermatologist,null, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),appointmentDTO.getPrice(),AppointmentType.EXAMINATION,AppointmentStatus.CREATED);
+			appointmentRepository.save(newAppointment);
+			return newAppointment.getId();
+		}catch(Exception e) {
+			return null;
+		}
 	}
 	
 	@Override
