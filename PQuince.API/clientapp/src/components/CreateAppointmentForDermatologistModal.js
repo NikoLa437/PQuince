@@ -149,7 +149,7 @@ class CreateAppointmentForDermatologistModal extends Component {
                 size = "md"
                 dialogClassName="modal-80w-100h"
                 aria-labelledby="contained-modal-title-vcenter"
-                centered                >
+                centered>
                 <Modal.Header >
                     <Modal.Title style={{marginLeft:'28%'}} id="contained-modal-title-vcenter">
                         {this.props.header}
