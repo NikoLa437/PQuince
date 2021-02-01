@@ -5,6 +5,8 @@ import { BASE_URL } from "../constants.js";
 import Axios from "axios";
 import ModalDialog from "../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
+import { Redirect } from "react-router-dom";
+import HeadingAlert from "../components/HeadingAlert";
 
 const mapState = {
 	center: [44, 21],
@@ -14,6 +16,9 @@ const mapState = {
 
 class RegisterPage extends Component {
 	state = {
+		errorHeader: "",
+		errorMessage: "",
+		hiddenErrorAlert: true,
 		email: "",
 		password: "",
 		name: "",
@@ -106,7 +111,7 @@ class RegisterPage extends Component {
 	};
 
 	handleModalClose = () => {
-		this.setState({ openModal: false });
+		this.setState({ openModal: false, redirect: true });
 	};
 
 	handleSignUp = () => {
@@ -142,10 +147,20 @@ class RegisterPage extends Component {
 
 				if (this.validateForm(userDTO)) {
 					console.log(userDTO);
-					Axios.post(BASE_URL + "/auth/signup", userDTO)
+					Axios.post(BASE_URL + "/auth/signup", userDTO, { validateStatus: () => true })
 						.then((res) => {
-							console.log("Success");
-							this.setState({ openModal: true });
+							if (res.status === 409) {
+								this.setState({
+									errorHeader: "Resource conflict!",
+									errorMessage: "Email already exist.",
+									hiddenErrorAlert: false,
+								});
+							} else if (res.status === 500) {
+								this.setState({ errorHeader: "Internal server error!", errorMessage: "Server error.", hiddenErrorAlert: false });
+							} else {
+								console.log("Success");
+								this.setState({ openModal: true });
+							}
 						})
 						.catch((err) => {
 							console.log(err);
@@ -154,13 +169,25 @@ class RegisterPage extends Component {
 			});
 	};
 
+	handleCloseAlert = () => {
+		this.setState({ hiddenErrorAlert: true });
+	};
+
 	render() {
+		if (this.state.redirect) return <Redirect push to="/" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
 				<Header />
 
 				<div className="container" style={{ marginTop: "8%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenErrorAlert}
+						header={this.state.errorHeader}
+						message={this.state.errorMessage}
+						handleCloseAlert={this.handleCloseAlert}
+					/>
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
 						Registration
 					</h5>
@@ -298,7 +325,6 @@ class RegisterPage extends Component {
 				</div>
 				<ModalDialog
 					show={this.state.openModal}
-					href="/"
 					onCloseModal={this.handleModalClose}
 					header="Successful registration"
 					text="You can activate your account by clicking on link sent to provided email address."

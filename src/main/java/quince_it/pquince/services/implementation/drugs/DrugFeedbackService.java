@@ -40,7 +40,7 @@ public class DrugFeedbackService implements IDrugFeedbackService{
 	
 	@Override
 	public void create(DrugFeedbackDTO entityDTO) {
-		// TODO eReciept check, logged patient
+		// TODO eReciept check
 		
 		try {
 			UUID patientId = userService.getLoggedUserId();
@@ -66,9 +66,7 @@ public class DrugFeedbackService implements IDrugFeedbackService{
 	}
 
 	@Override
-	public void update(DrugFeedbackDTO entityDTO) {
-		// TODO get logged patient
-		
+	public void update(DrugFeedbackDTO entityDTO) {		
 		try {
 			UUID patientId = userService.getLoggedUserId();
 			Patient patient = patientRepository.findById(patientId).get();

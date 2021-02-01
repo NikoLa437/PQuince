@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,34 +60,42 @@ public class AuthenticationController {
 	public ResponseEntity<UserTokenStateDTO> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest,
 			HttpServletResponse response) {
 
-		
-		Authentication authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
-						authenticationRequest.getPassword()));
-		
-
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		User user = (User) authentication.getPrincipal();
-		String jwt = tokenUtils.generateToken(user.getUsername());
-		int expiresIn = tokenUtils.getExpiredIn();
+		String jwt;
+		int expiresIn;
 		List<String> roles = new ArrayList<String>();
-		user.getUserAuthorities().forEach((a) -> roles.add(a.getName()));
+		
+		try {
+			Authentication authentication = authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
+							authenticationRequest.getPassword()));
+			
+	
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			User user = (User) authentication.getPrincipal();
+			jwt = tokenUtils.generateToken(user.getUsername());
+			expiresIn = tokenUtils.getExpiredIn();
+			user.getUserAuthorities().forEach((a) -> roles.add(a.getName()));
 
-		return ResponseEntity.ok(new UserTokenStateDTO(jwt, expiresIn,roles));
+		} catch (BadCredentialsException e) {
+			
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<UserTokenStateDTO>(new UserTokenStateDTO(jwt, expiresIn, roles), HttpStatus.OK);
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<UUID> addUser(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
-
-		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
-		if (existUser != null) {
-			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
+	public ResponseEntity<UUID> addUser(@RequestBody UserRequestDTO userRequest) {
+		try {
+			UUID userId = userService.createPatient(userRequest);
+			return new ResponseEntity<UUID>(userId, HttpStatus.CREATED);
+		} catch (ResourceConflictException e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
-
-		UUID userId = userService.createPatient(userRequest);
-		//HttpHeaders headers = new HttpHeaders();
-		//headers.setLocation(ucBuilder.path("/api/user/{userId}").buildAndExpand(user.getId()).toUri());
-		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+		catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@PostMapping("/signup-dermathologist")
@@ -135,6 +145,24 @@ public class AuthenticationController {
 		UUID userId = userService.createSupplier(userRequest);
 		
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/change-password")
+	@PreAuthorize("hasRole('PATIENT')") // or hasRole....
+	public ResponseEntity<?> changePassword(@RequestBody PasswordChanger passwordChanger) {
+		
+		try {
+		userService.changePassword(passwordChanger.oldPassword, passwordChanger.newPassword);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+	}
+
+	static class PasswordChanger {
+		public String oldPassword;
+		public String newPassword;
 	}
 	
 	
