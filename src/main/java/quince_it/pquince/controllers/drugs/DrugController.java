@@ -22,6 +22,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
+import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
@@ -86,28 +87,38 @@ public class DrugController {
 	public ResponseEntity<DrugFeedbackDTO> findByPatientAndDrug(@PathVariable UUID drugId) {
 		try {
 			return new ResponseEntity<>(drugFeedbackService.findByPatientAndDrug(drugId) ,HttpStatus.OK);
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
 	@PostMapping("/feedback")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> createFeedback(@RequestBody DrugFeedbackDTO drugFeedbackDTO) {
-		
-		drugFeedbackService.create(drugFeedbackDTO);
-		
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		try {
+			drugFeedbackService.create(drugFeedbackDTO);
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		} catch (FeedbackNotAllowedException e) {
+			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@PutMapping("/feedback")
 	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> updateFeedback(@RequestBody DrugFeedbackDTO drugFeedbackDTO) {
-		
-		drugFeedbackService.update(drugFeedbackDTO);
-		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		try {
+			drugFeedbackService.update(drugFeedbackDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	
