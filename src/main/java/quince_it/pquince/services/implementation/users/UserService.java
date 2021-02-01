@@ -12,6 +12,8 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +31,7 @@ import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
+import quince_it.pquince.security.exception.ResourceConflictException;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
@@ -84,6 +87,9 @@ public class UserService implements IUserService{
 	@Autowired
 	private Environment env;
 	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
 		List<IdentifiableDTO<UserDTO>> users = new ArrayList<IdentifiableDTO<UserDTO>>();
@@ -130,6 +136,10 @@ public class UserService implements IUserService{
 
 	@Override
 	public UUID createPatient(UserRequestDTO entityDTO) {
+		
+		IdentifiableDTO<UserDTO> existUser = findByEmail(entityDTO.getEmail());
+		if (existUser != null) throw new ResourceConflictException(entityDTO.getEmail(), "Email already exists");
+		
 		Patient patient = CreatePatientFromDTO(entityDTO);
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PATIENT");
 		List<Authority> authorities = new ArrayList<Authority>();
@@ -428,6 +438,22 @@ public class UserService implements IUserService{
 		User user = userRepository.findByEmail(email);
 		
 		return user.getId();
+	}
+
+	@Override
+	public void changePassword(String oldPassword, String newPassword) {
+		
+		UUID loggedUserId = getLoggedUserId();
+		User user = userRepository.findById(loggedUserId).get();
+		
+		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), oldPassword));
+		
+		if(newPassword.isEmpty())
+			throw new IllegalArgumentException("Invalid new password");
+		
+		user.setPassword(passwordEncoder.encode(newPassword));
+		userRepository.save(user);
+		
 	}
 
 

@@ -68,7 +68,6 @@ public class DrugReservationService implements IDrugReservationService{
 	 */
 	@Override
 	public UUID create(DrugReservationRequestDTO entityDTO) {
-		//TODO : NOT HARDCODED ID
 		
 		UUID patientId = userService.getLoggedUserId();
 		Patient patient = patientRepository.getOne(patientId);

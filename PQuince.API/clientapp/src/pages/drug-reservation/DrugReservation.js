@@ -79,7 +79,8 @@ class DrugReservation extends Component {
 
 	handleDrugSelect = (drug) => {
 		console.log(drug);
-		Axios.get(BASE_URL + "/api/pharmacy/find-by-drug/" + drug.Id)
+
+		Axios.get(BASE_URL + "/api/pharmacy/find-by-drug/" + drug.Id, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({

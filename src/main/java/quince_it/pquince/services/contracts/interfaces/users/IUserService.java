@@ -24,6 +24,8 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	UUID createPatient(UserRequestDTO entityDTO);
 	
+	void changePassword(String oldPassword, String newPassword);
+	
 	UUID getLoggedUserId();
 	
 	IdentifiableDTO<PatientDTO> getPatientById();
