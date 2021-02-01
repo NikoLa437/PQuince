@@ -7,7 +7,10 @@ import java.util.UUID;
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Staff;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
@@ -58,5 +61,7 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	
 	UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException;
 
+	List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO);
 
+	UUID createTerminForDermatologist(AppointmentCreateDTO appointmentDTO);
 }

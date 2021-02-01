@@ -18,13 +18,21 @@ import org.springframework.stereotype.Service;
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.users.DateRange;
+import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
+import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.WorkTimeRepository;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
 import quince_it.pquince.repository.users.PharmacistRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
@@ -66,36 +74,73 @@ public class AppointmentService implements IAppointmentService{
 	private PharmacistRepository pharmacistRepository;
 	
 	@Autowired
+	private PharmacyRepository pharmacyRepository;
+	
+	@Autowired
 	private Environment env;
 	
-	@Override
-	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IdentifiableDTO<DermatologistAppointmentDTO> findById(UUID id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public UUID create(DermatologistAppointmentDTO entityDTO) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public UUID createTerminForDermatologist(AppointmentCreateDTO appointmentDTO) {
+		// TODO NIKOLA : srediti try catch blok
+		try {
+			Pharmacy pharmacy = pharmacyRepository.getOne(appointmentDTO.getPharmacy());
+			Staff dermatologist = staffRepository.getOne(appointmentDTO.getStaff());
+			
+			Appointment newAppointment = new Appointment(pharmacy,dermatologist,null, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),appointmentDTO.getPrice(),AppointmentType.EXAMINATION,AppointmentStatus.CREATED);
+			appointmentRepository.save(newAppointment);
+			return newAppointment.getId();
+		}catch(Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAll() {
+		return null;
+	}
+
+	@Override
+	public IdentifiableDTO<DermatologistAppointmentDTO> findById(UUID id) {
+		return null;
+	}
 
 	@Override
 	public void update(DermatologistAppointmentDTO entityDTO, UUID id) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean delete(UUID id) {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO) {
+		WorkTime workTime = workTimeRepository.getWorkTimeForDermatologistForDateForPharmacy(appointmentRequestDTO.getDermatologistId(),appointmentRequestDTO.getDate(),appointmentRequestDTO.getPharmacyId());
+		List<Appointment> scheduledAppointments = appointmentRepository.getCreatedAppoitntmentsByDermatologistByDate(appointmentRequestDTO.getDermatologistId(),appointmentRequestDTO.getDate(),appointmentRequestDTO.getPharmacyId());
+	
+		if(workTime==null) {
+			return new ArrayList<AppointmentPeriodResponseDTO>();
+		}
+		else {
+			AppointmentScheduler scheduler = new AppointmentScheduler(createDateRangeForWorkTimeForDay(workTime,appointmentRequestDTO.getDate()),scheduledAppointments,appointmentRequestDTO.getDuration());
+			return scheduler.GetFreeAppointment();
+		}
+	}
+
+	private DateRange createDateRangeForWorkTimeForDay(WorkTime workTime, Date date) {
+		@SuppressWarnings("deprecation")
+		Date startDate = new Date(date.getYear(),date.getMonth(),date.getDay(),workTime.getStartTime(),0,0);
+		@SuppressWarnings("deprecation")
+		Date endDate = new Date(date.getYear(),date.getMonth(),date.getDay(),workTime.getEndTime(),0,0);
+
+		return new DateRange(startDate,endDate);
 	}
 
 	@Override
@@ -499,4 +544,5 @@ public class AppointmentService implements IAppointmentService{
 		
 		if(pharmacistWorkTime == null) throw new AppointmentNotScheduledException("Invalid appointment time");
 	}
+
 }

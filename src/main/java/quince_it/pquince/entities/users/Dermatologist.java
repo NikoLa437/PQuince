@@ -1,5 +1,6 @@
 package quince_it.pquince.entities.users;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import quince_it.pquince.entities.drugs.Allergen;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Entity
@@ -37,5 +39,24 @@ public class Dermatologist extends Staff{
 
 	public void setPharmacies(List<Pharmacy> pharmacies) {
 		this.pharmacies = pharmacies;
+	}
+	
+	public void addPharmacy(Pharmacy pharmacy) {
+		if(this.pharmacies == null)
+			this.pharmacies = new ArrayList<Pharmacy>();
+		
+		this.pharmacies.add(pharmacy);
+	}
+	
+	public void removePharmacy(UUID pharmacyId) {
+		if(this.pharmacies == null)
+			return;
+		
+		for(Pharmacy workInPharmacy : pharmacies) {
+			if(pharmacyId.equals(workInPharmacy.getId())) {
+				pharmacies.remove(workInPharmacy);
+				return;
+			}
+		}
 	}
 }

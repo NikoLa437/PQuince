@@ -37,6 +37,7 @@ import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
@@ -300,6 +301,21 @@ public class UserService implements IUserService{
 		catch (EntityNotFoundException e) { return false; } 
 		catch (IllegalArgumentException e) { return false; }
 	}
+	
+	
+	@Override
+	public boolean removeDermatologistFromPharmacy(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
+		//TODO: NIKOLA : Proveriti da li ima zakazane termine dermatolog u apoteci i obrisati radno vreme ukoliko nema 
+		try {
+			Dermatologist dermatologist = dermatologistRepository.getOne(removeDermatologistFromPharmacyDTO.getDermatologistId());
+			dermatologist.removePharmacy(removeDermatologistFromPharmacyDTO.getPharmacyId());
+			
+			dermatologistRepository.save(dermatologist);
+			return true;
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }
+	}
 
 	@Override
 	public void updatePatient(UUID patientId, UserInfoChangeDTO patientInfoChangeDTO) {
@@ -370,7 +386,21 @@ public class UserService implements IUserService{
 		
 		return retDermatologist;
 	}
-
+	
+	@Override
+	public List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologistForEmplooyeToPharmacy(UUID pharmacyId) {
+		
+		List<Dermatologist> dermatologists = dermatologistRepository.findAll();
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retDermatologist = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(Dermatologist dermatologist : dermatologists) {
+			if(!IsDermatogistWorkInPharmacy(dermatologist,pharmacyId))
+				retDermatologist.add(MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(dermatologist));
+		}
+		
+		return retDermatologist;
+	}
+	
 	private IdentifiableDermatologistForPharmacyGradeDTO MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(
 			Dermatologist dermatologist) {
 		return new IdentifiableDermatologistForPharmacyGradeDTO(dermatologist.getId(),dermatologist.getEmail(),dermatologist.getName(),dermatologist.getSurname(),dermatologist.getPhoneNumber(),staffFeedbackService.findAvgGradeForStaff(dermatologist.getId()));

@@ -18,8 +18,7 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-11eb-ae93-0242ac130002',true, 'exampla11@example.com','Vidoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-12eb-ac93-0242ac130002',true, 'exampla21@example.com','Sredoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Mikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-13eb-ae93-0242ac130002',true, 'exampla31@example.com','Radoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Bikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
-
-
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788',true, 'pharmacyadmin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 
 insert into patient (id, penalty, points, loyality_category) values ('22793162-52d3-11eb-ae93-0242ac130002',1,2, 'REGULAR');
 insert into patient (id, penalty, points, loyality_category) values ('23793162-52d3-11eb-ae93-0242ac130002',0,2, 'REGULAR');
@@ -29,6 +28,7 @@ insert into user_authority (user_id, authority_id) values ('23793162-52d3-11eb-a
 insert into user_authority (user_id, authority_id) values ('11355678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
 insert into user_authority (user_id, authority_id) values ('22345678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
 insert into user_authority (user_id, authority_id) values ('25345678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
+insert into user_authority (user_id, authority_id) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788', 'ea16767c-2c1f-49fb-ac98-c7739c0036e8');
 
 insert into allergen (id, name) values ('3b27db4c-48bb-4f78-a3da-745d9c9458ba', 'Penicilin');
 insert into allergen (id, name) values ('062d319f-f393-464c-98fb-b3db29e77626', 'Amoxicilin');
@@ -53,6 +53,7 @@ insert into staff (id, staff_type) values ('25345678-52d3-11eb-ae93-0242ac130002
 insert into staff (id, staff_type) values ('25345278-52d3-11eb-ae93-0242ac130002','PHARMACIST');
 insert into staff (id, staff_type) values ('25345278-52d3-12eb-ac93-0242ac130002','PHARMACIST');
 insert into staff (id, staff_type) values ('25345278-52d3-13eb-ae93-0242ac130002','PHARMACIST');
+insert into staff (id, staff_type) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788','PHARMACYADMIN');
 
 
 insert into dermatologist (id) values ('11355678-52d3-11eb-ae93-0242ac130002');
@@ -138,4 +139,4 @@ insert into work_time (id, start_date, start_time, end_date, end_time, staff_id,
 insert into work_time (id, end_date,end_time,start_date,start_time,pharmacy_id,staff_id) values ('1d16e66e-669b-49ca-9a7a-1a4f57e7f14e','2021-02-15',17,'2021-01-15',8,'cafeddee-56cb-11eb-ae93-0242ac130202','22345678-52d3-11eb-ae93-0242ac130002');
 insert into work_time (id, end_date,end_time,start_date,start_time,pharmacy_id,staff_id) values ('42b6d408-665e-4329-8879-98a821f4cfbe','2021-01-14',15,'2021-01-01',8,'cafeddee-56cb-11eb-ae93-0242ac130202','22345678-52d3-11eb-ae93-0242ac130002');
 
-insert into loyaltyprogram (id, points_for_appointment, points_for_consulting, points_to_enter_regular_cathegory, points_to_enter_silver_cathegory, points_to_enter_gold_cathegory) values ('791fee27-bb12-4340-9b0a-a7c9ef575278', 5, 4, 10, 50, 100);
+insert into loyaltyprogram (id, points_for_appointment, points_for_consulting, points_to_enter_regular_cathegory, points_to_enter_silver_cathegory, points_to_enter_gold_cathegory, appointment_discount_regular, drug_discount_regular, consultation_discount_regular, appointment_discount_silver,drug_discount_silver, consultation_discount_silver, appointment_discount_gold,  drug_discount_gold, consultation_discount_gold) values ('791fee27-bb12-4340-9b0a-a7c9ef575278', 5, 4, 10, 50, 100, 2, 2, 2, 5, 6, 7, 15, 20, 25);
