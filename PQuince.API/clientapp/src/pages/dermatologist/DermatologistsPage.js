@@ -30,6 +30,7 @@ class DermatologistsPage extends Component {
         showingSearched: false,
         pharmaciesForDermatologist:[],
         showPharmaciesModal:false,
+        dermatologistToEmploye:[],
     };
 
 
@@ -54,6 +55,17 @@ class DermatologistsPage extends Component {
     };
 
     handleAddDermatologistModalClose = () => {
+        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202" , {
+			headers: { Authorization: getAuthHeader() },
+		})
+			.then((res) => {
+				this.setState({ dermatologists: res.data });
+                console.log(res.data);
+            
+			})
+			.catch((err) => {
+				console.log(err);
+			});
         this.setState({ showAddDermatologistModal: false });
     }
     
@@ -64,6 +76,16 @@ class DermatologistsPage extends Component {
     };
     
     handleAddDermatologistClick = () => {
+        Axios.get(BASE_URL + "/api/users/dermatologist-for-emplooye-in-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202", {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) => {
+                this.setState({ dermatologistToEmploye: res.data });
+
+				console.log(res.data);
+		})
+			.catch((err) => {
+				console.log(err);
+		});
         this.setState({
 			showAddDermatologistModal: true,
 		});
@@ -374,7 +396,7 @@ class DermatologistsPage extends Component {
 					        show={this.state.showAddDermatologistModal}
 					        onCloseModal={this.handleAddDermatologistModalClose}
                             pharmacyId={this.state.pharmacyId}
-                            dermatologists={this.state.dermatologists}
+                            dermatologists={this.state.dermatologistToEmploye}
 					        header="Add dermatologist"
 				        />
                         <PharmaciesForDermatologistModal

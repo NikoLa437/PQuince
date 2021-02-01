@@ -27,6 +27,7 @@ import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
+import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.StaffRepository;
@@ -35,7 +36,7 @@ import quince_it.pquince.security.exception.ResourceConflictException;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
-import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
@@ -46,12 +47,12 @@ import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
+import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
-import quince_it.pquince.services.implementation.pharmacy.PharmacyService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.pharmacy.PharmacyMapper;
 import quince_it.pquince.services.implementation.util.users.UserMapper;
@@ -81,7 +82,7 @@ public class UserService implements IUserService{
 	private AllergenService allergenService;
 	
 	@Autowired
-	private PharmacyService pharmacyService;
+	private PharmacyRepository pharmacyRepository;
 
 	@Autowired
 	private AuthorityService authorityService;
@@ -315,7 +316,6 @@ public class UserService implements IUserService{
 	
 	@Override
 	public boolean removeDermatologistFromPharmacy(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
-		//TODO: NIKOLA : Proveriti da li ima zakazane termine dermatolog u apoteci i obrisati radno vreme ukoliko nema 
 		try {
 			if(!appointmentService.hasAppointmentInFuture(removeDermatologistFromPharmacyDTO)) {
 				Dermatologist dermatologist = dermatologistRepository.getOne(removeDermatologistFromPharmacyDTO.getDermatologistId());
@@ -512,6 +512,23 @@ public class UserService implements IUserService{
 		}catch(Exception e) {
 			return null;
 		}
+	}
+	
+	@Override
+	public boolean addDermatologistToPharmacy(AddDermatologistToPharmacyDTO addDermatologistToPharmacyDTO) {
+		try {
+			Dermatologist dermatologist = dermatologistRepository.getOne(addDermatologistToPharmacyDTO.getDermatologistId());
+			Pharmacy pharmacy = pharmacyRepository.getOne(addDermatologistToPharmacyDTO.getPharmacyId());
+			
+			dermatologist.addPharmacy(pharmacy);
+			dermatologistRepository.save(dermatologist);
+			
+			WorkTimeDTO workTimeDTO = new WorkTimeDTO(addDermatologistToPharmacyDTO.getPharmacyId(),addDermatologistToPharmacyDTO.getDermatologistId(), addDermatologistToPharmacyDTO.getStartDate(), addDermatologistToPharmacyDTO.getEndDate(), addDermatologistToPharmacyDTO.getStartTime(), addDermatologistToPharmacyDTO.getEndTime(),"");
+			workTimeService.create(workTimeDTO);
+			return true;
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }
 	}
 	
 

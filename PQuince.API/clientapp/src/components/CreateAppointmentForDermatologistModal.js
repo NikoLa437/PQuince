@@ -40,8 +40,8 @@ class CreateAppointmentForDermatologistModal extends Component {
         }).then((res) =>{
             console.log(res.data);
                 
-                
-                this.setState({showAddWorkTime: false, modalSize:'lg'});
+                alert('Uspesno kreiran appointment')
+                this.handleCloseAppointment();
         }).catch((err) => {
             alert('Nije moguce kreirati termin u naznacenom roku');
         });        

@@ -24,6 +24,7 @@ import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
@@ -187,10 +188,25 @@ public class UsersController {
 	@PutMapping("/remove-dermatologist-from-pharmacy") 
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
-	public ResponseEntity<?> RemoveDermatologistFromPharmacy(@RequestBody RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
+	public ResponseEntity<?> removeDermatologistFromPharmacy(@RequestBody RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
 		
 		try {
 			if(userService.removeDermatologistFromPharmacy(removeDermatologistFromPharmacyDTO))
+				return new ResponseEntity<>(HttpStatus.OK); 
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@PutMapping("/add-dermatologist-to-pharmacy") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<?> addDermatologistToPharmacy(@RequestBody AddDermatologistToPharmacyDTO addDermatologistToPharmacyDTO) {
+		
+		try {
+			if(userService.addDermatologistToPharmacy(addDermatologistToPharmacyDTO))
 				return new ResponseEntity<>(HttpStatus.OK); 
 			
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
