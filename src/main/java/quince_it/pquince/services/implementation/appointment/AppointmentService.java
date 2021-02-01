@@ -12,6 +12,7 @@ import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
@@ -448,8 +449,10 @@ public class AppointmentService implements IAppointmentService{
 		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
 		checkIfConsultationTimeIsValid(requestDTO, endDateTime);
 		
-		
 		Appointment appointment = createConsultationAppointmentFromDTO(requestDTO, endDateTime);
+		
+		if(!CanCreateConsultation(appointment)) throw new AuthorizationServiceException("Too many penalty points");
+		
 		appointmentRepository.save(appointment);
 		try {
 			emailService.sendAppointmentReservationNotificationAsync(appointment,"pharmacist");
@@ -460,6 +463,10 @@ public class AppointmentService implements IAppointmentService{
 		return appointment.getId();
 	}
 	
+	private boolean CanCreateConsultation(Appointment appointment) {
+		return appointment.getPatient().getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"));
+	}
+
 	private Appointment createConsultationAppointmentFromDTO(ConsultationRequestDTO requestDTO, Date endDateTime) {
 		
 		UUID patientId = userService.getLoggedUserId();

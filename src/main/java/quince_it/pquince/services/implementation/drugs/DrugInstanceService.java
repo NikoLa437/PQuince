@@ -19,6 +19,7 @@ import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDru
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
+import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
 import quince_it.pquince.services.implementation.util.drugs.DrugInstanceMapper;
 
 @Service
@@ -32,6 +33,9 @@ public class DrugInstanceService implements IDrugInstanceService{
 	
 	@Autowired
 	private DrugStorageService drugStorageService;
+	
+	@Autowired
+	private ILoyaltyProgramService loyalityProgramService;
 	
 	@Override
 	public List<IdentifiableDTO<DrugInstanceDTO>> findAll() {
@@ -73,6 +77,7 @@ public class DrugInstanceService implements IDrugInstanceService{
 		for (IdentifiablePharmacyDrugPriceAmountDTO pharmacy : drugPriceForPharmacyRepository.findByDrugId(drugId)) {
 			int countDrug = drugStorageService.getDrugCountForDrugAndPharmacy(drugId, pharmacy.Id);
 			if(countDrug > 0) {
+				pharmacy.setPriceWithDiscount(loyalityProgramService.getDiscountDrugPriceForPatient(pharmacy.getPrice()));
 				pharmacy.setCount(countDrug);
 				retVal.add(pharmacy);
 			}

@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.users.LoyaltyProgram;
+import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.repository.users.LoyaltyProgramRepository;
+import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.services.contracts.dto.users.LoyaltyProgramDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.util.users.LoyaltyProgramMapper;
 
 @Service
@@ -20,6 +23,11 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 	@Autowired
 	private LoyaltyProgramRepository loyaltyProgramRepository;
 
+	@Autowired
+	private IUserService userService;
+	
+	@Autowired
+	private PatientRepository patientRepository;
 
 	@Override
 	public IdentifiableDTO<LoyaltyProgramDTO> findById(UUID id) {
@@ -59,6 +67,17 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 	public List<IdentifiableDTO<LoyaltyProgramDTO>> findAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public double getDiscountDrugPriceForPatient(double regularPrice) {
+		// TODO DUSAN : SOLVE THIS
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();
+		//getLoyality
+		//return 100 - getLoyalityDrugDiscount / 100 * regular price
+		
+		return regularPrice;
 	}
 
 		

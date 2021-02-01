@@ -6,4 +6,5 @@ import quince_it.pquince.services.contracts.interfaces.IService;
 
 public interface ILoyaltyProgramService extends IService<LoyaltyProgramDTO, IdentifiableDTO<LoyaltyProgramDTO>> {
 
+	double getDiscountDrugPriceForPatient(double regularPrice);
 }
