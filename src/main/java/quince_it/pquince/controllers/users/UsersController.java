@@ -24,6 +24,7 @@ import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
@@ -181,7 +182,23 @@ public class UsersController {
 		}
 	}
 	
+	@PutMapping("/remove-dermatologist-from-pharmacy") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<?> RemoveDermatologistFromPharmacy(@RequestBody RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
+		
+		try {
+			if(userService.removeDermatologistFromPharmacy(removeDermatologistFromPharmacyDTO))
+				return new ResponseEntity<>(HttpStatus.OK); 
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 	@GetMapping("/dermatologist-for-pharmacy/{pharmacyId}") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
 	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getDermatologistForPharmacy(@PathVariable UUID pharmacyId) {
 	  
@@ -195,6 +212,21 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/dermatologist-for-emplooye-in-pharmacy/{pharmacyId}") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getDermatologistForEmplooyeInPharmacy(@PathVariable UUID pharmacyId) {
+	  
+		try {
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findAllDermatologistForEmplooyeToPharmacy(pharmacyId);
+			return new ResponseEntity<>(dermatologist,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+
 	@GetMapping("/get-pharmacists")
 	@PreAuthorize("hasRole('PATIENT')")
 	@CrossOrigin
