@@ -14,20 +14,125 @@ const mapState = {
 class RegisterDrug extends Component {
 	state = {
 		name: "",
+		instanceName: "",
 		description: "",
 		drugCode: "",
 		drugKind: "",
+		drugFormat:"",
+		loyaltyPoints:"",
+		quantity:"",
+		drugChange: "",
+		drugKinds: [],
+		drugFormats: [],
+		drugs: [],
+		drugReplacements: [],
+		ingredients: [],
 		sideEffects: "",
 		recommendAmount: "",
+		drugIngredient: "",
 		nameError: "none",
 		consulationPriceError: "none",
 		openModal: false,
 		coords: [],
 	};
+	
+	componentDidMount() {
 
+		Axios.get(BASE_URL + "/api/drug/drugkind")
+			.then((res) => {
+				this.setState({ drugKinds: res.data });
+                console.log(res.data);
+            
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+		
+		Axios.get(BASE_URL + "/api/drug/drugformat")
+			.then((res) => {
+				this.setState({ drugFormats: res.data });
+                console.log(res.data, "DRUG FORMATS");
+            
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+			
+		Axios.get(BASE_URL + "/api/drug")
+			.then((res) => {
+				this.setState({ drugs: res.data });
+                console.log(res.data);	
+				this.state.drugChange = res.data[0].EntityDTO.drugInstanceName;
+            
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+		
+    }
+    
 	constructor(props) {
 		super(props);
 	}
+
+	addIngredient = (event) => {
+		
+		if (this.state.drugIngredient === "") {
+			return;
+		}
+  		event.preventDefault();
+  		this.state.ingredients.push(this.state.drugIngredient);
+		document.getElementById("demo").innerHTML = this.state.ingredients;
+  		
+	};
+	
+	createIngredient = (event) => {
+		
+		for (const [index, value] of this.state.ingredients.entries()) {
+			let ingredientDTO = {
+				name: this.state.ingredients[index],
+			};
+			
+			Axios.post(BASE_URL + "/api/ingredients", ingredientDTO)
+				.then((res) => {
+					console.log("Success");
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+  		
+	};
+	
+	addReplacement = (event) => {
+		event.preventDefault();
+		if(this.state.drugReplacements.includes(this.state.drugChange))
+			return;
+			
+  		this.state.drugReplacements.push(this.state.drugChange);
+		document.getElementById("replacement").innerHTML = this.state.drugReplacements;
+		console.log(this.state.drugReplacements);
+  		
+	};
+	
+	resetIngredient = (event) => {
+  		event.preventDefault();
+  		this.setState({ingredients: []});
+		document.getElementById("demo").innerHTML = "";
+  		
+	};
+
+	handleDrugIngredientChange = (event) => {
+		this.setState({ drugIngredient: event.target.value });
+	};
+	
+	handleLoyaltyPointsChange = (event) => {
+		this.setState({ loyaltyPoints: event.target.value });
+	};
+	
+	handleQuantityChange = (event) => {
+		this.setState({ quantity: event.target.value });
+	};
 
 	handleRecommendAmountChange = (event) => {
 		this.setState({ recommendAmount: event.target.value });
@@ -35,6 +140,10 @@ class RegisterDrug extends Component {
 	
 	handleNameChange = (event) => {
 		this.setState({ name: event.target.value });
+	};
+	
+	handleInstanceNameChange = (event) => {
+		this.setState({ instanceName: event.target.value });
 	};
 	
 	handleSideEffectsChange = (event) => {
@@ -47,6 +156,14 @@ class RegisterDrug extends Component {
 	
 	handleDrugKindChange = (event) => {
 		this.setState({ drugKind: event.target.value });
+	};
+	
+	handleDrugFormatChange = (event) => {
+		this.setState({ drugFormat: event.target.value });
+	};
+	
+	handleDrugChange = (event) => {
+		this.setState({ drugChange: event.target.value });
 	};
 	
 	handleDescriptionChange = (event) => {
@@ -76,31 +193,27 @@ class RegisterDrug extends Component {
 	};
 
 	handleSignUp = () => {
-		let street;
-		let city;
-		let country;
-		let latitude;
-		let longitude;
-
 		
-		let pharmacyDTO = {
+		let drugInstanceDTO = {
 			name: this.state.name,
-			description: this.state.description,
-			address: { street, country, city, latitude, longitude },
-			consultationPrice: this.state.consulationPrice*1,
+			code: this.state.drugCode,
+			drugInstanceName: this.state.instanceName,
+			manufacturer: null,
+			drugFormat: this.state.drugFormat,
+			quantity: this.state.quantity,
+			sideEffects: this.state.sideEffects,
+			recommendedAmount: this.state.recommendAmount,
+			replacingDrugs: null,
+			allergens: null,
+			ingredients: null,
+			onReciept: this.state.onReciept,
+			drugKind: this.state.drugKind,
+			loyalityPoints: this.state.loyaltyPoints,
 		};
-		console.log(pharmacyDTO);
-		if (this.validateForm(pharmacyDTO)) {
 		
-			Axios.post(BASE_URL + "/api/pharmacy", pharmacyDTO)
-				.then((res) => {
-					console.log("Success");
-					this.setState({ openModal: true });
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		}
+		console.log(drugInstanceDTO);
+		
+		
 	};
 	
 	handleSelectChange  = (event) => {
@@ -115,7 +228,7 @@ class RegisterDrug extends Component {
 
 				<div className="container" style={{ marginTop: "8%" }}>
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
-						Registrater drug
+						Register drug
 					</h5>
 
 					<div className="row section-design">
@@ -138,6 +251,38 @@ class RegisterDrug extends Component {
 										Name must be entered.
 									</div>
 								</div>
+								<div className="control-group">
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Instance name:</label>
+										<input
+											placeholder="Instance name"
+											class="form-control"
+											type="text"
+											id="name"
+											onChange={this.handleInstanceNameChange}
+											value={this.state.instanceName}
+										/>
+									</div>
+									<div className="text-danger" style={{ display: this.state.nameError }}>
+										Instance name must be entered.
+									</div>
+								</div>
+								<div className="control-group">
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Quantity:</label>
+										<input
+											placeholder="Quantity"
+											class="form-control"
+											type="number"
+											id="name"
+											onChange={this.handleQuantityChange}
+											value={this.state.quantity}
+										/>
+									</div>
+									<div className="text-danger" style={{ display: this.state.nameError }}>
+										Quantity must be entered.
+									</div>
+								</div>
 								
 								<div className="control-group">
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
@@ -155,30 +300,28 @@ class RegisterDrug extends Component {
 										Code must be entered.
 									</div>
 								</div>
-								<div className="control-group">
+								
+								<div className="control-group">	
+								
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Drug kind:</label>
-										<input
-											placeholder="Drug kind"
-											class="form-control"
-											id="consulationPrice"
-											type="text"
-											onChange={this.handleDrugKindChange}
-											value={this.state.drugKind}
-										/>
 										<select
 									       onChange={this.handleDrugKindChange}
 											value={this.state.drugKind}
-									     >
-										  <option value="dermathologist">Dermathologist</option>
-										  <option value="pharmacyadmin">Pharmacy admin</option>
-										  <option value="supplier">Supplier</option>
-										  <option value="sysadmin">System admin</option>
-										</select>	
+									     >{this.state.drugKinds.map((kind) => (
+										  <option value={kind.EntityDTO.type}>{kind.EntityDTO.type}</option>
+										))}	
+										</select>
+										<label>On reciept </label>
+										<input
+											placeholder="Quantity"
+											type="checkbox"
+											id="name"
+											onChange={this.handleQuantityChange}
+											value={this.state.quantity}
+										/>
 									</div>
-									<div className="text-danger" style={{ display: this.state.consulationPriceError }}>
-										Code must be entered.
-									</div>
+									
 								</div>
 								<div className="control-group">
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
@@ -210,6 +353,89 @@ class RegisterDrug extends Component {
 									</div>
 									<div className="text-danger" style={{ display: this.state.nameError }}>
 										Recommend amount must be entered.
+									</div>
+								</div>
+								<div className="control-group">
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Drug ingredient:</label>
+										<input
+											placeholder="Drug ingredient"
+											class="form-control"
+											type="text"
+											id="name"
+											onChange={this.handleDrugIngredientChange}
+											value={this.state.drugIngredient}
+										/>
+										<button
+											onClick={this.addIngredient}
+										>
+											Add
+										</button>
+										<button
+											onClick={this.resetIngredient}
+										>
+											Reset ingredients
+										</button>
+										<button
+											onClick={this.createIngredient}
+										>
+											Create
+										</button>
+										<p id="demo"></p>
+									</div>
+									<div className="text-danger" style={{ display: this.state.nameError }}>
+										Drug ingredient must be entered.
+									</div>
+								</div>
+								<div className="control-group">
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Replacement drugs:</label>
+										<select
+											
+									        onChange={this.handleDrugChange}
+											value={this.state.drugChange}
+									     >{this.state.drugs.map((drug) => (
+										  <option value={drug.EntityDTO.drugInstanceName}>{drug.EntityDTO.drugInstanceName}</option>
+										))}	
+										</select>
+										<button
+											onClick={this.addReplacement}
+										>
+											Add replacement
+										</button>
+										<p id="replacement"></p>
+									</div>
+								</div>
+								
+								<div className="control-group">	
+								
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Drug Format:</label>
+										<select
+									       onChange={this.handleDrugFormatChange}
+											value={this.state.drugFormat}
+									     >{this.state.drugFormats.map((format) => (
+										  <option value={format.EntityDTO.type}>{format.EntityDTO.type}</option>
+										))}	
+										</select>
+									</div>
+									
+								</div>
+								
+								<div className="control-group">
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Loyalty points:</label>
+										<input
+											placeholder="Loyalty points"
+											class="form-control"
+											type="number"
+											id="name"
+											onChange={this.handleLoyaltyPointsChange}
+											value={this.state.loyaltyPoints}
+										/>
+									</div>
+									<div className="text-danger" style={{ display: this.state.nameError }}>
+										Quantity must be entered.
 									</div>
 								</div>
 								<div className="form-group">

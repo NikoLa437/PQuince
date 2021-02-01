@@ -8,5 +8,5 @@ import quince_it.pquince.entities.drugs.DrugKindId;
 import quince_it.pquince.entities.users.User;
 
 public interface DrugKindRepository  extends JpaRepository<DrugKindId, UUID>{
-	 User findByType ( String type );
+	DrugKindId findByType ( String type );
 }

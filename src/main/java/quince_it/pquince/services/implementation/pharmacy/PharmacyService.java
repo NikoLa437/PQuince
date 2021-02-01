@@ -66,7 +66,6 @@ public class PharmacyService implements IPharmacyService {
 	@Override
 	public UUID create(PharmacyDTO entityDTO) {
 		// TODO Auto-generated method stub
-		System.out.println("JAOOOOO" + entityDTO.getConsultationPrice());
 		Pharmacy pharmacy = new Pharmacy(entityDTO.getName(), entityDTO.getDescription(),
 						entityDTO.getAddress(), entityDTO.getConsultationPrice());
 

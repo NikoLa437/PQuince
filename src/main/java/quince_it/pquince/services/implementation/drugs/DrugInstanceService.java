@@ -10,16 +10,21 @@ import org.springframework.stereotype.Service;
 import quince_it.pquince.entities.drugs.DrugInstance;
 import quince_it.pquince.entities.drugs.DrugPriceForPharmacy;
 import quince_it.pquince.entities.drugs.DrugStorage;
+import quince_it.pquince.entities.drugs.Ingredient;
+import quince_it.pquince.entities.drugs.Manufacturer;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
+import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
+import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
 import quince_it.pquince.services.implementation.util.drugs.DrugInstanceMapper;
+import quince_it.pquince.services.implementation.util.drugs.ManufacturerMapper;
 
 @Service
 public class DrugInstanceService implements IDrugInstanceService{
@@ -50,10 +55,22 @@ public class DrugInstanceService implements IDrugInstanceService{
 
 	@Override
 	public UUID create(DrugInstanceDTO entityDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		DrugInstance drugInstance = CreateDrugInstanceFromDTO(entityDTO);
+		drugInstanceRepository.save(drugInstance);
+		return drugInstance.getId();
+	}
+	
+	private DrugInstance CreateDrugInstanceFromDTO(DrugInstanceDTO drugInstanceDTO) {
+		return new DrugInstance(drugInstanceDTO.getName(), drugInstanceDTO.getCode(), drugInstanceDTO.getDrugInstanceName(), 
+				drugInstanceDTO.getDrugFormat(), drugInstanceDTO.getQuantity(),  drugInstanceDTO.getSideEffects(), drugInstanceDTO.getRecommendedAmount(),
+				drugInstanceDTO.getLoyalityPoints(), drugInstanceDTO.isOnReciept(), drugInstanceDTO.getDrugKind());
 	}
 
+	
+	private Manufacturer CreateManufacturerFromDTO(ManufacturerDTO manufacturerDTO) {
+		return new Manufacturer(manufacturerDTO.getName());
+	}
+	
 	@Override
 	public void update(DrugInstanceDTO entityDTO, UUID id) {
 		// TODO Auto-generated method stub
