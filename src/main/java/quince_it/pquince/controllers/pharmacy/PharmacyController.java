@@ -79,6 +79,7 @@ public class PharmacyController {
 	
 	@CrossOrigin
 	@GetMapping("/find-by-drug-in-pharmacy")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<IdentifiablePharmacyDrugPriceAmountDTO> findPharmaciesWithPriceForDrug(@RequestParam UUID drugId,@RequestParam UUID pharmacyId) {
 		try {
 			return new ResponseEntity<>(drugService.findByDrugInPharmacy(drugId, pharmacyId),HttpStatus.OK);

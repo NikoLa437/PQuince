@@ -37,6 +37,7 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
@@ -136,11 +137,16 @@ public class AppointmentService implements IAppointmentService{
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private DateRange createDateRangeForWorkTimeForDay(WorkTime workTime, Date date) {
-		@SuppressWarnings("deprecation")
-		Date startDate = new Date(date.getYear(),date.getMonth(),date.getDay(),workTime.getStartTime(),0,0);
-		@SuppressWarnings("deprecation")
-		Date endDate = new Date(date.getYear(),date.getMonth(),date.getDay(),workTime.getEndTime(),0,0);
+
+		//@SuppressWarnings("deprecation")
+		//Date startDate = new Date(date.getYear(),date.getMonth(),date.getDay(),workTime.getStartTime(),0,0);
+		//@SuppressWarnings("deprecation")
+		Date startDate = (Date) date.clone();
+		Date endDate = (Date) date.clone();
+		startDate.setHours(workTime.getStartTime());
+		endDate.setHours(workTime.getEndTime());
 
 		return new DateRange(startDate,endDate);
 	}
@@ -564,6 +570,15 @@ public class AppointmentService implements IAppointmentService{
 						endDateTime.getMinutes() == 0 ? endDateTime.getHours() : endDateTime.getHours() + 1, requestDTO.getPharmacistId());
 		
 		if(pharmacistWorkTime == null) throw new AppointmentNotScheduledException("Invalid appointment time");
+	}
+
+	@Override
+	public boolean hasAppointmentInFuture(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
+		List<Appointment> listOfAppointment = appointmentRepository.findAllAppointmentForDermatologistInFutureInPharmacy(removeDermatologistFromPharmacyDTO.getDermatologistId(),removeDermatologistFromPharmacyDTO.getPharmacyId());
+		if(listOfAppointment.size()>0)
+			return true;
+		
+		return false;
 	}
 
 }

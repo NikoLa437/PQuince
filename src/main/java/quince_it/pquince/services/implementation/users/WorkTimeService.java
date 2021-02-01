@@ -13,6 +13,7 @@ import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
+import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.users.IWorkTimeService;
@@ -115,6 +116,18 @@ public class WorkTimeService implements IWorkTimeService{
 	@Override
 	public boolean delete(UUID id) {
 		return false;
+	}
+
+	@Override
+	public void removeWorkTimeForDermatologistForPharmacy(
+			RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
+
+		try {
+			List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDermatologistForPharmacy(removeDermatologistFromPharmacyDTO.getDermatologistId(),removeDermatologistFromPharmacyDTO.getPharmacyId());
+			workTimeRepository.deleteAll(workTimes);
+		}catch(Exception e) {
+			
+		}
 	}
 
 }
