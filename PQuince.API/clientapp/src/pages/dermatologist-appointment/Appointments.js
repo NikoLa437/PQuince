@@ -213,12 +213,12 @@ class Appointments extends Component {
 												}
 											>
 												{" "}
-												{appointment.EntityDTO.price}
+												{(Math.round(appointment.EntityDTO.price * 100) / 100).toFixed(2)}
 											</span>
 											<b> din</b>
 										</div>
 										<div hidden={appointment.EntityDTO.price === appointment.EntityDTO.discountPrice}>
-											<b>Price with discount:</b> {appointment.EntityDTO.discountPrice}
+											<b>Price with discount:</b> {(Math.round(appointment.EntityDTO.discountPrice * 100) / 100).toFixed(2)}
 											<b> din</b>
 										</div>
 										<div>

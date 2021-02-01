@@ -116,7 +116,10 @@ class PatientsDrugReservations extends Component {
 											<b>Amount:</b> {drugReservation.EntityDTO.amount}
 										</div>
 										<div>
-											<b>Total price:</b> {drugReservation.EntityDTO.drugPeacePrice * drugReservation.EntityDTO.amount}
+											<b>Total price:</b>{" "}
+											{(
+												Math.round(drugReservation.EntityDTO.drugPeacePrice * drugReservation.EntityDTO.amount * 100) / 100
+											).toFixed(2)}
 											<b> din</b>
 										</div>
 										<div>

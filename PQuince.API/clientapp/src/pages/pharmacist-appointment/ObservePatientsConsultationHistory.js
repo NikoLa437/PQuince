@@ -61,11 +61,11 @@ class ObservePatientsCosultationHistory extends Component {
 				console.log(err);
 			});
 	};
-	
+
 	handleComplaintChange = (event) => {
 		this.setState({ complaint: event.target.value });
 	};
-	
+
 	handleComplaintModalClose = () => {
 		this.setState({ showComplaintModal: false });
 	};
@@ -244,7 +244,6 @@ class ObservePatientsCosultationHistory extends Component {
 				console.log(err);
 			});
 	};
-	
 
 	handleModifyFeedback = () => {
 		let entityDTO = {
@@ -371,7 +370,7 @@ class ObservePatientsCosultationHistory extends Component {
 											})}
 										</div>
 										<div>
-											<b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
+											<b>Price: </b> {(Math.round(appointment.EntityDTO.price * 100) / 100).toFixed(2)} <b>din</b>
 										</div>
 										<div>
 											<b>Pharmacst: </b>{" "}

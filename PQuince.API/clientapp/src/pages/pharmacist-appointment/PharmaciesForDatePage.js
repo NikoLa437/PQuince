@@ -104,12 +104,13 @@ class PharmaciesForDatePage extends Component {
 												}
 											>
 												{" "}
-												{pharmacy.EntityDTO.price}
+												{(Math.round(pharmacy.EntityDTO.price * 100) / 100).toFixed(2)}
 											</span>
 											<b> din</b>
 										</div>
 										<div hidden={pharmacy.EntityDTO.price === pharmacy.EntityDTO.discountPrice}>
-											<b>Consultation price with discount: </b> {pharmacy.EntityDTO.discountPrice}
+											<b>Consultation price with discount: </b>{" "}
+											{(Math.round(pharmacy.EntityDTO.discountPrice * 100) / 100).toFixed(2)}
 											<b> din</b>
 										</div>
 									</td>

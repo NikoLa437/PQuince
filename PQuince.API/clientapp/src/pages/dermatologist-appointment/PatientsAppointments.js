@@ -126,7 +126,7 @@ class PatientsAppointments extends Component {
 											})}
 										</div>
 										<div>
-											<b>Price: </b> {appointment.EntityDTO.discountPrice} <b>din</b>
+											<b>Price: </b> {(Math.round(appointment.EntityDTO.discountPrice * 100) / 100).toFixed(2)} <b>din</b>
 										</div>
 										<div>
 											<b>Dermatologist: </b>{" "}
