@@ -323,7 +323,9 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public void updatePatient(UUID patientId, UserInfoChangeDTO patientInfoChangeDTO) {
+	public void updatePatient(UserInfoChangeDTO patientInfoChangeDTO) {
+		
+		UUID patientId = getLoggedUserId();
 		Patient patient = patientRepository.getOne(patientId);		
 		
 		patient.setAddress(patientInfoChangeDTO.getAddress());

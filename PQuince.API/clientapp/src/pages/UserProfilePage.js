@@ -10,6 +10,7 @@ import { YMaps, Map } from "react-yandex-maps";
 import getAuthHeader from "../GetHeader";
 import { Redirect } from "react-router-dom";
 import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
+import HeadingAlert from "../components/HeadingAlert";
 
 const mapState = {
 	center: [44, 21],
@@ -40,7 +41,6 @@ class UserProfilePage extends Component {
 		newPasswordRetypeNotSameError: "none",
 		openModal: false,
 		openPasswordModal: false,
-		openSuccessModal: false,
 		userAllergens: [],
 		patientPoints: "",
 		patientPenalties: "",
@@ -53,6 +53,15 @@ class UserProfilePage extends Component {
 		hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
+		hiddenAllergenSuccessAlert: true,
+		successAllergenHeader: "",
+		successAllergenMessage: "",
+		hiddenAllergenFailAlert: true,
+		failAllergenHeader: "",
+		failAllergenMessage: "",
 	};
 
 	constructor(props) {
@@ -171,6 +180,15 @@ class UserProfilePage extends Component {
 	};
 
 	handleChangeInfo = () => {
+		this.setState({
+			hiddenSuccessAlert: true,
+			successHeader: "",
+			successMessage: "",
+			hiddenFailAlert: true,
+			failHeader: "",
+			failMessage: "",
+		});
+
 		let street;
 		let city;
 		let country;
@@ -201,10 +219,21 @@ class UserProfilePage extends Component {
 
 				if (this.validateForm(userDTO)) {
 					console.log(userDTO);
-					Axios.put(BASE_URL + "/api/users/" + this.state.id, userDTO, { headers: { Authorization: getAuthHeader() } })
+					Axios.put(BASE_URL + "/api/users/patient", userDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 						.then((res) => {
-							console.log("Success");
-							this.setState({ hiddenEditInfo: true, openSuccessModal: true });
+							if (res.status === 400) {
+								this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Illegal argument." });
+							} else if (res.status === 500) {
+								this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+							} else if (res.status === 204) {
+								console.log("Success");
+								this.setState({
+									hiddenSuccessAlert: false,
+									successHeader: "Success",
+									successMessage: "You successfully updated your information.",
+									hiddenEditInfo: true,
+								});
+							}
 						})
 						.catch((err) => {
 							console.log(err);
@@ -222,19 +251,50 @@ class UserProfilePage extends Component {
 	};
 
 	handleAlergenRemove = (allergen) => {
+		this.setState({
+			hiddenAllergenSuccessAlert: true,
+			successAllergenHeader: "",
+			successAllergenMessage: "",
+			hiddenAllergenFailAlert: true,
+			failAllergenHeader: "",
+			failAllergenMessage: "",
+		});
+
 		let patientUserDTO = { allergenId: allergen.Id, patientId: this.state.id };
 		console.log(patientUserDTO);
-		Axios.put(BASE_URL + "/api/users/patient-allergens", patientUserDTO, { headers: { Authorization: getAuthHeader() } })
+		Axios.put(BASE_URL + "/api/users/patient-allergens", patientUserDTO, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
-				let allergens = [];
-				console.log(allergens);
-				for (let allerg of this.state.userAllergens) {
-					if (allerg.Id !== allergen.Id) {
-						allergens.push(allerg);
+				if (res.status === 400) {
+					this.setState({
+						hiddenAllergenFailAlert: false,
+						failAllergenHeader: "Bad request",
+						failAllergenMessage: "Bad request when removing allergen.",
+					});
+				} else if (res.status === 500) {
+					this.setState({
+						hiddenAllergenFailAlert: false,
+						failAllergenHeader: "Internal server error",
+						failAllergenMessage: "Server error.",
+					});
+				} else if (res.status === 200) {
+					let allergens = [];
+					console.log(allergens);
+					for (let allerg of this.state.userAllergens) {
+						if (allerg.Id !== allergen.Id) {
+							allergens.push(allerg);
+						}
 					}
+					console.log(allergens);
+					this.setState({
+						userAllergens: allergens,
+						hiddenAllergenSuccessAlert: false,
+						successAllergenHeader: "Success",
+						successAllergenMessage: "Allergen succesfully removed.",
+					});
 				}
-				console.log(allergens);
-				this.setState({ userAllergens: allergens });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -242,13 +302,43 @@ class UserProfilePage extends Component {
 	};
 
 	handleAllergenAdd = (allergen) => {
+		this.setState({
+			hiddenAllergenSuccessAlert: true,
+			successAllergenHeader: "",
+			successAllergenMessage: "",
+			hiddenAllergenFailAlert: true,
+			failAllergenHeader: "",
+			failAllergenMessage: "",
+		});
 		let patientUserDTO = { allergenId: allergen.Id, patientId: this.state.id };
 		console.log(patientUserDTO);
-		Axios.post(BASE_URL + "/api/users/patient-allergens", patientUserDTO, { headers: { Authorization: getAuthHeader() } })
+		Axios.post(BASE_URL + "/api/users/patient-allergens", patientUserDTO, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
-				let allergens = [...this.state.userAllergens];
-				allergens.push(allergen);
-				this.setState({ userAllergens: allergens });
+				if (res.status === 400) {
+					this.setState({
+						hiddenAllergenFailAlert: false,
+						failAllergenHeader: "Bad request",
+						failAllergenMessage: "Bad request when adding allergen.",
+					});
+				} else if (res.status === 500) {
+					this.setState({
+						hiddenAllergenFailAlert: false,
+						failAllergenHeader: "Internal server error",
+						failAllergenMessage: "Server error.",
+					});
+				} else if (res.status === 200) {
+					let allergens = [...this.state.userAllergens];
+					allergens.push(allergen);
+					this.setState({
+						userAllergens: allergens,
+						hiddenAllergenSuccessAlert: false,
+						successAllergenHeader: "Success",
+						successAllergenMessage: "Allergen succesfully added.",
+					});
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -305,7 +395,7 @@ class UserProfilePage extends Component {
 							errorPasswordHeader: "Internal server error",
 							errorPasswordMessage: "Server error.",
 						});
-					} else {
+					} else if (res.status === 204) {
 						this.setState({
 							hiddenSuccessAlert: false,
 							successHeader: "Success",
@@ -333,6 +423,18 @@ class UserProfilePage extends Component {
 		this.setState({ hiddenSuccessAlert: true });
 	};
 
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
+	handleCloseAllergenAlertFail = () => {
+		this.setState({ hiddenAllergenFailAlert: true });
+	};
+
+	handleCloseAllergenAlertSuccess = () => {
+		this.setState({ hiddenAllergenSuccessAlert: true });
+	};
+
 	render() {
 		if (this.state.redirect) return <Redirect push to="/login" />;
 
@@ -347,6 +449,12 @@ class UserProfilePage extends Component {
 						header={this.state.successHeader}
 						message={this.state.successMessage}
 						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
 					/>
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
 						User information
@@ -612,6 +720,14 @@ class UserProfilePage extends Component {
 					</div>
 				</div>
 				<AllergensModal
+					hiddenAllergenSuccessAlert={this.state.hiddenAllergenSuccessAlert}
+					successAllergenHeader={this.state.successAllergenHeader}
+					successAllergenMessage={this.state.successAllergenMessage}
+					handleCloseAllergenAlertSuccess={this.handleCloseAllergenAlertSuccess}
+					hiddenAllergenFailAlert={this.state.hiddenAllergenFailAlert}
+					failAllergenHeader={this.state.failAllergenHeader}
+					failAllergenMessage={this.state.failAllergenMessage}
+					handleCloseAllergenAlertFail={this.handleCloseAllergenAlertFail}
 					userAllergens={this.state.userAllergens}
 					show={this.state.openModal}
 					onAllergenRemove={this.handleAlergenRemove}
@@ -633,13 +749,6 @@ class UserProfilePage extends Component {
 					changePassword={this.changePassword}
 					onCloseModal={this.handlePasswordModalClose}
 					header="Change password"
-				/>
-				<ModalDialog
-					show={this.state.openSuccessModal}
-					href="/"
-					onCloseModal={this.handleSuccessModalClose}
-					header="Successful"
-					text="Your information is changed succesfully."
 				/>
 			</React.Fragment>
 		);

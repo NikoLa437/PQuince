@@ -39,7 +39,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	boolean removeAllergen(AllergenUserDTO allergenUserDTO);
 	
-	void updatePatient(UUID patientId,UserInfoChangeDTO patientInfoChangeDTO);
+	void updatePatient(UserInfoChangeDTO patientInfoChangeDTO);
 	
 	List<IdentifiableDTO<StaffGradeDTO>> findAllStaffWithAvgGradeByStaffType(StaffType staffType);
 	

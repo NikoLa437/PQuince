@@ -153,7 +153,7 @@ public class AuthenticationController {
 		
 		try {
 			userService.changePassword(passwordChanger.oldPassword, passwordChanger.newPassword);
-			return new ResponseEntity<>(HttpStatus.ACCEPTED);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (BadCredentialsException e){
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		} catch (IllegalArgumentException e) {
