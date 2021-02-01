@@ -95,7 +95,13 @@ class DermatologistsPage extends Component {
     }
 
     showPharmacies = (id) => {
-        Axios.get(BASE_URL + "/api/pharmacy")
+        Axios.get(BASE_URL + "/api/users/pharmacies-where-dermatologist-work",{
+            params:{
+                dermatologistId:id
+            },
+            headers: { Authorization: getAuthHeader() }
+            
+        })
 			.then((res) => {
 				this.setState({ pharmaciesForDermatologist: res.data });
 				console.log(res.data);

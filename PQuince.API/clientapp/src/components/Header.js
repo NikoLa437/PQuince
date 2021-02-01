@@ -55,17 +55,13 @@ class Header extends Component {
 									</li>
 								</ul>
 							</li>
-							<li className="drop-down">
-								<a href="#">Pharmacy</a>
-								<ul>
-									<li>
-										<a href="/pharmacy">Profile</a>
-									</li>
-									<li>
-										<a href="/dermatologists">Dermatologist</a>
-									</li>
-								</ul>
+							<li>
+								<a href="/pharmacy">Pharmacy</a>
 							</li>
+							<li>
+								<a href="/dermatologists">Dermatologist</a>
+							</li>
+							
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#" className="appointment-btn scrollto" style={myStyle}>
 									Make an Appointment

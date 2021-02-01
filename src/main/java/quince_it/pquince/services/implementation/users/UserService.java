@@ -34,6 +34,8 @@ import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.security.exception.ResourceConflictException;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
@@ -49,7 +51,9 @@ import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentS
 import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
+import quince_it.pquince.services.implementation.pharmacy.PharmacyService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
+import quince_it.pquince.services.implementation.util.pharmacy.PharmacyMapper;
 import quince_it.pquince.services.implementation.util.users.UserMapper;
 
 @Service
@@ -75,6 +79,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private AllergenService allergenService;
+	
+	@Autowired
+	private PharmacyService pharmacyService;
 
 	@Autowired
 	private AuthorityService authorityService;
@@ -494,6 +501,19 @@ public class UserService implements IUserService{
 		userRepository.save(user);
 		
 	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacyDTO>> getPharmaciesWhereDermatologistWork(UUID dermatologistId) {
+		try {
+			Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
+			List<IdentifiableDTO<PharmacyDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyDTO>>();
+			dermatologist.getPharmacies().forEach((p) -> pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(p)));
+			return pharmacies;
+		}catch(Exception e) {
+			return null;
+		}
+	}
+	
 
 
 

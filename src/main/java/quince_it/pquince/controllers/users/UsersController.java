@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
@@ -220,6 +222,21 @@ public class UsersController {
 		try {
 			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findAllDermatologistForEmplooyeToPharmacy(pharmacyId);
 			return new ResponseEntity<>(dermatologist,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/pharmacies-where-dermatologist-work") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> getPharmciesWhereDermatologistWork(@RequestParam UUID dermatologistId) {
+	  
+		try {
+			List<IdentifiableDTO<PharmacyDTO>> pharmacies = userService.getPharmaciesWhereDermatologistWork(dermatologistId);
+			return new ResponseEntity<>(pharmacies,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 		} catch (Exception e) {
