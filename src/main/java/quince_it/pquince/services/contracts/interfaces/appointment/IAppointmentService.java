@@ -52,7 +52,7 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	
 	List<IdentifiableDTO<AppointmentDTO>> getCreatedAppointmentsByDermatologist(UUID dermatologistId);
 	
-	boolean reserveAppointment(UUID appointmentId);
+	void reserveAppointment(UUID appointmentId) throws AppointmentTimeOverlappingWithOtherAppointmentException;
 	
 	void cancelAppointment(UUID appointmentId) throws AuthorizationServiceException;
 

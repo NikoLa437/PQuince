@@ -28,6 +28,8 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
+import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 
@@ -156,24 +158,38 @@ public class AppointmentController {
 	@PreAuthorize("hasRole('PATIENT')")
 	@CrossOrigin
 	public ResponseEntity<?> reserveAppointment(@RequestBody EntityIdDTO appointmentId) {
-		boolean isSuccesfull = appointmentService.reserveAppointment(appointmentId.getId());
-		
-		if(isSuccesfull) return new ResponseEntity<>(appointmentId,HttpStatus.CREATED);
-		
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		try {
+			appointmentService.reserveAppointment(appointmentId.getId());
+			return new ResponseEntity<>(appointmentId,HttpStatus.CREATED);
+		} catch (AppointmentTimeOverlappingWithOtherAppointmentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (AuthorizationServiceException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}		
 	}
 	
 	@PostMapping("/reserve-appointment")
 	@PreAuthorize("hasRole('PATIENT')")
 	@CrossOrigin
-	public ResponseEntity<UUID> reserveConsultationAppointment(@RequestBody ConsultationRequestDTO requestDTO) {
+	public ResponseEntity<?> reserveConsultationAppointment(@RequestBody ConsultationRequestDTO requestDTO) {
 		try {
 			UUID appointmentId = appointmentService.createConsultation(requestDTO);
 			return new ResponseEntity<>(appointmentId, HttpStatus.CREATED);
+		} catch (AppointmentTimeOverlappingWithOtherAppointmentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (AuthorizationServiceException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (AlreadyBeenScheduledConsultationException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} 
 		
 	}
 	

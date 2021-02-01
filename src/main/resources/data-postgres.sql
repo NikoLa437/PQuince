@@ -20,7 +20,7 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-13eb-ae93-0242ac130002',true, 'exampla31@example.com','Radoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Bikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788',true, 'pharmacyadmin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 
-insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',1,152);
+insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',3,152);
 insert into patient (id, penalty, points) values ('23793162-52d3-11eb-ae93-0242ac130002',0,2);
 
 insert into user_authority (user_id, authority_id) values ('22793162-52d3-11eb-ae93-0242ac130002', '7852aa5e-7040-4d99-8255-537a0b226c75');

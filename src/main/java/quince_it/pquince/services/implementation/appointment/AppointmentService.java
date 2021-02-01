@@ -159,27 +159,24 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public boolean reserveAppointment(UUID appointmentId) {
-		
-		try {
-			UUID patientId = userService.getLoggedUserId();
-			
-			Appointment appointment = appointmentRepository.findById(appointmentId).get();
-			Patient patient = patientRepository.findById(patientId).get();
+	public void reserveAppointment(UUID appointmentId) throws AppointmentTimeOverlappingWithOtherAppointmentException {
 
-			CanReserveAppointment(appointment, patient);
-			
-			appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
-			appointment.setPatient(patient);
-			appointment.setPriceToPay(loyalityProgramService.getDiscountAppointmentPriceForPatient(appointment.getPrice(), AppointmentType.EXAMINATION));
-			
-			appointmentRepository.save(appointment);
+		UUID patientId = userService.getLoggedUserId();
+		
+		Appointment appointment = appointmentRepository.findById(appointmentId).get();
+		Patient patient = patientRepository.findById(patientId).get();
+
+		CanReserveAppointment(appointment, patient);
+		
+		appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
+		appointment.setPatient(patient);
+		appointment.setPriceToPay(loyalityProgramService.getDiscountAppointmentPriceForPatient(appointment.getPrice(), AppointmentType.EXAMINATION));
+		
+		appointmentRepository.save(appointment);
+		try {
 			emailService.sendAppointmentReservationNotificationAsync(appointment, "dr.");
-			
-			return true;
-		} catch (Exception e) {
+		} catch (MessagingException e) {
 			e.printStackTrace();
-			return false;
 		}
 	}
 
@@ -193,7 +190,7 @@ public class AppointmentService implements IAppointmentService{
 		
 		if (!(appointment.getStartDateTime().after(new Date()) &&
 				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED))))
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Bad request");
 	}
 
 	@Override
@@ -533,6 +530,9 @@ public class AppointmentService implements IAppointmentService{
 																						appointment.getPatient().getId()) != null)
 			
 			throw new AlreadyBeenScheduledConsultationException("Cannot schedule appointment at same pharmacist at same time more than once");
+	
+		if (!(appointment.getStartDateTime().after(new Date())))
+				throw new IllegalArgumentException("Bad request");
 	}
 
 	private boolean doesPatientHaveAppointmentInDesiredTime(Appointment appointment, Patient patient) {
