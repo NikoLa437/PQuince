@@ -308,6 +308,10 @@ class PharmaciesPage extends Component {
 			});
 	};
 
+	handleClickOnPharmacy = (id) =>{
+		window.location.href = "pharmacy/" + id
+	}
+
 	handleSortByGradeDescending = () => {
 		let URL = BASE_URL + "/api/pharmacy";
 
@@ -477,7 +481,7 @@ class PharmaciesPage extends Component {
 					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.pharmacies.map((pharmacy) => (
-								<tr id={pharmacy.Id} key={pharmacy.Id} onClick={this.handle}>
+								<tr id={pharmacy.Id} key={pharmacy.Id} onClick={() => this.handleClickOnPharmacy(pharmacy.Id)}>
 									<td width="130em">
 										<img className="img-fluid" src={PharmacyLogo} width="70em" />
 									</td>

@@ -216,7 +216,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/dermatologist-for-pharmacy/{pharmacyId}") 
-	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@PreAuthorize("hasRole('PATIENT')")
 	@CrossOrigin
 	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getDermatologistForPharmacy(@PathVariable UUID pharmacyId) {
 	  

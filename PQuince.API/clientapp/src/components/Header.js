@@ -56,7 +56,7 @@ class Header extends Component {
 								</ul>
 							</li>
 							<li>
-								<a href="/pharmacy">Pharmacy</a>
+								<a href="/pharmacy/cafeddee-56cb-11eb-ae93-0242ac130002">Pharmacy</a>
 							</li>
 							<li>
 								<a href="/dermatologists">Dermatologist</a>

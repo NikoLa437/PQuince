@@ -1,6 +1,6 @@
 import "./App.css";
 import HomePage from "./pages/HomePage";
-import { BrowserRouter as Router, Link, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import UserProfilePage from "./pages/UserProfilePage";
@@ -56,7 +56,6 @@ function App() {
 				<Link exact to="/drugs-reservation-history" path="/drugs-reservation-history" component={PatientsDrugReservationHistory} />
 				<Link exact to="/drugs" path="/drugs" component={DrugReservation} />
 				<Link exact to="/admin-complaints" path="/admin-complaints" component={AdminComplaints} />
-				<Link exact to="/pharmacy" path="/pharmacy" component={PharmacyProfilePage} />
 				<Link exact to="/reserve-appointment" path="/reserve-appointment" component={Appointments} />
 				<Link exact to="/patients-appointments" path="/patients-appointments" component={PatientsAppointments} />
 				<Link exact to="/dermatologist-history" path="/dermatologist-history" component={HistoryDermatologistAppointments} />
@@ -67,6 +66,8 @@ function App() {
 				<Link exact to="/loyalty-program" path="/loyalty-program" component={LoyaltyProgram} />
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
 				<Link exact to="/observe-consultations-history" path="/observe-consultations-history" component={ObservePatientsCosultationHistory} />
+				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
+
 			</Switch>
 		</Router>
 	);
