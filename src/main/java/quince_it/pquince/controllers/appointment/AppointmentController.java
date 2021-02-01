@@ -152,6 +152,7 @@ public class AppointmentController {
 			UUID appointmentId = appointmentService.createConsultation(requestDTO);
 			return new ResponseEntity<>(appointmentId, HttpStatus.CREATED);
 		} catch (Exception e) {
+			e.printStackTrace();
 			 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		

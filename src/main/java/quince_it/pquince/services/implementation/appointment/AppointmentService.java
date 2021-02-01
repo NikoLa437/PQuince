@@ -33,6 +33,7 @@ import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestD
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
+import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
@@ -193,7 +194,6 @@ public class AppointmentService implements IAppointmentService{
 			if(!canAppointmentBeCanceled(appointment.getStartDateTime())) return false;
 			
 			appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
-			appointment.setPatient(null);
 			appointmentRepository.save(appointment);
 	
 			return true;
@@ -443,7 +443,7 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException {
+	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException {
 		
 		long time = requestDTO.getStartDateTime().getTime();
 		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
@@ -451,7 +451,7 @@ public class AppointmentService implements IAppointmentService{
 		
 		Appointment appointment = createConsultationAppointmentFromDTO(requestDTO, endDateTime);
 		
-		if(!CanCreateConsultation(appointment)) throw new AuthorizationServiceException("Too many penalty points");
+		CanCreateConsultation(appointment);
 		
 		appointmentRepository.save(appointment);
 		try {
@@ -463,8 +463,15 @@ public class AppointmentService implements IAppointmentService{
 		return appointment.getId();
 	}
 	
-	private boolean CanCreateConsultation(Appointment appointment) {
-		return appointment.getPatient().getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"));
+	private void CanCreateConsultation(Appointment appointment) throws AlreadyBeenScheduledConsultationException {
+		if(appointment.getPatient().getPenalty() >= Integer.parseInt(env.getProperty("max_penalty_count")))
+			throw new AuthorizationServiceException("Too many penalty points");
+
+		if(appointmentRepository.findConsultationsByAppointmentTimePharmacistAndPatient(appointment.getStartDateTime(),
+																						appointment.getStaff().getId(),
+																						appointment.getPatient().getId()) != null)
+			
+			throw new AlreadyBeenScheduledConsultationException("Cannot schedule appointment at same pharmacist at same time more than once");
 	}
 
 	private Appointment createConsultationAppointmentFromDTO(ConsultationRequestDTO requestDTO, Date endDateTime) {

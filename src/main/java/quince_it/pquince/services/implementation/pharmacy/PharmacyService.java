@@ -128,9 +128,15 @@ public class PharmacyService implements IPharmacyService {
 	@Override
 	public List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
 		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
-		
-		if((pharmacyFiltrationDTO.getGradeFrom() == 0 && pharmacyFiltrationDTO.getGradeTo() == 0) || (pharmacyFiltrationDTO.getGradeFrom() == 0 && pharmacyFiltrationDTO.getGradeTo() > 0))
-			pharmacies = findByNameAndCity(pharmacyFiltrationDTO.getName(), pharmacyFiltrationDTO.getCity());
+		List<IdentifiableDTO<PharmacyGradeDTO>> tempPharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+
+		if(pharmacyFiltrationDTO.getGradeFrom() == 0) {
+			tempPharmacies = findByNameAndCity(pharmacyFiltrationDTO.getName(), pharmacyFiltrationDTO.getCity());
+			for(IdentifiableDTO<PharmacyGradeDTO> pharmacy : tempPharmacies) {
+				if(pharmacy.EntityDTO.getGrade() <= pharmacyFiltrationDTO.getGradeTo() || pharmacyFiltrationDTO.getGradeTo() == 0)
+					pharmacies.add(pharmacy);
+			}
+		}
 		else
 			pharmacies = pharmacyFeedbackService.findByNameCityAndGrade(pharmacyFiltrationDTO);
 		
