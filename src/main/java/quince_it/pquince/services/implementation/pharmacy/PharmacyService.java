@@ -50,8 +50,6 @@ public class PharmacyService implements IPharmacyService {
 	
 		return pharmacies;
 	}
-	
-
 
 	@Override
 	public IdentifiableDTO<PharmacyDTO> findById(UUID id) {
@@ -166,7 +164,6 @@ public class PharmacyService implements IPharmacyService {
 
 		return pharmacies;
 	}
-
 
 
 	@Override

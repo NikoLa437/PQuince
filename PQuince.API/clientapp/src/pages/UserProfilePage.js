@@ -8,6 +8,7 @@ import PasswordChangeModal from "../components/PasswordChangeModal";
 import ModalDialog from "../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
 import getAuthHeader from "../GetHeader";
+import { Redirect } from "react-router-dom";
 
 const mapState = {
 	center: [44, 21],
@@ -38,7 +39,10 @@ class UserProfilePage extends Component {
 		openSuccessModal: false,
 		userAllergens: [],
 		patientPoints: "",
+		patientPenalties: "",
 		loyalityCategoryColor: "#1977cc",
+		hiddenEditInfo: true,
+		redirect: false,
 	};
 
 	constructor(props) {
@@ -49,43 +53,51 @@ class UserProfilePage extends Component {
 	onYmapsLoad = (ymaps) => {
 		this.ymaps = ymaps;
 
-		this.ymaps
-			.geocode([this.state.address.latitude, this.state.address.longitude], {
-				results: 1,
-			})
-			.then(function (res) {
-				var firstGeoObject = res.geoObjects.get(0);
-				document.getElementById("suggest").setAttribute("value", firstGeoObject.getAddressLine());
-				console.log(firstGeoObject.getAddressLine());
-			});
+		if (this.state.address !== "") {
+			console.log(this.state);
+			this.ymaps
+				.geocode([this.state.address.latitude, this.state.address.longitude], {
+					results: 1,
+				})
+				.then(function (res) {
+					var firstGeoObject = res.geoObjects.get(0);
+					document.getElementById("suggest").setAttribute("value", firstGeoObject.getAddressLine());
+					console.log(firstGeoObject.getAddressLine());
+				});
 
-		new this.ymaps.SuggestView(this.addressInput.current, {
-			provider: {
-				suggest: (request, options) => this.ymaps.suggest(request),
-			},
-		});
+			new this.ymaps.SuggestView(this.addressInput.current, {
+				provider: {
+					suggest: (request, options) => this.ymaps.suggest(request),
+				},
+			});
+		}
 	};
 
 	componentDidMount() {
 		this.addressInput = React.createRef();
 
-		Axios.get(BASE_URL + "/api/users/patient", { headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/users/patient", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
-				this.setState({
-					id: res.data.Id,
-					email: res.data.EntityDTO.email,
-					name: res.data.EntityDTO.name,
-					surname: res.data.EntityDTO.surname,
-					address: res.data.EntityDTO.address,
-					phoneNumber: res.data.EntityDTO.phoneNumber,
-					userAllergens: res.data.EntityDTO.allergens,
-					patientPoints: res.data.EntityDTO.points,
-					loyalityCategory: res.data.EntityDTO.category,
-				});
+				if (res.status !== 401) {
+					this.setState({
+						id: res.data.Id,
+						email: res.data.EntityDTO.email,
+						name: res.data.EntityDTO.name,
+						surname: res.data.EntityDTO.surname,
+						address: res.data.EntityDTO.address,
+						phoneNumber: res.data.EntityDTO.phoneNumber,
+						userAllergens: res.data.EntityDTO.allergens,
+						patientPoints: res.data.EntityDTO.points,
+						patientPenalties: res.data.EntityDTO.penalty,
+						loyalityCategory: res.data.EntityDTO.category,
+					});
 
-				if (this.state.loyalityCategory === "SILVER") this.setState({ loyalityCategoryColor: "#808080" });
-				else if (this.state.loyalityCategory === "GOLD") this.setState({ loyalityCategoryColor: "#FFCC00" });
+					if (this.state.loyalityCategory === "SILVER") this.setState({ loyalityCategoryColor: "#808080" });
+					else if (this.state.loyalityCategory === "GOLD") this.setState({ loyalityCategoryColor: "#FFCC00" });
+				} else {
+					this.setState({ redirect: true });
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -179,7 +191,7 @@ class UserProfilePage extends Component {
 					Axios.put(BASE_URL + "/api/users/" + this.state.id, userDTO, { headers: { Authorization: getAuthHeader() } })
 						.then((res) => {
 							console.log("Success");
-							this.setState({ openSuccessModal: true });
+							this.setState({ hiddenEditInfo: true, openSuccessModal: true });
 						})
 						.catch((err) => {
 							console.log(err);
@@ -189,11 +201,11 @@ class UserProfilePage extends Component {
 	};
 
 	handleAllergenModal = () => {
-		this.setState({ openModal: true });
+		this.setState({ hiddenEditInfo: true, openModal: true });
 	};
 
 	handlePasswordModal = () => {
-		this.setState({ openPasswordModal: true });
+		this.setState({ hiddenEditInfo: true, openPasswordModal: true });
 	};
 
 	handleAlergenRemove = (allergen) => {
@@ -231,7 +243,10 @@ class UserProfilePage extends Component {
 	};
 
 	changePassword = (oldPassword, newPassword, newPasswordRetype) => {
+		console.log(oldPassword, newPassword, newPasswordRetype);
+
 		this.setState({
+			hiddenEditInfo: true,
 			oldPasswordEmptyError: "none",
 			newPasswordEmptyError: "none",
 			newPasswordRetypeEmptyError: "none",
@@ -246,10 +261,26 @@ class UserProfilePage extends Component {
 			this.setState({ newPasswordRetypeEmptyError: "initial" });
 		} else if (newPasswordRetype !== newPassword) {
 			this.setState({ newPasswordRetypeNotSameError: "initial" });
+		} else {
+			let passwordChangeDTO = { oldPassword, newPassword };
+			Axios.post(BASE_URL + "/auth/change-password", passwordChangeDTO, { headers: { Authorization: getAuthHeader() } })
+				.then((res) => {
+					this.setState({ openPasswordModal: false });
+					console.log(res);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
 		}
 	};
 
+	handleEditInfoClick = () => {
+		this.setState({ hiddenEditInfo: false });
+	};
+
 	render() {
+		if (this.state.redirect) return <Redirect push to="/login" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
@@ -259,60 +290,17 @@ class UserProfilePage extends Component {
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
 						User information
 					</h5>
-
-					<div className="row section-design">
-						<div className="col-lg-8 mx-auto">
-							<br />
+					<div className="row mt-5">
+						<div className="col shadow p-3 bg-white rounded">
+							<h5 className=" text-center text-uppercase">Personal Information</h5>
 							<form id="contactForm" name="sentMessage">
-								<div className="control-group">
-									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Loyality category:{" "}
-											</div>
-											<div
-												className="form-col ml-2 rounded pr-2 pl-2"
-												style={{
-													color: "white",
-													background: this.state.loyalityCategoryColor,
-													fontSize: "1.5em",
-												}}
-											>
-												{" "}
-												{this.state.loyalityCategory}{" "}
-											</div>
-										</div>
-									</div>
-								</div>
-								<br />
-								<div className="control-group">
-									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Number of points:{" "}
-											</div>
-											<div
-												className="form-col ml-2 rounded pr-2 pl-2"
-												style={{
-													color: "white",
-													background: "#1977cc",
-													fontSize: "1.5em",
-												}}
-											>
-												{" "}
-												{this.state.patientPoints}{" "}
-											</div>
-										</div>
-									</div>
-								</div>
-								<br />
 								<div className="control-group">
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Email address:</label>
 										<input
 											readOnly
 											placeholder="Email address"
-											className="form-control"
+											className="form-control-plaintext"
 											id="name"
 											type="text"
 											onChange={this.handleEmailChange}
@@ -324,8 +312,9 @@ class UserProfilePage extends Component {
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Name:</label>
 										<input
+											readOnly={this.state.hiddenEditInfo}
+											className={!this.state.hiddenEditInfo === false ? "form-control-plaintext" : "form-control"}
 											placeholder="Name"
-											className="form-control"
 											type="text"
 											onChange={this.handleNameChange}
 											value={this.state.name}
@@ -339,8 +328,9 @@ class UserProfilePage extends Component {
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Surname:</label>
 										<input
+											readOnly={this.state.hiddenEditInfo}
+											className={!this.state.hiddenEditInfo === false ? "form-control-plaintext" : "form-control"}
 											placeholder="Surname"
-											className="form-control"
 											type="text"
 											onChange={this.handleSurnameChange}
 											value={this.state.surname}
@@ -353,7 +343,13 @@ class UserProfilePage extends Component {
 								<div className="control-group">
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Address:</label>
-										<input className="form-control" id="suggest" ref={this.addressInput} placeholder="Address" />
+										<input
+											readOnly={this.state.hiddenEditInfo}
+											className={!this.state.hiddenEditInfo === false ? "form-control-plaintext" : "form-control"}
+											id="suggest"
+											ref={this.addressInput}
+											placeholder="Address"
+										/>
 									</div>
 									<YMaps
 										query={{
@@ -379,7 +375,8 @@ class UserProfilePage extends Component {
 										<label>Phone number:</label>
 										<input
 											placeholder="Phone number"
-											className="form-control"
+											readOnly={this.state.hiddenEditInfo}
+											className={!this.state.hiddenEditInfo === false ? "form-control-plaintext" : "form-control"}
 											type="text"
 											onChange={this.handlePhoneNumberChange}
 											value={this.state.phoneNumber}
@@ -389,7 +386,7 @@ class UserProfilePage extends Component {
 										Phone number must be entered.
 									</div>
 								</div>
-								<div className="form-group text-center">
+								<div className="form-group text-center" hidden={this.state.hiddenEditInfo}>
 									<button
 										style={{ background: "#1977cc", marginTop: "15px" }}
 										onClick={this.handleChangeInfo}
@@ -404,10 +401,19 @@ class UserProfilePage extends Component {
 
 								<div className="form-group">
 									<div className="form-group controls mb-0 pb-2">
-										<div className="form-row">
-											<div className="form-col">
+										<div className="form-row justify-content-center">
+											<div className="form-col" hidden={!this.state.hiddenEditInfo}>
 												<button
-													style={{ marginTop: "15px" }}
+													onClick={this.handleEditInfoClick}
+													className="btn btn-outline-primary btn-xl"
+													id="sendMessageButton"
+													type="button"
+												>
+													Edit Info
+												</button>
+											</div>
+											<div className="form-col ml-3">
+												<button
 													onClick={this.handleAllergenModal}
 													className="btn btn-outline-primary btn-xl"
 													id="sendMessageButton"
@@ -418,7 +424,6 @@ class UserProfilePage extends Component {
 											</div>
 											<div className="form-col ml-3">
 												<button
-													style={{ marginTop: "15px" }}
 													onClick={this.handlePasswordModal}
 													className="btn btn-outline-primary btn-xl"
 													id="sendMessageButton"
@@ -431,6 +436,73 @@ class UserProfilePage extends Component {
 									</div>
 								</div>
 							</form>
+						</div>
+
+						<div className="col offset-1 shadow p-3  bg-white rounded">
+							<h5 className="text-center text-uppercase">Profile Information</h5>
+
+							<div className="control-group mt-4">
+								<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+									<div className="form-row">
+										<div className="form-col" style={{ fontSize: "1.5em" }}>
+											Loyality category:{" "}
+										</div>
+										<div
+											className="form-col ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: this.state.loyalityCategoryColor,
+												fontSize: "1.5em",
+											}}
+										>
+											{" "}
+											{this.state.loyalityCategory}{" "}
+										</div>
+									</div>
+								</div>
+							</div>
+							<br />
+							<div className="control-group">
+								<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+									<div className="form-row">
+										<div className="form-col" style={{ fontSize: "1.5em" }}>
+											Number of points:{" "}
+										</div>
+										<div
+											className="form-col ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: "#1977cc",
+												fontSize: "1.5em",
+											}}
+										>
+											{" "}
+											{this.state.patientPoints}{" "}
+										</div>
+									</div>
+								</div>
+							</div>
+							<br />
+							<div className="control-group">
+								<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+									<div className="form-row">
+										<div className="form-col" style={{ fontSize: "1.5em" }}>
+											Number of penalty:{" "}
+										</div>
+										<div
+											className="form-col ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: "#8b0000",
+												fontSize: "1.5em",
+											}}
+										>
+											{" "}
+											{this.state.patientPenalties}{" "}
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -50,12 +50,16 @@ public class PharmacyController {
 		
 	@GetMapping
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAll() {
-		return new ResponseEntity<>(pharmacyService.findAllPharmaciesWithGrades(),HttpStatus.OK);
+		try {
+			return new ResponseEntity<>(pharmacyService.findAllPharmaciesWithGrades(),HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@CrossOrigin
 	@PostMapping
-	@PreAuthorize("hasRole('PATIENT')")
+	@PreAuthorize("hasRole('PATIENT')") //????
 	public ResponseEntity<UUID> addPharmacy(@RequestBody PharmacyDTO pharmacyDTO) {
 		
 		return new ResponseEntity<>(pharmacyService.create(pharmacyDTO) ,HttpStatus.CREATED);
@@ -64,13 +68,22 @@ public class PharmacyController {
 	@CrossOrigin
 	@GetMapping("/find-by-drug/{drugId}")
 	public ResponseEntity<List<IdentifiablePharmacyDrugPriceAmountDTO>> findPharnaciesWithPriceForDrug(@PathVariable UUID drugId) {
-		return new ResponseEntity<>(drugService.findByDrugId(drugId),HttpStatus.OK);
+		try {
+			return new ResponseEntity<>(drugService.findByDrugId(drugId),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@CrossOrigin
 	@GetMapping("/find-by-drug-in-pharmacy")
-	public ResponseEntity<IdentifiablePharmacyDrugPriceAmountDTO> findPharnaciesWithPriceForDrug(@RequestParam UUID drugId,@RequestParam UUID pharmacyId) {
-		return new ResponseEntity<>(drugService.findByDrugInPharmacy(drugId, pharmacyId),HttpStatus.OK);
+	public ResponseEntity<IdentifiablePharmacyDrugPriceAmountDTO> findPharmaciesWithPriceForDrug(@RequestParam UUID drugId,@RequestParam UUID pharmacyId) {
+		try {
+			return new ResponseEntity<>(drugService.findByDrugInPharmacy(drugId, pharmacyId),HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	
@@ -155,7 +168,7 @@ public class PharmacyController {
 			
 			return new ResponseEntity<>(pharmacies, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	

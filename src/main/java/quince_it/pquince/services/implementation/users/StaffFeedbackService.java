@@ -51,13 +51,10 @@ public class StaffFeedbackService implements IStaffFeedbackService{
 	}
 
 	@Override
-	public void create(StaffFeedbackDTO entityDTO) {
-		
-		//TODO : get logged patient
-		
+	public void create(StaffFeedbackDTO entityDTO) {		
 		try {
-			
-			Patient patient = patientRepository.findById(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")).get();
+			UUID patientId = userService.getLoggedUserId();
+			Patient patient = patientRepository.findById(patientId).get();
 			
 			if(!CanPatientGiveFeedback(patient.getId(), entityDTO.getStaffId())) throw new FeedbackNotAllowedException();
 			
@@ -77,11 +74,10 @@ public class StaffFeedbackService implements IStaffFeedbackService{
 	}
 
 	@Override
-	public void update(StaffFeedbackDTO entityDTO) {
-		//TODO : get logged patient
-		
+	public void update(StaffFeedbackDTO entityDTO) {		
 		try {
-			Patient patient = patientRepository.findById(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")).get();
+			UUID patientId = userService.getLoggedUserId();
+			Patient patient = patientRepository.findById(patientId).get();
 			Staff staff = staffRepository.findById(entityDTO.getStaffId()).get();
 			
 			StaffFeedback staffFeedback = staffFeedbackRepository.findById(new StaffFeedbackId(staff, patient)).get();

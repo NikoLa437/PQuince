@@ -1,9 +1,12 @@
 package quince_it.pquince.controllers.appointment;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,10 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 
@@ -32,6 +40,20 @@ public class AppointmentController {
 
 	@Autowired
 	private IAppointmentService appointmentService;
+	
+	@PostMapping("/create-appointment-for-dermatologist")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> createAppointment(@RequestBody AppointmentCreateDTO appointmentDTO ) {
+		try {
+			if(appointmentService.createTerminForDermatologist(appointmentDTO)!=null)
+				return new ResponseEntity<>(HttpStatus.OK);
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	@GetMapping("/dermatologist/pending/find-by-patient")
 	@PreAuthorize("hasRole('PATIENT')")
@@ -175,5 +197,13 @@ public class AppointmentController {
 	@GetMapping("/patient/{patientId}")
 	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatient(@PathVariable UUID patientId) {
 		return new ResponseEntity<>(appointmentService.getDermatologistAppointmentsByPatient(patientId),HttpStatus.OK);
+	}
+	
+	@GetMapping("/getFreePeriod")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<List<AppointmentPeriodResponseDTO>> getFreePeriods(@RequestParam UUID dermatologistId,@RequestParam UUID pharmacyId,@RequestParam Date date,@RequestParam int duration) {
+		AppointmentRequestDTO appointmentRequestDTO = new AppointmentRequestDTO(dermatologistId,pharmacyId,date,duration, false);
+		return new ResponseEntity<>(appointmentService.getFreePeriods(appointmentRequestDTO),HttpStatus.OK);
 	}
 }

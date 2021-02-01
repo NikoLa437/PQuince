@@ -9,6 +9,7 @@ import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
@@ -23,6 +24,8 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	IdentifiableDTO<UserDTO> findByEmail ( String email );
 	
 	UUID createPatient(UserRequestDTO entityDTO);
+	
+	void changePassword(String oldPassword, String newPassword);
 	
 	UUID getLoggedUserId();
 	
@@ -66,6 +69,10 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 
 	UUID createSupplier(UserRequestDTO entityDTO);
 
+
+	boolean removeDermatologistFromPharmacy(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO);
+
+	List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologistForEmplooyeToPharmacy(UUID pharmacyId);
 
 
 }

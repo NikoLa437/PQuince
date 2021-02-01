@@ -5,12 +5,18 @@ import Axios from "axios";
 import { BASE_URL } from "../constants.js";
 import { Button } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
+import HeadingAlert from "../components/HeadingAlert";
 
 class LoginPage extends Component {
 	state = {
+		errorHeader: "",
+		errorMessage: "",
+		hiddenErrorAlert: true,
 		email: "",
 		password: "",
 		redirect: false,
+		emailError: "none",
+		passwordError: "none",
 	};
 	handleEmailChange = (event) => {
 		this.setState({ email: event.target.value });
@@ -20,20 +26,45 @@ class LoginPage extends Component {
 	};
 
 	handleLogin = () => {
-		let loginDTO = { username: this.state.email, password: this.state.password };
-		console.log(loginDTO);
-		Axios.post(BASE_URL + "/auth/login", loginDTO)
-			.then((res) => {
-				console.log("Success");
-				console.log(res.data);
-				localStorage.setItem("keyToken", res.data.accessToken);
-				localStorage.setItem("keyRole", JSON.stringify(res.data.roles));
-				this.setState({ redirect: true });
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+		this.setState({ hiddenErrorAlert: true, emailError: "none", passwordError: "none" });
+
+		if (this.validateForm()) {
+			let loginDTO = { username: this.state.email, password: this.state.password };
+			console.log(loginDTO);
+			Axios.post(BASE_URL + "/auth/login", loginDTO, { validateStatus: () => true })
+				.then((res) => {
+					if (res.status === 401) {
+						this.setState({ errorHeader: "Bad credentials!", errorMessage: "Wrong username or password.", hiddenErrorAlert: false });
+					} else if (res.status === 500) {
+						this.setState({ errorHeader: "Internal server error!", errorMessage: "Server error.", hiddenErrorAlert: false });
+					} else {
+						localStorage.setItem("keyToken", res.data.accessToken);
+						localStorage.setItem("keyRole", JSON.stringify(res.data.roles));
+						this.setState({ redirect: true });
+					}
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
 	};
+
+	validateForm = () => {
+		if (this.state.email === "") {
+			this.setState({ emailError: "inline" });
+			return false;
+		} else if (this.state.password === "") {
+			this.setState({ passwordError: "inline" });
+			return false;
+		}
+
+		return true;
+	};
+
+	handleCloseAlert = () => {
+		this.setState({ hiddenErrorAlert: true });
+	};
+
 	render() {
 		if (this.state.redirect) return <Redirect push to="/" />;
 		return (
@@ -42,6 +73,12 @@ class LoginPage extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenErrorAlert}
+						header={this.state.errorHeader}
+						message={this.state.errorMessage}
+						handleCloseAlert={this.handleCloseAlert}
+					/>
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
 						Login
 					</h5>
@@ -61,6 +98,9 @@ class LoginPage extends Component {
 											value={this.state.email}
 										/>
 									</div>
+									<div className="text-danger" style={{ display: this.state.emailError }}>
+										Email must be entered.
+									</div>
 								</div>
 
 								<div className="control-group">
@@ -73,6 +113,9 @@ class LoginPage extends Component {
 											onChange={this.handlePasswordChange}
 											value={this.state.password}
 										/>
+									</div>
+									<div className="text-danger" style={{ display: this.state.passwordError }}>
+										Password must be entered.
 									</div>
 								</div>
 
