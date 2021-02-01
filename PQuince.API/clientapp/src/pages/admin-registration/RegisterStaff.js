@@ -28,6 +28,9 @@ class RegisterStaff extends Component {
 		phoneError: "none",
 		emailNotValid: "none",
 		openModal: false,
+		pharmacies:[],
+		selectedPharmacy:null,
+		pharmacy:"",
 		coords: [],
 		selectValue:"dermathologist",
 	};
@@ -36,7 +39,18 @@ class RegisterStaff extends Component {
 		super(props);
 		this.addressInput = React.createRef();
 	}
+	
+	componentDidMount() {
 
+		Axios.get(BASE_URL + "/api/pharmacy")
+			.then((res) => {
+				this.setState({ pharmacies: res.data });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
 	onYmapsLoad = (ymaps) => {
 		this.ymaps = ymaps;
 		new this.ymaps.SuggestView(this.addressInput.current, {
@@ -49,7 +63,10 @@ class RegisterStaff extends Component {
 	handleEmailChange = (event) => {
 		this.setState({ email: event.target.value });
 	};
-
+	handlePharmacyChange = (event) => {
+		this.setState({ pharmacy: event.target.value });
+	};
+	
 	handlePasswordChange = (event) => {
 		this.setState({ password: event.target.value });
 	};
@@ -109,7 +126,13 @@ class RegisterStaff extends Component {
 	handleModalClose = () => {
 		this.setState({ openModal: false });
 	};
-
+	
+	onPharmacyChange  = (pharmacy) => {
+		this.state.selectedPharmacy = pharmacy;
+		console.log(pharmacy, "PHARMACy");
+	
+	};
+	
 	handleSignUp = () => {
 		let street;
 		let city;
@@ -139,9 +162,14 @@ class RegisterStaff extends Component {
 					phoneNumber: this.state.phoneNumber,
 					password: this.state.password,
 				};
+				let pharmacyDTO = {
+					name: this.state.selectedPharmacy.EntityDTO.name,
+					address: this.state.selectedPharmacy.EntityDTO.address,
+					description: this.state.selectedPharmacy.EntityDTO.description,
+					consultationPrice: this.state.selectedPharmacy.EntityDTO.consultationPrice,
+				};
 				
-				if (this.validateForm(userDTO)) {
-				
+			
 					if(this.state.selectValue == "dermathologist"){
 							
 						Axios.post(BASE_URL + "/auth/signup-dermathologist", userDTO)
@@ -154,8 +182,9 @@ class RegisterStaff extends Component {
 							});
 					}
 					if(this.state.selectValue == "pharmacyadmin"){
-							
-						Axios.post(BASE_URL + "/auth/signup-pharmacyadmin", userDTO)
+						console.log("USOOO");
+						console.log(this.state.selectedPharmacy.Id);
+						Axios.post(BASE_URL + "/auth/signup-pharmacyadmin/" + this.state.selectedPharmacy.Id, userDTO)
 							.then((res) => {
 								console.log("Success");
 								this.setState({ openModal: true });
@@ -163,6 +192,7 @@ class RegisterStaff extends Component {
 							.catch((err) => {
 								console.log(err);
 							});
+						
 					}
 					if(this.state.selectValue == "sysadmin"){
 							
@@ -186,7 +216,6 @@ class RegisterStaff extends Component {
 								console.log(err);
 							});
 					}
-				}
 			});
 	};
 	
@@ -223,17 +252,16 @@ class RegisterStaff extends Component {
 										</select>	
 									</div>
 								</div>
-								<div className="control-group"hidden={this.state.selectValue !== "pharmacyadmin"}>
+								<div className="control-group" hidden={this.state.selectValue !== "pharmacyadmin"}>
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
-										<label>Staff type:</label><br></br>
+										<label>Pharmacy:</label><br></br>
 										<select
-									        onChange={this.handleSelectChange} 
-											value={this.state.selectValue} 
-									     >
-										  <option value="dermathologist">Dermathologist</option>
-										  <option value="pharmacyadmin">Pharmacy admin</option>
-										  <option value="supplier">Supplier</option>
-										  <option value="sysadmin">System admin</option>
+									       onChange={this.handlePharmacyChange}
+											value={this.state.pharmacy}
+									     >{this.state.pharmacies.map((pharmacy) => (
+										  <option onClick={this.onPharmacyChange(pharmacy)}  id={pharmacy.Id} key={pharmacy.Id} value={pharmacy.EntityDTO.name}>{pharmacy.EntityDTO.name},{pharmacy.EntityDTO.address.street}, {pharmacy.EntityDTO.address.city},{" "}
+											{pharmacy.EntityDTO.address.country}</option>
+										))}	
 										</select>	
 									</div>
 								</div>
