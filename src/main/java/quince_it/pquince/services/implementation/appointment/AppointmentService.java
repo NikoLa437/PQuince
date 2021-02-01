@@ -29,6 +29,7 @@ import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentPeriodResponseDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDTO;
@@ -84,7 +85,7 @@ public class AppointmentService implements IAppointmentService{
 	}
 	
 	@Override
-	public UUID createTerminForDermatologist(AppointmentDTO appointmentDTO) {
+	public UUID createTerminForDermatologist(AppointmentCreateDTO appointmentDTO) {
 		// TODO NIKOLA : srediti try catch blok
 		try {
 			Pharmacy pharmacy = pharmacyRepository.getOne(appointmentDTO.getPharmacy());

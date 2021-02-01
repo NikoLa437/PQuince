@@ -4,13 +4,14 @@ import java.util.Date;
 import java.util.UUID;
 
 import quince_it.pquince.entities.appointment.AppointmentStatus;
-import quince_it.pquince.services.contracts.dto.users.StaffDTO;
-import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
-public class AppointmentDTO {
+public class AppointmentCreateDTO {
+	private UUID staff;
 	
-private IdentifiableDTO<StaffDTO> staff;
+	private UUID pharmacy;
 	
+	private UUID patient;
+
 	private Date startDateTime;
     
     private Date endDateTime;
@@ -19,11 +20,13 @@ private IdentifiableDTO<StaffDTO> staff;
     
     private AppointmentStatus appointmentStatus;
     
-    public AppointmentDTO() {}
+    public AppointmentCreateDTO() {}
 
-	public AppointmentDTO(IdentifiableDTO<StaffDTO> staff,AppointmentStatus appointmentStatus, Date startDateTime, Date endDateTime, double price) {
+	public AppointmentCreateDTO(UUID staff,UUID pharmacy, UUID patient,AppointmentStatus appointmentStatus, Date startDateTime, Date endDateTime, double price) {
 		super();
 		this.staff = staff;
+		this.pharmacy=pharmacy;
+		this.patient=patient;
 		this.appointmentStatus = appointmentStatus;
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
@@ -42,6 +45,15 @@ private IdentifiableDTO<StaffDTO> staff;
 		return endDateTime;
 	}
 	
+	
+
+	public UUID getPatient() {
+		return patient;
+	}
+
+	public void setPatient(UUID patient) {
+		this.patient = patient;
+	}
 
 	public void setEndDateTime(Date endDateTime) {
 		this.endDateTime = endDateTime;
@@ -54,13 +66,21 @@ private IdentifiableDTO<StaffDTO> staff;
 	public void setPrice(double price) {
 		this.price = price;
 	}
-
-	public IdentifiableDTO<StaffDTO> getStaff() {
+	
+    public UUID getStaff() {
 		return staff;
 	}
 
-	public void setStaff(IdentifiableDTO<StaffDTO> staff) {
+	public void setStaff(UUID staff) {
 		this.staff = staff;
+	}
+	
+	public UUID getPharmacy() {
+		return pharmacy;
+	}
+
+	public void setPharmacy(UUID pharmacy) {
+		this.pharmacy = pharmacy;
 	}
 
 	public AppointmentStatus getAppointmentStatus() {
