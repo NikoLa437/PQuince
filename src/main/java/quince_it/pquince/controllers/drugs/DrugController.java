@@ -49,10 +49,15 @@ public class DrugController {
 	@PostMapping("/reserve")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<UUID> reserveDrug(@RequestBody DrugReservationRequestDTO drugReservationRequestDTO) {
+		try {
+			UUID reservationId = drugReservationService.create(drugReservationRequestDTO);
+			return new ResponseEntity<>(reservationId ,HttpStatus.CREATED);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
-		UUID reservationId = drugReservationService.create(drugReservationRequestDTO);
-		
-		return new ResponseEntity<>(reservationId ,HttpStatus.CREATED);
 	}
 	
 	@CrossOrigin
@@ -110,7 +115,13 @@ public class DrugController {
 	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> cancelReservation(@RequestBody EntityIdDTO reservationId) {
-		drugReservationService.cancelDrugReservation(reservationId.getId());
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		try {
+			if(drugReservationService.cancelDrugReservation(reservationId.getId()))
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

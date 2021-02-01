@@ -3,6 +3,7 @@ import { Button, Modal } from "react-bootstrap";
 import CapsuleLogo from "../static/capsuleLogo.png";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import HeadingAlert from "./HeadingAlert";
 
 class DrugReservationModal extends Component {
 	state = {
@@ -31,6 +32,12 @@ class DrugReservationModal extends Component {
 					<Modal.Title id="contained-modal-title-vcenter">{this.props.header}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
+					<HeadingAlert
+						hidden={this.props.hiddenFailAlert}
+						header={this.props.failHeader}
+						message={this.props.failMessage}
+						handleCloseAlert={this.props.handleCloseAlertFail}
+					/>
 					<form className="ml-3">
 						<div className="control-group">
 							<div className="form-group controls" style={{ color: "#6c757d", opacity: 1 }}>
