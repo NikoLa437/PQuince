@@ -58,6 +58,22 @@ public class DrugInstanceDTO {
 		this.drugKind = drugKind;
 		this.loyalityPoints = loyalityPoints;
 	}
+	
+	public DrugInstanceDTO(String name, String code, String drugInstanceName,
+			FormatDrug drugFormat, double quiantity, String sideEffects, String recommendedAmount,
+			int loyalityPoints, boolean onReciept, DrugKind drugKind) {
+		super();
+		this.name = name;
+		this.code = code;
+		this.drugInstanceName = drugInstanceName;
+		this.drugFormat = drugFormat;
+		this.quantity = quiantity;
+		this.sideEffects = sideEffects;
+		this.recommendedAmount = recommendedAmount;
+		this.onReciept = onReciept;
+		this.drugKind = drugKind;
+		this.loyalityPoints = loyalityPoints;
+	}
 
 	public String getName() {
 		return name;

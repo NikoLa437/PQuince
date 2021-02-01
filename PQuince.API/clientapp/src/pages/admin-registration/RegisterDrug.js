@@ -4,6 +4,7 @@ import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import ModalDialog from "../../components/ModalDialog";
+import getAuthHeader from "../../GetHeader";
 
 const mapState = {
 	center: [44, 21],
@@ -26,10 +27,14 @@ class RegisterDrug extends Component {
 		drugFormats: [],
 		drugs: [],
 		drugReplacements: [],
+		manufacturers: [],
+		manufacturer:"",
 		ingredients: [],
 		sideEffects: "",
+		onReciept: "",
 		recommendAmount: "",
 		drugIngredient: "",
+		selectedManufacturer: null,
 		nameError: "none",
 		consulationPriceError: "none",
 		openModal: false,
@@ -37,6 +42,15 @@ class RegisterDrug extends Component {
 	};
 	
 	componentDidMount() {
+
+		Axios.get(BASE_URL + "/api/drug/manufacturers")
+			.then((res) => {
+				this.setState({ manufacturers: res.data });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 
 		Axios.get(BASE_URL + "/api/drug/drugkind")
 			.then((res) => {
@@ -75,6 +89,16 @@ class RegisterDrug extends Component {
 		super(props);
 	}
 
+	onManufacturerChange  = (manufacturer) => {
+		this.state.selectedManufacturer = manufacturer;
+		console.log(manufacturer, "manufacturer");
+	
+	};
+	
+	handleModalClose = () => {
+		this.setState({ openModal: false });
+	};
+	
 	addIngredient = (event) => {
 		
 		if (this.state.drugIngredient === "") {
@@ -121,6 +145,18 @@ class RegisterDrug extends Component {
 		document.getElementById("demo").innerHTML = "";
   		
 	};
+	
+	resetReplacement = (event) => {
+  		event.preventDefault();
+  		this.setState({drugReplacements: []});
+		document.getElementById("replacement").innerHTML = "";
+  		
+	};
+
+	handleOnRecieptChange = (event) => {
+		console.log(document.querySelector('.messageCheckbox').checked, "RECCC");
+		this.setState({ onReciept: event.target.value })
+	};
 
 	handleDrugIngredientChange = (event) => {
 		this.setState({ drugIngredient: event.target.value });
@@ -160,6 +196,7 @@ class RegisterDrug extends Component {
 	
 	handleDrugFormatChange = (event) => {
 		this.setState({ drugFormat: event.target.value });
+		console.log(event.target.value);
 	};
 	
 	handleDrugChange = (event) => {
@@ -198,24 +235,68 @@ class RegisterDrug extends Component {
 			name: this.state.name,
 			code: this.state.drugCode,
 			drugInstanceName: this.state.instanceName,
-			manufacturer: null,
 			drugFormat: this.state.drugFormat,
 			quantity: this.state.quantity,
 			sideEffects: this.state.sideEffects,
 			recommendedAmount: this.state.recommendAmount,
-			replacingDrugs: null,
-			allergens: null,
-			ingredients: null,
-			onReciept: this.state.onReciept,
-			drugKind: this.state.drugKind,
 			loyalityPoints: this.state.loyaltyPoints,
+			onReciept: document.querySelector('.messageCheckbox').checked,
+			drugKind: this.state.drugKind,
 		};
 		
 		console.log(drugInstanceDTO);
 		
+		Axios.put(BASE_URL + "/api/drug", drugInstanceDTO, { headers: { Authorization: getAuthHeader()}})
+			.then((res) => {
+			
+				for (const [index, value] of this.state.ingredients.entries()) {
+					let ingredientDTO = {
+						name: this.state.ingredients[index],
+					};
+					
+					Axios.post(BASE_URL + "/api/ingredients", ingredientDTO)
+						.then((res) => {
+							console.log("Success");
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+						
+					Axios.put(BASE_URL + "/api/drug/ingredient/" + res.data, ingredientDTO, { headers: { Authorization: getAuthHeader()}})
+						.then((res) => {
+							console.log("Success");					
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				
+				let drugManufacturerDTO = {
+					drug_id: res.data,
+					manufacturer_id: this.state.selectedManufacturer.Id,
+				}
+				
+				Axios.put(BASE_URL + "/api/drug/manufacturer", drugManufacturerDTO,  { headers: { Authorization: getAuthHeader()}})
+						.then((res) => {
+							console.log("Success");					
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				console.log("Success");
+				this.setState({ openModal: true });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+			
+		
 		
 	};
 	
+	handleManufacturerChange = (event) => {
+		this.setState({ manufacturer: event.target.value });
+	};
 	handleSelectChange  = (event) => {
 		this.setState({ selectValue: event.target.value });
 	};
@@ -314,11 +395,12 @@ class RegisterDrug extends Component {
 										</select>
 										<label>On reciept </label>
 										<input
-											placeholder="Quantity"
+										
+											class="messageCheckbox"
 											type="checkbox"
 											id="name"
-											onChange={this.handleQuantityChange}
-											value={this.state.quantity}
+											onChange={this.handleOnRecieptChange}
+											value={this.state.onReciept}
 										/>
 									</div>
 									
@@ -403,6 +485,11 @@ class RegisterDrug extends Component {
 										>
 											Add replacement
 										</button>
+										<button
+											onClick={this.resetReplacement}
+										>
+											Reset replacement
+										</button>
 										<p id="replacement"></p>
 									</div>
 								</div>
@@ -416,6 +503,21 @@ class RegisterDrug extends Component {
 											value={this.state.drugFormat}
 									     >{this.state.drugFormats.map((format) => (
 										  <option value={format.EntityDTO.type}>{format.EntityDTO.type}</option>
+										))}	
+										</select>
+									</div>
+									
+								</div>
+								
+								<div className="control-group">	
+								
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<label>Drug manufacturer:</label>
+										<select
+									       onChange={this.handleManufacturerChange}
+											value={this.state.manufacturer}
+										  >{this.state.manufacturers.map((manufacturer) => (
+										  <option onClick={this.onManufacturerChange(manufacturer)} value={manufacturer.EntityDTO.name}>{manufacturer.EntityDTO.name}</option>
 										))}	
 										</select>
 									</div>
@@ -463,7 +565,7 @@ class RegisterDrug extends Component {
 					href="/"
 					onCloseModal={this.handleModalClose}
 					header="Successful registration"
-					text="You have successfully registered staff."
+					text="You have successfully registered drug."
 				/>
 			</React.Fragment>
 		);
