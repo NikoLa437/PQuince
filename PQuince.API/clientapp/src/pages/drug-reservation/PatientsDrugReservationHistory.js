@@ -86,7 +86,7 @@ class PatientsDrugReservationHistory extends Component {
 				} else if (resp.status === 500) {
 					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
 				} else if (resp.status === 201) {
-					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully sent." });
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully saved." });
 				}
 				this.setState({ showFeedbackModal: false });
 			})

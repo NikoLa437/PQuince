@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.access.AuthorizationServiceException;
+
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Staff;
@@ -52,7 +54,7 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	
 	boolean reserveAppointment(UUID appointmentId);
 	
-	boolean cancelAppointment(UUID appointmentId);
+	void cancelAppointment(UUID appointmentId) throws AuthorizationServiceException;
 
 	List<IdentifiableDTO<AppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId);
 	

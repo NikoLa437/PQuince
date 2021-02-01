@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.users.StaffFeedbackDTO;
+import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
 
 @RestController
@@ -32,27 +33,38 @@ public class StaffFeedbackController {
 	public ResponseEntity<StaffFeedbackDTO> findByStaffIdAndPatientId(@PathVariable UUID staffId) {
 		try {
 			return new ResponseEntity<>(staffFeedbackService.findByStaffIdAndPatientId(staffId) ,HttpStatus.OK);
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}  catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
 	@PostMapping
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> createFeedback(@RequestBody StaffFeedbackDTO staffFeedbackDTO) {
-		
-		staffFeedbackService.create(staffFeedbackDTO);
-		
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		try {
+			staffFeedbackService.create(staffFeedbackDTO);
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		} catch (FeedbackNotAllowedException e) {
+			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@PutMapping
 	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> updateFeedback(@RequestBody StaffFeedbackDTO staffFeedbackDTO) {
-		
-		staffFeedbackService.update(staffFeedbackDTO);
-		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+		try {
+			staffFeedbackService.update(staffFeedbackDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

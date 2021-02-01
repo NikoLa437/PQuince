@@ -243,30 +243,30 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public boolean cancelAppointment(UUID appointmentId) {
+	public void cancelAppointment(UUID appointmentId) throws AuthorizationServiceException {
 		
-		try {
-			Appointment appointment = appointmentRepository.findById(appointmentId).get();
-			if(!canAppointmentBeCanceled(appointment.getStartDateTime())) return false;
-			
-			appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
-			appointment.setPriceToPay(appointment.getPrice());
-			appointmentRepository.save(appointment);
-	
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		Appointment appointment = appointmentRepository.findById(appointmentId).get();
+		
+		canAppointmentBeCanceled(appointment);
+		
+		appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
+		appointment.setPriceToPay(appointment.getPrice());
+		appointmentRepository.save(appointment);	
+
 	}
 
-	private boolean canAppointmentBeCanceled(Date appointmentStartDateTime) {
+	private void canAppointmentBeCanceled(Appointment appointment) throws AuthorizationServiceException {
 		
-		LocalDateTime ldt = LocalDateTime.ofInstant(appointmentStartDateTime.toInstant(), ZoneId.systemDefault());
+		LocalDateTime ldt = LocalDateTime.ofInstant(appointment.getStartDateTime().toInstant(), ZoneId.systemDefault());
 		ldt = ldt.minusDays(1);
 		
-		if(ldt.isBefore(LocalDateTime.now())) return false;
+		if(ldt.isBefore(LocalDateTime.now())) 
+			throw new IllegalArgumentException();
 		
-		return true;
+		UUID loggedPatientId = userService.getLoggedUserId();
+		
+		if(!appointment.getPatient().getId().equals(loggedPatientId))
+			throw new AuthorizationServiceException("Unauthorized to cancel appointment");
 	}
 
 	@Override

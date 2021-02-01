@@ -51,43 +51,36 @@ public class StaffFeedbackService implements IStaffFeedbackService{
 	}
 
 	@Override
-	public void create(StaffFeedbackDTO entityDTO) {		
-		try {
-			UUID patientId = userService.getLoggedUserId();
-			Patient patient = patientRepository.findById(patientId).get();
-			
-			if(!CanPatientGiveFeedback(patient.getId(), entityDTO.getStaffId())) throw new FeedbackNotAllowedException();
-			
-			Staff staff = staffRepository.findById(entityDTO.getStaffId()).get();
-			
-			StaffFeedback staffFeedback = new StaffFeedback(staff,patient, entityDTO.getGrade());
-			staffFeedbackRepository.save(staffFeedback);
-		}catch (Exception e) {
-		}
+	public void create(StaffFeedbackDTO entityDTO) throws FeedbackNotAllowedException {		
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();
 		
+		CanPatientGiveFeedback(patient.getId(), entityDTO.getStaffId());
+		
+		Staff staff = staffRepository.findById(entityDTO.getStaffId()).get();
+		
+		StaffFeedback staffFeedback = new StaffFeedback(staff,patient, entityDTO.getGrade());
+		staffFeedbackRepository.save(staffFeedback);
 	}
 
 	@Override
-	public boolean CanPatientGiveFeedback(UUID patientId, UUID staffId) {
-		
-		return appointmentRepository.findAllPreviousAppointmentsForPatientForStaff(patientId, staffId).size() > 0;
+	public void CanPatientGiveFeedback(UUID patientId, UUID staffId) throws FeedbackNotAllowedException {
+		if(!(appointmentRepository.findAllPreviousAppointmentsForPatientForStaff(patientId, staffId).size() > 0))
+			throw new FeedbackNotAllowedException();
 	}
 
 	@Override
 	public void update(StaffFeedbackDTO entityDTO) {		
-		try {
-			UUID patientId = userService.getLoggedUserId();
-			Patient patient = patientRepository.findById(patientId).get();
-			Staff staff = staffRepository.findById(entityDTO.getStaffId()).get();
-			
-			StaffFeedback staffFeedback = staffFeedbackRepository.findById(new StaffFeedbackId(staff, patient)).get();
-			staffFeedback.setDate(new Date());
-			staffFeedback.setGrade(entityDTO.getGrade());
-			
-			staffFeedbackRepository.save(staffFeedback);
-			
-		}catch (Exception e) {
-		}
+		
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();
+		Staff staff = staffRepository.findById(entityDTO.getStaffId()).get();
+		
+		StaffFeedback staffFeedback = staffFeedbackRepository.findById(new StaffFeedbackId(staff, patient)).get();
+		staffFeedback.setDate(new Date());
+		staffFeedback.setGrade(entityDTO.getGrade());
+		
+		staffFeedbackRepository.save(staffFeedback);
 	}
 
 	@Override
