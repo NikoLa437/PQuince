@@ -39,49 +39,41 @@ public class DrugFeedbackService implements IDrugFeedbackService{
 	private IUserService userService;
 	
 	@Override
-	public void create(DrugFeedbackDTO entityDTO) {
+	public void create(DrugFeedbackDTO entityDTO) throws FeedbackNotAllowedException {
 		// TODO eReciept check
 		
-		try {
-			UUID patientId = userService.getLoggedUserId();
-			Patient patient = patientRepository.findById(patientId).get();
-			
-			if(!CanPatientGiveFeedback(patient.getId())) throw new FeedbackNotAllowedException();
-			
-			
-			DrugInstance drugInstance = drugInstanceRepository.findById(entityDTO.getDrugId()).get();
-			DrugFeedback drugFeedback = new DrugFeedback(drugInstance,  patient, entityDTO.getGrade());
-
-			drugFeedbackRepository.save(drugFeedback);
-			
-		}catch (Exception e) {
-			// TODO: handle exception
-		}
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();
 		
+		CanPatientGiveFeedback(patient.getId());
+		
+		
+		DrugInstance drugInstance = drugInstanceRepository.findById(entityDTO.getDrugId()).get();
+		DrugFeedback drugFeedback = new DrugFeedback(drugInstance,  patient, entityDTO.getGrade());
+
+		drugFeedbackRepository.save(drugFeedback);
+			
 	}
 
-	private boolean CanPatientGiveFeedback(UUID patientId) {
+	private void CanPatientGiveFeedback(UUID patientId) throws FeedbackNotAllowedException {
 		// TODO eReciept check
-		return drugReservationRepository.findProcessedDrugReservationsForPatient(patientId).size() > 0;
+		
+		if(!(drugReservationRepository.findProcessedDrugReservationsForPatient(patientId).size() > 0))
+			throw new FeedbackNotAllowedException();
 	}
 
 	@Override
 	public void update(DrugFeedbackDTO entityDTO) {		
-		try {
-			UUID patientId = userService.getLoggedUserId();
-			Patient patient = patientRepository.findById(patientId).get();
-			
-			DrugInstance drugInstance = drugInstanceRepository.findById(entityDTO.getDrugId()).get();
-			
-			DrugFeedback drugFeedback  = drugFeedbackRepository.findById(new DrugFeedbackId(drugInstance, patient)).get();
-			drugFeedback.setDate(new Date());
-			drugFeedback.setGrade(entityDTO.getGrade());
-			
-			drugFeedbackRepository.save(drugFeedback);
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();
+		
+		DrugInstance drugInstance = drugInstanceRepository.findById(entityDTO.getDrugId()).get();
+		
+		DrugFeedback drugFeedback  = drugFeedbackRepository.findById(new DrugFeedbackId(drugInstance, patient)).get();
+		drugFeedback.setDate(new Date());
+		drugFeedback.setGrade(entityDTO.getGrade());
+		
+		drugFeedbackRepository.save(drugFeedback);
 	}
 
 	@Override

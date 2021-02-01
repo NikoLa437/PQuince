@@ -101,12 +101,12 @@ class PharmacyPage extends Component {
 											<b>Drug price:</b>{" "}
 											<span style={pharmacy.price !== pharmacy.priceWithDiscount ? { textDecoration: "line-through" } : {}}>
 												{" "}
-												{pharmacy.price}
+												{(Math.round(pharmacy.price * 100) / 100).toFixed(2)}
 											</span>
 											<b> din</b>
 										</div>
 										<div hidden={pharmacy.price === pharmacy.priceWithDiscount}>
-											<b>Drug price with discount:</b> {pharmacy.priceWithDiscount}
+											<b>Drug price with discount:</b> {(Math.round(pharmacy.priceWithDiscount * 100) / 100).toFixed(2)}
 											<b> din</b>
 										</div>
 									</td>

@@ -14,6 +14,7 @@ import org.springframework.mail.MailException;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
@@ -25,6 +26,7 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
+import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
 import quince_it.pquince.services.implementation.util.LocationUtil;
 import quince_it.pquince.services.implementation.util.pharmacy.PharmacyMapper;
 
@@ -42,6 +44,9 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private ILoyaltyProgramService loyalityProgramService;
 	
 	@Override
 	public List<IdentifiableDTO<PharmacyDTO>> findAll() {
@@ -117,17 +122,24 @@ public class PharmacyService implements IPharmacyService {
 		if(pharmacy == null) throw new IllegalArgumentException();
 		
 		double avgGrade = getAvgGradeForPharmacy(pharmacy.getId());
-
-		return new IdentifiableDTO<PharmacyGradePriceDTO>(pharmacy.getId(), new PharmacyGradePriceDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade, pharmacy.getConsultationPrice()));
+		double getDiscountConsultationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION);
+		
+		return new IdentifiableDTO<PharmacyGradePriceDTO>(pharmacy.getId(), new PharmacyGradePriceDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade, pharmacy.getConsultationPrice(), getDiscountConsultationPrice));
 	}
 	
 
 	@Override
 	public List<IdentifiableDTO<PharmacyGradeDTO>> findByNameGradeAndDistance(PharmacyFiltrationDTO pharmacyFiltrationDTO) {
 		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
-		
-		if((pharmacyFiltrationDTO.getGradeFrom() == 0 && pharmacyFiltrationDTO.getGradeTo() == 0) || (pharmacyFiltrationDTO.getGradeFrom() == 0 && pharmacyFiltrationDTO.getGradeTo() > 0))
-			pharmacies = findByNameAndCity(pharmacyFiltrationDTO.getName(), pharmacyFiltrationDTO.getCity());
+		List<IdentifiableDTO<PharmacyGradeDTO>> tempPharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+
+		if(pharmacyFiltrationDTO.getGradeFrom() == 0) {
+			tempPharmacies = findByNameAndCity(pharmacyFiltrationDTO.getName(), pharmacyFiltrationDTO.getCity());
+			for(IdentifiableDTO<PharmacyGradeDTO> pharmacy : tempPharmacies) {
+				if(pharmacy.EntityDTO.getGrade() <= pharmacyFiltrationDTO.getGradeTo() || pharmacyFiltrationDTO.getGradeTo() == 0)
+					pharmacies.add(pharmacy);
+			}
+		}
 		else
 			pharmacies = pharmacyFeedbackService.findByNameCityAndGrade(pharmacyFiltrationDTO);
 		

@@ -3,6 +3,8 @@ import { Button, Modal } from "react-bootstrap";
 import Axios from "axios";
 import { BASE_URL } from "../constants.js";
 import getAuthHeader from "../GetHeader";
+import HeadingSuccessAlert from "./HeadingSuccessAlert.js";
+import HeadingAlert from "./HeadingAlert.js";
 
 class AllergensModal extends Component {
 	state = {
@@ -42,6 +44,18 @@ class AllergensModal extends Component {
 					<Modal.Title id="contained-modal-title-vcenter">{this.props.header}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
+					<HeadingSuccessAlert
+						hidden={this.props.hiddenAllergenSuccessAlert}
+						header={this.props.successAllergenHeader}
+						message={this.props.successAllergenMessage}
+						handleCloseAlert={this.props.handleCloseAllergenAlertSuccess}
+					/>
+					<HeadingAlert
+						hidden={this.props.hiddenAllergenFailAlert}
+						header={this.props.failAllergenHeader}
+						message={this.props.failAllergenMessage}
+						handleCloseAlert={this.props.handleCloseAllergenAlertFail}
+					/>
 					<h4>{this.props.subheader}</h4>
 					<table className="table" style={{ width: "100%" }}>
 						<thead>

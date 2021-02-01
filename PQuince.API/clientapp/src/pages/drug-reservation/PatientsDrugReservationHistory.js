@@ -7,6 +7,8 @@ import Header from "../../components/Header";
 import { NavLink } from "react-router-dom";
 import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 import getAuthHeader from "../../GetHeader";
+import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
+import HeadingAlert from "../../components/HeadingAlert";
 
 class PatientsDrugReservationHistory extends Component {
 	state = {
@@ -16,6 +18,12 @@ class PatientsDrugReservationHistory extends Component {
 		selectedDrugId: "",
 		drugName: "",
 		grade: 0,
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
 	};
 
 	componentDidMount() {
@@ -31,7 +39,7 @@ class PatientsDrugReservationHistory extends Component {
 
 	handleFeedbackClick = (drug) => {
 		console.log(drug);
-		Axios.get(BASE_URL + "/api/drug/feedback/" + drug.Id, { validateStatus: () => true, Authorization: getAuthHeader() })
+		Axios.get(BASE_URL + "/api/drug/feedback/" + drug.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				if (res.status === 404) {
@@ -41,7 +49,7 @@ class PatientsDrugReservationHistory extends Component {
 						drugName: drug.EntityDTO.name,
 						grade: 0,
 					});
-				} else {
+				} else if (res.status === 200) {
 					this.setState({
 						selectedDrugId: drug.Id,
 						showModifyFeedbackModal: true,
@@ -64,13 +72,22 @@ class PatientsDrugReservationHistory extends Component {
 	};
 
 	handleFeedback = () => {
+		this.setState({ hiddenFailAlert: true, failHeader: "", failMessage: "", hiddenSuccessAlert: true, successHeader: "", successMessage: "" });
+
 		let entityDTO = {
 			drugId: this.state.selectedDrugId,
 			date: new Date(),
 			grade: this.state.grade,
 		};
-		Axios.post(BASE_URL + "/api/drug/feedback", entityDTO, { headers: { Authorization: getAuthHeader() } })
+		Axios.post(BASE_URL + "/api/drug/feedback", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
+				if (resp.status === 405) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Drug feedback not allowed." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 201) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully saved." });
+				}
 				this.setState({ showFeedbackModal: false });
 			})
 			.catch((err) => {
@@ -79,13 +96,22 @@ class PatientsDrugReservationHistory extends Component {
 	};
 
 	handleModifyFeedback = () => {
+		this.setState({ hiddenFailAlert: true, failHeader: "", failMessage: "", hiddenSuccessAlert: true, successHeader: "", successMessage: "" });
+
 		let entityDTO = {
 			drugId: this.state.selectedDrugId,
 			date: new Date(),
 			grade: this.state.grade,
 		};
-		Axios.put(BASE_URL + "/api/drug/feedback", entityDTO, { headers: { Authorization: getAuthHeader() } })
+		Axios.put(BASE_URL + "/api/drug/feedback", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
+				if (resp.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Bad request when modifying feedback." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 204) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully modified." });
+				}
 				this.setState({ showModifyFeedbackModal: false });
 			})
 			.catch((err) => {
@@ -97,6 +123,14 @@ class PatientsDrugReservationHistory extends Component {
 		this.setState({ grade });
 	};
 
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
+	handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+	};
+
 	render() {
 		return (
 			<React.Fragment>
@@ -104,6 +138,19 @@ class PatientsDrugReservationHistory extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
+
+					<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">My drug reservations</h5>
 					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
 						<NavLink className="nav-link" exact to="/drugs-reservation">
@@ -128,7 +175,10 @@ class PatientsDrugReservationHistory extends Component {
 											<b>Amount:</b> {drugReservation.EntityDTO.amount}
 										</div>
 										<div>
-											<b>Total price:</b> {drugReservation.EntityDTO.drugPeacePrice * drugReservation.EntityDTO.amount}
+											<b>Total price:</b>{" "}
+											{(
+												Math.round(drugReservation.EntityDTO.drugPeacePrice * drugReservation.EntityDTO.amount * 100) / 100
+											).toFixed(2)}
 											<b> din</b>
 										</div>
 									</td>

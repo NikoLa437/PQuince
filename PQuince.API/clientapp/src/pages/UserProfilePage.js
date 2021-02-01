@@ -9,6 +9,8 @@ import ModalDialog from "../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
 import getAuthHeader from "../GetHeader";
 import { Redirect } from "react-router-dom";
+import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
+import HeadingAlert from "../components/HeadingAlert";
 
 const mapState = {
 	center: [44, 21],
@@ -26,6 +28,9 @@ class UserProfilePage extends Component {
 		address: "",
 		phoneNumber: "",
 		loyalityCategory: "",
+		appointmentDiscount: "",
+		consultationDiscount: "",
+		drugDiscount: "",
 		nameError: "none",
 		surnameError: "none",
 		addressError: "none",
@@ -36,13 +41,27 @@ class UserProfilePage extends Component {
 		newPasswordRetypeNotSameError: "none",
 		openModal: false,
 		openPasswordModal: false,
-		openSuccessModal: false,
 		userAllergens: [],
 		patientPoints: "",
 		patientPenalties: "",
 		loyalityCategoryColor: "#1977cc",
 		hiddenEditInfo: true,
 		redirect: false,
+		hiddenPasswordErrorAlert: true,
+		errorPasswordHeader: "",
+		errorPasswordMessage: "",
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
+		hiddenAllergenSuccessAlert: true,
+		successAllergenHeader: "",
+		successAllergenMessage: "",
+		hiddenAllergenFailAlert: true,
+		failAllergenHeader: "",
+		failAllergenMessage: "",
 	};
 
 	constructor(props) {
@@ -90,7 +109,10 @@ class UserProfilePage extends Component {
 						userAllergens: res.data.EntityDTO.allergens,
 						patientPoints: res.data.EntityDTO.points,
 						patientPenalties: res.data.EntityDTO.penalty,
-						loyalityCategory: res.data.EntityDTO.category,
+						loyalityCategory: res.data.EntityDTO.loyalityProgramDTO.loyalityCategory,
+						appointmentDiscount: res.data.EntityDTO.loyalityProgramDTO.appointmentDiscount,
+						consultationDiscount: res.data.EntityDTO.loyalityProgramDTO.consultationDiscount,
+						drugDiscount: res.data.EntityDTO.loyalityProgramDTO.drugDiscount,
 					});
 
 					if (this.state.loyalityCategory === "SILVER") this.setState({ loyalityCategoryColor: "#808080" });
@@ -158,6 +180,15 @@ class UserProfilePage extends Component {
 	};
 
 	handleChangeInfo = () => {
+		this.setState({
+			hiddenSuccessAlert: true,
+			successHeader: "",
+			successMessage: "",
+			hiddenFailAlert: true,
+			failHeader: "",
+			failMessage: "",
+		});
+
 		let street;
 		let city;
 		let country;
@@ -188,10 +219,21 @@ class UserProfilePage extends Component {
 
 				if (this.validateForm(userDTO)) {
 					console.log(userDTO);
-					Axios.put(BASE_URL + "/api/users/" + this.state.id, userDTO, { headers: { Authorization: getAuthHeader() } })
+					Axios.put(BASE_URL + "/api/users/patient", userDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 						.then((res) => {
-							console.log("Success");
-							this.setState({ hiddenEditInfo: true, openSuccessModal: true });
+							if (res.status === 400) {
+								this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Illegal argument." });
+							} else if (res.status === 500) {
+								this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+							} else if (res.status === 204) {
+								console.log("Success");
+								this.setState({
+									hiddenSuccessAlert: false,
+									successHeader: "Success",
+									successMessage: "You successfully updated your information.",
+									hiddenEditInfo: true,
+								});
+							}
 						})
 						.catch((err) => {
 							console.log(err);
@@ -209,19 +251,50 @@ class UserProfilePage extends Component {
 	};
 
 	handleAlergenRemove = (allergen) => {
+		this.setState({
+			hiddenAllergenSuccessAlert: true,
+			successAllergenHeader: "",
+			successAllergenMessage: "",
+			hiddenAllergenFailAlert: true,
+			failAllergenHeader: "",
+			failAllergenMessage: "",
+		});
+
 		let patientUserDTO = { allergenId: allergen.Id, patientId: this.state.id };
 		console.log(patientUserDTO);
-		Axios.put(BASE_URL + "/api/users/patient-allergens", patientUserDTO, { headers: { Authorization: getAuthHeader() } })
+		Axios.put(BASE_URL + "/api/users/patient-allergens", patientUserDTO, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
-				let allergens = [];
-				console.log(allergens);
-				for (let allerg of this.state.userAllergens) {
-					if (allerg.Id !== allergen.Id) {
-						allergens.push(allerg);
+				if (res.status === 400) {
+					this.setState({
+						hiddenAllergenFailAlert: false,
+						failAllergenHeader: "Bad request",
+						failAllergenMessage: "Bad request when removing allergen.",
+					});
+				} else if (res.status === 500) {
+					this.setState({
+						hiddenAllergenFailAlert: false,
+						failAllergenHeader: "Internal server error",
+						failAllergenMessage: "Server error.",
+					});
+				} else if (res.status === 200) {
+					let allergens = [];
+					console.log(allergens);
+					for (let allerg of this.state.userAllergens) {
+						if (allerg.Id !== allergen.Id) {
+							allergens.push(allerg);
+						}
 					}
+					console.log(allergens);
+					this.setState({
+						userAllergens: allergens,
+						hiddenAllergenSuccessAlert: false,
+						successAllergenHeader: "Success",
+						successAllergenMessage: "Allergen succesfully removed.",
+					});
 				}
-				console.log(allergens);
-				this.setState({ userAllergens: allergens });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -229,13 +302,43 @@ class UserProfilePage extends Component {
 	};
 
 	handleAllergenAdd = (allergen) => {
+		this.setState({
+			hiddenAllergenSuccessAlert: true,
+			successAllergenHeader: "",
+			successAllergenMessage: "",
+			hiddenAllergenFailAlert: true,
+			failAllergenHeader: "",
+			failAllergenMessage: "",
+		});
 		let patientUserDTO = { allergenId: allergen.Id, patientId: this.state.id };
 		console.log(patientUserDTO);
-		Axios.post(BASE_URL + "/api/users/patient-allergens", patientUserDTO, { headers: { Authorization: getAuthHeader() } })
+		Axios.post(BASE_URL + "/api/users/patient-allergens", patientUserDTO, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
-				let allergens = [...this.state.userAllergens];
-				allergens.push(allergen);
-				this.setState({ userAllergens: allergens });
+				if (res.status === 400) {
+					this.setState({
+						hiddenAllergenFailAlert: false,
+						failAllergenHeader: "Bad request",
+						failAllergenMessage: "Bad request when adding allergen.",
+					});
+				} else if (res.status === 500) {
+					this.setState({
+						hiddenAllergenFailAlert: false,
+						failAllergenHeader: "Internal server error",
+						failAllergenMessage: "Server error.",
+					});
+				} else if (res.status === 200) {
+					let allergens = [...this.state.userAllergens];
+					allergens.push(allergen);
+					this.setState({
+						userAllergens: allergens,
+						hiddenAllergenSuccessAlert: false,
+						successAllergenHeader: "Success",
+						successAllergenMessage: "Allergen succesfully added.",
+					});
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -246,11 +349,17 @@ class UserProfilePage extends Component {
 		console.log(oldPassword, newPassword, newPasswordRetype);
 
 		this.setState({
+			hiddenPasswordErrorAlert: true,
+			errorPasswordHeader: "",
+			errorPasswordMessage: "",
 			hiddenEditInfo: true,
 			oldPasswordEmptyError: "none",
 			newPasswordEmptyError: "none",
 			newPasswordRetypeEmptyError: "none",
 			newPasswordRetypeNotSameError: "none",
+			hiddenSuccessAlert: true,
+			successHeader: "",
+			successMessage: "",
 		});
 
 		if (oldPassword === "") {
@@ -263,9 +372,37 @@ class UserProfilePage extends Component {
 			this.setState({ newPasswordRetypeNotSameError: "initial" });
 		} else {
 			let passwordChangeDTO = { oldPassword, newPassword };
-			Axios.post(BASE_URL + "/auth/change-password", passwordChangeDTO, { headers: { Authorization: getAuthHeader() } })
+			Axios.post(BASE_URL + "/auth/change-password", passwordChangeDTO, {
+				validateStatus: () => true,
+				headers: { Authorization: getAuthHeader() },
+			})
 				.then((res) => {
-					this.setState({ openPasswordModal: false });
+					if (res.status === 403) {
+						this.setState({
+							hiddenPasswordErrorAlert: false,
+							errorPasswordHeader: "Bad credentials",
+							errorPasswordMessage: "You entered wrong password.",
+						});
+					} else if (res.status === 400) {
+						this.setState({
+							hiddenPasswordErrorAlert: false,
+							errorPasswordHeader: "Invalid new password",
+							errorPasswordMessage: "Invalid new password.",
+						});
+					} else if (res.status === 500) {
+						this.setState({
+							hiddenPasswordErrorAlert: false,
+							errorPasswordHeader: "Internal server error",
+							errorPasswordMessage: "Server error.",
+						});
+					} else if (res.status === 204) {
+						this.setState({
+							hiddenSuccessAlert: false,
+							successHeader: "Success",
+							successMessage: "You successfully changed your password.",
+							openPasswordModal: false,
+						});
+					}
 					console.log(res);
 				})
 				.catch((err) => {
@@ -278,6 +415,26 @@ class UserProfilePage extends Component {
 		this.setState({ hiddenEditInfo: false });
 	};
 
+	handleCloseAlertPassword = () => {
+		this.setState({ hiddenPasswordErrorAlert: true });
+	};
+
+	handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+	};
+
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
+	handleCloseAllergenAlertFail = () => {
+		this.setState({ hiddenAllergenFailAlert: true });
+	};
+
+	handleCloseAllergenAlertSuccess = () => {
+		this.setState({ hiddenAllergenSuccessAlert: true });
+	};
+
 	render() {
 		if (this.state.redirect) return <Redirect push to="/login" />;
 
@@ -287,6 +444,18 @@ class UserProfilePage extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "8%" }}>
+					<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
 						User information
 					</h5>
@@ -445,27 +614,6 @@ class UserProfilePage extends Component {
 								<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 									<div className="form-row">
 										<div className="form-col" style={{ fontSize: "1.5em" }}>
-											Loyality category:{" "}
-										</div>
-										<div
-											className="form-col ml-2 rounded pr-2 pl-2"
-											style={{
-												color: "white",
-												background: this.state.loyalityCategoryColor,
-												fontSize: "1.5em",
-											}}
-										>
-											{" "}
-											{this.state.loyalityCategory}{" "}
-										</div>
-									</div>
-								</div>
-							</div>
-							<br />
-							<div className="control-group">
-								<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
-									<div className="form-row">
-										<div className="form-col" style={{ fontSize: "1.5em" }}>
 											Number of points:{" "}
 										</div>
 										<div
@@ -503,10 +651,83 @@ class UserProfilePage extends Component {
 									</div>
 								</div>
 							</div>
+							<br />
+							<div className="control-group mt-2">
+								<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+									<div className="form-row">
+										<div className="form-col" style={{ fontSize: "1.5em" }}>
+											Loyality category:{" "}
+										</div>
+										<div
+											className="form-col ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: this.state.loyalityCategoryColor,
+												fontSize: "1.5em",
+											}}
+										>
+											{" "}
+											{this.state.loyalityCategory}{" "}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div className="control-group mt-4">
+								<div className="form-group controls mb-0 pb-2">
+									<div className="form-row" style={{ fontSize: "1.3em" }}>
+										With this loyality program you recieve{" "}
+										<span
+											className="ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: "green",
+												fontSize: "1.3em",
+											}}
+										>
+											{" "}
+											{this.state.drugDiscount}%
+										</span>
+										discount on medicine, <br />
+										<span
+											className="ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: "green",
+												fontSize: "1.3em",
+											}}
+										>
+											{" "}
+											{this.state.appointmentDiscount}%
+										</span>{" "}
+										discount on dermatologist examination and <br />
+										<div
+											className="ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: "green",
+												fontSize: "1.3em",
+											}}
+										>
+											{" "}
+											{this.state.consultationDiscount}%
+										</div>{" "}
+										discount on pharmacist consultation
+									</div>
+								</div>
+							</div>
+							<br />
 						</div>
 					</div>
 				</div>
 				<AllergensModal
+					hiddenAllergenSuccessAlert={this.state.hiddenAllergenSuccessAlert}
+					successAllergenHeader={this.state.successAllergenHeader}
+					successAllergenMessage={this.state.successAllergenMessage}
+					handleCloseAllergenAlertSuccess={this.handleCloseAllergenAlertSuccess}
+					hiddenAllergenFailAlert={this.state.hiddenAllergenFailAlert}
+					failAllergenHeader={this.state.failAllergenHeader}
+					failAllergenMessage={this.state.failAllergenMessage}
+					handleCloseAllergenAlertFail={this.handleCloseAllergenAlertFail}
 					userAllergens={this.state.userAllergens}
 					show={this.state.openModal}
 					onAllergenRemove={this.handleAlergenRemove}
@@ -516,6 +737,10 @@ class UserProfilePage extends Component {
 					subheader="Add or remove patients allergens"
 				/>
 				<PasswordChangeModal
+					handleCloseAlertPassword={this.handleCloseAlertPassword}
+					hiddenPasswordErrorAlert={this.state.hiddenPasswordErrorAlert}
+					errorPasswordHeader={this.state.errorPasswordHeader}
+					errorPasswordMessage={this.state.errorPasswordMessage}
 					oldPasswordEmptyError={this.state.oldPasswordEmptyError}
 					newPasswordEmptyError={this.state.newPasswordEmptyError}
 					newPasswordRetypeEmptyError={this.state.newPasswordRetypeEmptyError}
@@ -524,13 +749,6 @@ class UserProfilePage extends Component {
 					changePassword={this.changePassword}
 					onCloseModal={this.handlePasswordModalClose}
 					header="Change password"
-				/>
-				<ModalDialog
-					show={this.state.openSuccessModal}
-					href="/"
-					onCloseModal={this.handleSuccessModalClose}
-					header="Successful"
-					text="Your information is changed succesfully."
 				/>
 			</React.Fragment>
 		);

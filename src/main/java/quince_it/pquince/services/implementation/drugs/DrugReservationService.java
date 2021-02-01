@@ -62,10 +62,6 @@ public class DrugReservationService implements IDrugReservationService{
 		return null;
 	}
 
-	/*
-	 * Pharmacy pharmacy, DrugInstance drugInstance, Patient patient, int amount,
-	 * Date endDate,double drugPeacePrice
-	 */
 	@Override
 	public UUID create(DrugReservationRequestDTO entityDTO) {
 		
@@ -76,35 +72,30 @@ public class DrugReservationService implements IDrugReservationService{
 															  patient,
 															  entityDTO.getDrugAmount(), entityDTO.getEndDate(), entityDTO.getDrugPrice());
 		
-		if(!CanReserveDrug(drugReservation, patient))
-			throw new IllegalArgumentException();
-		else {
-			drugReservationRepository.save(drugReservation);
-			drugStorageService.reduceAmountOfReservedDrug(entityDTO.getDrugId(), entityDTO.getPharmacyId(), entityDTO.getDrugAmount());
-		}
+		CanReserveDrug(drugReservation, patient);
+		
+		drugReservationRepository.save(drugReservation);
+		drugStorageService.reduceAmountOfReservedDrug(entityDTO.getDrugId(), entityDTO.getPharmacyId(), entityDTO.getDrugAmount());
+		
 		try {
 			emailService.sendDrugReservationNotificaitionAsync(drugReservation);
 		} catch (MailException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		return drugReservation.getId();
 	}
 	
-	private boolean CanReserveDrug(DrugReservation drugReservation,Patient patient) {
+	private void CanReserveDrug(DrugReservation drugReservation,Patient patient) {
 			
-		if(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0
-				&& patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count")))
-			return true;
+		if(!(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0
+				&& patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"))))
+			throw new IllegalArgumentException();
 		
-		return false;
 	}
 
 	@Override
@@ -132,8 +123,7 @@ public class DrugReservationService implements IDrugReservationService{
 			drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
 			
 			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
 			return false;
 		}
 	}

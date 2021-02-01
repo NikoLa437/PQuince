@@ -42,7 +42,7 @@ class PharmacistForPharmacy extends Component {
 										<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 									</div>
 									<div>
-										<b>Consultation price: </b> {this.props.pharmacyPrice}
+										<b>Consultation price: </b> {(Math.round(this.props.pharmacyPrice * 100) / 100).toFixed(2)}
 									</div>
 								</div>
 							</div>
