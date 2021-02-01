@@ -26,6 +26,9 @@ class UserProfilePage extends Component {
 		address: "",
 		phoneNumber: "",
 		loyalityCategory: "",
+		appointmentDiscount: "",
+		consultationDiscount: "",
+		drugDiscount: "",
 		nameError: "none",
 		surnameError: "none",
 		addressError: "none",
@@ -90,7 +93,10 @@ class UserProfilePage extends Component {
 						userAllergens: res.data.EntityDTO.allergens,
 						patientPoints: res.data.EntityDTO.points,
 						patientPenalties: res.data.EntityDTO.penalty,
-						loyalityCategory: res.data.EntityDTO.category,
+						loyalityCategory: res.data.EntityDTO.loyalityProgramDTO.loyalityCategory,
+						appointmentDiscount: res.data.EntityDTO.loyalityProgramDTO.appointmentDiscount,
+						consultationDiscount: res.data.EntityDTO.loyalityProgramDTO.consultationDiscount,
+						drugDiscount: res.data.EntityDTO.loyalityProgramDTO.drugDiscount,
 					});
 
 					if (this.state.loyalityCategory === "SILVER") this.setState({ loyalityCategoryColor: "#808080" });
@@ -445,27 +451,6 @@ class UserProfilePage extends Component {
 								<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 									<div className="form-row">
 										<div className="form-col" style={{ fontSize: "1.5em" }}>
-											Loyality category:{" "}
-										</div>
-										<div
-											className="form-col ml-2 rounded pr-2 pl-2"
-											style={{
-												color: "white",
-												background: this.state.loyalityCategoryColor,
-												fontSize: "1.5em",
-											}}
-										>
-											{" "}
-											{this.state.loyalityCategory}{" "}
-										</div>
-									</div>
-								</div>
-							</div>
-							<br />
-							<div className="control-group">
-								<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
-									<div className="form-row">
-										<div className="form-col" style={{ fontSize: "1.5em" }}>
 											Number of points:{" "}
 										</div>
 										<div
@@ -503,6 +488,71 @@ class UserProfilePage extends Component {
 									</div>
 								</div>
 							</div>
+							<br />
+							<div className="control-group mt-2">
+								<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+									<div className="form-row">
+										<div className="form-col" style={{ fontSize: "1.5em" }}>
+											Loyality category:{" "}
+										</div>
+										<div
+											className="form-col ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: this.state.loyalityCategoryColor,
+												fontSize: "1.5em",
+											}}
+										>
+											{" "}
+											{this.state.loyalityCategory}{" "}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div className="control-group mt-4">
+								<div className="form-group controls mb-0 pb-2">
+									<div className="form-row" style={{ fontSize: "1.3em" }}>
+										With this loyality program you recieve{" "}
+										<span
+											className="ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: "green",
+												fontSize: "1.3em",
+											}}
+										>
+											{" "}
+											{this.state.drugDiscount}%
+										</span>
+										discount on medicine, <br />
+										<span
+											className="ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: "green",
+												fontSize: "1.3em",
+											}}
+										>
+											{" "}
+											{this.state.appointmentDiscount}%
+										</span>{" "}
+										discount on dermatologist examination and <br />
+										<div
+											className="ml-2 rounded pr-2 pl-2"
+											style={{
+												color: "white",
+												background: "green",
+												fontSize: "1.3em",
+											}}
+										>
+											{" "}
+											{this.state.consultationDiscount}%
+										</div>{" "}
+										discount on pharmacist consultation
+									</div>
+								</div>
+							</div>
+							<br />
 						</div>
 					</div>
 				</div>

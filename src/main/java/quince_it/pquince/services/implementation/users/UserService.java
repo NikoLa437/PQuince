@@ -46,6 +46,7 @@ import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
+import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
 import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
@@ -90,6 +91,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private ILoyaltyProgramService loyalityProgramService;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -267,7 +271,8 @@ public class UserService implements IUserService{
 	@Override
 	public IdentifiableDTO<PatientDTO> getPatientById() {	
 		UUID patientId = getLoggedUserId();
-		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(patientId));
+		return UserMapper.MapPatientPersistenceToPatientIdentifiableDTO(patientRepository.getOne(patientId),
+																		loyalityProgramService.getLoggedPatientLoyalityProgram(patientId));
 	}
 	
 	@Override

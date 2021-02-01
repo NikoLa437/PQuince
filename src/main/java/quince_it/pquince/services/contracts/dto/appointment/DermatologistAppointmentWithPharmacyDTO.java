@@ -15,8 +15,8 @@ public class DermatologistAppointmentWithPharmacyDTO extends DermatologistAppoin
 	}
 
 	public DermatologistAppointmentWithPharmacyDTO(IdentifiableDTO<StaffGradeDTO> staff, Date startDateTime,
-			Date endDateTime, double price, IdentifiableDTO<PharmacyDTO> pharmacy) {
-		super(staff, startDateTime, endDateTime, price);
+			Date endDateTime, double price, IdentifiableDTO<PharmacyDTO> pharmacy, double priceWithDiscount) {
+		super(staff, startDateTime, endDateTime, price, priceWithDiscount);
 		this.pharmacy = pharmacy;
 	}
 

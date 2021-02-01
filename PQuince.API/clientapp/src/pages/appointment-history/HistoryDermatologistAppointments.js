@@ -43,8 +43,8 @@ class HistoryDermatologistAppointments extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
-	};			
-				
+	};
+
 	handleComplaintClick = (staff) => {
 		console.log(staff);
 		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
@@ -76,7 +76,7 @@ class HistoryDermatologistAppointments extends Component {
 	handleComplaintChange = (event) => {
 		this.setState({ complaint: event.target.value });
 	};
-	
+
 	handleComplaintModalClose = () => {
 		this.setState({ showComplaintModal: false });
 	};
@@ -104,7 +104,7 @@ class HistoryDermatologistAppointments extends Component {
 				console.log(err);
 			});
 	};
-	
+
 	handleSortByDateAscending = () => {
 		Axios.get(BASE_URL + "/api/appointment/appointment-history/sort-by-date-ascending?appointmentType=EXAMINATION", {
 			headers: { Authorization: getAuthHeader() },
@@ -370,7 +370,7 @@ class HistoryDermatologistAppointments extends Component {
 											})}
 										</div>
 										<div>
-											<b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
+											<b>Price: </b> {appointment.EntityDTO.discountPrice} <b>din</b>
 										</div>
 										<div>
 											<b>Dermatologist: </b>{" "}

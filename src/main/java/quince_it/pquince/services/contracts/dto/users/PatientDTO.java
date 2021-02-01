@@ -4,7 +4,6 @@ import java.util.List;
 
 import quince_it.pquince.entities.users.Address;
 import quince_it.pquince.entities.users.Authority;
-import quince_it.pquince.entities.users.LoyalityCategory;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
@@ -16,16 +15,16 @@ public class PatientDTO extends UserDTO {
 	
 	private List<IdentifiableDTO<AllergenDTO>> allergens;
 	
-	private LoyalityCategory category;
+	private PatientLoyalityProgramDTO loyalityProgramDTO;
 
 	public PatientDTO(String email, String name, String surname, Address address, String phoneNumber, boolean active,
-			List<Authority> authorities, int penalty,List<IdentifiableDTO<AllergenDTO>> allergens, int points, LoyalityCategory category) {
+			List<Authority> authorities, int penalty,List<IdentifiableDTO<AllergenDTO>> allergens, int points, PatientLoyalityProgramDTO loyalityProgramDTO) {
 		
 		super(email, name, surname, address, phoneNumber, active, authorities);
 		this.allergens = allergens;
 		this.penalty = penalty;
 		this.points = points;
-		this.category = category;
+		this.loyalityProgramDTO = loyalityProgramDTO;
 	}
 
 	public int getPenalty() {
@@ -52,11 +51,12 @@ public class PatientDTO extends UserDTO {
 		this.points = points;
 	}
 
-	public LoyalityCategory getCategory() {
-		return category;
+	public PatientLoyalityProgramDTO getLoyalityProgramDTO() {
+		return loyalityProgramDTO;
 	}
 
-	public void setCategory(LoyalityCategory category) {
-		this.category = category;
+	public void setLoyalityProgramDTO(PatientLoyalityProgramDTO loyalityProgramDTO) {
+		this.loyalityProgramDTO = loyalityProgramDTO;
 	}
+
 }

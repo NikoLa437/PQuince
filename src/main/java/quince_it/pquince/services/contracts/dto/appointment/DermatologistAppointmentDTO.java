@@ -15,14 +15,17 @@ public class DermatologistAppointmentDTO {
     
     private double price;
     
+    private double discountPrice;
+    
     public DermatologistAppointmentDTO() {}
 
-	public DermatologistAppointmentDTO(IdentifiableDTO<StaffGradeDTO> staff, Date startDateTime, Date endDateTime, double price) {
+	public DermatologistAppointmentDTO(IdentifiableDTO<StaffGradeDTO> staff, Date startDateTime, Date endDateTime, double price, double discountPrice) {
 		super();
 		this.staff = staff;
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
 		this.price = price;
+		this.discountPrice = discountPrice;
 	}
 
 	public IdentifiableDTO<StaffGradeDTO> getStaff() {
@@ -55,5 +58,13 @@ public class DermatologistAppointmentDTO {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public double getDiscountPrice() {
+		return discountPrice;
+	}
+
+	public void setDiscountPrice(double discountPrice) {
+		this.discountPrice = discountPrice;
 	}
 }

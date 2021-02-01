@@ -76,7 +76,11 @@ class PharmaciesForDatePage extends Component {
 									style={{ cursor: "pointer" }}
 								>
 									<td width="150em">
-										<img className="img-fluid" src={PharmacyLogo} width="90em" />
+										<img
+											className="img-fluid"
+											src={PharmacyLogo}
+											width={pharmacy.EntityDTO.price === pharmacy.EntityDTO.discountPrice ? "90em" : "110em"}
+										/>
 									</td>
 									<td>
 										<div>
@@ -91,7 +95,22 @@ class PharmaciesForDatePage extends Component {
 											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 										<div>
-											<b>Consultation price: </b> {pharmacy.EntityDTO.price} <b> din</b>
+											<b>Consultation price::</b>{" "}
+											<span
+												style={
+													pharmacy.EntityDTO.price !== pharmacy.EntityDTO.discountPrice
+														? { textDecoration: "line-through" }
+														: {}
+												}
+											>
+												{" "}
+												{pharmacy.EntityDTO.price}
+											</span>
+											<b> din</b>
+										</div>
+										<div hidden={pharmacy.EntityDTO.price === pharmacy.EntityDTO.discountPrice}>
+											<b>Consultation price with discount: </b> {pharmacy.EntityDTO.discountPrice}
+											<b> din</b>
 										</div>
 									</td>
 								</tr>

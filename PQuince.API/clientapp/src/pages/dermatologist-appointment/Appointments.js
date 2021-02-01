@@ -204,7 +204,22 @@ class Appointments extends Component {
 											})}
 										</div>
 										<div>
-											<b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
+											<b>Price:</b>{" "}
+											<span
+												style={
+													appointment.EntityDTO.price !== appointment.EntityDTO.discountPrice
+														? { textDecoration: "line-through" }
+														: {}
+												}
+											>
+												{" "}
+												{appointment.EntityDTO.price}
+											</span>
+											<b> din</b>
+										</div>
+										<div hidden={appointment.EntityDTO.price === appointment.EntityDTO.discountPrice}>
+											<b>Price with discount:</b> {appointment.EntityDTO.discountPrice}
+											<b> din</b>
 										</div>
 										<div>
 											<b>Dermatologist: </b>{" "}

@@ -69,7 +69,7 @@ class PatientsAppointments extends Component {
 			grade: appointment.EntityDTO.staff.EntityDTO.grade,
 			startDateTime: appointment.EntityDTO.startDateTime,
 			endDateTime: appointment.EntityDTO.endDateTime,
-			price: appointment.EntityDTO.price,
+			price: appointment.EntityDTO.discountPrice,
 			pharmacyName: appointment.EntityDTO.pharmacy.EntityDTO.name,
 			pharmacyStreet: appointment.EntityDTO.pharmacy.EntityDTO.address.street,
 			pharmacyCity: appointment.EntityDTO.pharmacy.EntityDTO.address.city,
@@ -126,7 +126,7 @@ class PatientsAppointments extends Component {
 											})}
 										</div>
 										<div>
-											<b>Price: </b> {appointment.EntityDTO.price} <b>din</b>
+											<b>Price: </b> {appointment.EntityDTO.discountPrice} <b>din</b>
 										</div>
 										<div>
 											<b>Dermatologist: </b>{" "}
