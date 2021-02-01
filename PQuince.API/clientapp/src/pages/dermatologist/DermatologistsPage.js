@@ -9,6 +9,8 @@ import CreateAppointmentForDermatologistModal from "../../components/CreateAppoi
 import AddDermatologistToPharmacy from "../../components/AddDermatologistToPharmacy";
 import PharmaciesForDermatologistModal from "../../components/PharmaciesForDermatologistModal";
 import getAuthHeader from "../../GetHeader";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 class DermatologistsPage extends Component {
 	state = {
@@ -29,6 +31,8 @@ class DermatologistsPage extends Component {
         pharmaciesForDermatologist:[],
         showPharmaciesModal:false,
     };
+
+
 
     componentDidMount() {
 
@@ -105,30 +109,49 @@ class DermatologistsPage extends Component {
     }
 
     removeDermatologistClick = (id) =>{
-        
-        let removeDermatologistDTO = {
-            pharmacyId : this.state.forPharmacy,
-            dermatologistId: id,
-        };
 
-        Axios
-        .put(BASE_URL + "/api/users/remove-dermatologist-from-pharmacy", removeDermatologistDTO, {
-			headers: { Authorization: getAuthHeader() },
-		}).then((res) =>{
-            console.log(res.data);
+        confirmAlert({
+            message: 'Are you sure to remove dermatologist.',
+            buttons: [
+              {
+                label: 'Yes',
+                onClick: () => {
+                    let removeDermatologistDTO = {
+                        pharmacyId : 'cafeddee-56cb-11eb-ae93-0242ac130202',
+                        dermatologistId: id,
+                    };
             
-            Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202", {
-                headers: { Authorization: getAuthHeader() },
-            }).then((res) => {
-				this.setState({ dermatologists: res.data });
-                console.log(res.data);
-            
-			})
-			.catch((err) => {
-				console.log(err);
-            });
-            
-        }).catch((err) => {console.log(err);});
+                    Axios
+                    .put(BASE_URL + "/api/users/remove-dermatologist-from-pharmacy", removeDermatologistDTO, {
+                        headers: { Authorization: getAuthHeader() },
+                    }).then((res) =>{
+                        console.log(res.data);
+                        
+                        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202", {
+                            headers: { Authorization: getAuthHeader() },
+                        }).then((res) => {
+                            this.setState({ dermatologists: res.data });
+                            console.log(res.data);
+                        
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                        
+                    }).catch((err) => {
+                        alert("Nije moguce obrisati datog dermatologa! ")
+                    });
+                }
+              },
+              {
+                label: 'No',
+                onClick: () => {
+                    
+                }
+              }
+            ]
+        });
+       
     }
 
     hangleFormToogle = () => {

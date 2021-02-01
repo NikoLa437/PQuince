@@ -71,6 +71,9 @@ public class UserService implements IUserService{
 	private DermatologistRepository dermatologistRepository;
 	
 	@Autowired
+	private WorkTimeService workTimeService;
+	
+	@Autowired
 	private AllergenService allergenService;
 
 	@Autowired
@@ -307,11 +310,17 @@ public class UserService implements IUserService{
 	public boolean removeDermatologistFromPharmacy(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
 		//TODO: NIKOLA : Proveriti da li ima zakazane termine dermatolog u apoteci i obrisati radno vreme ukoliko nema 
 		try {
-			Dermatologist dermatologist = dermatologistRepository.getOne(removeDermatologistFromPharmacyDTO.getDermatologistId());
-			dermatologist.removePharmacy(removeDermatologistFromPharmacyDTO.getPharmacyId());
-			
-			dermatologistRepository.save(dermatologist);
-			return true;
+			if(!appointmentService.hasAppointmentInFuture(removeDermatologistFromPharmacyDTO)) {
+				Dermatologist dermatologist = dermatologistRepository.getOne(removeDermatologistFromPharmacyDTO.getDermatologistId());
+				dermatologist.removePharmacy(removeDermatologistFromPharmacyDTO.getPharmacyId());
+				
+				dermatologistRepository.save(dermatologist);
+				
+				workTimeService.removeWorkTimeForDermatologistForPharmacy(removeDermatologistFromPharmacyDTO);
+				return true;
+			}else {
+				return false;
+			}
 		} 
 		catch (EntityNotFoundException e) { return false; } 
 		catch (IllegalArgumentException e) { return false; }

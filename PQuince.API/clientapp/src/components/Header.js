@@ -29,13 +29,13 @@ class Header extends Component {
 
 					<nav className="nav-menu d-none d-lg-block">
 						<ul>
-							<li className="active">
+							<li className="active" hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<a href="/">Home</a>
 							</li>
-							<li>
+							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<a href="/pharmacies">Pharmacies</a>
 							</li>
-							<li>
+							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<a href="/drugs">Drugs</a>
 							</li>
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>

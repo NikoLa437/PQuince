@@ -20,8 +20,11 @@ public class DateRange {
 	
 	public DateRange(Date startDateTime, Date endDateTime) {
 		super();
+
 		this.startDateTime = convertToLocalDateTimeViaInstant(startDateTime);
 		this.endDateTime = convertToLocalDateTimeViaInstant(endDateTime);
+		
+
 	}
 
 	public LocalDateTime getStartDateTime() {
