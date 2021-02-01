@@ -8,6 +8,7 @@ import Axios from "axios";
 import ModalDialog from "../../components/ModalDialog";
 import { NavLink } from "react-router-dom";
 import getAuthHeader from "../../GetHeader";
+import HeadingAlert from "../../components/HeadingAlert";
 
 class ObservePatientsCosultation extends Component {
 	state = {
@@ -24,6 +25,9 @@ class ObservePatientsCosultation extends Component {
 		pharmacyStreet: "",
 		pharmacyCity: "",
 		pharmacyCountry: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
 	};
 
 	componentDidMount() {
@@ -55,13 +59,17 @@ class ObservePatientsCosultation extends Component {
 		Axios.put(
 			BASE_URL + "/api/appointment/cancel-appointment",
 			{ id: appointmentId },
-			{
-				headers: { Authorization: getAuthHeader() },
-			}
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				this.setState({ openModalSuccess: true });
-				console.log(res.data);
+				if (res.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Consultation cannot be canceled." });
+				} else if (res.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (res.status === 204) {
+					this.setState({ openModalSuccess: true });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -91,6 +99,12 @@ class ObservePatientsCosultation extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Consultations</h5>
 					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
 						<NavLink className="nav-link active" exact to="/observe-consultations">

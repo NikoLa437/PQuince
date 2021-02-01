@@ -8,6 +8,8 @@ import { NavLink } from "react-router-dom";
 import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 import getAuthHeader from "../../GetHeader";
 import ComplaintCreateModal from "../../components/ComplaintCreateModal";
+import HeadingAlert from "../../components/HeadingAlert";
+import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 
 class ObservePatientsCosultationHistory extends Component {
 	state = {
@@ -21,6 +23,12 @@ class ObservePatientsCosultationHistory extends Component {
 		StaffName: "",
 		StaffSurame: "",
 		grade: 0,
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
 	};
 
 	componentDidMount() {
@@ -172,7 +180,7 @@ class ObservePatientsCosultationHistory extends Component {
 						StaffSurame: staff.EntityDTO.surname,
 						grade: 0,
 					});
-				} else {
+				} else if (res.status === 200) {
 					this.setState({
 						selectedStaffId: staff.Id,
 						showModifyFeedbackModal: true,
@@ -205,16 +213,24 @@ class ObservePatientsCosultationHistory extends Component {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/pharmacist-history", {
-					headers: { Authorization: getAuthHeader() },
-				})
-					.then((res) => {
-						this.setState({ appointments: res.data, showFeedbackModal: false });
-						console.log(res.data);
+				if (resp.status === 405) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Staff feedback not allowed." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 201) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully saved." });
+					Axios.get(BASE_URL + "/api/appointment/pharmacist-history", {
+						headers: { Authorization: getAuthHeader() },
 					})
-					.catch((err) => {
-						console.log(err);
-					});
+						.then((res) => {
+							this.setState({ appointments: res.data, showFeedbackModal: false });
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				this.setState({ showFeedbackModal: false });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -255,16 +271,24 @@ class ObservePatientsCosultationHistory extends Component {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/pharmacist-history", {
-					headers: { Authorization: getAuthHeader() },
-				})
-					.then((res) => {
-						this.setState({ appointments: res.data, showModifyFeedbackModal: false });
-						console.log(res.data);
+				if (resp.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Bad request when modifying feedback." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 204) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully modified." });
+					Axios.get(BASE_URL + "/api/appointment/pharmacist-history", {
+						headers: { Authorization: getAuthHeader() },
 					})
-					.catch((err) => {
-						console.log(err);
-					});
+						.then((res) => {
+							this.setState({ appointments: res.data, showModifyFeedbackModal: false });
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				this.setState({ showModifyFeedbackModal: false });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -275,6 +299,14 @@ class ObservePatientsCosultationHistory extends Component {
 		this.setState({ grade });
 	};
 
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
+	handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+	};
+
 	render() {
 		return (
 			<React.Fragment>
@@ -282,6 +314,19 @@ class ObservePatientsCosultationHistory extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
+
+					<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Consultations</h5>
 					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
 						<NavLink className="nav-link " exact to="/observe-consultations">
