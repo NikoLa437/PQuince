@@ -24,9 +24,11 @@ import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.PharmacyAdmin;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
+import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.StaffRepository;
@@ -34,6 +36,7 @@ import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.security.exception.ResourceConflictException;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
@@ -51,6 +54,7 @@ import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackServi
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
+import quince_it.pquince.services.implementation.util.pharmacy.PharmacyMapper;
 import quince_it.pquince.services.implementation.util.users.UserMapper;
 
 @Service
@@ -64,6 +68,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private StaffRepository staffRepository;
+	
+	@Autowired
+	private PharmacyRepository pharmacyRepository;
 	
 	@Autowired
 	private PatientRepository patientRepository;
@@ -223,8 +230,12 @@ public class UserService implements IUserService{
 	}
 	
 	@Override
-	public UUID createPharmacyAdmin(UserRequestDTO entityDTO) {
-		Staff staff = CreatePharmacyAdminFromDTO(entityDTO);
+	public UUID createPharmacyAdmin(UserRequestDTO entityDTO, UUID pharmacyId) {
+		//Pharmacy pharmacy = CreatePharmacyFromDTO(pharmacyDTO);
+		Pharmacy pharmacy = pharmacyRepository.getOne(pharmacyId);
+		System.out.println(pharmacy.getName() + pharmacy.getId() + "PHARMACY");
+		PharmacyAdmin staff = CreatePharmacyAdminFromDTO(entityDTO, pharmacy);
+		System.out.println(staff.getName() + staff.getEmail() + "STAFF");
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACYADMIN");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -235,8 +246,8 @@ public class UserService implements IUserService{
 		return staff.getId();
 	}
 	
-	private Staff CreatePharmacyAdminFromDTO(UserRequestDTO staffDTO) {
-		return new Staff(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(), StaffType.PHARMACYADMIN);
+	private PharmacyAdmin CreatePharmacyAdminFromDTO(UserRequestDTO staffDTO,Pharmacy pharmacy) {
+		return new PharmacyAdmin(staffDTO.getEmail(), passwordEncoder.encode(staffDTO.getPassword()), staffDTO.getName(), staffDTO.getSurname(), staffDTO.getAddress(), staffDTO.getPhoneNumber(),pharmacy);
 	}
 	
 	@Override

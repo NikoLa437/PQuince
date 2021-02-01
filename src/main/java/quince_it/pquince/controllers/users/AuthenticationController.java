@@ -17,9 +17,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -27,6 +29,7 @@ import quince_it.pquince.entities.users.User;
 import quince_it.pquince.security.TokenUtils;
 import quince_it.pquince.security.auth.JwtAuthenticationRequest;
 import quince_it.pquince.security.exception.ResourceConflictException;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.dto.users.UserTokenStateDTO;
@@ -110,15 +113,15 @@ public class AuthenticationController {
 		
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}
-	@PostMapping("/signup-pharmacyadmin")
-	public ResponseEntity<UUID> addPharmacyAdmin(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
+	@PostMapping("/signup-pharmacyadmin/{pharmacyId}")
+	public ResponseEntity<UUID> addPharmacyAdmin(@PathVariable UUID pharmacyId, @RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
 
 		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
 		if (existUser != null) {
 			throw new ResourceConflictException(userRequest.getEmail(), "Email already exists");
 		}
-
-		UUID userId = userService.createPharmacyAdmin(userRequest);
+		System.out.println(pharmacyId + "id");
+		UUID userId = userService.createPharmacyAdmin(userRequest,pharmacyId);
 		
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}

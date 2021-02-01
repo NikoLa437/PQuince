@@ -62,6 +62,19 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 			loyaltyProgram.setPointsToEnterSilverCathegory(entityDTO.getPointsToEnterSilverCathegory());
 			loyaltyProgram.setPointsToEnterGoldCathegory(entityDTO.getPointsToEnterGoldCathegory());
 			
+			loyaltyProgram.setAppointmentDiscountRegular(entityDTO.getAppointmentDiscountRegular());
+			loyaltyProgram.setDrugDiscountRegular(entityDTO.getDrugDiscountRegular());
+			loyaltyProgram.setConsultationDiscountRegular(entityDTO.getConsultationDiscountRegular());
+
+			loyaltyProgram.setAppointmentDiscountSilver(entityDTO.getAppointmentDiscountSilver());
+			loyaltyProgram.setDrugDiscountSilver(entityDTO.getDrugDiscountSilver());
+			loyaltyProgram.setConsultationDiscountSilver(entityDTO.getConsultationDiscountSilver());
+			
+
+			loyaltyProgram.setAppointmentDiscountGold(entityDTO.getAppointmentDiscountGold());
+			loyaltyProgram.setDrugDiscountGold(entityDTO.getDrugDiscountGold());
+			loyaltyProgram.setConsultationDiscountGold(entityDTO.getConsultationDiscountGold());
+			
 			loyaltyProgramRepository.save(loyaltyProgram);
 			
 		}catch (Exception e) {

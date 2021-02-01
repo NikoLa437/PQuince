@@ -19,13 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugFormatIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugKindIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFeedbackService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFormatService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IDrugKindIdService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugReservationService;
 
 
@@ -41,11 +45,27 @@ public class DrugController {
 	
 	@Autowired
 	private IDrugFeedbackService drugFeedbackService;
+
+	@Autowired
+	private IDrugKindIdService drugKindIdService;
+	
+	@Autowired
+	private IDrugFormatService drugFormatService;
 	
 	@GetMapping
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findAll() {
 		return new ResponseEntity<>(drugInstanceService.findAll(),HttpStatus.OK);
 	}
+	
+	@CrossOrigin
+	@PutMapping
+	public ResponseEntity<UUID> addDrugInstance(@RequestBody DrugInstanceDTO drugInstanceDTO) {
+		
+		UUID drugInstanceId = drugInstanceService.create(drugInstanceDTO);
+		
+		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
+	}
+	
 	
 	@PostMapping("/reserve")
 	@PreAuthorize("hasRole('PATIENT')")
@@ -80,6 +100,26 @@ public class DrugController {
 	public ResponseEntity<List<IdentifiableDTO<DrugReservationDTO>>> findProcessedDrugReservationsForPatient() {
 		
 		return new ResponseEntity<>(drugReservationService.findProcessedDrugReservationsForPatient() ,HttpStatus.OK);
+	}
+
+	@CrossOrigin
+	@GetMapping("/drugkind")
+	public ResponseEntity<List<IdentifiableDTO<DrugKindIdDTO>>> findAllDrugKinds() {
+		
+		return new ResponseEntity<>(drugKindIdService.findAll() ,HttpStatus.OK);
+	}
+	
+	@CrossOrigin
+	@PostMapping("/drugkind")
+	public ResponseEntity<?>addDrugKind(@RequestBody DrugKindIdDTO drugKindIdDTO) {
+		drugKindIdService.create(drugKindIdDTO);
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	@CrossOrigin
+	@GetMapping("/drugformat")
+	public ResponseEntity<List<IdentifiableDTO<DrugFormatIdDTO>>> findAllDrugFormats() {
+		
+		return new ResponseEntity<>(drugFormatService.findAll() ,HttpStatus.OK);
 	}
 	
 	@GetMapping("/feedback/{drugId}")

@@ -11,6 +11,7 @@ import ComplaintCreateModal from "../../components/ComplaintCreateModal";
 import HeadingAlert from "../../components/HeadingAlert";
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 
+
 class ObservePatientsCosultationHistory extends Component {
 	state = {
 		appointments: [],

@@ -139,4 +139,18 @@ insert into work_time (id, start_date, start_time, end_date, end_time, staff_id,
 insert into work_time (id, end_date,end_time,start_date,start_time,pharmacy_id,staff_id) values ('1d16e66e-669b-49ca-9a7a-1a4f57e7f14e','2021-02-15',17,'2021-01-15',8,'cafeddee-56cb-11eb-ae93-0242ac130202','22345678-52d3-11eb-ae93-0242ac130002');
 insert into work_time (id, end_date,end_time,start_date,start_time,pharmacy_id,staff_id) values ('42b6d408-665e-4329-8879-98a821f4cfbe','2021-01-14',15,'2021-01-01',8,'cafeddee-56cb-11eb-ae93-0242ac130202','22345678-52d3-11eb-ae93-0242ac130002');
 
+insert into drug_kind_id (id, type) values ('33345278-52d3-13eb-ae93-0242ac130002','HERBAL');
+insert into drug_kind_id (id, type) values ('34345278-52d3-13eb-ae93-0242ac130002','BIOLOGICAL');
+insert into drug_kind_id (id, type) values ('35345278-52d3-13eb-ae93-0242ac130002','HOMEOPATIC');
+insert into drug_kind_id (id, type) values ('36345278-52d3-13eb-ae93-0242ac130002','HUMAN');
+insert into drug_kind_id (id, type) values ('37345278-52d3-13eb-ae93-0242ac130002','BLOOD');
+insert into drug_kind_id (id, type) values ('38345278-52d3-13eb-ae93-0242ac130002','RADIOFARMACEUTICAL');
+insert into drug_kind_id (id, type) values ('39345278-52d3-13eb-ae93-0242ac130002','RADIONUCLIDE');
+insert into drug_kind_id (id, type) values ('40345278-52d3-13eb-ae93-0242ac130002','TRADICIONAL');
+
+insert into drug_format_id (id, type) values ('38445278-52d3-13eb-ae93-0242ac130002','VACCINE');
+insert into drug_format_id (id, type) values ('39545278-52d3-13eb-ae93-0242ac130002','CAPSULE');
+insert into drug_format_id (id, type) values ('40645278-52d3-13eb-ae93-0242ac130002','INJECTION');
+
 insert into loyaltyprogram (id, points_for_appointment, points_for_consulting, points_to_enter_regular_cathegory, points_to_enter_silver_cathegory, points_to_enter_gold_cathegory, appointment_discount_regular, drug_discount_regular, consultation_discount_regular, appointment_discount_silver,drug_discount_silver, consultation_discount_silver, appointment_discount_gold,  drug_discount_gold, consultation_discount_gold) values ('791fee27-bb12-4340-9b0a-a7c9ef575278', 5, 4, 10, 50, 100, 2, 2, 2, 5, 6, 7, 15, 20, 25);
+

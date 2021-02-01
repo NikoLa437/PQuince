@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-import quince_it.pquince.entities.drugs.Allergen;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Entity

@@ -16,6 +16,21 @@ public class UserRequestDTO {
 	
 	private String phoneNumber;
 
+	public UserRequestDTO(String email, String password, String name, String surname, Address address,
+			String phoneNumber) {
+		super();
+		this.email = email;
+		this.password = password;
+		this.name = name;
+		this.surname = surname;
+		this.address = address;
+		this.phoneNumber = phoneNumber;
+	}
+
+	public UserRequestDTO() {
+		super();
+	}
+
 	public String getPassword() {
 		return password;
 	}
