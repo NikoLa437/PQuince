@@ -7,6 +7,7 @@ import java.util.UUID;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
@@ -61,8 +62,6 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 
 	UUID createAdmin(UserRequestDTO entityDTO);
 
-	UUID createPharmacyAdmin(UserRequestDTO entityDTO);
-
 	UUID createPharmacist(UserRequestDTO entityDTO);
 
 	UUID createDermatologist(UserRequestDTO userRequest);
@@ -73,6 +72,8 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	boolean removeDermatologistFromPharmacy(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO);
 
 	List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologistForEmplooyeToPharmacy(UUID pharmacyId);
+
+	UUID createPharmacyAdmin(UserRequestDTO entityDTO, UUID pharmacyDTO);
 
 
 }

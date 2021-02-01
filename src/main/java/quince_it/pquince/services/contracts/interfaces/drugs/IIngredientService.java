@@ -6,4 +6,6 @@ import quince_it.pquince.services.contracts.interfaces.IService;
 
 public interface IIngredientService extends IService<IngredientDTO, IdentifiableDTO<IngredientDTO>>{
 
+	IdentifiableDTO<IngredientDTO> findByName(String name);
+
 }
