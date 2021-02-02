@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 class Header extends Component {
 	hasRole = (reqRole) => {
@@ -24,34 +25,34 @@ class Header extends Component {
 			<header id="header" className="fixed-top">
 				<div className="container d-flex align-items-center">
 					<h1 className="logo mr-auto">
-						<a href="/">PQuince</a>
+						<Link to="/">PQuince</Link>
 					</h1>
 
 					<nav className="nav-menu d-none d-lg-block">
 						<ul>
 							<li className="active">
-								<a href="/">Home</a>
+								<Link to="/">Home</Link>
 							</li>
 							<li>
-								<a href="/pharmacies">Pharmacies</a>
+								<Link to="/pharmacies">Pharmacies</Link>
 							</li>
 							<li>
-								<a href="/drugs">Drugs</a>
+								<Link to="/drugs">Drugs</Link>
 							</li>
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#">My record</a>
 								<ul>
 									<li>
-										<a href="/patients-appointments">Dermatologist visits</a>
+										<Link to="/patients-appointments">Dermatologist visits</Link>
 									</li>
 									<li>
-										<a href="/observe-consultations">Consultations with a pharmacist</a>
+										<Link to="/observe-consultations">Consultations with a pharmacist</Link>
 									</li>
 									<li>
-										<a href="/">eReciepts</a>
+										<Link to="/">eReciepts</Link>
 									</li>
 									<li>
-										<a href="/drugs-reservation">Reserved medicines</a>
+										<Link to="/drugs-reservation">Reserved medicines</Link>
 									</li>
 								</ul>
 							</li>
@@ -59,10 +60,10 @@ class Header extends Component {
 								<a href="#">Pharmacy</a>
 								<ul>
 									<li>
-										<a href="/pharmacy">Profile</a>
+										<Link to="/pharmacy">Profile</Link>
 									</li>
 									<li>
-										<a href="/dermatologists">Dermatologist</a>
+										<Link to="/dermatologists">Dermatologist</Link>
 									</li>
 								</ul>
 							</li>
@@ -72,10 +73,10 @@ class Header extends Component {
 								</a>
 								<ul>
 									<li>
-										<a href="/reserve-appointment">Dermatologist</a>
+										<Link to="/reserve-appointment">Dermatologist</Link>
 									</li>
 									<li>
-										<a href="/schedule-consultation">Pharmacist</a>
+										<Link to="/schedule-consultation">Pharmacist</Link>
 									</li>
 								</ul>
 							</li>

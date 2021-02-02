@@ -28,7 +28,7 @@ import ObservePatientsCosultationHistory from "./pages/pharmacist-appointment/Ob
 
 function App() {
 	return (
-		<Router>
+		<Router basename="/clientapp">
 			<Switch>
 				<Link exact to="/" path="/" component={HomePage} />
 				<Link exact to="/login" path="/login" component={LoginPage} />

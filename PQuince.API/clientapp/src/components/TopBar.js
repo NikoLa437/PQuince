@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 class TopBar extends React.Component {
 	handleLogout = () => {
@@ -41,18 +42,18 @@ class TopBar extends React.Component {
 					</div>
 
 					<div className="register-login">
-						<a href="/registration" hidden={this.hasRole("*")}>
+						<Link to="/registration" hidden={this.hasRole("*")}>
 							Register
-						</a>
-						<a href="/login" hidden={this.hasRole("*")}>
+						</Link>
+						<Link  to="/login" hidden={this.hasRole("*")}>
 							Login
-						</a>
-						<a onClick={this.handleLogout} href="/login" hidden={!this.hasRole("*")}>
+						</Link >
+						<Link onClick={this.handleLogout} to="/login" hidden={!this.hasRole("*")}>
 							Logout
-						</a>
-						<a href="/profile" style={myStyle} className="profile" hidden={!this.hasRole("*")}>
+						</Link>
+						<Link to="/profile" style={myStyle} className="profile" hidden={!this.hasRole("*")}>
 							<i className="icofont-user"></i>Profile
-						</a>
+						</Link>
 					</div>
 				</div>
 			</div>
