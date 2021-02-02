@@ -544,6 +544,11 @@ public class UserService implements IUserService{
 	}
 	
 
+	@Override
+	public IdentifiableDTO<UserDTO> getPatientById(UUID patientId) {
+		return UserMapper.MapUserPersistenceToUserIdentifiableDTO(userRepository.getOne(patientId));
+	}
+
 
 
 

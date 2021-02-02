@@ -5,6 +5,7 @@ import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import { Button } from 'react-bootstrap';
 import PatientLogo from "../static/patientLogo.png";
+import getAuthHeader from "../GetHeader";
 
 class ObservePatientsPage extends Component {
     state = {
@@ -19,6 +20,10 @@ class ObservePatientsPage extends Component {
         this.setState({surname: event.target.value});
     }
 
+    componentDidMount() {
+        this.handleSearch();
+    }
+
     handleSearch = () => {
         console.log(this.state);
         const SEARCH_URL =
@@ -28,7 +33,7 @@ class ObservePatientsPage extends Component {
             "&surname=" +
             this.state.surname;
 
-        Axios.get(SEARCH_URL)
+        Axios.get(SEARCH_URL, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
             .then((res) => {
                 this.setState({
                     patients: res.data
@@ -47,7 +52,8 @@ class ObservePatientsPage extends Component {
 			})
 			.catch((err) => {
 				console.log(err);
-			});
+            });
+        window.location.href = "/patient-profile/" + patientId
 	};
 
     render() { 
