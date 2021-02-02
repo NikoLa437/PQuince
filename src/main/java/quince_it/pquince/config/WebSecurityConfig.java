@@ -121,7 +121,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 		//web.ignoring().antMatchers(HttpMethod.GET, "/api/users/activate-patient/**");
-		web.ignoring().antMatchers(HttpMethod.GET, "/clientapp/**", "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
+		web.ignoring().antMatchers(HttpMethod.GET,"/assets/**" ,"/**/**/*.jpg" , "/**/**/*.png","/clientapp/**", "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
 				"/**/*.css", "/**/*.js", "/**/**/*.js", "/**/**/*.css");
 	}
 

@@ -1,4 +1,4 @@
-FROM node:12.2.0 as front
+FROM node:14.11.0 as front
 
 WORKDIR /usr/src/pquince
 COPY PQuince.API/clientapp .
@@ -9,7 +9,7 @@ FROM maven:3.6.3-ibmjava-8-alpine AS appServer
 
 WORKDIR /usr/src/pquince
 COPY . .
-COPY --from=front /usr/src/pquince/build/static ./src/main/resource/static
+COPY --from=front /usr/src/pquince/build ./src/main/resources/static
 RUN ["mvn", "package", "-DskipTests"]
 
 FROM openjdk:8-jdk-alpine

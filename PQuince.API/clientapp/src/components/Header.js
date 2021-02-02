@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 class Header extends Component {
 	hasRole = (reqRole) => {
+		
 		let roles = JSON.parse(localStorage.getItem("keyRole"));
 		console.log(roles);
 
@@ -31,7 +32,7 @@ class Header extends Component {
 					<nav className="nav-menu d-none d-lg-block">
 						<ul>
 							<li className="active">
-								<Link to="/">Home</Link>
+								<a to="/">Home</a>
 							</li>
 							<li>
 								<Link to="/pharmacies">Pharmacies</Link>
