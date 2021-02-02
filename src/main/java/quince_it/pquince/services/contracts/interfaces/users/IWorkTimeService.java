@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import quince_it.pquince.entities.users.WorkTime;
+import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
@@ -13,4 +14,6 @@ public interface IWorkTimeService {
 	void update(WorkTimeDTO workTimeDTO, UUID id);
     boolean delete(UUID id);
     List<IdentifiableDTO<WorkTimeDTO>> findWorkTimeForStaff(UUID staffId);
+	void removeWorkTimeForDermatologistForPharmacy(
+			RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO);
 }

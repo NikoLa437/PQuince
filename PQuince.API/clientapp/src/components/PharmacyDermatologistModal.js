@@ -3,24 +3,9 @@ import { Button, Modal } from 'react-bootstrap';
 import DermatologistLogo from '../static/dermatologistLogo.png';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
+import getAuthHeader from "../GetHeader";
 
 class PharmacyDermatologistModal extends Component {
-    state = {
-        dermatologists:[]
-    }
-
-    componentDidMount() {
-
-		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202")
-			.then((res) => {
-				this.setState({ dermatologists: res.data });
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-    }
-
     render() { 
         return ( 
             <Modal
@@ -39,7 +24,7 @@ class PharmacyDermatologistModal extends Component {
                 <Modal.Body>
                 <table className="table" style={{ width: "100%", marginTop: "3rem" }}>
                             <tbody>
-                                {this.state.dermatologists.map((dermatologist) => (
+                                {this.props.dermatologists.map((dermatologist) => (
                                     <tr id={dermatologist.Id} key={dermatologist.Id}>
                                         <td width="130em">
                                             <img
@@ -60,11 +45,6 @@ class PharmacyDermatologistModal extends Component {
                                             </div>
                                             <div>
                                                 <b>Phone number: </b> {dermatologist.EntityDTO.phoneNumber}
-                                            </div>
-                                        </td>
-                                        <td >
-                                            <div style={{marginLeft:'25%'}}>
-                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'17%'}} className="btn btn-primary btn-xl" type="button"><i className="icofont-subscribe mr-1"></i>Zakazi pregled</button>
                                             </div>
                                         </td>
                                     </tr>

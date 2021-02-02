@@ -37,6 +37,7 @@ import quince_it.pquince.security.exception.ResourceConflictException;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
@@ -47,6 +48,7 @@ import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
+import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
@@ -77,6 +79,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private DermatologistRepository dermatologistRepository;
+	
+	@Autowired
+	private WorkTimeService workTimeService;
 	
 	@Autowired
 	private AllergenService allergenService;
@@ -321,13 +326,18 @@ public class UserService implements IUserService{
 	
 	@Override
 	public boolean removeDermatologistFromPharmacy(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
-		//TODO: NIKOLA : Proveriti da li ima zakazane termine dermatolog u apoteci i obrisati radno vreme ukoliko nema 
 		try {
-			Dermatologist dermatologist = dermatologistRepository.getOne(removeDermatologistFromPharmacyDTO.getDermatologistId());
-			dermatologist.removePharmacy(removeDermatologistFromPharmacyDTO.getPharmacyId());
-			
-			dermatologistRepository.save(dermatologist);
-			return true;
+			if(!appointmentService.hasAppointmentInFuture(removeDermatologistFromPharmacyDTO)) {
+				Dermatologist dermatologist = dermatologistRepository.getOne(removeDermatologistFromPharmacyDTO.getDermatologistId());
+				dermatologist.removePharmacy(removeDermatologistFromPharmacyDTO.getPharmacyId());
+				
+				dermatologistRepository.save(dermatologist);
+				
+				workTimeService.removeWorkTimeForDermatologistForPharmacy(removeDermatologistFromPharmacyDTO);
+				return true;
+			}else {
+				return false;
+			}
 		} 
 		catch (EntityNotFoundException e) { return false; } 
 		catch (IllegalArgumentException e) { return false; }
@@ -503,6 +513,36 @@ public class UserService implements IUserService{
 		userRepository.save(user);
 		
 	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacyDTO>> getPharmaciesWhereDermatologistWork(UUID dermatologistId) {
+		try {
+			Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
+			List<IdentifiableDTO<PharmacyDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyDTO>>();
+			dermatologist.getPharmacies().forEach((p) -> pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(p)));
+			return pharmacies;
+		}catch(Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public boolean addDermatologistToPharmacy(AddDermatologistToPharmacyDTO addDermatologistToPharmacyDTO) {
+		try {
+			Dermatologist dermatologist = dermatologistRepository.getOne(addDermatologistToPharmacyDTO.getDermatologistId());
+			Pharmacy pharmacy = pharmacyRepository.getOne(addDermatologistToPharmacyDTO.getPharmacyId());
+			
+			dermatologist.addPharmacy(pharmacy);
+			dermatologistRepository.save(dermatologist);
+			
+			WorkTimeDTO workTimeDTO = new WorkTimeDTO(addDermatologistToPharmacyDTO.getPharmacyId(),addDermatologistToPharmacyDTO.getDermatologistId(), addDermatologistToPharmacyDTO.getStartDate(), addDermatologistToPharmacyDTO.getEndDate(), addDermatologistToPharmacyDTO.getStartTime(), addDermatologistToPharmacyDTO.getEndTime(),"");
+			workTimeService.create(workTimeDTO);
+			return true;
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }
+	}
+	
 
 
 

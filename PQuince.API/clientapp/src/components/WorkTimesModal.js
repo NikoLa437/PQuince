@@ -4,7 +4,7 @@ import DermatologistLogo from '../static/dermatologistLogo.png';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
-
+import getAuthHeader from "../GetHeader";
 
 class WorkTimesModal extends Component {
     state = {
@@ -27,6 +27,8 @@ class WorkTimesModal extends Component {
             timeTo:2,
         });
     }
+
+
 
     handleAddWorkTimeModal = (event) =>{
         this.setState({showAddWorkTime: true, modalSize:'md'});
@@ -95,17 +97,28 @@ class WorkTimesModal extends Component {
         };
 
         Axios
-        .post(BASE_URL + "/api/worktime/", workTimeDTO).then((res) =>{
+        .post(BASE_URL + "/api/worktime/", workTimeDTO, {
+            headers: { Authorization: getAuthHeader() },
+        }).then((res) =>{
             console.log(res.data);
-                
-                
-                this.setState({showAddWorkTime: false, modalSize:'lg'});
-
-                
-
+            this.setState({showAddWorkTime: false, modalSize:'lg'});
+            alert("Uspesno dodat worktime")
+            this.handleClickOnClose();
         }).catch((err) => {
             alert('Nije moguce kreirati termin u naznacenom roku');
         });
+    }
+
+    handleClickOnClose = () => {
+        this.setState({
+            showAddWorkTime: false, 
+            modalSize:'lg',
+            selectedStartDate:new Date(),
+            selectedEndDate:new Date(),
+            timeFrom:1,
+            timeTo:2,
+        });
+        this.props.onCloseModal();
     }
 
     render() { 
@@ -116,9 +129,8 @@ class WorkTimesModal extends Component {
                 dialogClassName="modal-120w-100h"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
-                onHide={this.props.onCloseModal}
                 >
-                <Modal.Header closeButton >
+                <Modal.Header >
                     <Modal.Title style={{marginLeft:'37%'}} id="contained-modal-title-vcenter">
                         {this.props.header}
 
@@ -203,7 +215,7 @@ class WorkTimesModal extends Component {
                             </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={this.props.onCloseModal}>Close</Button>
+                    <Button onClick={() => this.handleClickOnClose()}>Close</Button>
                 </Modal.Footer>
             </Modal>
          );
