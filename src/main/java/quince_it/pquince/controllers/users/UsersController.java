@@ -116,10 +116,25 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/patient/{patientId}")
+	@CrossOrigin
+	//@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	public ResponseEntity<IdentifiableDTO<UserDTO>> getPatientById(@PathVariable UUID patientId) {
+		try {
+			IdentifiableDTO<UserDTO> patient = userService.getPatientById(patientId);
+			return new ResponseEntity<>(patient,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} 
+		catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 	@GetMapping("/patient")
+	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<IdentifiableDTO<PatientDTO>> getPatientById() {
-	  
 		try {
 			IdentifiableDTO<PatientDTO> patient = userService.getPatientById();
 			return new ResponseEntity<>(patient,HttpStatus.OK); 

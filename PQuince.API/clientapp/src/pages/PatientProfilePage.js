@@ -5,7 +5,7 @@ import { BASE_URL } from "../constants.js";
 import Axios from "axios";
 import PatientLogo from "../static/patientLogo.png";
 import AppointmentIcon from "../static/appointment-icon.jpg";
-
+import getAuthHeader from "../GetHeader";
 
 class PatientProfilePage extends Component {
 	state = {
@@ -20,7 +20,7 @@ class PatientProfilePage extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/users/patient/22793162-52d3-11eb-ae93-0242ac130002")
+		Axios.get(BASE_URL + "/api/users/patient/22793162-52d3-11eb-ae93-0242ac130002",   { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({
@@ -37,7 +37,7 @@ class PatientProfilePage extends Component {
 				console.log(err);
             });
 
-        Axios.get(BASE_URL + "/api/appointment/patient/22793162-52d3-11eb-ae93-0242ac130002")
+        Axios.get(BASE_URL + "/api/appointment/patient/22793162-52d3-11eb-ae93-0242ac130002",   { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
         .then((res) => {
             this.setState({ appointments: res.data });
             console.log(res.data);
