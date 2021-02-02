@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -29,13 +28,10 @@ import quince_it.pquince.entities.users.User;
 import quince_it.pquince.security.TokenUtils;
 import quince_it.pquince.security.auth.JwtAuthenticationRequest;
 import quince_it.pquince.security.exception.ResourceConflictException;
-import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.dto.users.UserTokenStateDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-import quince_it.pquince.services.implementation.users.AuthorityService;
-import quince_it.pquince.services.implementation.users.CustomUserDetailsService;
 import quince_it.pquince.services.implementation.users.UserService;
 
 @RestController
@@ -48,15 +44,10 @@ public class AuthenticationController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
-	@Autowired
-	private CustomUserDetailsService userDetailsService;
-	
+
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private AuthorityService authorityService;
-
 
 	@PostMapping("/login")
 	@CrossOrigin
