@@ -40,8 +40,8 @@ class CreateAppointmentForDermatologistModal extends Component {
         }).then((res) =>{
             console.log(res.data);
                 
-                
-                this.setState({showAddWorkTime: false, modalSize:'lg'});
+                alert('Uspesno kreiran appointment')
+                this.handleCloseAppointment();
         }).catch((err) => {
             alert('Nije moguce kreirati termin u naznacenom roku');
         });        
@@ -149,7 +149,7 @@ class CreateAppointmentForDermatologistModal extends Component {
                 size = "md"
                 dialogClassName="modal-80w-100h"
                 aria-labelledby="contained-modal-title-vcenter"
-                centered                >
+                centered>
                 <Modal.Header >
                     <Modal.Title style={{marginLeft:'28%'}} id="contained-modal-title-vcenter">
                         {this.props.header}

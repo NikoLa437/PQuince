@@ -8,6 +8,8 @@ import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
@@ -72,6 +74,10 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	boolean removeDermatologistFromPharmacy(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO);
 
 	List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologistForEmplooyeToPharmacy(UUID pharmacyId);
+
+	List<IdentifiableDTO<PharmacyDTO>> getPharmaciesWhereDermatologistWork(UUID dermatologistId);
+
+	boolean addDermatologistToPharmacy(AddDermatologistToPharmacyDTO addDermatologistToPharmacyDTO);
 
 	UUID createPharmacyAdmin(UserRequestDTO entityDTO, UUID pharmacyDTO);
 

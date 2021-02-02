@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -20,14 +22,20 @@ public class AppointmentScheduler {
 	public AppointmentScheduler(DateRange workTime, List<Appointment> scheduledAppointments, int duration) {
 		super();
 		this.workTime = workTime;
-		this.scheduledAppointments = scheduledAppointments;
+		//this.scheduledAppointments = scheduledAppointments;
 		this.duration=duration;
-		//this.scheduledAppointments = SortScheduledAppointment(scheduledAppointments);
+		this.scheduledAppointments = SortScheduledAppointment(scheduledAppointments);
 	}
 
-	private List<Appointment> SortScheduledAppointment(List<Appointment> scheduledAppointments2) {
+	private List<Appointment> SortScheduledAppointment(List<Appointment> scheduledAppointments) {
 		// TODO Auto-generated method stub
-		return null;
+		Collections.sort(scheduledAppointments, new Comparator<Appointment>() {
+			  public int compare(Appointment o1, Appointment o2) {
+			      return o1.getStartDateTime().compareTo(o2.getStartDateTime());
+			  }
+			});
+		
+		return scheduledAppointments;
 	}
 
 	public List<AppointmentPeriodResponseDTO> GetFreeAppointment(){

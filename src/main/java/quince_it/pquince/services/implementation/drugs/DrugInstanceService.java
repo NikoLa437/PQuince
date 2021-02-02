@@ -15,6 +15,8 @@ import quince_it.pquince.entities.drugs.Manufacturer;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
+import quince_it.pquince.repository.drugs.IngredientRepository;
+import quince_it.pquince.repository.drugs.ManufacturerRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
@@ -32,6 +34,12 @@ public class DrugInstanceService implements IDrugInstanceService{
 
 	@Autowired
 	private DrugInstanceRepository drugInstanceRepository;
+	
+	@Autowired
+	private ManufacturerRepository manufacturerRepository;
+
+	@Autowired
+	private IngredientRepository ingredientRepository;
 	
 	@Autowired
 	private DrugPriceForPharmacyRepository drugPriceForPharmacyRepository;
@@ -69,12 +77,69 @@ public class DrugInstanceService implements IDrugInstanceService{
 				drugInstanceDTO.getDrugFormat(), drugInstanceDTO.getQuantity(),  drugInstanceDTO.getSideEffects(), drugInstanceDTO.getRecommendedAmount(),
 				drugInstanceDTO.getLoyalityPoints(), drugInstanceDTO.isOnReciept(), drugInstanceDTO.getDrugKind());
 	}
+	
+	@Override
+	public List<IdentifiableDTO<ManufacturerDTO>>  findDrugManufacturers() {
+			
+			List<IdentifiableDTO<ManufacturerDTO>> manufacturers = new ArrayList<IdentifiableDTO<ManufacturerDTO>>();
+			manufacturerRepository.findAll().forEach((d) -> manufacturers.add(ManufacturerMapper.MapManufacturerPersistenceToManufacturerIdentifiableDTO(d)));
+			
+			return manufacturers;
+	}
+	
+	@Override
+	public UUID addDrugManufacturer(UUID id, UUID manufacturerId) {
+		DrugInstance drugInstance = drugInstanceRepository.getOne(id);
+		Manufacturer manufacturer = manufacturerRepository.getOne(manufacturerId);
+		
+		drugInstance.setManufacturer(manufacturer);
+		
+		drugInstanceRepository.save(drugInstance);
+		
+		return id;
+	}
+	
 
+	@Override
+	public UUID addDrugReplacement(UUID id, UUID replacement_id) {
+		
+		DrugInstance drugInstance = drugInstanceRepository.getOne(id);
+		DrugInstance drugReplacementInstance = drugInstanceRepository.getOne(replacement_id);
+		
+		drugInstance.addReplaceDrug(drugReplacementInstance);
+		
+		drugInstanceRepository.save(drugInstance);
+		
+		return id;
+	}
 	
 	private Manufacturer CreateManufacturerFromDTO(ManufacturerDTO manufacturerDTO) {
 		return new Manufacturer(manufacturerDTO.getName());
 	}
 	
+	@Override
+	public UUID addDrugIngredients(UUID id, IngredientDTO entityDTO) {
+		DrugInstance drugInstance = drugInstanceRepository.getOne(id);
+		Ingredient ingredient = ingredientRepository.findByName(entityDTO.getName());
+		drugInstance.addIngredient(ingredient);
+		
+		drugInstanceRepository.save(drugInstance);
+		
+		return id;
+	}
+	
+	@Override
+	public UUID addDrugReplacement(UUID id, DrugInstanceDTO entityDTO) {
+		DrugInstance drugInstance = drugInstanceRepository.getOne(id);
+		DrugInstance drugReplace = drugInstanceRepository.getOne(id);
+		
+		drugInstance.addReplaceDrug(drugReplace);
+		
+		drugInstanceRepository.save(drugReplace);
+		
+		return id;
+	}
+
 	@Override
 	public void update(DrugInstanceDTO entityDTO, UUID id) {
 		// TODO Auto-generated method stub
@@ -128,5 +193,6 @@ public class DrugInstanceService implements IDrugInstanceService{
 		
 		return drugs;
 	}
+
 
 }

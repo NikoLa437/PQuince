@@ -90,7 +90,6 @@ public class DrugInstance extends Drug {
 			int loyalityPoints, boolean onReciept, DrugKind drugKind) {
 		super(UUID.randomUUID(),name, code);
 		this.drugInstanceName = drugInstanceName;
-		this.manufacturer = null;
 		this.drugFormat = drugFormat;
 		this.quantity = quantity;
 		this.sideEffects = sideEffects;

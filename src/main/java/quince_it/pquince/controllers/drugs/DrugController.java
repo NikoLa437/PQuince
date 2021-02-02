@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
@@ -24,6 +25,11 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugKindIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
+import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
+import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
+import quince_it.pquince.services.contracts.dto.drugs.ReplaceDrugIdDTO;
+import quince_it.pquince.services.contracts.dto.users.AbsenceDTO;
+import quince_it.pquince.services.contracts.dto.users.DrugManufacturerDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFeedbackService;
@@ -39,7 +45,7 @@ public class DrugController {
 
 	@Autowired
 	private IDrugInstanceService drugInstanceService;
-	
+
 	@Autowired
 	private IDrugReservationService drugReservationService;
 	
@@ -51,14 +57,16 @@ public class DrugController {
 	
 	@Autowired
 	private IDrugFormatService drugFormatService;
-	
+
+	@CrossOrigin
 	@GetMapping
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findAll() {
 		return new ResponseEntity<>(drugInstanceService.findAll(),HttpStatus.OK);
 	}
-	
+
+	@PutMapping() 
 	@CrossOrigin
-	@PutMapping
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<UUID> addDrugInstance(@RequestBody DrugInstanceDTO drugInstanceDTO) {
 		
 		UUID drugInstanceId = drugInstanceService.create(drugInstanceDTO);
@@ -66,6 +74,41 @@ public class DrugController {
 		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
 	}
 	
+	@PutMapping("/ingredient/{drugId}") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<UUID> addDrugIngredient(@PathVariable UUID drugId, @RequestBody IngredientDTO ingredientDTO) {
+		
+		UUID drugInstanceId = drugInstanceService.addDrugIngredients(drugId, ingredientDTO);
+		
+		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/manufacturer") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<UUID> addDrugManufacturer(@RequestBody DrugManufacturerDTO drugManufacturerDTO) {
+		
+		UUID drugInstanceId = drugInstanceService.addDrugManufacturer(drugManufacturerDTO.getDrug_id(), drugManufacturerDTO.getManufacturer_id());
+		
+		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/replacement") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<UUID> addDrugReplacement(@RequestBody ReplaceDrugIdDTO replaceDrugIdDTO) {
+		
+		UUID drugInstanceId = drugInstanceService.addDrugReplacement(replaceDrugIdDTO.getId(), replaceDrugIdDTO.getReplacement_id());
+		
+		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
+	}
+
+	@CrossOrigin
+	@GetMapping("/manufacturers")
+	public ResponseEntity<List<IdentifiableDTO<ManufacturerDTO>>> findAllManufacturers() {
+		return new ResponseEntity<>(drugInstanceService.findDrugManufacturers(),HttpStatus.OK);
+	}
 	
 	@PostMapping("/reserve")
 	@PreAuthorize("hasRole('PATIENT')")
@@ -83,6 +126,7 @@ public class DrugController {
 	
 	@CrossOrigin
 	@GetMapping("/find-drug-by-pharmacy")
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findDrugsFromPharmacy(@RequestParam UUID pharmacyId) {
 		return new ResponseEntity<>(drugInstanceService.findDrugsByPharmacy(pharmacyId),HttpStatus.OK);
 	}

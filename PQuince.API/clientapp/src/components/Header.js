@@ -31,14 +31,15 @@ class Header extends Component {
 
 					<nav className="nav-menu d-none d-lg-block">
 						<ul>
-							<li className="active">
+							<li className="active" hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<a to="/">Home</a>
 							</li>
-							<li>
+							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/pharmacies">Pharmacies</Link>
 							</li>
-							<li>
+							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/drugs">Drugs</Link>
+
 							</li>
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#">My record</a>
@@ -61,13 +62,14 @@ class Header extends Component {
 								<a href="#">Pharmacy</a>
 								<ul>
 									<li>
-										<Link to="/pharmacy">Profile</Link>
+										<Link to="/pharmacy/cafeddee-56cb-11eb-ae93-0242ac130002">Profile</Link>
 									</li>
 									<li>
 										<Link to="/dermatologists">Dermatologist</Link>
 									</li>
 								</ul>
 							</li>
+							
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#" className="appointment-btn scrollto" style={myStyle}>
 									Make an Appointment

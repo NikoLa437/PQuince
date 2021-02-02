@@ -81,13 +81,16 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 	List<Appointment> findAllConsultationsByAppointmentTimeAndPharmacy(Date dateTimeFrom, Date dateTimeTo, UUID pharmacyId);
 
 	@Query(value = "SELECT a FROM Appointment a WHERE a.staff.id = ?1 AND (CAST(a.startDateTime as date) = CAST(?2 as date))"
-			+ " AND a.appointmentStatus = 'CREATED' AND a.pharmacy.id = ?3")
+			+ " AND (a.appointmentStatus = 'CREATED' OR a.appointmentStatus = 'SCHEDULED') AND a.pharmacy.id = ?3")
 	List<Appointment> getCreatedAppoitntmentsByDermatologistByDate(UUID dermatologistId,Date date, UUID pharmacyId);
 	
 	@Query(value = "SELECT a FROM Appointment a WHERE a.appointmentType = 'CONSULTATION' AND NOT (a.startDateTime >= ?2 OR a.endDateTime <= ?1)"
 			+ " AND a.appointmentStatus = 'SCHEDULED' AND a.staff.id = ?3")
 	List<Appointment> findAllConsultationsByAppointmentTimeAndPharmacist(Date dateTimeFrom, Date dateTimeTo, UUID pharmacistId);
 	
+	@Query(value = "SELECT a FROM Appointment a WHERE a.staff.id = ?1 AND a.startDateTime > CURRENT_TIMESTAMP"
+			+ " AND a.appointmentStatus = 'SCHEDULED' AND a.appointmentType = 'EXAMINATION'  AND a.pharmacy.id=?2")
+	List<Appointment> findAllAppointmentForDermatologistInFutureInPharmacy(UUID dermatologistId, UUID pharmacyId);
 	@Query(value = "SELECT a FROM Appointment a WHERE a.appointmentType = 'CONSULTATION' AND a.startDateTime = ?1"
 			+ " AND a.staff.id = ?2 AND a.patient.id = ?3")
 	Appointment findConsultationsByAppointmentTimePharmacistAndPatient(Date dateTimeFrom, UUID pharmacistId, UUID patientId);

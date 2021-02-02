@@ -31,7 +31,4 @@ public class RemoveDermatologistFromPharmacyDTO {
 	public void setDermatologistId(UUID dermatologistId) {
 		this.dermatologistId = dermatologistId;
 	}
-	
-	
-	
 }
