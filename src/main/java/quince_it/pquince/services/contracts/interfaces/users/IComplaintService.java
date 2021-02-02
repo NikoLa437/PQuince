@@ -18,4 +18,6 @@ public interface IComplaintService {
 
 	List<IdentifiableDTO<ComplaintStaffDTO>> findAll();
 
+	void replyComplaint(UUID id, String reply, String em);
+
 }

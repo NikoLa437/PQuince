@@ -11,7 +11,7 @@
 	<groupId>quince_it</groupId>
 	<artifactId>pquince</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>pquince</name>
 	<description>ISA project</description>
 

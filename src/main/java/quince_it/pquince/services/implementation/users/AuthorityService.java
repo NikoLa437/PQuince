@@ -47,7 +47,6 @@ public class AuthorityService implements IAuthorityService{
 	@Override
 	public IdentifiableDTO<AuthorityDTO> findByName(String name) {
 		Authority authority = authorityRepository.findByName(name);
-		System.out.println(authority.getName() + "NAMEEEE");
 		if (authority == null)
 			return null;
 		return AuthorityMapper.MapAuthorityPersistenceToAuthorityIdentifiableDTO(authority);
