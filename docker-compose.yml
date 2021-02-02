@@ -1,0 +1,41 @@
+services:
+  servers:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    container_name: pquince
+    restart: on-failure
+    networks:
+      - demo
+    ports:
+      - 8081:8081
+    environment:
+      DATABASE_USERNAME: pquince
+      DATABASE_PASSWORD: pquince
+      DATABASE_DOMAIN: postgres
+      DATABASE_SCHEMA: pquince
+    depends_on: 
+      - postgres
+
+      
+  postgres:
+    image: postgres:13
+    restart: always
+    networks:
+     - demo
+    environment:
+      POSTGRES_PASSWORD: pquince
+      POSTGRES_USER: pquince
+      POSTGRES_DB: pquince
+    volumes:
+     - postgres:/var/lib/postgresql/data
+    
+
+volumes:
+  postgres:
+  # mysql-data:
+
+networks:
+  demo:
+    name: demo
+    driver: bridge

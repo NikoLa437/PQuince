@@ -1,11 +1,19 @@
 import React, { Component } from "react";
 import PharmacyLogo from "../../static/pharmacyLogo.png";
 import PharmacistLogo from "../../static/pharmacistLogo.png";
+import HeadingAlert from "../../components/HeadingAlert";
 
 class PharmacistForPharmacy extends Component {
 	render() {
 		return (
 			<div hidden={this.props.hidden} className="container" style={{ marginTop: "10%" }}>
+				<HeadingAlert
+					hidden={this.props.hiddenFailAlert}
+					header={this.props.failHeader}
+					message={this.props.failMessage}
+					handleCloseAlert={this.props.handleCloseAlertFail}
+				/>
+
 				<h5 className=" text-center mb-0 mt-2 text-uppercase">Available pharmacists</h5>
 				<form>
 					<div className="control-group">
