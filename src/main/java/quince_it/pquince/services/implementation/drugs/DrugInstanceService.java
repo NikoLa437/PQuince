@@ -99,6 +99,20 @@ public class DrugInstanceService implements IDrugInstanceService{
 		return id;
 	}
 	
+
+	@Override
+	public UUID addDrugReplacement(UUID id, UUID replacement_id) {
+		
+		DrugInstance drugInstance = drugInstanceRepository.getOne(id);
+		DrugInstance drugReplacementInstance = drugInstanceRepository.getOne(replacement_id);
+		
+		drugInstance.addReplaceDrug(drugReplacementInstance);
+		
+		drugInstanceRepository.save(drugInstance);
+		
+		return id;
+	}
+	
 	private Manufacturer CreateManufacturerFromDTO(ManufacturerDTO manufacturerDTO) {
 		return new Manufacturer(manufacturerDTO.getName());
 	}
@@ -179,5 +193,6 @@ public class DrugInstanceService implements IDrugInstanceService{
 		
 		return drugs;
 	}
+
 
 }

@@ -27,6 +27,7 @@ class RegisterDrug extends Component {
 		drugFormats: [],
 		drugs: [],
 		drugReplacements: [],
+		drugReplacementsEntity: [],
 		manufacturers: [],
 		manufacturer:"",
 		ingredients: [],
@@ -35,6 +36,7 @@ class RegisterDrug extends Component {
 		recommendAmount: "",
 		drugIngredient: "",
 		selectedManufacturer: null,
+		selectDrugReplacement: null,
 		nameError: "none",
 		consulationPriceError: "none",
 		openModal: false,
@@ -95,6 +97,12 @@ class RegisterDrug extends Component {
 	
 	};
 	
+	onDrugReplacementEntityChange  = (drug) => {
+		this.state.selectDrugReplacement = drug;
+		console.log(drug, "drug");
+	
+	};
+	
 	handleModalClose = () => {
 		this.setState({ openModal: false });
 	};
@@ -107,6 +115,40 @@ class RegisterDrug extends Component {
   		event.preventDefault();
   		this.state.ingredients.push(this.state.drugIngredient);
 		document.getElementById("demo").innerHTML = this.state.ingredients;
+  		
+	};
+	
+	
+	addReplacement = (event) => {
+		if (this.state.drugChange === "") {
+			return;
+		}
+		
+		event.preventDefault();
+		if(this.state.drugReplacements.includes(this.state.drugChange))
+			return;
+			
+  		this.state.drugReplacementsEntity.push(this.state.selectDrugReplacement);
+  		this.state.drugReplacements.push(this.state.drugChange);
+		document.getElementById("replacement").innerHTML = this.state.drugReplacements;
+		console.log(this.state.drugReplacements);
+		console.log(this.state.drugReplacementsEntity, "ENTITY DRUG");
+  		
+	};
+	
+	handleDrugChange = (event) => {
+		this.setState({ drugChange: event.target.value });
+	};
+	
+	handleManufacturerChange = (event) => {
+		this.setState({ manufacturer: event.target.value });
+	};
+	
+	resetReplacement = (event) => {
+  		event.preventDefault();
+  		this.setState({drugReplacements: []});
+  		this.setState({drugReplacementsEntity: []});
+		document.getElementById("replacement").innerHTML = "";
   		
 	};
 	
@@ -128,16 +170,6 @@ class RegisterDrug extends Component {
   		
 	};
 	
-	addReplacement = (event) => {
-		event.preventDefault();
-		if(this.state.drugReplacements.includes(this.state.drugChange))
-			return;
-			
-  		this.state.drugReplacements.push(this.state.drugChange);
-		document.getElementById("replacement").innerHTML = this.state.drugReplacements;
-		console.log(this.state.drugReplacements);
-  		
-	};
 	
 	resetIngredient = (event) => {
   		event.preventDefault();
@@ -146,13 +178,6 @@ class RegisterDrug extends Component {
   		
 	};
 	
-	resetReplacement = (event) => {
-  		event.preventDefault();
-  		this.setState({drugReplacements: []});
-		document.getElementById("replacement").innerHTML = "";
-  		
-	};
-
 	handleOnRecieptChange = (event) => {
 		console.log(document.querySelector('.messageCheckbox').checked, "RECCC");
 		this.setState({ onReciept: event.target.value })
@@ -197,10 +222,6 @@ class RegisterDrug extends Component {
 	handleDrugFormatChange = (event) => {
 		this.setState({ drugFormat: event.target.value });
 		console.log(event.target.value);
-	};
-	
-	handleDrugChange = (event) => {
-		this.setState({ drugChange: event.target.value });
 	};
 	
 	handleDescriptionChange = (event) => {
@@ -285,6 +306,25 @@ class RegisterDrug extends Component {
 						});
 				console.log("Success");
 				this.setState({ openModal: true });
+				
+				
+				for (const [index, value] of this.state.drugReplacementsEntity.entries()) {
+				
+					let ReplaceDrugIdDTO = {
+						id: res.data,
+						replacement_id: this.state.drugReplacementsEntity[index].Id,
+					};
+					
+					Axios.put(BASE_URL + "/api/drug/replacement", ReplaceDrugIdDTO, { headers: { Authorization: getAuthHeader()}})
+						.then((res) => {
+							console.log("Success");					
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				
+				
 			})
 			.catch((err) => {
 				console.log(err);
@@ -294,9 +334,6 @@ class RegisterDrug extends Component {
 		
 	};
 	
-	handleManufacturerChange = (event) => {
-		this.setState({ manufacturer: event.target.value });
-	};
 	handleSelectChange  = (event) => {
 		this.setState({ selectValue: event.target.value });
 	};
@@ -477,7 +514,7 @@ class RegisterDrug extends Component {
 									        onChange={this.handleDrugChange}
 											value={this.state.drugChange}
 									     >{this.state.drugs.map((drug) => (
-										  <option value={drug.EntityDTO.drugInstanceName}>{drug.EntityDTO.drugInstanceName}</option>
+										  <option onClick={this.onDrugReplacementEntityChange(drug)} value={drug.EntityDTO.drugInstanceName}>{drug.EntityDTO.drugInstanceName}</option>
 										))}	
 										</select>
 										<button

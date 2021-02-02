@@ -27,6 +27,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
+import quince_it.pquince.services.contracts.dto.drugs.ReplaceDrugIdDTO;
 import quince_it.pquince.services.contracts.dto.users.AbsenceDTO;
 import quince_it.pquince.services.contracts.dto.users.DrugManufacturerDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
@@ -89,6 +90,16 @@ public class DrugController {
 	public ResponseEntity<UUID> addDrugManufacturer(@RequestBody DrugManufacturerDTO drugManufacturerDTO) {
 		
 		UUID drugInstanceId = drugInstanceService.addDrugManufacturer(drugManufacturerDTO.getDrug_id(), drugManufacturerDTO.getManufacturer_id());
+		
+		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/replacement") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<UUID> addDrugReplacement(@RequestBody ReplaceDrugIdDTO replaceDrugIdDTO) {
+		
+		UUID drugInstanceId = drugInstanceService.addDrugReplacement(replaceDrugIdDTO.getId(), replaceDrugIdDTO.getReplacement_id());
 		
 		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
 	}
