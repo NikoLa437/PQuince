@@ -32,10 +32,6 @@ public class Patient extends User {
             inverseJoinColumns = @JoinColumn(name = "allergen_id", referencedColumnName = "id"))
     private List<Allergen> allergens;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name="loyality_category")
-	private LoyalityCategory loyalityCategory;
-
 	public Patient() {
 		super();
 	}
@@ -46,7 +42,6 @@ public class Patient extends User {
 		this.allergens = new ArrayList<Allergen>();
 		this.penalty = 0;
 		this.points = 0;
-		this.loyalityCategory = LoyalityCategory.REGULAR;
 	}
 
 	public Patient(UUID id, String email, String password, String name, String surname, Address address,
@@ -56,7 +51,6 @@ public class Patient extends User {
 		this.penalty = penalty;
 		this.allergens = allergens;
 		this.points = points;
-		this.loyalityCategory = loyalityCategory;
 	}
 
 	public int getPenalty() {
@@ -101,14 +95,6 @@ public class Patient extends User {
 
 	public void setPoints(int points) {
 		this.points = points;
-	}
-
-	public LoyalityCategory getLoyalityCategory() {
-		return loyalityCategory;
-	}
-
-	public void setLoyalityCategory(LoyalityCategory loyalityCategory) {
-		this.loyalityCategory = loyalityCategory;
 	}
 	
 	public void addPenalty(int amount) {

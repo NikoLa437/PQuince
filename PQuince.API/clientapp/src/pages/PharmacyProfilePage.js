@@ -7,6 +7,10 @@ import { YMaps, Map, GeoObject, Placemark } from "react-yandex-maps";
 import PharmacyDermatologistModal from "../components/PharmacyDermatologistModal";
 import DrugsInPharmacyModal from "../components/DrugsInPharmacyModal";
 import FeedbackCreateModal from "../components/FeedbackCreateModal";
+import ComplaintCreateModal from "../components/ComplaintCreateModal";
+import getAuthHeader from "../GetHeader";
+import { withRouter } from "react-router";
+import ReserveDrugsInPharmacy from "../components/ReserveDrugsInPharmacyModal";
 
 class PharmacyProfilePage extends Component {
 	state = {
@@ -21,11 +25,26 @@ class PharmacyProfilePage extends Component {
 		x: "",
 		y: "",
 		showDermatologistModal: false,
+		showCreateAppointment: false,
 		showDrugsInPharmacy: false,
+		showReserveDrugsInPharmacy:false,
+		complaint: "",
+		dermatologists:[],
+		drugsInPharmacy:[],
+	};
+
+	fetchData = id => {
+		this.setState({
+			pharmacyId:id
+		});
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=cafeddee-56cb-11eb-ae93-0242ac130002")
+		const id = this.props.match.params.id;
+		this.fetchData(id);
+
+		
+		Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId="+id)
 			.then((response) => {
 				this.setState({
 					pharmacy: response.data,
@@ -46,11 +65,38 @@ class PharmacyProfilePage extends Component {
 
 	handleSubscribe = () => {
 		this.setState({
-			showDermatologistModal: true,
+			showCreateAppointment: true,
 		});
 	};
 
+	handleComplaintChange = (event) => {
+		this.setState({ complaint: event.target.value });
+	};
+
+	handleReserveDrugsClick = () => {
+		Axios
+        .get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId="+ this.state.pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) =>{
+            this.setState({drugsInPharmacy : res.data});
+            console.log(res.data);
+        }).catch((err) => {console.log(err);});
+	
+		this.setState({
+			showReserveDrugsInPharmacy: true,
+		});
+	}
+
 	handleOurDrugs = () => {
+
+		Axios
+        .get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId="+ this.state.pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) =>{
+            this.setState({drugsInPharmacy : res.data});
+            console.log(res.data);
+        }).catch((err) => {console.log(err);});
+	
 		this.setState({
 			showDrugsInPharmacy: true,
 		});
@@ -60,12 +106,29 @@ class PharmacyProfilePage extends Component {
 		this.setState({ showDermatologistModal: false });
 	};
 
+	handleCreateAppoitmentClose = () => {
+		this.setState({ showCreateAppointment: false });
+	};
+	
+	
+	handleComplaintModalClose = () => {
+		this.setState({ showComplaintModal: false });
+	};
+
 	handleShowDrugsInPharmacyClose = () => {
 		this.setState({ showDrugsInPharmacy: false });
 	};
 
+	handleReserveDrugsInPharmacyClose = () => {
+		this.setState({ showReserveDrugsInPharmacy: false });
+
+	}
+
 	handleFeedbackClick = () => {
-		Axios.get(BASE_URL + "/api/pharmacy/feedback/" + this.state.pharmacyId, { validateStatus: () => true })
+		Axios.get(BASE_URL + "/api/pharmacy/feedback/" + this.state.pharmacyId, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
 				console.log(res.data);
 				if (res.status === 404) {
@@ -85,8 +148,36 @@ class PharmacyProfilePage extends Component {
 			});
 	};
 
+	handleComplaintClick = () => {
+		Axios.get(BASE_URL + "/api/pharmacy/feedback/" + this.state.pharmacyId, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
+			.then((res) => {
+				console.log(res.data);
+				if (res.status === 404) {
+					this.setState({
+						showComplaintModal: true,
+						patientsGrade: 0,
+					});
+				} else {
+					this.setState({
+						showComplaintModal: true,
+						patientsGrade: res.data.grade,
+					});
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
 	handleFeedbackModalClose = () => {
 		this.setState({ showFeedbackModal: false });
+	};
+
+	handleComplaintModalClose = () => {
+		this.setState({ showComplaintModal: false });
 	};
 
 	handleModifyFeedbackModalClose = () => {
@@ -99,13 +190,60 @@ class PharmacyProfilePage extends Component {
 			date: new Date(),
 			grade: this.state.patientsGrade,
 		};
-		Axios.post(BASE_URL + "/api/pharmacy/feedback", entityDTO)
+		Axios.post(BASE_URL + "/api/pharmacy/feedback", entityDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=cafeddee-56cb-11eb-ae93-0242ac130002")
+				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=" + this.state.pharmacyId)
 					.then((response) => {
 						this.setState({
 							grade: response.data.EntityDTO.grade,
 							showFeedbackModal: false,
+						});
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleListOfDermatologistOpenModal = () => {
+
+		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/" + this.state.pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) => {
+				this.setState({ dermatologists: res.data });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+
+		this.setState({
+			showDermatologistModal:true
+		})
+	}
+
+	handleListOfDermatologistCloseModal = () => {
+		this.setState({
+			showDermatologistModal:false
+		})
+	}
+
+	handleComaplaint = () => {
+		let entityDTO = {
+			pharmacyId: this.state.pharmacyId,
+			date: new Date(),
+			text: this.state.complaint,
+		};
+		Axios.post(BASE_URL + "/api/pharmacy/complaint-pharmacy", entityDTO, { headers: { Authorization: getAuthHeader() } })
+			.then((resp) => {
+				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=" + this.state.pharmacyId)
+					.then((response) => {
+						this.setState({
+							grade: response.data.EntityDTO.grade,
+							showComplaintModal: false,
 						});
 					})
 					.catch((err) => {
@@ -123,9 +261,9 @@ class PharmacyProfilePage extends Component {
 			date: new Date(),
 			grade: this.state.patientsGrade,
 		};
-		Axios.put(BASE_URL + "/api/pharmacy/feedback", entityDTO)
+		Axios.put(BASE_URL + "/api/pharmacy/feedback", entityDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=cafeddee-56cb-11eb-ae93-0242ac130002")
+				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId="+this.state.pharmacyId)
 					.then((response) => {
 						this.setState({
 							grade: response.data.EntityDTO.grade,
@@ -145,6 +283,20 @@ class PharmacyProfilePage extends Component {
 		this.setState({ patientsGrade: grade });
 	};
 
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+		console.log(roles);
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
+	};
+
 	render() {
 		const { pharmacy, pharmacyName, pharmacyDescription, pharmacyAdress, pharmacyCity, x, y } = this.state;
 		const mapState = { center: [x, y], zoom: 17 };
@@ -160,25 +312,25 @@ class PharmacyProfilePage extends Component {
 				<nav className="nav-menu d-none d-lg-block" style={{ marginTop: "8%" }}>
 					<ul style={{ marginLeft: "28%" }}>
 						<li>
-							<a href="#" className="appointment-btn scrollto" style={myStyle}>
-								Rezervisi lek
+							<a onClick={this.handleReserveDrugsClick} className="appointment-btn scrollto" style={myStyle}>
+								Reserve drug
 							</a>
 						</li>
 						<li>
 							<a href="#" className="appointment-btn scrollto" style={myStyle}>
-								Proveri dostupnost leka
+								Check drug availability ***
 							</a>
 						</li>
 						<li className="drop-down">
 							<a href="#" className="appointment-btn scrollto" style={myStyle}>
-								Zakazi pregled
+								Make an Appointment *** 
 							</a>
 							<ul>
 								<li>
-									<a href="/">Dermatolog</a>
+									<a href="/">Examination *** </a>
 								</li>
 								<li>
-									<a href="/">Farmaceut</a>
+									<a href="/">Consultation ***</a>
 								</li>
 							</ul>
 						</li>
@@ -198,18 +350,18 @@ class PharmacyProfilePage extends Component {
 							</div>
 							<br></br>
 							<h7>
-								Adresa apoteke: {pharmacyAdress}, {pharmacyCity}
+								Address: {pharmacyAdress}, {pharmacyCity}
 							</h7>
 							<br></br>
-							<h7>Opis apoteke: {pharmacyDescription}</h7>
+							<h7>Description: {pharmacyDescription}</h7>
 							<br></br>
 							<button
 								style={({ background: "#1977cc" }, { height: "30px" }, { verticalAlign: "center" }, { marginTop: "5%" })}
-								onClick={this.handleSubscribe}
+								onClick={this.handleListOfDermatologistOpenModal}
 								className="btn btn-primary btn-xl"
 								type="button"
 							>
-								<i className="icofont-subscribe mr-1"></i>Lista dermatologa
+								<i className="icofont-subscribe mr-1"></i>List of dermatologists
 							</button>
 							<br></br>
 							<button
@@ -218,7 +370,7 @@ class PharmacyProfilePage extends Component {
 								className="btn btn-primary btn-xl"
 								type="button"
 							>
-								<i className="icofont-subscribe mr-1"></i>Nasi farmaceuti
+								<i className="icofont-subscribe mr-1"></i>List of pharmacists ***
 							</button>
 							<br></br>
 							<button
@@ -227,12 +379,21 @@ class PharmacyProfilePage extends Component {
 								className="btn btn-primary btn-xl"
 								type="button"
 							>
-								<i className="icofont-subscribe mr-1"></i>Lekovi na stanju
+								<i className="icofont-subscribe mr-1"></i>Drugs in stock
 							</button>
 							<br></br>
 
-							<button type="button" onClick={this.handleFeedbackClick} className="btn btn-outline-secondary mt-3">
+							<button
+								type="button"
+								hidden={!this.hasRole("ROLE_PATIENT")}
+								onClick={this.handleFeedbackClick}
+								className="btn btn-outline-secondary mt-3"
+							>
 								Give feedback
+							</button>
+							<br></br>
+							<button type="button" onClick={this.handleComplaintClick} className="btn btn-outline-secondary mt-3">
+								Make complaint
 							</button>
 						</div>
 						<div className="col-xs-8">
@@ -258,15 +419,25 @@ class PharmacyProfilePage extends Component {
 
 					<PharmacyDermatologistModal
 						show={this.state.showDermatologistModal}
-						onCloseModal={this.handleModalClose}
+						onCloseModal={this.handleListOfDermatologistCloseModal}
 						pharmacyId={this.state.pharmacyId}
+						dermatologists={this.state.dermatologists}
 						header="Our dermatologist"
 					/>
 					<DrugsInPharmacyModal
 						show={this.state.showDrugsInPharmacy}
 						onCloseModal={this.handleShowDrugsInPharmacyClose}
 						pharmacyId={this.state.pharmacyId}
+						drugs={this.state.drugsInPharmacy}
 						header="Our drugs in stock"
+					/>
+
+					<ReserveDrugsInPharmacy
+						show={this.state.showReserveDrugsInPharmacy}
+						onCloseModal={this.handleReserveDrugsInPharmacyClose}
+						pharmacyId={this.state.pharmacyId}
+						drugs={this.state.drugsInPharmacy}
+						header="Reserve drugs"
 					/>
 				</div>
 
@@ -292,9 +463,21 @@ class PharmacyProfilePage extends Component {
 					forWho="pharmacy"
 					handleClickIcon={this.handleClickIcon}
 				/>
+				<ComplaintCreateModal
+					buttonName="Send complaint"
+					header="Make complaint"
+					handleComplaintChange={this.handleComplaintChange}
+					show={this.state.showComplaintModal}
+					onCloseModal={this.handleComplaintModalClose}
+					giveFeedback={this.handleComaplaint}
+					name={this.state.pharmacyName}
+					forWho="pharmacy"
+					handleClickIcon={this.handleClickIcon}
+					complaint={this.state.complaint}
+				/>
 			</React.Fragment>
 		);
 	}
 }
 
-export default PharmacyProfilePage;
+export default withRouter(PharmacyProfilePage);

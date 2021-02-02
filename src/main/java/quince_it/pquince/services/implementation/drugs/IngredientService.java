@@ -33,14 +33,35 @@ public class IngredientService implements IIngredientService{
 	public IdentifiableDTO<IngredientDTO> findById(UUID id) {
 		return IngredientMapper.MapIngredientPersistenceToIngredientIdentifiableDTO(ingredientRepository.getOne(id));
 	}
+	
+	@Override
+	public IdentifiableDTO<IngredientDTO> findByName(String name) {
+		return IngredientMapper.MapIngredientPersistenceToIngredientIdentifiableDTO(ingredientRepository.findByName(name));
+	}
+	
+	private Ingredient findByIngredientName(String name) {
+		return ingredientRepository.findByName(name);
+	}
+	
 
 	@Override
 	public UUID create(IngredientDTO entityDTO) {
+		if(findByIngredientName(entityDTO.getName()) != null)
+			update(entityDTO,findByIngredientName(entityDTO.getName()).getId());
 		Ingredient ingredient = CreateIngredientFromDTO(entityDTO);
 		ingredientRepository.save(ingredient);
 		return ingredient.getId();
 	}
-
+	
+	private boolean checkifIngredientExist(IngredientDTO ingredientDTO) {
+		for(Ingredient i : ingredientRepository.findAll()){
+			if(i.getName().equals(ingredientDTO.getName()))
+				return true;
+		}
+		
+		return false;
+	}
+	 
 	@Override
 	public void update(IngredientDTO entityDTO, UUID id) {
 		Ingredient ingredient = CreateIngredientFromDTO(entityDTO, id);

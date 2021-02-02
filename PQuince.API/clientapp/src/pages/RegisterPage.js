@@ -5,6 +5,8 @@ import { BASE_URL } from "../constants.js";
 import Axios from "axios";
 import ModalDialog from "../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
+import { Redirect } from "react-router-dom";
+import HeadingAlert from "../components/HeadingAlert";
 
 const mapState = {
 	center: [44, 21],
@@ -14,6 +16,9 @@ const mapState = {
 
 class RegisterPage extends Component {
 	state = {
+		errorHeader: "",
+		errorMessage: "",
+		hiddenErrorAlert: true,
 		email: "",
 		password: "",
 		name: "",
@@ -106,7 +111,7 @@ class RegisterPage extends Component {
 	};
 
 	handleModalClose = () => {
-		this.setState({ openModal: false });
+		this.setState({ openModal: false, redirect: true });
 	};
 
 	handleSignUp = () => {
@@ -142,10 +147,20 @@ class RegisterPage extends Component {
 
 				if (this.validateForm(userDTO)) {
 					console.log(userDTO);
-					Axios.post(BASE_URL + "/auth/signup", userDTO)
+					Axios.post(BASE_URL + "/auth/signup", userDTO, { validateStatus: () => true })
 						.then((res) => {
-							console.log("Success");
-							this.setState({ openModal: true });
+							if (res.status === 409) {
+								this.setState({
+									errorHeader: "Resource conflict!",
+									errorMessage: "Email already exist.",
+									hiddenErrorAlert: false,
+								});
+							} else if (res.status === 500) {
+								this.setState({ errorHeader: "Internal server error!", errorMessage: "Server error.", hiddenErrorAlert: false });
+							} else {
+								console.log("Success");
+								this.setState({ openModal: true });
+							}
 						})
 						.catch((err) => {
 							console.log(err);
@@ -154,13 +169,25 @@ class RegisterPage extends Component {
 			});
 	};
 
+	handleCloseAlert = () => {
+		this.setState({ hiddenErrorAlert: true });
+	};
+
 	render() {
+		if (this.state.redirect) return <Redirect push to="/" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
 				<Header />
 
 				<div className="container" style={{ marginTop: "8%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenErrorAlert}
+						header={this.state.errorHeader}
+						message={this.state.errorMessage}
+						handleCloseAlert={this.handleCloseAlert}
+					/>
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
 						Registration
 					</h5>
@@ -170,10 +197,7 @@ class RegisterPage extends Component {
 							<br />
 							<form id="contactForm" name="sentMessage" novalidate="novalidate">
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Email address:</label>
 										<input
 											placeholder="Email address"
@@ -184,24 +208,15 @@ class RegisterPage extends Component {
 											value={this.state.email}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.emailError }}
-									>
+									<div className="text-danger" style={{ display: this.state.emailError }}>
 										Email address must be entered.
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.emailNotValid }}
-									>
+									<div className="text-danger" style={{ display: this.state.emailNotValid }}>
 										Email address is not valid.
 									</div>
 								</div>
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Name:</label>
 										<input
 											placeholder="Name"
@@ -212,18 +227,12 @@ class RegisterPage extends Component {
 											value={this.state.name}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.nameError }}
-									>
+									<div className="text-danger" style={{ display: this.state.nameError }}>
 										Name must be entered.
 									</div>
 								</div>
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Surname:</label>
 										<input
 											placeholder="Surname"
@@ -234,25 +243,14 @@ class RegisterPage extends Component {
 											value={this.state.surname}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.surnameError }}
-									>
+									<div className="text-danger" style={{ display: this.state.surnameError }}>
 										Surname must be entered.
 									</div>
 								</div>
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Address:</label>
-										<input
-											className="form-control"
-											id="suggest"
-											ref={this.addressInput}
-											placeholder="Address"
-										/>
+										<input className="form-control" id="suggest" ref={this.addressInput} placeholder="Address" />
 									</div>
 									<YMaps
 										query={{
@@ -269,18 +267,12 @@ class RegisterPage extends Component {
 											modules={["coordSystem.geo", "geocode", "util.bounds"]}
 										></Map>
 									</YMaps>
-									<div
-										className="text-danger"
-										style={{ display: this.state.addressError }}
-									>
+									<div className="text-danger" style={{ display: this.state.addressError }}>
 										Address must be entered.
 									</div>
 								</div>
 								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Phone number:</label>
 										<input
 											placeholder="Phone number"
@@ -291,19 +283,13 @@ class RegisterPage extends Component {
 											value={this.state.phoneNumber}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.phoneError }}
-									>
+									<div className="text-danger" style={{ display: this.state.phoneError }}>
 										Phone number must be entered.
 									</div>
 								</div>
 								<div className="control-group">
 									<label>Password:</label>
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<input
 											placeholder="Password"
 											class="form-control"
@@ -312,10 +298,7 @@ class RegisterPage extends Component {
 											value={this.state.password}
 										/>
 									</div>
-									<div
-										className="text-danger"
-										style={{ display: this.state.passwordError }}
-									>
+									<div className="text-danger" style={{ display: this.state.passwordError }}>
 										Password must be entered.
 									</div>
 								</div>
@@ -342,7 +325,6 @@ class RegisterPage extends Component {
 				</div>
 				<ModalDialog
 					show={this.state.openModal}
-					href="/"
 					onCloseModal={this.handleModalClose}
 					header="Successful registration"
 					text="You can activate your account by clicking on link sent to provided email address."

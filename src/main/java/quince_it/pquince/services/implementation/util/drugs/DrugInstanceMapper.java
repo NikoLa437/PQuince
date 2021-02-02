@@ -20,7 +20,7 @@ public class DrugInstanceMapper {
 																					  MapListReplaceDugsPersistenceToListReplaceDrugsIdentifiableDTO(drug.getReplacingDrugs()),
 																					  AllergenMapper.MapAllergenPersistenceListToAllergenIdentifiableDTOList(drug.getAllergens()),
 																					  IngredientMapper.MapIngredientPersistenceListToIngredientIdentifiableDTOList(drug.getIngredients()),
-																					  drug.isOnReciept(), drug.getDrugKind()));
+																					  drug.getLoyalityPoints(), drug.isOnReciept(), drug.getDrugKind()));
 	}
 	
 	public static List<IdentifiableDTO<ReplaceDrugDTO>> MapListReplaceDugsPersistenceToListReplaceDrugsIdentifiableDTO(List<DrugInstance> drugs){

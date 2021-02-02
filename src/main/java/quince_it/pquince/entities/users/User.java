@@ -126,6 +126,12 @@ public class User implements UserDetails {
         return this.authorities;
     }
 
+    
+	
+    public void setUserAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
+    }
+    
 	@Override
 	public String getUsername() {
 		return this.email;

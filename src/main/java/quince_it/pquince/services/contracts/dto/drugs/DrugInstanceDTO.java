@@ -31,6 +31,8 @@ public class DrugInstanceDTO {
     private List<IdentifiableDTO<AllergenDTO>> allergens;
 	
     private List<IdentifiableDTO<IngredientDTO>> ingredients;
+    
+	private int loyalityPoints;
 	
 	private boolean onReciept;
 	
@@ -39,7 +41,7 @@ public class DrugInstanceDTO {
 	public DrugInstanceDTO(String name, String code, String drugInstanceName, IdentifiableDTO<ManufacturerDTO> manufacturer,
 			FormatDrug drugFormat, double quiantity, String sideEffects, String recommendedAmount,
 			List<IdentifiableDTO<ReplaceDrugDTO>> replacingDrugs, List<IdentifiableDTO<AllergenDTO>> allergens,
-			List<IdentifiableDTO<IngredientDTO>> ingredients, boolean onReciept, DrugKind drugKind) {
+			List<IdentifiableDTO<IngredientDTO>> ingredients, int loyalityPoints, boolean onReciept, DrugKind drugKind) {
 		super();
 		this.name = name;
 		this.code = code;
@@ -54,6 +56,23 @@ public class DrugInstanceDTO {
 		this.ingredients = ingredients;
 		this.onReciept = onReciept;
 		this.drugKind = drugKind;
+		this.loyalityPoints = loyalityPoints;
+	}
+	
+	public DrugInstanceDTO(String name, String code, String drugInstanceName,
+			FormatDrug drugFormat, double quiantity, String sideEffects, String recommendedAmount,
+			int loyalityPoints, boolean onReciept, DrugKind drugKind) {
+		super();
+		this.name = name;
+		this.code = code;
+		this.drugInstanceName = drugInstanceName;
+		this.drugFormat = drugFormat;
+		this.quantity = quiantity;
+		this.sideEffects = sideEffects;
+		this.recommendedAmount = recommendedAmount;
+		this.onReciept = onReciept;
+		this.drugKind = drugKind;
+		this.loyalityPoints = loyalityPoints;
 	}
 
 	public String getName() {
@@ -83,7 +102,14 @@ public class DrugInstanceDTO {
 	public IdentifiableDTO<ManufacturerDTO> getManufacturer() {
 		return manufacturer;
 	}
+	
+	public int getLoyalityPoints() {
+		return loyalityPoints;
+	}
 
+	public void setLoyalityPoints(int loyalityPoints) {
+		this.loyalityPoints = loyalityPoints;
+	}
 	public void setManufacturer(IdentifiableDTO<ManufacturerDTO> manufacturer) {
 		this.manufacturer = manufacturer;
 	}

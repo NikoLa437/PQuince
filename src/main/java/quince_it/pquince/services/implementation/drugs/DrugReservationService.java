@@ -25,6 +25,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugReservationService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.drugs.DrugReservationMapper;
 
@@ -51,6 +52,9 @@ public class DrugReservationService implements IDrugReservationService{
 	
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private IUserService userService;
 
 	@Override
 	public IdentifiableDTO<DrugReservationDTO> findById(UUID id) {
@@ -58,48 +62,40 @@ public class DrugReservationService implements IDrugReservationService{
 		return null;
 	}
 
-	/*
-	 * Pharmacy pharmacy, DrugInstance drugInstance, Patient patient, int amount,
-	 * Date endDate,double drugPeacePrice
-	 */
 	@Override
 	public UUID create(DrugReservationRequestDTO entityDTO) {
-		//TODO : NOT HARDCODED ID
-		Patient patient = patientRepository.getOne(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002"));
+		
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.getOne(patientId);
 		DrugReservation drugReservation = new DrugReservation(pharmacyRepository.getOne(entityDTO.getPharmacyId()),
 															  drugInstanceRepository.getOne(entityDTO.getDrugId()),
 															  patient,
 															  entityDTO.getDrugAmount(), entityDTO.getEndDate(), entityDTO.getDrugPrice());
 		
-		if(!CanReserveDrug(drugReservation, patient))
-			throw new IllegalArgumentException();
-		else {
-			drugReservationRepository.save(drugReservation);
-			drugStorageService.reduceAmountOfReservedDrug(entityDTO.getDrugId(), entityDTO.getPharmacyId(), entityDTO.getDrugAmount());
-		}
+		CanReserveDrug(drugReservation, patient);
+		
+		drugReservationRepository.save(drugReservation);
+		drugStorageService.reduceAmountOfReservedDrug(entityDTO.getDrugId(), entityDTO.getPharmacyId(), entityDTO.getDrugAmount());
+		
 		try {
 			emailService.sendDrugReservationNotificaitionAsync(drugReservation);
 		} catch (MailException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		return drugReservation.getId();
 	}
 	
-	private boolean CanReserveDrug(DrugReservation drugReservation,Patient patient) {
+	private void CanReserveDrug(DrugReservation drugReservation,Patient patient) {
 			
-		if(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0
-				&& patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count")))
-			return true;
+		if(!(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0
+				&& patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"))))
+			throw new IllegalArgumentException();
 		
-		return false;
 	}
 
 	@Override
@@ -127,8 +123,7 @@ public class DrugReservationService implements IDrugReservationService{
 			drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
 			
 			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
 			return false;
 		}
 	}
@@ -144,7 +139,8 @@ public class DrugReservationService implements IDrugReservationService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId(UUID patientId) {
+	public List<IdentifiableDTO<DrugReservationDTO>> findAllByPatientId() {
+		UUID patientId = userService.getLoggedUserId();
 		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findAllByPatientId(patientId));
 	}
 
@@ -170,13 +166,15 @@ public class DrugReservationService implements IDrugReservationService{
 	}
 
 	@Override
-	public List<IdentifiableDTO<DrugReservationDTO>> findAllFutureReservationsByPatientId(UUID patientId) {
+	public List<IdentifiableDTO<DrugReservationDTO>> findAllFutureReservationsByPatientId() {
+		UUID patientId = userService.getLoggedUserId();
 		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findAllFutureReservationsByPatientId(patientId));
 
 	}
 
 	@Override
-	public List<IdentifiableDTO<DrugReservationDTO>> findProcessedDrugReservationsForPatient(UUID patientId) {
+	public List<IdentifiableDTO<DrugReservationDTO>> findProcessedDrugReservationsForPatient() {
+		UUID patientId = userService.getLoggedUserId();
 		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findProcessedDrugReservationsForPatient(patientId));
 
 	}

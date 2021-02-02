@@ -6,7 +6,9 @@ import TopBar from "../../components/TopBar";
 import Header from "../../components/Header";
 import ModalDialog from "../../components/ModalDialog";
 import ReservationModalInfo from "../../components/ReservationInfoModal";
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
+import getAuthHeader from "../../GetHeader";
+import HeadingAlert from "../../components/HeadingAlert";
 
 class PatientsDrugReservations extends Component {
 	state = {
@@ -22,10 +24,13 @@ class PatientsDrugReservations extends Component {
 		endDate: "",
 		drugAmount: "",
 		reservationStatus: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/drug/future-reservations")
+		Axios.get(BASE_URL + "/api/drug/future-reservations", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ drugReservations: res.data });
 				console.log(res.data);
@@ -42,19 +47,30 @@ class PatientsDrugReservations extends Component {
 	};
 
 	handleCancelDrugReservation = (reservationId) => {
-		Axios.put(BASE_URL + "/api/drug/reservations/cancel/" + reservationId)
+		this.setState({ hiddenFailAlert: true, failHeader: "", failMessage: "" });
+		Axios.put(
+			BASE_URL + "/api/drug/reservations/cancel",
+			{ id: reservationId },
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
+		)
 			.then((res) => {
-				let reservations = [...this.state.drugReservations];
-				for (let reservation of reservations) {
-					if (reservation.Id === reservationId) {
-						reservation.EntityDTO.reservationStatus = "CANCELED";
-						break;
+				if (res.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Bad request when canceling drug reservation." });
+				} else if (res.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (res.status === 204) {
+					let reservations = [...this.state.drugReservations];
+					for (let reservation of reservations) {
+						if (reservation.Id === reservationId) {
+							reservation.EntityDTO.reservationStatus = "CANCELED";
+							break;
+						}
 					}
+					this.setState({
+						drugReservations: reservations,
+						showSuccessModal: true,
+					});
 				}
-				this.setState({
-					drugReservations: reservations,
-					showSuccessModal: true,
-				});
 			})
 			.catch((err) => {
 				console.log(err);
@@ -62,7 +78,7 @@ class PatientsDrugReservations extends Component {
 	};
 
 	handleModalSuccessClose = () => {
-		this.setState({ showSuccessModal: false });
+		this.setState({ showSuccessModal: false, redirect: true });
 	};
 
 	handleModalInfoClose = () => {
@@ -73,8 +89,7 @@ class PatientsDrugReservations extends Component {
 		this.setState({
 			showInfoModal: true,
 			drugName: drugReservation.EntityDTO.drugInstance.EntityDTO.drugInstanceName,
-			drugManufacturer:
-				drugReservation.EntityDTO.drugInstance.EntityDTO.manufacturer.EntityDTO.name,
+			drugManufacturer: drugReservation.EntityDTO.drugInstance.EntityDTO.manufacturer.EntityDTO.name,
 			drugQuantity: drugReservation.EntityDTO.drugInstance.EntityDTO.quantity,
 			drugPrice: drugReservation.EntityDTO.drugPeacePrice,
 			pharmacyName: drugReservation.EntityDTO.pharmacy.EntityDTO.name,
@@ -85,13 +100,25 @@ class PatientsDrugReservations extends Component {
 		});
 	};
 
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
 	render() {
+		if (this.state.redirect) return <Redirect push to="/" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">My drug reservations</h5>
 					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
 						<NavLink className="nav-link active" exact to="/drugs-reservation">
@@ -101,55 +128,30 @@ class PatientsDrugReservations extends Component {
 							Reservation history
 						</NavLink>
 					</nav>
-					<table
-						className="table table-hover"
-						style={{ width: "100%", marginTop: "3rem" }}
-					>
+					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.drugReservations.map((drugReservation) => (
-								<tr
-									id={drugReservation.Id}
-									key={drugReservation.Id}
-									style={{ cursor: "pointer" }}
-								>
-									<td
-										width="130em"
-										onClick={() =>
-											this.handleSelectReservation(drugReservation)
-										}
-									>
-										<img
-											className="img-fluid"
-											src={CapsuleLogo}
-											width="110em"
-										/>
+								<tr id={drugReservation.Id} key={drugReservation.Id} style={{ cursor: "pointer" }}>
+									<td width="130em" onClick={() => this.handleSelectReservation(drugReservation)}>
+										<img className="img-fluid" src={CapsuleLogo} width="110em" />
 									</td>
-									<td
-										onClick={() =>
-											this.handleSelectReservation(drugReservation)
-										}
-									>
+									<td onClick={() => this.handleSelectReservation(drugReservation)}>
 										<div>
-											<b>Name:</b>{" "}
-											{
-												drugReservation.EntityDTO.drugInstance.EntityDTO
-													.drugInstanceName
-											}
+											<b>Name:</b> {drugReservation.EntityDTO.drugInstance.EntityDTO.drugInstanceName}
 										</div>
 										<div>
 											<b>Amount:</b> {drugReservation.EntityDTO.amount}
 										</div>
 										<div>
 											<b>Total price:</b>{" "}
-											{drugReservation.EntityDTO.drugPeacePrice *
-												drugReservation.EntityDTO.amount}
+											{(
+												Math.round(drugReservation.EntityDTO.drugPeacePrice * drugReservation.EntityDTO.amount * 100) / 100
+											).toFixed(2)}
 											<b> din</b>
 										</div>
 										<div>
 											<b>Reserved until: </b>
-											{new Date(
-												drugReservation.EntityDTO.endDate
-											).toLocaleDateString("en-US", {
+											{new Date(drugReservation.EntityDTO.endDate).toLocaleDateString("en-US", {
 												day: "2-digit",
 												month: "2-digit",
 												year: "numeric",
@@ -162,20 +164,12 @@ class PatientsDrugReservations extends Component {
 										<button
 											type="button"
 											hidden={
-												this.addDays(
-													new Date(drugReservation.EntityDTO.endDate),
-													-1
-												) <= new Date() ||
-												drugReservation.EntityDTO.reservationStatus ===
-													"CANCELED" ||
-												drugReservation.EntityDTO.reservationStatus ===
-													"PROCESSED" ||
-												drugReservation.EntityDTO.reservationStatus ===
-													"EXPIRED"
+												this.addDays(new Date(drugReservation.EntityDTO.endDate), -1) <= new Date() ||
+												drugReservation.EntityDTO.reservationStatus === "CANCELED" ||
+												drugReservation.EntityDTO.reservationStatus === "PROCESSED" ||
+												drugReservation.EntityDTO.reservationStatus === "EXPIRED"
 											}
-											onClick={() =>
-												this.handleCancelDrugReservation(drugReservation.Id)
-											}
+											onClick={() => this.handleCancelDrugReservation(drugReservation.Id)}
 											class="btn btn-outline-danger"
 										>
 											Cancel
@@ -188,7 +182,6 @@ class PatientsDrugReservations extends Component {
 				</div>
 				<ModalDialog
 					show={this.state.showSuccessModal}
-					href="/"
 					onCloseModal={this.handleModalSuccessClose}
 					header="Successfully canceled"
 					text="Your reservation is succesfully canceled."
