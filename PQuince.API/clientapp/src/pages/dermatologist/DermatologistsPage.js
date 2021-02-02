@@ -9,8 +9,8 @@ import CreateAppointmentForDermatologistModal from "../../components/CreateAppoi
 import AddDermatologistToPharmacy from "../../components/AddDermatologistToPharmacy";
 import PharmaciesForDermatologistModal from "../../components/PharmaciesForDermatologistModal";
 import getAuthHeader from "../../GetHeader";
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
 
 class DermatologistsPage extends Component {
 	state = {
