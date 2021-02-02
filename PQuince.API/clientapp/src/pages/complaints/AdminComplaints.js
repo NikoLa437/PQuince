@@ -1,26 +1,41 @@
 import React, { Component } from "react";
-import AppointmentIcon from "../../static/appointment-icon.jpg";
+import AppointmentIcon from "../../static/complaint.png";
 import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
-import ComplaintCreateModal from "../../components/ComplaintCreateModal";
+import ComplaintCreateModal from "../../components/ComplaintReplyModal";
+import getAuthHeader from "../../GetHeader";
 
 class AdminComplaints extends Component {
 	state = {
 		complaints: [],
-		showingSorted: false,
-		showFeedbackModal: false,
 		selectedStaffId: "",
 		StaffName: "",
 		StaffSurame: "",
 		complaint: "",
+		complaintId: "",
 		text: "",
 		grade: 0,
+		appointments: [],
+		showingSorted: false,
+		showFeedbackModal: false,
+		showModifyFeedbackModal: false,
+		showComplaintModal: false,
+		selectedStaffId: "",
+		StaffName: "",
+		StaffSurame: "",
+		grade: 0,
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "api/staff/complaint")
+		Axios.get(BASE_URL + "/api/staff/complaint", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ complaints: res.data });
 				console.log(res.data);
@@ -63,16 +78,19 @@ class AdminComplaints extends Component {
 	};
 
 	handleComaplaint = () => {
-		let entityDTO = {
-			staffId: this.state.selectedStaffId,
-			date: new Date(),
-			text: this.state.complaint,
+		let complaintReplyDTO = {
+			id: this.state.complaintId,
+			reply: this.state.complaint
 		};
-		Axios.post(BASE_URL + "/api/staff/complaint", entityDTO)
+		console.log(complaintReplyDTO, "COMPL");
+		Axios.post(BASE_URL + "/api/staff/complaint/reply", complaintReplyDTO, {
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((resp) => {
-				Axios.get(BASE_URL + "api/staff/complaint")
+				this.setState({ showFeedbackModal: false });
+				Axios.get(BASE_URL + "/api/staff/complaint", { headers: { Authorization: getAuthHeader() } })
 					.then((res) => {
-						this.setState({ complaints: res.data, showFeedbackModal: false });
+						this.setState({ complaints: res.data });
 						console.log(res.data);
 					})
 					.catch((err) => {
@@ -83,7 +101,40 @@ class AdminComplaints extends Component {
 				console.log(err);
 			});
 	};
-
+	
+	handleComplaintClick = (complaint) => {
+		console.log(complaint);
+	
+		Axios.get(BASE_URL + "/api/users/" + complaint.EntityDTO.staffId, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data, "RESPONSE");
+				console.log(res.data.EntityDTO.name);
+				if (res.status === 404) {
+					this.setState({
+						selectedStaffId: res.data.Id,
+						complaintId: complaint.Id,
+						showFeedbackModal: true,
+						StaffName: res.data.EntityDTO.name,
+						StaffSurame: res.data.EntityDTO.surname,
+						grade: 0,
+					});
+				} else if (res.status === 200) {
+					this.setState({
+						selectedStaffId: res.data.Id,
+						showFeedbackModal: true,
+						complaintId: complaint.Id,
+						StaffName: res.data.EntityDTO.name,
+						StaffSurame: res.data.EntityDTO.surname,
+						grade: res.data.grade,
+					});
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+			
+	};
+	
 
 	render() {
 		return (
@@ -92,7 +143,7 @@ class AdminComplaints extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Dermatologist Appointment History</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Patient complaints </h5>
 
 					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
@@ -102,8 +153,18 @@ class AdminComplaints extends Component {
 										<img className="img-fluid" src={AppointmentIcon} width="150em" />
 									</td>
 									<td>
-										
-										sdsadasd
+										<div>
+											<b>Staff name: </b>{" "}
+											{complaint.EntityDTO.staffName}
+										</div>
+										<div>
+											<b>Staff surname: </b>{" "}
+											{complaint.EntityDTO.staffSurname}
+										</div>
+										<div>
+											<b>Profession: </b>{" "}
+											{complaint.EntityDTO.profession}
+										</div>
 										<div>
 											<b>Complant text: </b>{" "}
 											{complaint.EntityDTO.text}
@@ -116,6 +177,7 @@ class AdminComplaints extends Component {
 									<td className="align-middle">
 										<button
 											type="button"
+											onClick={() => this.handleComplaintClick(complaint)}
 											className="btn btn-outline-secondary"
 										>
 											Reply to complaint
