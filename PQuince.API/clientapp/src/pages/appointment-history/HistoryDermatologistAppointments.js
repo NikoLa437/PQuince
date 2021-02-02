@@ -94,6 +94,9 @@ class HistoryDermatologistAppointments extends Component {
 			staffId: this.state.selectedStaffId,
 			date: new Date(),
 			text: this.state.complaint,
+			staffName: this.state.StaffName,
+			staffSurname: this.state.StaffSurame,
+			profession: 'dermathologist'
 		};
 		Axios.post(BASE_URL + "/api/staff/complaint", entityDTO)
 			.then((resp) => {
