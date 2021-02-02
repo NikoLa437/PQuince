@@ -26,13 +26,11 @@ class PatientProfilePage extends Component {
 		});
 	};
 
-	//22793162-52d3-11eb-ae93-0242ac130002
-
 	componentDidMount() {
 		const id = this.props.match.params.id;
 		this.fetchData(id);
 
-		Axios.get(BASE_URL + "/api/users/patient/" + id,   { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/users/patient/" + id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({
@@ -49,7 +47,7 @@ class PatientProfilePage extends Component {
 				console.log(err);
             });
 
-        Axios.get(BASE_URL + "/api/appointment/patient/" + id,   { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+        Axios.get(BASE_URL + "/api/appointment/patient/" + id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
         .then((res) => {
             this.setState({ appointments: res.data });
             console.log(res.data);
@@ -68,7 +66,7 @@ class PatientProfilePage extends Component {
     };    
     
     handleSchedule = () => {
-
+		window.location.href = "/schedule-appointment/" + this.state.id
     };
 
 	render() {
@@ -163,7 +161,7 @@ class PatientProfilePage extends Component {
 									}
 									className="btn btn-primary"
 								>
-							    	Reserve new appointment
+							    	Create and schedule appointment
 								</button>
 								
 							</form>

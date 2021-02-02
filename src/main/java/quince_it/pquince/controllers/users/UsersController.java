@@ -75,8 +75,9 @@ public class UsersController {
 	}
 	
 	@GetMapping("/search") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
 	public ResponseEntity<List<IdentifiableDTO<UserDTO>>> findByNameAndSurname(@RequestParam String name,@RequestParam String surname) {
-		
 		try {
 			List<IdentifiableDTO<UserDTO>> users = userService.findByNameAndSurname(name, surname);
 			return new ResponseEntity<>(users,HttpStatus.OK); 
@@ -118,7 +119,7 @@ public class UsersController {
 	
 	@GetMapping("/patient/{patientId}")
 	@CrossOrigin
-	//@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
 	public ResponseEntity<IdentifiableDTO<UserDTO>> getPatientById(@PathVariable UUID patientId) {
 		try {
 			IdentifiableDTO<UserDTO> patient = userService.getPatientById(patientId);
@@ -132,7 +133,6 @@ public class UsersController {
 	}
 	
 	@GetMapping("/patient")
-	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<IdentifiableDTO<PatientDTO>> getPatientById() {
 		try {

@@ -28,6 +28,7 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.appointment.ScheduleAppointmentDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 
@@ -122,9 +123,10 @@ public class AppointmentController {
 		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeDescending(appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist/{dermatologistId}")
-	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAllAppointmentsByDermatologist(@PathVariable UUID dermatologistId) {
-		return new ResponseEntity<>(appointmentService.getCreatedAppointmentsByDermatologist(dermatologistId),HttpStatus.OK);
+	@GetMapping("/dermatologist")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAllAppointmentsByDermatologist() {
+		return new ResponseEntity<>(appointmentService.getCreatedAppointmentsByDermatologist(),HttpStatus.OK);
 	}
 	
 	@GetMapping("/dermatologist/find-by-pharmacy/{pharmacyId}")
@@ -150,6 +152,17 @@ public class AppointmentController {
 	@GetMapping("/dermatologist/find-by-pharmacy/sort-by-grade-descending/{pharmacyId}")
 	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeDescending(@PathVariable UUID pharmacyId) {
 		return new ResponseEntity<>(appointmentService.findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByGradeDescending(pharmacyId, AppointmentType.EXAMINATION),HttpStatus.OK);
+	}
+	
+	@PostMapping("/schedule-appointment")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
+	public ResponseEntity<?> scheduleAppointment(@RequestBody ScheduleAppointmentDTO scheduleAppointmentDTO) {
+		boolean isSuccesfull = appointmentService.scheduleAppointment(scheduleAppointmentDTO.getPatientId(), scheduleAppointmentDTO.getAppointmentId());
+		
+		if(isSuccesfull) return new ResponseEntity<>(scheduleAppointmentDTO,HttpStatus.CREATED);
+		
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 	
 	@PostMapping("/reserve-dermatologist-appointment")

@@ -13,6 +13,8 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
@@ -397,8 +399,8 @@ public class AppointmentService implements IAppointmentService{
 		return returnAppointments;
 	}
 	@Override
-	public List<IdentifiableDTO<AppointmentDTO>> getCreatedAppointmentsByDermatologist(UUID dermatologistId) {
-		List<Appointment> appointments = appointmentRepository.getCreatedAppointmentsByDermatologist(dermatologistId);
+	public List<IdentifiableDTO<AppointmentDTO>> getCreatedAppointmentsByDermatologist() {
+		List<Appointment> appointments = appointmentRepository.getCreatedAppointmentsByDermatologist(userService.getLoggedUserId());
 		
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
 		
@@ -579,6 +581,29 @@ public class AppointmentService implements IAppointmentService{
 			return true;
 		
 		return false;
+	}
+
+	@Override
+	public boolean scheduleAppointment(UUID patientId, UUID appointmentId) {
+		try {
+			UUID dermatologistId = userService.getLoggedUserId();
+			
+			Appointment appointment = appointmentRepository.findById(appointmentId).get();
+			Patient patient = patientRepository.findById(patientId).get();
+
+			CanReserveAppointment(appointment, patient);
+			
+			appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
+			appointment.setPatient(patient);
+			
+			appointmentRepository.save(appointment);
+			emailService.sendAppointmentReservationNotificationAsync(appointment, "dr.");
+			
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }
