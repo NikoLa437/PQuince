@@ -3,6 +3,7 @@ package quince_it.pquince.services.implementation.users;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,8 +38,10 @@ import quince_it.pquince.security.exception.ResourceConflictException;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
+import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
@@ -543,8 +546,76 @@ public class UserService implements IUserService{
 		catch (IllegalArgumentException e) { return false; }
 	}
 	
+	@Override
+	public List<IdentifiableDermatologistForPharmacyGradeDTO> findByNameSurnameAndGradeForPharmacy(DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		
+		List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch = this.findAllDermatologistForPharmacy(dermatologistFiltrationDTO.getPharmacyId());
+		
+		if(!dermatologistFiltrationDTO.getName().equals("")&&(!dermatologistFiltrationDTO.getSurname().equals("")))
+			return findDermatologistByNameAndSurname(dermatologistForSearch, dermatologistFiltrationDTO);
+		else if(!dermatologistFiltrationDTO.getName().equals(""))
+			return findDermatologistByName(dermatologistForSearch,dermatologistFiltrationDTO);
+		else if(!dermatologistFiltrationDTO.getSurname().equals(""))
+			return findDermatologistBySurname(dermatologistForSearch,dermatologistFiltrationDTO);
+		else if(dermatologistFiltrationDTO.getGradeFrom()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(dermatologistForSearch,dermatologistFiltrationDTO);	
+		
+		return dermatologistForSearch;
+	}
 
+	private List<IdentifiableDermatologistForPharmacyGradeDTO> findDermatologistBySurname(List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(IdentifiableDermatologistForPharmacyGradeDTO dermatologist : dermatologistForSearch) {
+			if(dermatologist.EntityDTO.getSurname().toLowerCase().contains(dermatologistFiltrationDTO.getSurname().toLowerCase()))
+				retVal.add(dermatologist);
+		}
+		
+		if(dermatologistFiltrationDTO.getGradeTo()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(retVal,dermatologistFiltrationDTO);
+		
+		return retVal;
+	}
 
+	private List<IdentifiableDermatologistForPharmacyGradeDTO> findDermatologistByName(
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(IdentifiableDermatologistForPharmacyGradeDTO dermatologist : dermatologistForSearch) {
+			if(dermatologist.EntityDTO.getName().toLowerCase().contains(dermatologistFiltrationDTO.getName().toLowerCase()))
+				retVal.add(dermatologist);
+		}
+		
+		if(dermatologistFiltrationDTO.getGradeTo()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(retVal,dermatologistFiltrationDTO);
+		
+		return retVal;
+	}
 
+	private List<IdentifiableDermatologistForPharmacyGradeDTO> findDermatologistByGrade(List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(IdentifiableDermatologistForPharmacyGradeDTO dermatologist : dermatologistForSearch) {
+			if(dermatologist.EntityDTO.getGrade()>= dermatologistFiltrationDTO.getGradeFrom() && (dermatologist.EntityDTO.getGrade()< dermatologistFiltrationDTO.getGradeTo() || dermatologistFiltrationDTO.getGradeTo()==-1))
+				retVal.add(dermatologist);
+		}
+		
+		return retVal;
+	}
 
+	private List<IdentifiableDermatologistForPharmacyGradeDTO> findDermatologistByNameAndSurname(
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		// TODO Auto-generated method stub
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(IdentifiableDermatologistForPharmacyGradeDTO dermatologist : dermatologistForSearch) {
+			if(dermatologist.EntityDTO.getName().toLowerCase().contains(dermatologistFiltrationDTO.getName().toLowerCase()) && dermatologist.EntityDTO.getSurname().toLowerCase().contains(dermatologistFiltrationDTO.getSurname().toLowerCase()))
+				retVal.add(dermatologist);
+		}
+		
+		if(dermatologistFiltrationDTO.getGradeTo()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(retVal,dermatologistFiltrationDTO);
+		
+		return retVal;	}
+	
 }

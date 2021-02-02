@@ -87,6 +87,10 @@ class PharmacyProfilePage extends Component {
 		});
 	}
 
+	handleAddExaminationClick = () => {
+		window.location.href = "/reserve-appointment/" + this.state.pharmacyId
+	}
+
 	handleOurDrugs = () => {
 
 		Axios
@@ -327,7 +331,7 @@ class PharmacyProfilePage extends Component {
 							</a>
 							<ul>
 								<li>
-									<a href="/">Examination *** </a>
+									<a onClick={this.handleAddExaminationClick}>Examination</a>
 								</li>
 								<li>
 									<a href="/">Consultation ***</a>

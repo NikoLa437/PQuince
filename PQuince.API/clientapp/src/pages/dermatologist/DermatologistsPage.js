@@ -23,14 +23,15 @@ class DermatologistsPage extends Component {
         forPharmacy:'cafeddee-56cb-11eb-ae93-0242ac130202',
         forStaff:'',
         formShowed:false,
-        name:'',
-        surname:'',
-        gradeFrom:'',
-        gradeTo:'',
+        searchName:'',
+        searchSurname:'',
+        searchGradeFrom:'',
+        searchGradeTo:'',
         showingSearched: false,
         pharmaciesForDermatologist:[],
         showPharmaciesModal:false,
         dermatologistToEmploye:[],
+        showingSorted:false,
     };
 
 
@@ -187,24 +188,113 @@ class DermatologistsPage extends Component {
     };
     
     handleNameChange = (event) => {
-		this.setState({ name: event.target.value });
+		this.setState({ searchName: event.target.value });
     };
     
     handleSurnameChange = (event) => {
-		this.setState({ surname: event.target.value });
+		this.setState({ searchSurname: event.target.value });
     };
     
     handleGradeFromChange = (event) => {
-		this.setState({ gradeFrom: event.target.value });
+		this.setState({ searchGradeFrom: event.target.value });
 	};
 
 	handleGradeToChange = (event) => {
-		this.setState({ gradeTo: event.target.value });
+		this.setState({ searchGradeTo: event.target.value });
     };
+
+    handleSortByGradeAscending = () =>{
+
+    }
+
+    handleSortByGradeDescending = () =>{
+
+    }
     
     handleSearchClick = () =>{
-        alert("IMPLEMENT")
-    }
+
+		if (this.state.showingSorted === true) {
+			this.setState({ showingSearched: true }, () => {
+				if (this.state.sortIndicator === 1) this.handleSortByGradeAscending();
+				else if (this.state.sortIndicator === 2) this.handleSortByGradeDescending();
+			});
+		} else {
+			if (
+				!(
+					this.state.searchGradeFrom === "" &&
+					this.state.searchGradeTo === "" &&
+					this.state.searchName === "" &&
+					this.state.searchSurname === ""
+				)
+			) {
+				let gradeFrom = this.state.searchGradeFrom;
+				let gradeTo = this.state.searchGradeTo;
+				let name = this.state.searchName;
+				let surname = this.state.searchSurname;
+
+				if (gradeFrom === "") gradeFrom = -1;
+				if (gradeTo === "") gradeTo = -1;
+				if (name === "") name = '';
+				if (surname === "") surname = '';
+
+				const SEARCH_URL =
+					BASE_URL +
+					"/api/users/search-dermatologist-for-pharmacy?name=" +
+                    name +
+                    "&surname=" +
+					surname +
+					"&gradeFrom=" +
+					gradeFrom +
+					"&gradeTo=" +
+					gradeTo +
+					"&pharmacyId=" +
+					'cafeddee-56cb-11eb-ae93-0242ac130202';
+
+				Axios.get(SEARCH_URL, {
+                    headers: { Authorization: getAuthHeader() },
+                })
+					.then((res) => {
+						this.setState({
+							dermatologists: res.data,
+							formShowed: false,
+							showingSearched: true,
+						});
+						console.log(res.data);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			}
+        }   
+     }
+
+     handleResetSearch = () => {
+
+        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202" , {
+			headers: { Authorization: getAuthHeader() },
+		})
+			.then((res) => {
+				this.setState({ 
+                    dermatologists: res.data ,
+                    formShowed: false,
+					showingSearched: false,
+					searchName: "",
+                    searchSurname: "",
+                    searchGradeFrom: "",
+					searchGradeTo: "",
+
+                });
+                console.log(res.data);
+            
+			})
+			.catch((err) => {
+				console.log(err);
+            });
+            
+	
+	};
+
+
 
     render() {
         const myStyle = {
@@ -262,7 +352,7 @@ class DermatologistsPage extends Component {
                                     style={{ width: "9em" }}
                                     type="text"
                                     onChange={this.handleNameChange}
-                                    value={this.state.name}
+                                    value={this.state.searchName}
                                 />
 
                                 <input
@@ -271,7 +361,7 @@ class DermatologistsPage extends Component {
                                     style={{ width: "9em" }}
                                     type="text"
                                     onChange={this.handleSurnameChange}
-                                    value={this.state.surname}
+                                    value={this.state.searchSurname}
                                 />
 
                                 <input
@@ -282,7 +372,7 @@ class DermatologistsPage extends Component {
                                     min="1"
                                     max="5"
                                     onChange={this.handleGradeFromChange}
-                                    value={this.state.gradeFrom}
+                                    value={this.state.searchGradeFrom}
                                 />
                                 <input
                                     placeholder="Grade to"
@@ -292,7 +382,7 @@ class DermatologistsPage extends Component {
                                     min="1"
                                     max="5"
                                     onChange={this.handleGradeToChange}
-                                    value={this.state.gradeTo}
+                                    value={this.state.searchGradeTo}
                                 />
                                 
                             </div>
