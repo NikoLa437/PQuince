@@ -4,20 +4,23 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffFeedback;
 import quince_it.pquince.entities.users.StaffFeedbackId;
+import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.StaffFeedbackRepository;
 import quince_it.pquince.repository.users.StaffRepository;
+import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.users.StaffFeedbackDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.interfaces.users.IStaffFeedbackService;
-import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.util.users.StaffFeedbackMapper;
 
 
@@ -37,7 +40,7 @@ public class StaffFeedbackService implements IStaffFeedbackService{
 	private AppointmentRepository appointmentRepository;
 	
 	@Autowired
-	private IUserService userService;
+	private UserRepository userRepository;
 	
 	
 	@Override
@@ -52,7 +55,7 @@ public class StaffFeedbackService implements IStaffFeedbackService{
 
 	@Override
 	public void create(StaffFeedbackDTO entityDTO) throws FeedbackNotAllowedException {		
-		UUID patientId = userService.getLoggedUserId();
+		UUID patientId = getLoggedUserId();
 		Patient patient = patientRepository.findById(patientId).get();
 		
 		CanPatientGiveFeedback(patient.getId(), entityDTO.getStaffId());
@@ -72,7 +75,7 @@ public class StaffFeedbackService implements IStaffFeedbackService{
 	@Override
 	public void update(StaffFeedbackDTO entityDTO) {		
 		
-		UUID patientId = userService.getLoggedUserId();
+		UUID patientId = getLoggedUserId();
 		Patient patient = patientRepository.findById(patientId).get();
 		Staff staff = staffRepository.findById(entityDTO.getStaffId()).get();
 		
@@ -85,8 +88,17 @@ public class StaffFeedbackService implements IStaffFeedbackService{
 
 	@Override
 	public StaffFeedbackDTO findByStaffIdAndPatientId(UUID staffId) {
-		UUID patientId = userService.getLoggedUserId();
+		UUID patientId = getLoggedUserId();
 		return StaffFeedbackMapper.MapStaffFeedbackPersistenceToStaffFeedbackDTO(staffFeedbackRepository.findByStaffIdAndPatientId(staffId, patientId));
+	}
+	
+	private UUID getLoggedUserId() {
+		
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		String email = currentUser.getName();
+		User user = userRepository.findByEmail(email);
+		
+		return user.getId();
 	}
 
 }
