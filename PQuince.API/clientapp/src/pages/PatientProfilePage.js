@@ -5,7 +5,8 @@ import { BASE_URL } from "../constants.js";
 import Axios from "axios";
 import PatientLogo from "../static/patientLogo.png";
 import AppointmentIcon from "../static/appointment-icon.jpg";
-
+import getAuthHeader from "../GetHeader";
+import { withRouter } from "react-router";
 
 class PatientProfilePage extends Component {
 	state = {
@@ -19,8 +20,17 @@ class PatientProfilePage extends Component {
 		appointments: []
 	};
 
+	fetchData = id => {
+		this.setState({
+			id:id
+		});
+	};
+
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/users/patient/22793162-52d3-11eb-ae93-0242ac130002")
+		const id = this.props.match.params.id;
+		this.fetchData(id);
+
+		Axios.get(BASE_URL + "/api/users/patient/" + id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({
@@ -37,7 +47,7 @@ class PatientProfilePage extends Component {
 				console.log(err);
             });
 
-        Axios.get(BASE_URL + "/api/appointment/patient/22793162-52d3-11eb-ae93-0242ac130002")
+        Axios.get(BASE_URL + "/api/appointment/patient/" + id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
         .then((res) => {
             this.setState({ appointments: res.data });
             console.log(res.data);
@@ -49,7 +59,15 @@ class PatientProfilePage extends Component {
     
     handleExamine = (appointmentId) => {
 		console.log(appointmentId)
-	};
+    };
+
+    handleNotShowUp = (appointmentId) => {
+		console.log(appointmentId)
+    };    
+    
+    handleSchedule = () => {
+		window.location.href = "/schedule-appointment/" + this.state.id
+    };
 
 	render() {
 		return (
@@ -66,7 +84,6 @@ class PatientProfilePage extends Component {
 						<div className="col-lg-8 mx-auto">
 							<br />
 							<form id="contactForm" name="sentMessage">	
-
                                 <img
                                     style={{float: "left"}}
 									className="img-fluid"
@@ -123,6 +140,29 @@ class PatientProfilePage extends Component {
 										</div>
 									</div>
 								</div>
+                                <br/>
+                                <button
+                                    type="button"
+                                    style={{width: "80%"}}
+									onClick={() =>
+										this.handleSchedule()
+									}
+									className="btn btn-primary"
+								>
+							    	Schedule appointment
+								</button>
+								<br/>
+								<br/>
+								<button
+                                    type="button"
+                                    style={{width: "80%"}}
+									onClick={() =>
+										this.handleSchedule()
+									}
+									className="btn btn-primary"
+								>
+							    	Create and schedule appointment
+								</button>
 								
 							</form>
 						</div>
@@ -180,9 +220,10 @@ class PatientProfilePage extends Component {
                                             " " + appointment.EntityDTO.staff.EntityDTO.surname}
                                     </div>
                                 </td>
-                                <td className="align-right">
+                                <td className="align-right" style={{ width: "35%"}}>
 										<button
-											type="button"
+                                            type="button"
+                                            style={{ width: "60%", float: "right"}}
 											hidden={
 												appointment.EntityDTO.appointmentStatus != "SCHEDULED" || appointment.EntityDTO.staff.Id != "25345678-52d3-11eb-ae93-0242ac130002"
 											}
@@ -192,6 +233,21 @@ class PatientProfilePage extends Component {
 											className="btn btn-primary"
 										>
 											Examine
+										</button>
+                                        <br/>
+                                        <br/>
+                                        <button
+                                            type="button"
+                                            style={{ width: "60%", float: "right", verticalAlign: "bottom"}}
+											hidden={
+												appointment.EntityDTO.appointmentStatus != "SCHEDULED" || appointment.EntityDTO.staff.Id != "25345678-52d3-11eb-ae93-0242ac130002"
+											}
+											onClick={() =>
+												this.handleNotShowUp(appointment.Id)
+											}
+											className="btn btn-danger"
+										>
+											Did not show up
 										</button>
 									</td>
                             </tr>
@@ -206,4 +262,4 @@ class PatientProfilePage extends Component {
 	}
 }
 
-export default PatientProfilePage;
+export default withRouter(PatientProfilePage);
