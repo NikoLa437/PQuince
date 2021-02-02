@@ -57,7 +57,7 @@ class ScheduleAppointmentPage extends Component {
 
 					<table
 						className="table table-hover"
-						style={{ width: "100%", marginTop: "3rem" }}
+						style={{ width: "70%", marginTop: "3rem" }}
 					>
 						<tbody>
 							{this.state.appointments.map((appointment) => (
@@ -72,7 +72,7 @@ class ScheduleAppointmentPage extends Component {
 										<img
 											className="img-fluid"
 											src={AppointmentIcon}
-											width="150em"
+											width="100em"
 										/>
 									</td>
 									<td>

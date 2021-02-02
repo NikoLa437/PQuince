@@ -6,6 +6,7 @@ import Axios from "axios";
 import PatientLogo from "../static/patientLogo.png";
 import AppointmentIcon from "../static/appointment-icon.jpg";
 import getAuthHeader from "../GetHeader";
+import { withRouter } from "react-router";
 
 class PatientProfilePage extends Component {
 	state = {
@@ -19,8 +20,19 @@ class PatientProfilePage extends Component {
 		appointments: []
 	};
 
+	fetchData = id => {
+		this.setState({
+			id:id
+		});
+	};
+
+	//22793162-52d3-11eb-ae93-0242ac130002
+
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/users/patient/22793162-52d3-11eb-ae93-0242ac130002",   { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+		const id = this.props.match.params.id;
+		this.fetchData(id);
+
+		Axios.get(BASE_URL + "/api/users/patient/" + id,   { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({
@@ -37,7 +49,7 @@ class PatientProfilePage extends Component {
 				console.log(err);
             });
 
-        Axios.get(BASE_URL + "/api/appointment/patient/22793162-52d3-11eb-ae93-0242ac130002",   { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+        Axios.get(BASE_URL + "/api/appointment/patient/" + id,   { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
         .then((res) => {
             this.setState({ appointments: res.data });
             console.log(res.data);
@@ -141,6 +153,18 @@ class PatientProfilePage extends Component {
 								>
 							    	Schedule appointment
 								</button>
+								<br/>
+								<br/>
+								<button
+                                    type="button"
+                                    style={{width: "80%"}}
+									onClick={() =>
+										this.handleSchedule()
+									}
+									className="btn btn-primary"
+								>
+							    	Reserve new appointment
+								</button>
 								
 							</form>
 						</div>
@@ -240,4 +264,4 @@ class PatientProfilePage extends Component {
 	}
 }
 
-export default PatientProfilePage;
+export default withRouter(PatientProfilePage);

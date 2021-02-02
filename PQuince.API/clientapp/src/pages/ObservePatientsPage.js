@@ -19,6 +19,10 @@ class ObservePatientsPage extends Component {
         this.setState({surname: event.target.value});
     }
 
+    componentDidMount() {
+        this.handleSearch();
+    }
+
     handleSearch = () => {
         console.log(this.state);
         const SEARCH_URL =
@@ -47,7 +51,8 @@ class ObservePatientsPage extends Component {
 			})
 			.catch((err) => {
 				console.log(err);
-			});
+            });
+        window.location.href = "patient-profile/" + patientId
 	};
 
     render() { 
