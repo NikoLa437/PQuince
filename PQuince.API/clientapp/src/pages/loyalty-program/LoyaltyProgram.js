@@ -159,8 +159,7 @@ state = {
 					drugDiscountGold: this.state.drugDiscountGold*1,
 					consultationDiscountGold: this.state.consultationDiscountGold*1,
 				};
-				console.log("UPISSS",loyaltyProgramDTO);
-
+				
 				Axios.put(BASE_URL + "/api/loyaltyProgram/" + this.state.id, loyaltyProgramDTO, { headers: { Authorization: getAuthHeader()}})
 					.then((res) => {
 						console.log("Success");
