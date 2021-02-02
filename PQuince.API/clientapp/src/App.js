@@ -25,6 +25,7 @@ import AdminComplaints from "./pages/complaints/AdminComplaints";
 import LoyaltyProgram from "./pages/loyalty-program/LoyaltyProgram";
 import ObservePatientsCosultation from "./pages/pharmacist-appointment/ObservePatientsCosultation";
 import ObservePatientsCosultationHistory from "./pages/pharmacist-appointment/ObservePatientsConsultationHistory";
+import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPageForPatient";
 
 function App() {
 	return (
@@ -59,6 +60,7 @@ function App() {
 				<Link exact to="/patients-appointments" path="/patients-appointments" component={PatientsAppointments} />
 				<Link exact to="/dermatologist-history" path="/dermatologist-history" component={HistoryDermatologistAppointments} />
 				<Link exact to="/dermatologists" path="/dermatologists" component={DermatologistsPage} />
+				<Link exact to="/dermatologists-for-patient" path="/dermatologists-for-patient" component={DermatologistsPageForPatient} />
 				<Link exact to="/patients" path="/patients" component={ObservePatientsPage} />
 				<Link exact to="/schedule-appointment" path="/schedule-appointment" component={ScheduleAppointmentPage} />
 				<Link exact to="/schedule-consultation" path="/schedule-consultation" component={ConsultationTimeSelectPage} />

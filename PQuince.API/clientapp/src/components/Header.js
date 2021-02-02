@@ -58,7 +58,10 @@ class Header extends Component {
 							<li>
 								<a href="/pharmacy/cafeddee-56cb-11eb-ae93-0242ac130002">Pharmacy</a>
 							</li>
-							<li>
+							<li hidden={!this.hasRole("ROLE_PATIENT")}>
+								<a href="/dermatologists-for-patient">Dermatologist</a>
+							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
 								<a href="/dermatologists">Dermatologist</a>
 							</li>
 							

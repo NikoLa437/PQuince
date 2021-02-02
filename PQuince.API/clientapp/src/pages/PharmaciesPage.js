@@ -4,6 +4,8 @@ import Header from "../components/Header";
 import Axios from "axios";
 import { BASE_URL } from "../constants.js";
 import PharmacyLogo from "../static/pharmacyLogo.png";
+import '../App.js'
+
 
 class PharmaciesPage extends Component {
 	state = {

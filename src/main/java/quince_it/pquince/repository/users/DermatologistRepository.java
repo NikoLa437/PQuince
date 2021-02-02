@@ -10,7 +10,7 @@ import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Dermatologist;
 
 public interface DermatologistRepository extends JpaRepository<Dermatologist, UUID>{
-	@Query(value = "SELECT d from Dermatologist d WHERE (SELECT p from d.pharmacies p) = ?1")
-	List<Dermatologist> findAllDermatologistForPharmacy(UUID pharmacyId);
+	@Query(value = "SELECT d from Dermatologist d WHERE LOWER(d.name) LIKE %?1% AND LOWER(d.surname) LIKE %?2%")
+	List<Dermatologist> findByNameAndSurname(String name, String surname);
 
 }

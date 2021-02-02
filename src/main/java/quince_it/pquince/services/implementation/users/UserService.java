@@ -618,4 +618,42 @@ public class UserService implements IUserService{
 		
 		return retVal;	}
 	
+	@Override
+	public List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologist() {
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retDermatologist = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		dermatologistRepository.findAll().forEach((d) -> retDermatologist.add(MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(d)));
+
+		return retDermatologist;
+	}
+
+	public List<IdentifiableDermatologistForPharmacyGradeDTO> findByNameSurnameGradeAndPharmacy(DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal= new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		List<Dermatologist> dermatologistForSearch = dermatologistRepository.findByNameAndSurname(dermatologistFiltrationDTO.getName().toLowerCase(),dermatologistFiltrationDTO.getSurname().toLowerCase());
+		
+		if(!dermatologistFiltrationDTO.getPharmacyId().toString().equals("00000000-0000-0000-0000-000000000000"))
+			dermatologistForSearch = findDermatologistByPharmacy(dermatologistForSearch,dermatologistFiltrationDTO);
+		
+		dermatologistForSearch.forEach((d) -> retVal.add(MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(d)));
+		
+		if(dermatologistFiltrationDTO.getGradeTo()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(retVal,dermatologistFiltrationDTO);
+		
+		return retVal;
+	}
+
+	private List<Dermatologist> findDermatologistByPharmacy(List<Dermatologist> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		List<Dermatologist> retVal = new ArrayList<Dermatologist>();
+		
+		
+		for(Dermatologist dermatologist : dermatologistForSearch) {
+			if(IsDermatogistWorkInPharmacy(dermatologist,dermatologistFiltrationDTO.getPharmacyId()))
+				retVal.add(dermatologist);
+		}
+
+		return retVal;
+	}
+
+	
 }

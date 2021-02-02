@@ -235,6 +235,21 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/dermatologists") 
+	@PreAuthorize("hasRole('PATIENT')")
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getAllDermatologist() {
+	  
+		try {
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findAllDermatologist();
+			return new ResponseEntity<>(dermatologist,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 	@GetMapping("/dermatologist-for-emplooye-in-pharmacy/{pharmacyId}") 
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
@@ -251,7 +266,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/pharmacies-where-dermatologist-work") 
-	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@PreAuthorize("hasRole('PHARMACYADMIN') or hasRole('PATIENT')")
 	@CrossOrigin
 	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> getPharmciesWhereDermatologistWork(@RequestParam UUID dermatologistId) {
 	  
@@ -306,11 +321,23 @@ public class UsersController {
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> findByNameSurnameAndGradeForPharmacy(@RequestParam String name,@RequestParam String surname, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam UUID pharmacyId) {
 		
-		try {
-			System.out.println("TESTTTTTT");
-			
+		try {			
 			DermatologistFiltrationDTO dermatologistFiltrationDTO = new DermatologistFiltrationDTO(name, surname, gradeFrom, gradeTo,pharmacyId);
 			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findByNameSurnameAndGradeForPharmacy(dermatologistFiltrationDTO);
+			
+			return new ResponseEntity<>(dermatologist, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/search-dermatologist")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> findByNameSurnameGradeAndPharmacy(@RequestParam String name,@RequestParam String surname, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam UUID pharmacyId) {
+		
+		try {
+			DermatologistFiltrationDTO dermatologistFiltrationDTO = new DermatologistFiltrationDTO(name, surname, gradeFrom, gradeTo ,pharmacyId);
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findByNameSurnameGradeAndPharmacy(dermatologistFiltrationDTO);
 			
 			return new ResponseEntity<>(dermatologist, HttpStatus.OK);
 		} catch (Exception e) {
