@@ -5,13 +5,17 @@ import CapsuleLogo from "../../static/capsuleLogo.png";
 import { BASE_URL } from "../../constants.js";
 import DrugSpecificationModal from "../../components/DrugSpecification";
 import Axios from "axios";
+import getAuthHeader from "../../GetHeader";
 
 class DrugsPage extends Component {
 	state = {
 		drugs: [],
+		newDrugs: [],
 		specificationModalShow: false,
 		ingredients: [],
 		replacingDrugs: [],
+		drugGrades: [],
+		newGrades: [],
 		drugAmount: "",
 		drugQuantity: "",
 		drugManufacturer: "",
@@ -24,15 +28,22 @@ class DrugsPage extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/drug")
+    
+    		Axios.get(BASE_URL + "/api/drug/boze")
 			.then((res) => {
 				this.setState({ drugs: res.data });
-				console.log(res.data);
+				console.log(this.state.drugs, "USLO JE");
+			
+				
 			})
 			.catch((err) => {
 				console.log(err);
 			});
+			
+			
+	
 	}
+	
 	handleDrugClick  = (drug) => {
 		this.setState({ 
 			drugAmount: drug.EntityDTO.recommendedAmount,
@@ -48,7 +59,6 @@ class DrugsPage extends Component {
 			replacingDrugs: drug.EntityDTO.replacingDrugs,
 			specificationModalShow: true,
 		})
-		console.log( drug.EntityDTO.ingredients, "XOXOXO")
 	}
 	handleModalClose = () => {
 		this.setState({ specificationModalShow: false });
@@ -64,8 +74,9 @@ class DrugsPage extends Component {
 
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
+						
 							{this.state.drugs.map((drug) => (
-								<tr id={drug.Id} key={drug.Id}  style={{ cursor: "pointer" }}>
+								<tr  style={{ cursor: "pointer" }}>
 									<td width="130em">
 										<img className="img-fluid" src={CapsuleLogo} width="70em" />
 									</td>
@@ -74,10 +85,10 @@ class DrugsPage extends Component {
 											<b>Name:</b> {drug.EntityDTO.drugInstanceName}
 										</div>
 										<div>
-											<b>Manufacturer:</b> {drug.EntityDTO.manufacturer.EntityDTO.name}
+											<b>Kind:</b> {drug.EntityDTO.drugKind}
 										</div>
 										<div>
-											<b>Quantity:</b> {drug.EntityDTO.quantity} <b>mg</b>
+											<b>Grade:</b> {drug.EntityDTO.avgGrade}
 										</div>
 									</td>
 									<td>

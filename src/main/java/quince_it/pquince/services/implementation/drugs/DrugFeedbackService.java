@@ -1,6 +1,8 @@
 package quince_it.pquince.services.implementation.drugs;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,16 @@ import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.DrugReservationRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugKindIdDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
+import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.util.drugs.DrugFeedbackMapper;
+import quince_it.pquince.services.implementation.util.drugs.DrugsWithGradesMapper;
+import quince_it.pquince.services.implementation.util.users.UserMapper;
 
 @Service
 public class DrugFeedbackService implements IDrugFeedbackService{
@@ -81,6 +89,31 @@ public class DrugFeedbackService implements IDrugFeedbackService{
 		UUID patientId = userService.getLoggedUserId();
 		return DrugFeedbackMapper.MapDrugFeedbackPersistenceToPDrugFeedbackDTO(drugFeedbackRepository.findByPatientAndDrug(patientId, drugId));
 	}
+	
+	@Override
+	public double findAvgGradeForDrug(UUID drugId) {
+		try {
+			double retVal = drugFeedbackRepository.findAvgGradeForDrug(drugId);
+			
+			return  retVal;
+		}catch (Exception e) {
+			return 0;
+		}
+	}
 
+	@Override
+	public List<IdentifiableDTO<DrugsWithGradesDTO>> findDrugsWithGrades() {
+		List<DrugInstance> drugs = drugInstanceRepository.findAll();
+		List<IdentifiableDTO<DrugsWithGradesDTO>> drugsWithGrades = new ArrayList<IdentifiableDTO<DrugsWithGradesDTO>>();
+		double grade;
+		for (DrugInstance var : drugs) 
+		{ 
+			grade = findAvgGradeForDrug(var.getId());
+			drugsWithGrades.add(DrugsWithGradesMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(var, grade));
+			
+		}
+	
+		return drugsWithGrades;
+	}
 	
 }
