@@ -66,6 +66,8 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException;
 
 	List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO);
+	
+	List<AppointmentPeriodResponseDTO> getFreePeriodsDermatologist(Date date, int duration);
 
 	UUID createTerminForDermatologist(AppointmentCreateDTO appointmentDTO);
 

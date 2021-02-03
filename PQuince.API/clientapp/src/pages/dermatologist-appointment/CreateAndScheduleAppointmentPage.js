@@ -90,7 +90,7 @@ class CreateAndScheduleAppointmentPage extends Component {
 	componentDidMount() {
 		const id = this.props.match.params.id;
 		this.fetchData(id);
-		//this.fetchPeriods();
+		this.fetchPeriods();
 	}
 
 	handleAppointment = (selectedPeriod) => {
