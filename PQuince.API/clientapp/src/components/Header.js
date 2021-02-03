@@ -35,15 +35,13 @@ class Header extends Component {
 							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
 								<Link to="/patients">Patients</Link>
 							</li>
+							<li hidden={!this.hasRole("ROLE_PATIENT")}>
+								<Link to="/patient-complaint">Make complaint</Link>
+							</li>
 							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
 								<Link to="/dermatologist-calendar">Calendar</Link>
 							</li>
-							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
-								<Link to="/pharmacies">Pharmacies</Link>
-							</li>
-							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
-								<Link to="/drugs">Drugs</Link>
-							</li>
+
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#">My record</a>
 								<ul>
@@ -61,12 +59,34 @@ class Header extends Component {
 									</li>
 								</ul>
 							</li>
+							<li hidden={this.hasRole("*")}>
+								<Link to="/pharmacies">Pharmacies</Link>
+							</li>
+							<li hidden={this.hasRole("*")}>
+								<Link to="/drugs">Drugs</Link>
+							</li>
+							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
+								<a href="#">Services</a>
+								<ul>
+									<li hidden={!this.hasRole("ROLE_PATIENT")}>
+										<Link to="/dermatologists-for-patient">Dermatologist</Link>
+									</li>
+									<li hidden={!this.hasRole("ROLE_PATIENT")}>
+										<Link to="/pharmacist-for-patient">Pharmacist</Link>
+									</li>
+									<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
+										<Link to="/pharmacies">Pharmacies</Link>
+									</li>
+									<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
+										<Link to="/drugs">Drugs</Link>
+									</li>
+								</ul>
+							</li>
+
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/pharmacy-for-admin">Pharmacy</Link>
 							</li>
-							<li hidden={!this.hasRole("ROLE_PATIENT")}>
-								<Link to="/dermatologists-for-patient">Dermatologist</Link>
-							</li>
+
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/dermatologists">Dermatologist</Link>
 							</li>
@@ -82,10 +102,6 @@ class Header extends Component {
 							</li>
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/absence-for-administrator">Absence</Link>
-							</li>
-
-							<li hidden={!this.hasRole("ROLE_PATIENT")}>
-								<Link to="/pharmacist-for-patient">Pharmacist</Link>
 							</li>
 
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
