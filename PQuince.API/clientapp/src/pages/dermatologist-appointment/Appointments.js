@@ -18,15 +18,21 @@ class Appointments extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+		unauthorizedRedirect: false,
 	};
 
 	componentDidMount() {
 		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/" + "cafeddee-56cb-11eb-ae93-0242ac130002", {
+			validateStatus: () => true,
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
-				this.setState({ appointments: res.data });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else {
+					this.setState({ appointments: res.data });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -131,6 +137,8 @@ class Appointments extends Component {
 
 	render() {
 		if (this.state.redirect) return <Redirect push to="/" />;
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />

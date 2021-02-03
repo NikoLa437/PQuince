@@ -25,6 +25,7 @@ import AdminComplaints from "./pages/complaints/AdminComplaints";
 import LoyaltyProgram from "./pages/loyalty-program/LoyaltyProgram";
 import ObservePatientsCosultation from "./pages/pharmacist-appointment/ObservePatientsCosultation";
 import ObservePatientsCosultationHistory from "./pages/pharmacist-appointment/ObservePatientsConsultationHistory";
+import UnauthorizedPage from "./pages/UnauthorizedPage";
 
 function App() {
 	return (
@@ -39,18 +40,8 @@ function App() {
 				<Link exact to="/admin-register-staff" path="/admin-register-staff" component={AdminRegisterStaff} />
 				<Link exact to="/admin-register-drug" path="/admin-register-drug" component={AdminRegisterDrug} />
 				<Link exact to="/admin-register-pharmacies" path="/admin-register-pharmacies" component={AdminRegisterPharmacies} />
-				<Link
-					exact
-					to="/drugs-reservation"
-					path="/drugs-reservation"
-					component={PatientsDrugReservations}
-				/>
-				<Link
-					exact
-					to="/drugs-reservation-history"
-					path="/drugs-reservation-history"
-					component={PatientsDrugReservationHistory}
-				/>
+				<Link exact to="/drugs-reservation" path="/drugs-reservation" component={PatientsDrugReservations} />
+				<Link exact to="/drugs-reservation-history" path="/drugs-reservation-history" component={PatientsDrugReservationHistory} />
 				<Link exact to="/drugs-reservation" path="/drugs-reservation" component={PatientsDrugReservations} />
 				<Link exact to="/drugs-reservation-history" path="/drugs-reservation-history" component={PatientsDrugReservationHistory} />
 				<Link exact to="/drugs" path="/drugs" component={DrugReservation} />
@@ -64,10 +55,11 @@ function App() {
 				<Link exact to="/loyalty-program" path="/loyalty-program" component={LoyaltyProgram} />
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
 				<Link exact to="/observe-consultations-history" path="/observe-consultations-history" component={ObservePatientsCosultationHistory} />
-				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
-				<Route path="/patient-profile/:id" children={<PatientProfilePage/>}/>
-				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage/>}/>
+				<Link exact to="/unauthorized" path="/unauthorized" component={UnauthorizedPage} />
 
+				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
+				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
+				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />
 			</Switch>
 		</Router>
 	);

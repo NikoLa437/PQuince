@@ -94,9 +94,9 @@ insert into drug_replacement(drug_id, replacement_drug_id) values ('2c797174-583
 insert into drug_replacement(drug_id, replacement_drug_id) values ('2fe1cd8e-5839-11eb-ae93-0242ac130002', '2c797174-5839-11eb-ae93-0242ac130002');
 insert into drug_replacement(drug_id, replacement_drug_id) values ('2fe1cd8e-5839-11eb-ae93-0242ac130002', 'dac2b818-5838-11eb-ae93-0242ac130002');
 
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-02', 340);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac111002','2020-11-11','2021-02-02', 399.99);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-02', 320);
+insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 340);
+insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac111002','2020-11-11','2021-02-22', 399.99);
+insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-22', 320);
 
 
 insert into drug_storage(drug_instance_id, pharmacy_id, count) values ('dac2b818-5838-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24);

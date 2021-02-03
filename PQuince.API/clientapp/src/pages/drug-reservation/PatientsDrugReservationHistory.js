@@ -4,7 +4,7 @@ import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import TopBar from "../../components/TopBar";
 import Header from "../../components/Header";
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 import getAuthHeader from "../../GetHeader";
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
@@ -24,13 +24,18 @@ class PatientsDrugReservationHistory extends Component {
 		hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
+		unauthorizedRedirect: false,
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/drug/processed-reservations", { headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/drug/processed-reservations", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				this.setState({ drugReservations: res.data });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else {
+					this.setState({ drugReservations: res.data });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -132,6 +137,8 @@ class PatientsDrugReservationHistory extends Component {
 	};
 
 	render() {
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
