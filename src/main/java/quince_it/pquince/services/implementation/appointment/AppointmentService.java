@@ -138,6 +138,36 @@ public class AppointmentService implements IAppointmentService{
 			return scheduler.GetFreeAppointment();
 		}
 	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	public List<AppointmentPeriodResponseDTO> getFreePeriodsDermatologist(Date date, int duration) {
+		UUID dermatologistId = userService.getLoggedUserId();
+		
+		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);
+		
+		UUID pharmacyId = null;
+		for(WorkTime wt : workTimes){
+			Date currentDate = new Date();
+			if(currentDate.getHours() > wt.getStartTime() && currentDate.getHours() < wt.getEndTime())
+				pharmacyId = wt.getPharmacy().getId();
+		}
+		
+		if(pharmacyId==null) {
+			return new ArrayList<AppointmentPeriodResponseDTO>();
+		}
+		
+		WorkTime workTime = workTimeRepository.getWorkTimeForDermatologistForDateForPharmacy(dermatologistId, date, pharmacyId);
+		List<Appointment> scheduledAppointments = appointmentRepository.getCreatedAppoitntmentsByDermatologistByDate(dermatologistId, date, pharmacyId);
+	
+		if(workTime==null) {
+			return new ArrayList<AppointmentPeriodResponseDTO>();
+		}
+		else {
+			AppointmentScheduler scheduler = new AppointmentScheduler(createDateRangeForWorkTimeForDay(workTime, date),scheduledAppointments, duration);
+			return scheduler.GetFreeAppointment();
+		}
+	}
 
 	@SuppressWarnings("deprecation")
 	private DateRange createDateRangeForWorkTimeForDay(WorkTime workTime, Date date) {
