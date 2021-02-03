@@ -75,7 +75,6 @@ public class UsersController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
 	}
-	
 	@GetMapping("/search") 
 	public ResponseEntity<List<IdentifiableDTO<UserDTO>>> findByNameAndSurname(@RequestParam String name,@RequestParam String surname) {
 		
@@ -220,9 +219,8 @@ public class UsersController {
 		}
 	}
 	
-	@GetMapping("/dermatologist-for-pharmacy/{pharmacyId}") 
-	@PreAuthorize("hasRole('PHARMACYADMIN') or hasRole('PATIENT')")
 	@CrossOrigin
+	@GetMapping("/dermatologist-for-pharmacy/{pharmacyId}") 
 	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getDermatologistForPharmacy(@PathVariable UUID pharmacyId) {
 	  
 		try {
@@ -345,4 +343,17 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/get-pharmacyid-for-admin")
+	@PreAuthorize("hasRole('PHARMACYADMIN')") 
+	public ResponseEntity<UUID> getPharmacyIdForPharmacyAdmin() {
+		
+		try {
+			UUID pharmacyId = userService.getPharmacyIdForPharmacyAdmin();
+			return new ResponseEntity<>(pharmacyId,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
 }

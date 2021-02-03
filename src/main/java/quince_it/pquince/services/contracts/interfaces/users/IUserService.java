@@ -87,5 +87,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 
 	List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologist();
 
+	UUID getPharmacyIdForPharmacyAdmin();
+
 
 }

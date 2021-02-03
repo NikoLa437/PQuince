@@ -32,6 +32,7 @@ import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.PharmacyAdminRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.security.exception.ResourceConflictException;
@@ -109,6 +110,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private ILoyaltyProgramService loyalityProgramService;
+	
+	@Autowired
+	private PharmacyAdminRepository pharmacyAdminRepository;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -653,6 +657,15 @@ public class UserService implements IUserService{
 		}
 
 		return retVal;
+	}
+	
+	@Override
+	public UUID getPharmacyIdForPharmacyAdmin() {
+		UUID loggedUser= this.getLoggedUserId();
+		
+		PharmacyAdmin pharmacyAdmin = pharmacyAdminRepository.getOne(loggedUser);
+		
+		return pharmacyAdmin.getPharmacy().getId();
 	}
 
 	

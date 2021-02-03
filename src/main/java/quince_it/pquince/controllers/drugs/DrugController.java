@@ -83,7 +83,6 @@ public class DrugController {
 	
 	@CrossOrigin
 	@GetMapping("/find-drug-by-pharmacy")
-	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findDrugsFromPharmacy(@RequestParam UUID pharmacyId) {
 		return new ResponseEntity<>(drugInstanceService.findDrugsByPharmacy(pharmacyId),HttpStatus.OK);
 	}

@@ -26,6 +26,7 @@ import LoyaltyProgram from "./pages/loyalty-program/LoyaltyProgram";
 import ObservePatientsCosultation from "./pages/pharmacist-appointment/ObservePatientsCosultation";
 import ObservePatientsCosultationHistory from "./pages/pharmacist-appointment/ObservePatientsConsultationHistory";
 import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPageForPatient";
+import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
 
 function App() {
 	return (
@@ -69,7 +70,7 @@ function App() {
 				<Link exact to="/observe-consultations-history" path="/observe-consultations-history" component={ObservePatientsCosultationHistory} />
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
 				<Route path="/reserve-appointment/:id" children={<Appointments />} />
-
+				<Link exact to="/pharmacy-for-admin" path="/pharmacy-for-admin" component={PharmacyForAdmin} />
 
 			</Switch>
 		</Router>

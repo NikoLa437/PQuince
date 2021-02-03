@@ -6,6 +6,7 @@ import { BASE_URL } from "../constants.js";
 import { Button } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import HeadingAlert from "../components/HeadingAlert";
+import getAuthHeader from "../GetHeader";
 
 class LoginPage extends Component {
 	state = {
@@ -40,6 +41,20 @@ class LoginPage extends Component {
 					} else {
 						localStorage.setItem("keyToken", res.data.accessToken);
 						localStorage.setItem("keyRole", JSON.stringify(res.data.roles));
+						
+						if(JSON.stringify(res.data.roles)==='["ROLE_PHARMACYADMIN"]'){
+							Axios.get(BASE_URL + "/api/users/get-pharmacyid-for-admin", {
+								headers: { 
+									Authorization: getAuthHeader() 
+								} 
+							}).then((response) => {
+								localStorage.setItem("keyPharmacyId", response.data);
+							})
+							.catch((err) => {
+								console.log(err);
+							});
+						}
+
 						this.setState({ redirect: true });
 					}
 				})

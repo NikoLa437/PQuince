@@ -5,6 +5,7 @@ import Axios from "axios";
 import { BASE_URL } from "../constants.js";
 import PharmacyLogo from "../static/pharmacyLogo.png";
 import '../App.js'
+import { Redirect } from "react-router-dom";
 
 
 class PharmaciesPage extends Component {
@@ -22,6 +23,8 @@ class PharmaciesPage extends Component {
 		currentLatitude: null,
 		currentLongitude: null,
 		sortIndicator: 0,
+		redirect:false,
+		redirectUrl:''
 	};
 
 	handleNameChange = (event) => {
@@ -311,7 +314,11 @@ class PharmaciesPage extends Component {
 	};
 
 	handleClickOnPharmacy = (id) =>{
-		window.location.href = "pharmacy/" + id
+		this.setState({
+			redirect:true,
+			redirectUrl : "/pharmacy/"+id
+		})
+		//window.location.href = "pharmacy/" + id
 	}
 
 	handleSortByGradeDescending = () => {
@@ -333,6 +340,8 @@ class PharmaciesPage extends Component {
 	};
 
 	render() {
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
 			<React.Fragment>
 				<TopBar />

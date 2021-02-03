@@ -55,8 +55,8 @@ class Header extends Component {
 									</li>
 								</ul>
 							</li>
-							<li>
-								<a href="/pharmacy/cafeddee-56cb-11eb-ae93-0242ac130002">Pharmacy</a>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<a href="/pharmacy-for-admin">Pharmacy</a>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="/dermatologists-for-patient">Dermatologist</a>
@@ -64,6 +64,25 @@ class Header extends Component {
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
 								<a href="/dermatologists">Dermatologist</a>
 							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<a href="/pharmacist">Pharmacist</a>
+							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<a href="/drugs-in-pharmacy">Drugs</a>
+							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<a href="/narudzbine">Narudzbine</a>
+							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<a href="/absence-for-administrator">Absence</a>
+							</li>
+
+
+							<li hidden={!this.hasRole("ROLE_PATIENT")}>
+								<a href="/pharmacist-for-patient">Pharmacist</a>
+							</li>
+							
+							
 							
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#" className="appointment-btn scrollto" style={myStyle}>
