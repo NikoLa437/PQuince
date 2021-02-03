@@ -237,4 +237,11 @@ public class AppointmentController {
 		AppointmentRequestDTO appointmentRequestDTO = new AppointmentRequestDTO(dermatologistId,pharmacyId,date,duration, false);
 		return new ResponseEntity<>(appointmentService.getFreePeriods(appointmentRequestDTO),HttpStatus.OK);
 	}
+	
+	@GetMapping("/free-periods-dermatologist")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
+	public ResponseEntity<List<AppointmentPeriodResponseDTO>> getFreePeriodsDermatologist(@RequestParam Date date,@RequestParam int duration) {
+		return new ResponseEntity<>(appointmentService.getFreePeriodsDermatologist(date, duration),HttpStatus.OK);
+	}
 }
