@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.DrugInstance;
@@ -12,11 +14,13 @@ import quince_it.pquince.entities.drugs.DrugPriceForPharmacy;
 import quince_it.pquince.entities.drugs.DrugStorage;
 import quince_it.pquince.entities.drugs.Ingredient;
 import quince_it.pquince.entities.drugs.Manufacturer;
+import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.drugs.IngredientRepository;
 import quince_it.pquince.repository.drugs.ManufacturerRepository;
+import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
@@ -49,6 +53,9 @@ public class DrugInstanceService implements IDrugInstanceService{
 	
 	@Autowired
 	private ILoyaltyProgramService loyalityProgramService;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Override
 	public List<IdentifiableDTO<DrugInstanceDTO>> findAll() {
@@ -155,11 +162,15 @@ public class DrugInstanceService implements IDrugInstanceService{
 	@Override
 	public List<IdentifiablePharmacyDrugPriceAmountDTO> findByDrugId(UUID drugId) {
 		
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		String email = currentUser.getName();
+		User user = userRepository.findByEmail(email);
+		
 		List<IdentifiablePharmacyDrugPriceAmountDTO> retVal = new ArrayList<IdentifiablePharmacyDrugPriceAmountDTO>();
 		for (IdentifiablePharmacyDrugPriceAmountDTO pharmacy : drugPriceForPharmacyRepository.findByDrugId(drugId)) {
 			int countDrug = drugStorageService.getDrugCountForDrugAndPharmacy(drugId, pharmacy.Id);
 			if(countDrug > 0) {
-				pharmacy.setPriceWithDiscount(loyalityProgramService.getDiscountDrugPriceForPatient(pharmacy.getPrice()));
+				pharmacy.setPriceWithDiscount(loyalityProgramService.getDiscountDrugPriceForPatient(pharmacy.getPrice(), user.getId()));
 				pharmacy.setCount(countDrug);
 				retVal.add(pharmacy);
 			}
