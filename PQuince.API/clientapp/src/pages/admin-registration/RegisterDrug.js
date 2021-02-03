@@ -29,7 +29,7 @@ class RegisterDrug extends Component {
 		drugReplacements: [],
 		drugReplacementsEntity: [],
 		manufacturers: [],
-		manufacturer:"",
+		manufacturer:null,
 		ingredients: [],
 		sideEffects: "",
 		onReciept: "",
@@ -47,7 +47,10 @@ class RegisterDrug extends Component {
 
 		Axios.get(BASE_URL + "/api/drug/manufacturers")
 			.then((res) => {
-				this.setState({ manufacturers: res.data });
+				this.setState({ 
+					manufacturers: res.data,
+					manufacturer: res.data[0],
+				 });
 				console.log(res.data);
 			})
 			.catch((err) => {
@@ -56,7 +59,10 @@ class RegisterDrug extends Component {
 
 		Axios.get(BASE_URL + "/api/drug/drugkind")
 			.then((res) => {
-				this.setState({ drugKinds: res.data });
+				this.setState({ 
+					drugKinds: res.data ,
+					drugKind: res.data[0]
+				});
                 console.log(res.data);
             
 			})
@@ -66,8 +72,10 @@ class RegisterDrug extends Component {
 		
 		Axios.get(BASE_URL + "/api/drug/drugformat")
 			.then((res) => {
-				this.setState({ drugFormats: res.data });
-                console.log(res.data, "DRUG FORMATS");
+				this.setState({ 
+					drugFormats: res.data,
+					drugFormat: res.data[0]
+				});
             
 			})
 			.catch((err) => {
@@ -93,15 +101,9 @@ class RegisterDrug extends Component {
 
 	onManufacturerChange  = (manufacturer) => {
 		this.state.selectedManufacturer = manufacturer;
-		console.log(manufacturer, "manufacturer");
 	
 	};
 	
-	onDrugReplacementEntityChange  = (drug) => {
-		this.state.selectDrugReplacement = drug;
-		console.log(drug, "drug");
-	
-	};
 	
 	handleModalClose = () => {
 		this.setState({ openModal: false });
@@ -137,11 +139,16 @@ class RegisterDrug extends Component {
 	};
 	
 	handleDrugChange = (event) => {
-		this.setState({ drugChange: event.target.value });
+		this.setState({ drugChange: event.target.options[event.target.selectedIndex].text,
+		selectDrugReplacement:  this.state.drugs[event.target.value]});
+	};
+	
+	onDrugReplacementEntityChange  = (drug) => {
+	
 	};
 	
 	handleManufacturerChange = (event) => {
-		this.setState({ manufacturer: event.target.value });
+		this.setState({ manufacturer: this.state.manufacturers[event.target.value]});
 	};
 	
 	resetReplacement = (event) => {
@@ -179,7 +186,6 @@ class RegisterDrug extends Component {
 	};
 	
 	handleOnRecieptChange = (event) => {
-		console.log(document.querySelector('.messageCheckbox').checked, "RECCC");
 		this.setState({ onReciept: event.target.value })
 	};
 
@@ -294,7 +300,7 @@ class RegisterDrug extends Component {
 				
 				let drugManufacturerDTO = {
 					drug_id: res.data,
-					manufacturer_id: this.state.selectedManufacturer.Id,
+					manufacturer_id: this.state.manufacturer.Id,
 				}
 				
 				Axios.put(BASE_URL + "/api/drug/manufacturer", drugManufacturerDTO,  { headers: { Authorization: getAuthHeader()}})
@@ -309,7 +315,7 @@ class RegisterDrug extends Component {
 				
 				
 				for (const [index, value] of this.state.drugReplacementsEntity.entries()) {
-				
+					console.log("ubicu se,", this.state.drugReplacementsEntity[index].EntityDTO.drugInstanceName)
 					let ReplaceDrugIdDTO = {
 						id: res.data,
 						replacement_id: this.state.drugReplacementsEntity[index].Id,
@@ -512,9 +518,8 @@ class RegisterDrug extends Component {
 										<select
 											
 									        onChange={this.handleDrugChange}
-											value={this.state.drugChange}
-									     >{this.state.drugs.map((drug) => (
-										  <option onClick={this.onDrugReplacementEntityChange(drug)} value={drug.EntityDTO.drugInstanceName}>{drug.EntityDTO.drugInstanceName}</option>
+									     >{this.state.drugs.map((drug,index) => (
+										  <option onClick={this.onDrugReplacementEntityChange(drug)} value={index}>{drug.EntityDTO.drugInstanceName}</option>
 										))}	
 										</select>
 										<button
@@ -552,9 +557,8 @@ class RegisterDrug extends Component {
 										<label>Drug manufacturer:</label>
 										<select
 									       onChange={this.handleManufacturerChange}
-											value={this.state.manufacturer}
-										  >{this.state.manufacturers.map((manufacturer) => (
-										  <option onClick={this.onManufacturerChange(manufacturer)} value={manufacturer.EntityDTO.name}>{manufacturer.EntityDTO.name}</option>
+										  >{this.state.manufacturers.map((manufacturer, index) => (
+										  <option value={index}>{manufacturer.EntityDTO.name}</option>
 										))}	
 										</select>
 									</div>
