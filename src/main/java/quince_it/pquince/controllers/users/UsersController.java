@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
@@ -73,7 +75,6 @@ public class UsersController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
 	}
-	
 	@GetMapping("/search") 
 	@CrossOrigin
 	@PreAuthorize("hasRole('DERMATHOLOGIST')")
@@ -233,13 +234,27 @@ public class UsersController {
 		}
 	}
 	
-	@GetMapping("/dermatologist-for-pharmacy/{pharmacyId}") 
-	@PreAuthorize("hasRole('PATIENT')")
 	@CrossOrigin
+	@GetMapping("/dermatologist-for-pharmacy/{pharmacyId}") 
 	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getDermatologistForPharmacy(@PathVariable UUID pharmacyId) {
 	  
 		try {
 			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findAllDermatologistForPharmacy(pharmacyId);
+			return new ResponseEntity<>(dermatologist,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/dermatologists") 
+	@PreAuthorize("hasRole('PATIENT')")
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> getAllDermatologist() {
+	  
+		try {
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findAllDermatologist();
 			return new ResponseEntity<>(dermatologist,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
@@ -264,7 +279,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/pharmacies-where-dermatologist-work") 
-	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@PreAuthorize("hasRole('PHARMACYADMIN') or hasRole('PATIENT')")
 	@CrossOrigin
 	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> getPharmciesWhereDermatologistWork(@RequestParam UUID dermatologistId) {
 	  
@@ -315,4 +330,45 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/search-dermatologist-for-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> findByNameSurnameAndGradeForPharmacy(@RequestParam String name,@RequestParam String surname, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam UUID pharmacyId) {
+		
+		try {			
+			DermatologistFiltrationDTO dermatologistFiltrationDTO = new DermatologistFiltrationDTO(name, surname, gradeFrom, gradeTo,pharmacyId);
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findByNameSurnameAndGradeForPharmacy(dermatologistFiltrationDTO);
+			
+			return new ResponseEntity<>(dermatologist, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/search-dermatologist")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> findByNameSurnameGradeAndPharmacy(@RequestParam String name,@RequestParam String surname, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam UUID pharmacyId) {
+		
+		try {
+			DermatologistFiltrationDTO dermatologistFiltrationDTO = new DermatologistFiltrationDTO(name, surname, gradeFrom, gradeTo ,pharmacyId);
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findByNameSurnameGradeAndPharmacy(dermatologistFiltrationDTO);
+			
+			return new ResponseEntity<>(dermatologist, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/get-pharmacyid-for-admin")
+	@PreAuthorize("hasRole('PHARMACYADMIN')") 
+	public ResponseEntity<UUID> getPharmacyIdForPharmacyAdmin() {
+		
+		try {
+			UUID pharmacyId = userService.getPharmacyIdForPharmacyAdmin();
+			return new ResponseEntity<>(pharmacyId,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
 }

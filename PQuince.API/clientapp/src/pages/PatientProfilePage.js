@@ -67,6 +67,10 @@ class PatientProfilePage extends Component {
     
     handleSchedule = () => {
 		window.location.href = "/schedule-appointment/" + this.state.id
+	};
+	
+	handleCreateAndSchedule = () => {
+		window.location.href = "/create-and-schedule-appointment/" + this.state.id
     };
 
 	render() {
@@ -157,7 +161,7 @@ class PatientProfilePage extends Component {
                                     type="button"
                                     style={{width: "80%"}}
 									onClick={() =>
-										this.handleSchedule()
+										this.handleCreateAndSchedule()
 									}
 									className="btn btn-primary"
 								>

@@ -19,6 +19,11 @@ class DrugReservation extends Component {
 		drugName: "",
 		drugManufacturer: "",
 		drugQuantity: "",
+		drugSideEffects: "",
+		drugRecommendedAmount: "",
+		loyaltyPoints: "",
+		drugFormat: "",
+		drugKind: "",
 		maxDrugAmount: 1,
 		drugPrice: 0,
 		redirect: false,
@@ -105,7 +110,12 @@ class DrugReservation extends Component {
 					drugManufacturer: drug.EntityDTO.manufacturer.EntityDTO.name,
 					drugQuantity: drug.EntityDTO.quantity,
 					drugId: drug.Id,
-				});
+					drugSideEffects:  drug.EntityDTO.sideEffects,
+					drugRecommendedAmount:  drug.EntityDTO.recommendedAmount,
+					loyaltyPoints:  drug.EntityDTO.loyalityPoints,
+					drugFormat: drug.EntityDTO.drugFormat,
+					drugKind: drug.EntityDTO.drugKind,
+ 				});
 			})
 			.catch((err) => {
 				console.log(err);
@@ -122,6 +132,7 @@ class DrugReservation extends Component {
 		return (
 			<React.Fragment>
 				<DrugsPage hidden={this.state.drugsPageHidden} onDrugSelect={this.handleDrugSelect} />
+			
 				<PharmacyPage
 					onBackIcon={this.handleBackIcon}
 					onPharmacyClick={this.handlePharmacyClick}
