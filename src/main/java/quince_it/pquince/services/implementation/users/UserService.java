@@ -31,14 +31,18 @@ import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.PharmacyAdminRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.security.exception.ResourceConflictException;
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
+import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
@@ -106,6 +110,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private ILoyaltyProgramService loyalityProgramService;
+	
+	@Autowired
+	private PharmacyAdminRepository pharmacyAdminRepository;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -558,13 +565,173 @@ public class UserService implements IUserService{
 		catch (IllegalArgumentException e) { return false; }
 	}
 	
+	@Override
+	public List<IdentifiableDermatologistForPharmacyGradeDTO> findByNameSurnameAndGradeForPharmacy(DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		
+		List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch = this.findAllDermatologistForPharmacy(dermatologistFiltrationDTO.getPharmacyId());
+		
+		if(!dermatologistFiltrationDTO.getName().equals("")&&(!dermatologistFiltrationDTO.getSurname().equals("")))
+			return findDermatologistByNameAndSurname(dermatologistForSearch, dermatologistFiltrationDTO);
+		else if(!dermatologistFiltrationDTO.getName().equals(""))
+			return findDermatologistByName(dermatologistForSearch,dermatologistFiltrationDTO);
+		else if(!dermatologistFiltrationDTO.getSurname().equals(""))
+			return findDermatologistBySurname(dermatologistForSearch,dermatologistFiltrationDTO);
+		else if(dermatologistFiltrationDTO.getGradeFrom()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(dermatologistForSearch,dermatologistFiltrationDTO);	
+		
+		return dermatologistForSearch;
+	}
 
+	private List<IdentifiableDermatologistForPharmacyGradeDTO> findDermatologistBySurname(List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(IdentifiableDermatologistForPharmacyGradeDTO dermatologist : dermatologistForSearch) {
+			if(dermatologist.EntityDTO.getSurname().toLowerCase().contains(dermatologistFiltrationDTO.getSurname().toLowerCase()))
+				retVal.add(dermatologist);
+		}
+		
+		if(dermatologistFiltrationDTO.getGradeTo()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(retVal,dermatologistFiltrationDTO);
+		
+		return retVal;
+	}
 	@Override
 	public IdentifiableDTO<UserDTO> getPatientById(UUID patientId) {
 		return UserMapper.MapUserPersistenceToUserIdentifiableDTO(userRepository.getOne(patientId));
 	}
 
 
+	private List<IdentifiableDermatologistForPharmacyGradeDTO> findDermatologistByName(
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(IdentifiableDermatologistForPharmacyGradeDTO dermatologist : dermatologistForSearch) {
+			if(dermatologist.EntityDTO.getName().toLowerCase().contains(dermatologistFiltrationDTO.getName().toLowerCase()))
+				retVal.add(dermatologist);
+		}
+		
+		if(dermatologistFiltrationDTO.getGradeTo()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(retVal,dermatologistFiltrationDTO);
+		
+		return retVal;
+	}
 
+	private List<IdentifiableDermatologistForPharmacyGradeDTO> findDermatologistByGrade(List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(IdentifiableDermatologistForPharmacyGradeDTO dermatologist : dermatologistForSearch) {
+			if(dermatologist.EntityDTO.getGrade()>= dermatologistFiltrationDTO.getGradeFrom() && (dermatologist.EntityDTO.getGrade()< dermatologistFiltrationDTO.getGradeTo() || dermatologistFiltrationDTO.getGradeTo()==-1))
+				retVal.add(dermatologist);
+		}
+		
+		return retVal;
+	}
 
+	private List<IdentifiableDermatologistForPharmacyGradeDTO> findDermatologistByNameAndSurname(
+			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		// TODO Auto-generated method stub
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		for(IdentifiableDermatologistForPharmacyGradeDTO dermatologist : dermatologistForSearch) {
+			if(dermatologist.EntityDTO.getName().toLowerCase().contains(dermatologistFiltrationDTO.getName().toLowerCase()) && dermatologist.EntityDTO.getSurname().toLowerCase().contains(dermatologistFiltrationDTO.getSurname().toLowerCase()))
+				retVal.add(dermatologist);
+		}
+		
+		if(dermatologistFiltrationDTO.getGradeTo()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(retVal,dermatologistFiltrationDTO);
+		
+		return retVal;	}
+	
+	@Override
+	public List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologist() {
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retDermatologist = new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		
+		dermatologistRepository.findAll().forEach((d) -> retDermatologist.add(MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(d)));
+
+		return retDermatologist;
+	}
+
+	public List<IdentifiableDermatologistForPharmacyGradeDTO> findByNameSurnameGradeAndPharmacy(DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		
+		List<IdentifiableDermatologistForPharmacyGradeDTO> retVal= new ArrayList<IdentifiableDermatologistForPharmacyGradeDTO>();
+		List<Dermatologist> dermatologistForSearch = dermatologistRepository.findByNameAndSurname(dermatologistFiltrationDTO.getName().toLowerCase(),dermatologistFiltrationDTO.getSurname().toLowerCase());
+		
+		if(!dermatologistFiltrationDTO.getPharmacyId().toString().equals("00000000-0000-0000-0000-000000000000"))
+			dermatologistForSearch = findDermatologistByPharmacy(dermatologistForSearch,dermatologistFiltrationDTO);
+		
+		dermatologistForSearch.forEach((d) -> retVal.add(MapDermatologistPersistenceToDermatolgoistForPharmacyGradeIdentifiableDTO(d)));
+		
+		if(dermatologistFiltrationDTO.getGradeTo()!=-1 || dermatologistFiltrationDTO.getGradeTo()!=-1)
+			return findDermatologistByGrade(retVal,dermatologistFiltrationDTO);
+		
+		return retVal;
+	}
+
+	private List<Dermatologist> findDermatologistByPharmacy(List<Dermatologist> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {
+		List<Dermatologist> retVal = new ArrayList<Dermatologist>();
+		
+		
+		for(Dermatologist dermatologist : dermatologistForSearch) {
+			if(IsDermatogistWorkInPharmacy(dermatologist,dermatologistFiltrationDTO.getPharmacyId()))
+				retVal.add(dermatologist);
+		}
+
+		return retVal;
+	}
+	
+	@Override
+	public UUID getPharmacyIdForPharmacyAdmin() {
+		UUID loggedUser= this.getLoggedUserId();
+		
+		PharmacyAdmin pharmacyAdmin = pharmacyAdminRepository.getOne(loggedUser);
+		
+		return pharmacyAdmin.getPharmacy().getId();
+	}
+	
+	@Override
+	public boolean subscribeToPharmacy(EntityIdDTO pharmacyIdDTO) {
+		try {
+			UUID loggedUser= this.getLoggedUserId();
+
+			Patient patient = patientRepository.getOne(loggedUser);
+			Pharmacy pharmacy = pharmacyRepository.getOne(pharmacyIdDTO.getId());
+			patient.addSubscribeToPharmacy(pharmacy);
+			
+			patientRepository.save(patient);
+			return true;
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }		
+	}
+	
+	@Override
+	public boolean unsubscribeFromPharmacy(EntityIdDTO pharmacyIdDTO) {
+		// TODO Auto-generated method stub
+		try {
+			UUID loggedUser= this.getLoggedUserId();
+
+			Patient patient = patientRepository.getOne(loggedUser);
+			patient.removeSubscribeFromPharmacy(pharmacyIdDTO.getId());
+			
+			patientRepository.save(patient);
+			return true;
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }	
+	}
+	
+	@Override
+	public boolean checkIfPatientSubscribed(UUID pharmacyId) {
+		try {
+			UUID loggedUser= this.getLoggedUserId();
+
+			Patient patient = patientRepository.getOne(loggedUser);
+
+			return patient.isPatientSubscribedToPharmacy(pharmacyId);
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }	
+	}
+
+	
 }

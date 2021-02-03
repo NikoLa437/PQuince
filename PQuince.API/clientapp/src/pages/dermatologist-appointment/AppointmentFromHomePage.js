@@ -1,14 +1,12 @@
 import React, { Component } from "react";
-import TopBar from "../components/TopBar";
-import Header from "../components/Header";
+import TopBar from "../../components/TopBar";
+import Header from "../../components/Header";
 import Axios from "axios";
-import { BASE_URL } from "../constants.js";
-import PharmacyLogo from "../static/pharmacyLogo.png";
-import '../App.js'
+import { BASE_URL } from "../../constants.js";
+import PharmacyLogo from "../../static/pharmacyLogo.png";
 import { Redirect } from "react-router-dom";
 
-
-class PharmaciesPage extends Component {
+class AppointmentFromHomePage extends Component {
 	state = {
 		pharmacies: [],
 		formShowed: false,
@@ -23,8 +21,8 @@ class PharmaciesPage extends Component {
 		currentLatitude: null,
 		currentLongitude: null,
 		sortIndicator: 0,
-		redirect:false,
-		redirectUrl:''
+		pharmacyId: "",
+		redirectToAppointment: false,
 	};
 
 	handleNameChange = (event) => {
@@ -313,13 +311,9 @@ class PharmaciesPage extends Component {
 			});
 	};
 
-	handleClickOnPharmacy = (id) =>{
-		this.setState({
-			redirect:true,
-			redirectUrl : "/pharmacy/"+id
-		})
-		//window.location.href = "pharmacy/" + id
-	}
+	handleClickOnPharmacy = (id) => {
+		this.setState({ pharmacyId: id, redirectToAppointment: true });
+	};
 
 	handleSortByGradeDescending = () => {
 		let URL = BASE_URL + "/api/pharmacy";
@@ -340,7 +334,7 @@ class PharmaciesPage extends Component {
 	};
 
 	render() {
-		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+		if (this.state.redirectToAppointment) return <Redirect push to={"/reserve-appointment/" + this.state.pharmacyId} />;
 
 		return (
 			<React.Fragment>
@@ -348,7 +342,7 @@ class PharmaciesPage extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Pharmacies</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Choose pharmacy</h5>
 
 					<div className="form-group">
 						<div className="form-group controls">
@@ -489,10 +483,15 @@ class PharmaciesPage extends Component {
 						</div>
 					</div>
 
-					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.pharmacies.map((pharmacy) => (
-								<tr id={pharmacy.Id} key={pharmacy.Id} onClick={() => this.handleClickOnPharmacy(pharmacy.Id)}>
+								<tr
+									id={pharmacy.Id}
+									key={pharmacy.Id}
+									style={{ cursor: "pointer" }}
+									onClick={() => this.handleClickOnPharmacy(pharmacy.Id)}
+								>
 									<td width="130em">
 										<img className="img-fluid" src={PharmacyLogo} width="70em" />
 									</td>
@@ -519,4 +518,4 @@ class PharmaciesPage extends Component {
 	}
 }
 
-export default PharmaciesPage;
+export default AppointmentFromHomePage;

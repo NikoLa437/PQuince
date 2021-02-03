@@ -19,7 +19,7 @@ public class Staff extends User {
     @OneToMany(mappedBy = "forStaff")
 	private List<Absence> absences;
 	
-    
+ 
     @Enumerated(EnumType.STRING)
 	@Column(name="staffType")
 	private StaffType staffType;

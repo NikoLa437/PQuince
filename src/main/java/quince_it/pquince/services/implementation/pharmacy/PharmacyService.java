@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.UserRepository;
+import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
@@ -105,7 +107,7 @@ public class PharmacyService implements IPharmacyService {
 		
 		double avgGrade = getAvgGradeForPharmacy(pharmacy.getId());
 
-		return new IdentifiableDTO<PharmacyGradeDTO>(pharmacy.getId(), new PharmacyGradeDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade));
+		return new IdentifiableDTO<PharmacyGradeDTO>(pharmacy.getId(), new PharmacyGradeDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade,pharmacy.getConsultationPrice()));
 	}
 	
 	
@@ -321,5 +323,20 @@ public class PharmacyService implements IPharmacyService {
 	
 		return pharmacies;
 	}
+
+	@Override
+	public void updatePharmacy(EditPharmacyDTO editPharmacyDTO) {
+		// TODO Auto-generated method stub
+		Pharmacy pharmacy = pharmacyRepository.getOne(editPharmacyDTO.getPharmacyId());		
+		
+		pharmacy.setAddress(editPharmacyDTO.getAddress());
+		pharmacy.setName(editPharmacyDTO.getName());
+		pharmacy.setDescription(editPharmacyDTO.getDescription());
+		pharmacy.setConsultationPrice(editPharmacyDTO.getConsultationPrice());
+		
+		pharmacyRepository.save(pharmacy);
+	}
+
+
 	
 }

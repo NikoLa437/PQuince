@@ -5,6 +5,7 @@ class TopBar extends React.Component {
 	handleLogout = () => {
 		localStorage.removeItem("keyToken");
 		localStorage.removeItem("keyRole");
+		localStorage.removeItem("expireTime");
 	};
 
 	hasRole = (reqRole) => {
@@ -44,9 +45,9 @@ class TopBar extends React.Component {
 						<Link to="/registration" hidden={this.hasRole("*")}>
 							Register
 						</Link>
-						<Link  to="/login" hidden={this.hasRole("*")}>
+						<Link to="/login" hidden={this.hasRole("*")}>
 							Login
-						</Link >
+						</Link>
 						<Link onClick={this.handleLogout} to="/login" hidden={!this.hasRole("*")}>
 							Logout
 						</Link>

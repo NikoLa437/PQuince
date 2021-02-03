@@ -4,13 +4,12 @@ import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 import getAuthHeader from "../../GetHeader";
 import ComplaintCreateModal from "../../components/ComplaintCreateModal";
 import HeadingAlert from "../../components/HeadingAlert";
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
-
 
 class ObservePatientsCosultationHistory extends Component {
 	state = {
@@ -30,14 +29,18 @@ class ObservePatientsCosultationHistory extends Component {
 		hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
+		unauthorizedRedirect: false,
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/pharmacist-history", { headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/appointment/pharmacist-history", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				console.log(res.data);
-
-				this.setState({ appointments: res.data });
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else {
+					console.log(res.data);
+					this.setState({ appointments: res.data });
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -245,7 +248,7 @@ class ObservePatientsCosultationHistory extends Component {
 			text: this.state.complaint,
 			staffName: this.state.StaffName,
 			staffSurname: this.state.StaffSurame,
-			profession: 'pharmacist'
+			profession: "pharmacist",
 		};
 		Axios.post(BASE_URL + "/api/staff/complaint", entityDTO)
 			.then((resp) => {
@@ -312,6 +315,8 @@ class ObservePatientsCosultationHistory extends Component {
 	};
 
 	render() {
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
