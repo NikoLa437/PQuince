@@ -16,7 +16,6 @@ import quince_it.pquince.services.contracts.dto.users.LoyaltyProgramDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientLoyalityProgramDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
-import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.util.users.LoyaltyProgramMapper;
 
 @Service
@@ -25,9 +24,6 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 
 	@Autowired
 	private LoyaltyProgramRepository loyaltyProgramRepository;
-
-	@Autowired
-	private IUserService userService;
 	
 	@Autowired
 	private PatientRepository patientRepository;
@@ -88,9 +84,8 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 	}
 
 	@Override
-	public double getDiscountDrugPriceForPatient(double regularPrice) {
+	public double getDiscountDrugPriceForPatient(double regularPrice, UUID patientId) {
 
-		UUID patientId = userService.getLoggedUserId();		
 		PatientLoyalityProgramDTO patientLoyalityProgramDTO = getLoggedPatientLoyalityProgram(patientId);
 
 		return ((100 - patientLoyalityProgramDTO.getDrugDiscount()) / 100.0 ) * regularPrice;
@@ -117,9 +112,8 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 	}
 
 	@Override
-	public double getDiscountAppointmentPriceForPatient(double regularPrice, AppointmentType appointmentType) {
+	public double getDiscountAppointmentPriceForPatient(double regularPrice, AppointmentType appointmentType, UUID patientId) {
 		
-		UUID patientId = userService.getLoggedUserId();		
 		PatientLoyalityProgramDTO patientLoyalityProgramDTO = getLoggedPatientLoyalityProgram(patientId);
 		if(appointmentType.equals(AppointmentType.EXAMINATION))
 			return ((100 - patientLoyalityProgramDTO.getAppointmentDiscount()) / 100.0) * regularPrice;
@@ -129,8 +123,8 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 	}
 
 	@Override
-	public int getDiscountPercentageForAppointmentForPatient(AppointmentType appointmentType) {
-		UUID patientId = userService.getLoggedUserId();		
+	public int getDiscountPercentageForAppointmentForPatient(AppointmentType appointmentType, UUID patientId) {
+
 		PatientLoyalityProgramDTO patientLoyalityProgramDTO = getLoggedPatientLoyalityProgram(patientId);
 		if(appointmentType.equals(AppointmentType.EXAMINATION))
 			return patientLoyalityProgramDTO.getAppointmentDiscount();

@@ -27,6 +27,8 @@ class LoginPage extends Component {
 	};
 
 	handleLogin = () => {
+		console.log(BASE_URL);
+
 		this.setState({ hiddenErrorAlert: true, emailError: "none", passwordError: "none" });
 
 		if (this.validateForm()) {

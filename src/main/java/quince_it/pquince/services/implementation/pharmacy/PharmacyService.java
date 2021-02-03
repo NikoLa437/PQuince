@@ -6,18 +6,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import javax.mail.MessagingException;
-
 import org.springframework.aop.AopInvocationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailException;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
-import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
+import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
@@ -47,6 +47,9 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Autowired
 	private ILoyaltyProgramService loyalityProgramService;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Override
 	public List<IdentifiableDTO<PharmacyDTO>> findAll() {
@@ -121,8 +124,12 @@ public class PharmacyService implements IPharmacyService {
 	public IdentifiableDTO<PharmacyGradePriceDTO> MapPharmacyPersistenceToPharmacyGradePriceIdentifiableDTO(Pharmacy pharmacy){
 		if(pharmacy == null) throw new IllegalArgumentException();
 		
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		String email = currentUser.getName();
+		User user = userRepository.findByEmail(email);
+		
 		double avgGrade = getAvgGradeForPharmacy(pharmacy.getId());
-		double getDiscountConsultationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION);
+		double getDiscountConsultationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, user.getId());
 		
 		return new IdentifiableDTO<PharmacyGradePriceDTO>(pharmacy.getId(), new PharmacyGradePriceDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade, pharmacy.getConsultationPrice(), getDiscountConsultationPrice));
 	}

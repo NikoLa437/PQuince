@@ -51,9 +51,9 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	
 	List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllPreviousAppointmentsForPatientSortByTimeDescending(AppointmentType appointmentType);
 	
-	List<IdentifiableDTO<AppointmentDTO>> getCreatedAppointmentsByDermatologist(UUID dermatologistId);
+	List<IdentifiableDTO<AppointmentDTO>> getCreatedAppointmentsByDermatologist();
 	
-	boolean reserveAppointment(UUID appointmentId);
+	void reserveAppointment(UUID appointmentId) throws AppointmentTimeOverlappingWithOtherAppointmentException;
 	
 	void cancelAppointment(UUID appointmentId) throws AuthorizationServiceException;
 
@@ -66,8 +66,12 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException;
 
 	List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO);
+	
+	List<AppointmentPeriodResponseDTO> getFreePeriodsDermatologist(Date date, int duration);
 
 	UUID createTerminForDermatologist(AppointmentCreateDTO appointmentDTO);
 
 	boolean hasAppointmentInFuture(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO);
+
+	boolean scheduleAppointment(UUID patientId, UUID appointmentId);
 }

@@ -580,6 +580,11 @@ public class UserService implements IUserService{
 		
 		return retVal;
 	}
+	@Override
+	public IdentifiableDTO<UserDTO> getPatientById(UUID patientId) {
+		return UserMapper.MapUserPersistenceToUserIdentifiableDTO(userRepository.getOne(patientId));
+	}
+
 
 	private List<IdentifiableDermatologistForPharmacyGradeDTO> findDermatologistByName(
 			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologistForSearch, DermatologistFiltrationDTO dermatologistFiltrationDTO) {

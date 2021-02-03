@@ -27,16 +27,17 @@ import ObservePatientsCosultation from "./pages/pharmacist-appointment/ObservePa
 import ObservePatientsCosultationHistory from "./pages/pharmacist-appointment/ObservePatientsConsultationHistory";
 import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPageForPatient";
 import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
+import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
+
 
 function App() {
 	return (
-		<Router>
+		<Router basename="/clientapp">
 			<Switch>
 				<Link exact to="/" path="/" component={HomePage} />
 				<Link exact to="/login" path="/login" component={LoginPage} />
 				<Link exact to="/registration" path="/registration" component={RegisterPage} />
 				<Link exact to="/profile" path="/profile" component={UserProfilePage} />
-				<Link exact to="/patient-profile" path="/patient-profile" component={PatientProfilePage} />
 				<Link exact to="/staff-profile" path="/staff-profile" component={StaffProfilePage} />
 				<Link exact to="/pharmacies" path="/pharmacies" component={PharmaciesPage} />
 				<Link exact to="/admin-register-staff" path="/admin-register-staff" component={AdminRegisterStaff} />
@@ -63,14 +64,20 @@ function App() {
 				<Link exact to="/dermatologists" path="/dermatologists" component={DermatologistsPage} />
 				<Link exact to="/dermatologists-for-patient" path="/dermatologists-for-patient" component={DermatologistsPageForPatient} />
 				<Link exact to="/patients" path="/patients" component={ObservePatientsPage} />
-				<Link exact to="/schedule-appointment" path="/schedule-appointment" component={ScheduleAppointmentPage} />
 				<Link exact to="/schedule-consultation" path="/schedule-consultation" component={ConsultationTimeSelectPage} />
 				<Link exact to="/loyalty-program" path="/loyalty-program" component={LoyaltyProgram} />
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
 				<Link exact to="/observe-consultations-history" path="/observe-consultations-history" component={ObservePatientsCosultationHistory} />
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
+
 				<Route path="/reserve-appointment/:id" children={<Appointments />} />
 				<Link exact to="/pharmacy-for-admin" path="/pharmacy-for-admin" component={PharmacyForAdmin} />
+
+				<Route path="/patient-profile/:id" children={<PatientProfilePage/>}/>
+				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage/>}/>
+				<Route path="/create-and-schedule-appointment/:id" children={<CreateAndScheduleAppointmentPage/>}/>
+				
+
 
 			</Switch>
 		</Router>

@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 class Header extends Component {
 	hasRole = (reqRole) => {
+		
 		let roles = JSON.parse(localStorage.getItem("keyRole"));
 		console.log(roles);
 
@@ -24,62 +26,66 @@ class Header extends Component {
 			<header id="header" className="fixed-top">
 				<div className="container d-flex align-items-center">
 					<h1 className="logo mr-auto">
-						<a href="/">PQuince</a>
+						<Link to="/">PQuince</Link>
 					</h1>
 
 					<nav className="nav-menu d-none d-lg-block">
 						<ul>
 							<li className="active" hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a href="/">Home</a>
+								<a to="/">Home</a>
+							</li>
+							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
+								<Link to="/patients">Patients</Link>
 							</li>
 							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a href="/pharmacies">Pharmacies</a>
+								<Link to="/pharmacies">Pharmacies</Link>
 							</li>
 							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a href="/drugs">Drugs</a>
+								<Link to="/drugs">Drugs</Link>
+
 							</li>
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#">My record</a>
 								<ul>
 									<li>
-										<a href="/patients-appointments">Dermatologist visits</a>
+										<Link to="/patients-appointments">Dermatologist visits</Link>
 									</li>
 									<li>
-										<a href="/observe-consultations">Consultations with a pharmacist</a>
+										<Link to="/observe-consultations">Consultations with a pharmacist</Link>
 									</li>
 									<li>
-										<a href="/">eReciepts</a>
+										<Link to="/">eReciepts</Link>
 									</li>
 									<li>
-										<a href="/drugs-reservation">Reserved medicines</a>
+										<Link to="/drugs-reservation">Reserved medicines</Link>
 									</li>
 								</ul>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a href="/pharmacy-for-admin">Pharmacy</a>
+								<Link to="/pharmacy-for-admin">Pharmacy</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PATIENT")}>
-								<a href="/dermatologists-for-patient">Dermatologist</a>
+								<Link to="/dermatologists-for-patient">Dermatologist</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a href="/dermatologists">Dermatologist</a>
+								<Link to="/dermatologists">Dermatologist</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a href="/pharmacist">Pharmacist</a>
+								<Link to="/pharmacist">Pharmacist</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a href="/drugs-in-pharmacy">Drugs</a>
+								<Link to="/drugs-in-pharmacy">Drugs</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a href="/narudzbine">Narudzbine</a>
+								<Link to="/narudzbine">Narudzbine</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a href="/absence-for-administrator">Absence</a>
+								<Link to="/absence-for-administrator">Absence</Link>
 							</li>
 
 
 							<li hidden={!this.hasRole("ROLE_PATIENT")}>
-								<a href="/pharmacist-for-patient">Pharmacist</a>
+								<Link to="/pharmacist-for-patient">Pharmacist</Link>
 							</li>
 							
 							
@@ -90,10 +96,10 @@ class Header extends Component {
 								</a>
 								<ul>
 									<li>
-										<a href="/reserve-appointment">Dermatologist</a>
+										<Link to="/reserve-appointment">Dermatologist</Link>
 									</li>
 									<li>
-										<a href="/schedule-consultation">Pharmacist</a>
+										<Link to="/schedule-consultation">Pharmacist</Link>
 									</li>
 								</ul>
 							</li>

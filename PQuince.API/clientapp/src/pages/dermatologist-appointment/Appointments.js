@@ -8,7 +8,7 @@ import ModalDialog from "../../components/ModalDialog";
 import { Redirect } from "react-router-dom";
 import getAuthHeader from "../../GetHeader";
 import { withRouter } from "react-router";
-
+import HeadingAlert from "../../components/HeadingAlert";
 
 class Appointments extends Component {
 	state = {
@@ -17,12 +17,16 @@ class Appointments extends Component {
 		showingSorted: false,
 		redirect: false,
 		pharmacyId:'',
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
 	};
 
 	fetchData = id => {
 		this.setState({
 			pharmacyId:id
 		});
+		
 	};
 
 	componentDidMount() {
@@ -43,14 +47,22 @@ class Appointments extends Component {
 	}
 
 	handleAppointmentClick = (appointmentId) => {
+		this.setState({ hiddenFailAlert: true, failHeader: "", failMessage: "" });
+
 		Axios.post(
 			BASE_URL + "/api/appointment/reserve-dermatologist-appointment",
 			{ id: appointmentId },
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				this.setState({ openModalSuccess: true });
-				console.log(res.data);
+				if (res.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: res.data });
+				} else if (res.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (res.status === 201) {
+					this.setState({ openModalSuccess: true });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -126,6 +138,10 @@ class Appointments extends Component {
 			});
 	};
 
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
 	render() {
 		if (this.state.redirect) return <Redirect push to="/" />;
 		return (
@@ -134,6 +150,12 @@ class Appointments extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Create Appointment</h5>
 
 					<p className="mb-0 mt-2 text-uppercase">Click on appointment to make reservation</p>

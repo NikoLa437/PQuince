@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import quince_it.pquince.entities.users.ComplaintStaff;
 import quince_it.pquince.entities.users.StaffFeedbackId;
 
-public interface ComplaintRepository extends JpaRepository<ComplaintStaff, StaffFeedbackId>{
+public interface ComplaintRepository extends JpaRepository<ComplaintStaff, UUID>{
 	
 	@Query(value = "SELECT s FROM ComplaintStaff s WHERE s.staffComplaintId.staff.id = ?1 AND s.staffComplaintId.patient.id = ?2")
 	ComplaintStaff findByStaffIdAndPatientId(UUID pharmacyId, UUID patientId);

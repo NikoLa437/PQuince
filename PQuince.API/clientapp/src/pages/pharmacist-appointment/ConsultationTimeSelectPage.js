@@ -31,6 +31,9 @@ class ConsultationTimeSelectPage extends Component {
 		showingPharmacistSorted: false,
 		redirect: false,
 		openModalSuccess: false,
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
 	};
 
 	handleSortByGradeAscending = () => {
@@ -368,6 +371,8 @@ class ConsultationTimeSelectPage extends Component {
 	};
 
 	handlePharmacistClick = (pharmacistId) => {
+		this.setState({ hiddenFailAlert: true, failHeader: "", failMessage: "" });
+
 		let EntityDTO = {
 			pharmacistId: pharmacistId,
 			startDateTime: new Date(
@@ -381,14 +386,27 @@ class ConsultationTimeSelectPage extends Component {
 			),
 		};
 
-		Axios.post(BASE_URL + "/api/appointment/reserve-appointment", EntityDTO, { headers: { Authorization: getAuthHeader() } })
+		Axios.post(BASE_URL + "/api/appointment/reserve-appointment", EntityDTO, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
-				this.setState({ openModalSuccess: true });
-				console.log(res);
+				if (res.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: res.data });
+				} else if (res.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (res.status === 201) {
+					this.setState({ openModalSuccess: true });
+					console.log(res);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
 			});
+	};
+
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
 	};
 
 	render() {
@@ -481,6 +499,10 @@ class ConsultationTimeSelectPage extends Component {
 					handleSortByPriceDescending={this.handleSortByPriceDescending}
 				/>
 				<PharmacistForPharmacy
+					hiddenFailAlert={this.state.hiddenFailAlert}
+					failHeader={this.state.failHeader}
+					failMessage={this.state.failMessage}
+					handleCloseAlertFail={this.handleCloseAlertFail}
 					onPharmacistClick={this.handlePharmacistClick}
 					showingPharmacistSorted={this.state.showingPharmacistSorted}
 					handleSortPharmacstByGradeAscending={this.handleSortPharmacstByGradeAscending}

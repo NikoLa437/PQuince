@@ -20,7 +20,7 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-13eb-ae93-0242ac130002',true, 'exampla31@example.com','Radoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Bikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788',true, 'pharmacyadmin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 
-insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',1,152);
+insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',2,152);
 insert into patient (id, penalty, points) values ('23793162-52d3-11eb-ae93-0242ac130002',0,2);
 
 insert into user_authority (user_id, authority_id) values ('22793162-52d3-11eb-ae93-0242ac130002', '7852aa5e-7040-4d99-8255-537a0b226c75');
@@ -94,9 +94,9 @@ insert into drug_replacement(drug_id, replacement_drug_id) values ('2c797174-583
 insert into drug_replacement(drug_id, replacement_drug_id) values ('2fe1cd8e-5839-11eb-ae93-0242ac130002', '2c797174-5839-11eb-ae93-0242ac130002');
 insert into drug_replacement(drug_id, replacement_drug_id) values ('2fe1cd8e-5839-11eb-ae93-0242ac130002', 'dac2b818-5838-11eb-ae93-0242ac130002');
 
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-02', 340);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac111002','2020-11-11','2021-02-02', 399.99);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-02', 320);
+insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 340);
+insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac111002','2020-11-11','2021-02-22', 399.99);
+insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-22', 320);
 
 
 insert into drug_storage(drug_instance_id, pharmacy_id, count) values ('dac2b818-5838-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24);

@@ -81,6 +81,8 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	boolean addDermatologistToPharmacy(AddDermatologistToPharmacyDTO addDermatologistToPharmacyDTO);
 
 	UUID createPharmacyAdmin(UserRequestDTO entityDTO, UUID pharmacyDTO);
+	
+	IdentifiableDTO<UserDTO> getPatientById(UUID patientId);
 
 	List<IdentifiableDermatologistForPharmacyGradeDTO> findByNameSurnameAndGradeForPharmacy(
 			DermatologistFiltrationDTO dermatologistFiltrationDTO);

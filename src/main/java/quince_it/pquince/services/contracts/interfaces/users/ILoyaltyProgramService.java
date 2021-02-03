@@ -10,11 +10,11 @@ import quince_it.pquince.services.contracts.interfaces.IService;
 
 public interface ILoyaltyProgramService extends IService<LoyaltyProgramDTO, IdentifiableDTO<LoyaltyProgramDTO>> {
 
-	double getDiscountDrugPriceForPatient(double regularPrice);
+	double getDiscountDrugPriceForPatient(double regularPrice, UUID patientId);
 	
-	double getDiscountAppointmentPriceForPatient(double regularPrice, AppointmentType appointmentType);
+	double getDiscountAppointmentPriceForPatient(double regularPrice, AppointmentType appointmentType, UUID patientId);
 	
-	int getDiscountPercentageForAppointmentForPatient(AppointmentType appointmentType);
+	int getDiscountPercentageForAppointmentForPatient(AppointmentType appointmentType, UUID patientId);
 	
 	PatientLoyalityProgramDTO getLoggedPatientLoyalityProgram(UUID patientId);
 }
