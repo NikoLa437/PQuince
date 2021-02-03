@@ -12,8 +12,8 @@ class DrugSpecification extends Component {
 	
 	componentDidMount() {
 	
-		console.log("HAHAHA",this.state.ingredients)
-		console.log("HAHAHA",this.state.replacingDrugs)
+		console.log(this.state.ingredients)
+		console.log(this.state.replacingDrugs)
 	}
 	render() {
 		return (
