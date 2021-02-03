@@ -125,10 +125,16 @@ public class AppointmentController {
 		return new ResponseEntity<>(appointmentService.findAllPreviousAppointmentsForPatientSortByTimeDescending(appointmentType),HttpStatus.OK);
 	}
 	
-	@GetMapping("/dermatologist")
+	@GetMapping("/dermatologist/created")
 	@PreAuthorize("hasRole('DERMATHOLOGIST')")
 	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAllAppointmentsByDermatologist() {
 		return new ResponseEntity<>(appointmentService.getCreatedAppointmentsByDermatologist(),HttpStatus.OK);
+	}
+	
+	@GetMapping("/dermatologist/calendar-for-pharmacy/{pharmacyId}")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getCalendarAppointmentsByDermatologist(@PathVariable UUID pharmacyId) {
+		return new ResponseEntity<>(appointmentService.getCalendarAppointmentsByDermatologist(pharmacyId),HttpStatus.OK);
 	}
 	
 	@GetMapping("/dermatologist/find-by-pharmacy/{pharmacyId}")

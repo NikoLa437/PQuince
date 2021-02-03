@@ -35,6 +35,7 @@ import quince_it.pquince.repository.users.PharmacyAdminRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.security.exception.ResourceConflictException;
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
@@ -297,8 +298,9 @@ public class UserService implements IUserService{
 	}
 	
 	@Override
-	public IdentifiableDTO<StaffDTO> getStaffById(UUID id) {	
-		return UserMapper.MapStaffPersistenceToStaffIdentifiableDTO(staffRepository.getOne(id));
+	public IdentifiableDTO<StaffDTO> getStaff() {	
+		UUID staffId = getLoggedUserId();
+		return UserMapper.MapStaffPersistenceToStaffIdentifiableDTO(staffRepository.getOne(staffId));
 	}
 	
 	@Override
@@ -363,7 +365,8 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public void updateStaff(UUID staffId, UserInfoChangeDTO staffInfoChangeDTO) {
+	public void updateStaff(UserInfoChangeDTO staffInfoChangeDTO) {
+		UUID staffId = getLoggedUserId();
 		Staff staff = staffRepository.getOne(staffId);		
 		
 		staff.setAddress(staffInfoChangeDTO.getAddress());
@@ -532,6 +535,19 @@ public class UserService implements IUserService{
 	}
 	
 	@Override
+	public List<IdentifiableDTO<PharmacyDTO>> getPharmacies() {
+		try {
+			UUID dermatologistId = getLoggedUserId();
+			Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
+			List<IdentifiableDTO<PharmacyDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyDTO>>();
+			dermatologist.getPharmacies().forEach((p) -> pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(p)));
+			return pharmacies;
+		}catch(Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
 	public boolean addDermatologistToPharmacy(AddDermatologistToPharmacyDTO addDermatologistToPharmacyDTO) {
 		try {
 			Dermatologist dermatologist = dermatologistRepository.getOne(addDermatologistToPharmacyDTO.getDermatologistId());
@@ -669,6 +685,51 @@ public class UserService implements IUserService{
 		PharmacyAdmin pharmacyAdmin = pharmacyAdminRepository.getOne(loggedUser);
 		
 		return pharmacyAdmin.getPharmacy().getId();
+	}
+	
+	@Override
+	public boolean subscribeToPharmacy(EntityIdDTO pharmacyIdDTO) {
+		try {
+			UUID loggedUser= this.getLoggedUserId();
+
+			Patient patient = patientRepository.getOne(loggedUser);
+			Pharmacy pharmacy = pharmacyRepository.getOne(pharmacyIdDTO.getId());
+			patient.addSubscribeToPharmacy(pharmacy);
+			
+			patientRepository.save(patient);
+			return true;
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }		
+	}
+	
+	@Override
+	public boolean unsubscribeFromPharmacy(EntityIdDTO pharmacyIdDTO) {
+		// TODO Auto-generated method stub
+		try {
+			UUID loggedUser= this.getLoggedUserId();
+
+			Patient patient = patientRepository.getOne(loggedUser);
+			patient.removeSubscribeFromPharmacy(pharmacyIdDTO.getId());
+			
+			patientRepository.save(patient);
+			return true;
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }	
+	}
+	
+	@Override
+	public boolean checkIfPatientSubscribed(UUID pharmacyId) {
+		try {
+			UUID loggedUser= this.getLoggedUserId();
+
+			Patient patient = patientRepository.getOne(loggedUser);
+
+			return patient.isPatientSubscribedToPharmacy(pharmacyId);
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }	
 	}
 
 	

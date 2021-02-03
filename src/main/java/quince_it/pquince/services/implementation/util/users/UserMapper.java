@@ -13,7 +13,7 @@ import quince_it.pquince.services.implementation.util.drugs.AllergenMapper;
 public class UserMapper {
 	
 	public static IdentifiableDTO<UserDTO> MapUserPersistenceToUserIdentifiableDTO(User user){
-		if(user == null) throw new IllegalArgumentException();
+		if(user == null) return null;
 
 		
 		return new IdentifiableDTO<UserDTO>(user.getId(), new UserDTO(user.getEmail(), user.getName(), user.getSurname(), user.getAddress(),

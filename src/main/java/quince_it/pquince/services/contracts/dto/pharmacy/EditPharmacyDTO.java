@@ -1,37 +1,39 @@
 package quince_it.pquince.services.contracts.dto.pharmacy;
 
+import java.util.UUID;
+
 import quince_it.pquince.entities.users.Address;
 
-public class PharmacyGradeDTO {
-
-	private String name;
+public class EditPharmacyDTO {
+	private UUID pharmacyId;
 	
+	private String name;
+		
 	private Address address;
 	
 	private String description;
 
-	private double grade;
+    private double consultationPrice;
+    
+	public EditPharmacyDTO() {}
 	
-	private double consultationPrice;
-	
-	public PharmacyGradeDTO() {}
-	
-	public PharmacyGradeDTO(String name, Address address, String description, double grade,double consultationPrice) {
+	public EditPharmacyDTO(UUID pharmacyId,String name, Address address, String description, double consultationPrice) {
 		super();
+		this.pharmacyId=pharmacyId;
 		this.name = name;
 		this.address = address;
 		this.description = description;
-		this.grade = grade;
-		this.consultationPrice=consultationPrice;
+		this.consultationPrice = consultationPrice;
 	}
+
 	
-	public PharmacyGradeDTO(String name, Address address, String description, double grade) {
-		super();
-		this.name = name;
-		this.address = address;
-		this.description = description;
-		this.grade = grade;
-		this.consultationPrice=0;
+	
+	public UUID getPharmacyId() {
+		return pharmacyId;
+	}
+
+	public void setPharmacyId(UUID pharmacyId) {
+		this.pharmacyId = pharmacyId;
 	}
 
 	public String getName() {
@@ -57,15 +59,7 @@ public class PharmacyGradeDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public double getGrade() {
-		return grade;
-	}
-
-	public void setGrade(double grade) {
-		this.grade = grade;
-	}
-
+	
 	public double getConsultationPrice() {
 		return consultationPrice;
 	}

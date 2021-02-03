@@ -26,6 +26,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugKindIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ReplaceDrugIdDTO;
@@ -64,6 +65,7 @@ public class DrugController {
 		return new ResponseEntity<>(drugInstanceService.findAll(),HttpStatus.OK);
 	}
 
+
 	@PutMapping() 
 	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
@@ -72,6 +74,18 @@ public class DrugController {
 		UUID drugInstanceId = drugInstanceService.create(drugInstanceDTO);
 		
 		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
+	}
+
+	@CrossOrigin
+	@GetMapping("/boze") 
+	public ResponseEntity<List<IdentifiableDTO<DrugsWithGradesDTO>>> boze() {
+		return new ResponseEntity<>(drugFeedbackService.findDrugsWithGrades() ,HttpStatus.CREATED);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/search-drugs") 
+	public ResponseEntity<List<IdentifiableDTO<DrugsWithGradesDTO>>> searchDrugs(@RequestParam String name, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam String drugKind) {
+		return new ResponseEntity<>(drugFeedbackService.searchDrugs(name, gradeFrom, gradeTo, drugKind) ,HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/ingredient/{drugId}") 

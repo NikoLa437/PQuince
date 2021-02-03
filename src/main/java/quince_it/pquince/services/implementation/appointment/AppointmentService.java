@@ -636,4 +636,13 @@ public class AppointmentService implements IAppointmentService{
 		}
 	}
 
+	@Override
+	public List<IdentifiableDTO<AppointmentDTO>> getCalendarAppointmentsByDermatologist(UUID pharmacyId) {
+		List<Appointment> appointments = appointmentRepository.getCalendarDermatologistAppointmentsForPharamacy(userService.getLoggedUserId(), pharmacyId);
+		
+		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
+		
+		return returnAppointments;
+	}
+
 }

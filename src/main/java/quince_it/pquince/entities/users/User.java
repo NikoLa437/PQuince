@@ -22,6 +22,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import quince_it.pquince.entities.pharmacy.Pharmacy;
+
 @Entity
 @Table(name="USERS")
 @Inheritance(strategy = InheritanceType.JOINED)

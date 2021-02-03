@@ -12,6 +12,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import quince_it.pquince.entities.drugs.Allergen;
+import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Entity
 public class Patient extends User {
@@ -29,6 +30,10 @@ public class Patient extends User {
             joinColumns = @JoinColumn(name = "patient_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "allergen_id", referencedColumnName = "id"))
     private List<Allergen> allergens;
+	
+	@ManyToMany
+	@JoinTable(name = "patient_pharmacy_subscribe")
+    private List<Pharmacy> pharmacies;
 	
 	public Patient() {
 		super();
@@ -79,6 +84,28 @@ public class Patient extends User {
 			}
 		}
 	}
+	
+	public void addSubscribeToPharmacy(Pharmacy pharmacy) {
+		
+		if(pharmacy == null)
+			this.pharmacies = new ArrayList<Pharmacy>();
+		
+		this.pharmacies.add(pharmacy);
+	}
+
+	public void removeSubscribeFromPharmacy(UUID pharmacyId) {
+		
+		if(pharmacies == null)
+			return;
+		
+		for (Pharmacy pharmacy : this.pharmacies) {
+			if(pharmacy.getId().equals(pharmacyId)) {
+				this.pharmacies.remove(pharmacy);
+				break;
+			}
+		}
+	}
+	
 	public List<Allergen> getAllergens() {
 		return allergens;
 	}
@@ -97,6 +124,18 @@ public class Patient extends User {
 	
 	public void addPenalty(int amount) {
 		this.penalty += amount;
+	}
+
+	public boolean isPatientSubscribedToPharmacy(UUID pharmacyId) {
+		if(pharmacies == null)
+			return false;
+		
+		for (Pharmacy pharmacy : this.pharmacies) {
+			if(pharmacy.getId().equals(pharmacyId)) 
+				return true;
+		}
+		
+		return false;
 	}
 	
 }
