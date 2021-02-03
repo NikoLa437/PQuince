@@ -40,6 +40,13 @@ class ReservationModalInfo extends Component {
 								</div>
 							</div>
 							<br />
+							<div className="form-row mt-3" style={{ fontSize: "1.3em" }}>
+								<b>Reservation code: </b>
+							</div>
+							<div className="form-row" style={{ fontSize: "1.3em" }}>
+								<b>{this.props.reservationCode}</b>
+							</div>
+							<br />
 							<div className="form-row mt-3">
 								<div>
 									<b>Pharmacy name: </b> {this.props.pharmacyName}

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 class Header extends Component {
 	hasRole = (reqRole) => {
-		
 		let roles = JSON.parse(localStorage.getItem("keyRole"));
 		console.log(roles);
 
@@ -42,7 +41,6 @@ class Header extends Component {
 							</li>
 							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/drugs">Drugs</Link>
-
 							</li>
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#">My record</a>
@@ -70,6 +68,7 @@ class Header extends Component {
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/dermatologists">Dermatologist</Link>
 							</li>
+
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/pharmacist">Pharmacist</Link>
 							</li>
@@ -83,20 +82,17 @@ class Header extends Component {
 								<Link to="/absence-for-administrator">Absence</Link>
 							</li>
 
-
 							<li hidden={!this.hasRole("ROLE_PATIENT")}>
 								<Link to="/pharmacist-for-patient">Pharmacist</Link>
 							</li>
-							
-							
-							
+
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#" className="appointment-btn scrollto" style={myStyle}>
 									Make an Appointment
 								</a>
 								<ul>
 									<li>
-										<Link to="/reserve-appointment">Dermatologist</Link>
+										<Link to="/home-dermatologist-reservation">Dermatologist</Link>
 									</li>
 									<li>
 										<Link to="/schedule-consultation">Pharmacist</Link>

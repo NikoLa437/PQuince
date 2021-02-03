@@ -12,34 +12,45 @@ import HeadingAlert from "../../components/HeadingAlert";
 
 class Appointments extends Component {
 	state = {
+		pharmacyId: "",
 		appointments: [],
 		openModalSuccess: false,
 		showingSorted: false,
 		redirect: false,
-		pharmacyId:'',
+		pharmacyId: "",
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+		unauthorizedRedirect: false,
 	};
 
-	fetchData = id => {
+	fetchData = (id) => {
 		this.setState({
-			pharmacyId:id
+			pharmacyId: id,
 		});
-		
+	};
+
+	fetchData = (id) => {
+		this.setState({
+			pharmacyId: id,
+		});
 	};
 
 	componentDidMount() {
-
 		const id = this.props.match.params.id;
 		this.fetchData(id);
 
 		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/" + id, {
+			validateStatus: () => true,
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
-				this.setState({ appointments: res.data });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else {
+					this.setState({ appointments: res.data });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -144,6 +155,8 @@ class Appointments extends Component {
 
 	render() {
 		if (this.state.redirect) return <Redirect push to="/" />;
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
@@ -269,8 +282,6 @@ class Appointments extends Component {
 							))}
 						</tbody>
 					</table>
-
-
 				</div>
 				<ModalDialog
 					show={this.state.openModalSuccess}

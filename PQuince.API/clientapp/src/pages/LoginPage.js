@@ -27,8 +27,6 @@ class LoginPage extends Component {
 	};
 
 	handleLogin = () => {
-		console.log(BASE_URL);
-
 		this.setState({ hiddenErrorAlert: true, emailError: "none", passwordError: "none" });
 
 		if (this.validateForm()) {
@@ -41,20 +39,23 @@ class LoginPage extends Component {
 					} else if (res.status === 500) {
 						this.setState({ errorHeader: "Internal server error!", errorMessage: "Server error.", hiddenErrorAlert: false });
 					} else {
+						console.log(res.data);
 						localStorage.setItem("keyToken", res.data.accessToken);
 						localStorage.setItem("keyRole", JSON.stringify(res.data.roles));
-						
-						if(JSON.stringify(res.data.roles)==='["ROLE_PHARMACYADMIN"]'){
+						localStorage.setItem("expireTime", new Date(new Date().getTime() + res.data.expiresIn).getTime());
+
+						if (JSON.stringify(res.data.roles) === '["ROLE_PHARMACYADMIN"]') {
 							Axios.get(BASE_URL + "/api/users/get-pharmacyid-for-admin", {
-								headers: { 
-									Authorization: getAuthHeader() 
-								} 
-							}).then((response) => {
-								localStorage.setItem("keyPharmacyId", response.data);
+								headers: {
+									Authorization: getAuthHeader(),
+								},
 							})
-							.catch((err) => {
-								console.log(err);
-							});
+								.then((response) => {
+									localStorage.setItem("keyPharmacyId", response.data);
+								})
+								.catch((err) => {
+									console.log(err);
+								});
 						}
 
 						this.setState({ redirect: true });
