@@ -16,7 +16,6 @@ class AddDermatologistToPharmacy extends Component {
         selectedEndDate:new Date(),
         timeFrom:1,
         timeTo:2,    
-
     }
 
     componentDidMount() {

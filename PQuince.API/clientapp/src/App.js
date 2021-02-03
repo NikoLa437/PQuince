@@ -30,6 +30,7 @@ import AppointmentFromHomePage from "./pages/dermatologist-appointment/Appointme
 import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPageForPatient";
 import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
 import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
+import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
 
 function App() {
 	return (
@@ -64,7 +65,6 @@ function App() {
 				<Link exact to="/home-dermatologist-reservation" path="/home-dermatologist-reservation" component={AppointmentFromHomePage} />
 
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
-
 				<Route path="/reserve-appointment/:id" children={<Appointments />} />
 				<Link exact to="/pharmacy-for-admin" path="/pharmacy-for-admin" component={PharmacyForAdmin} />
 
@@ -75,6 +75,9 @@ function App() {
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
 				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />
+
+				<Link exact to="/dermatologist-calendar" path="/dermatologist-calendar" component={DermatologistCalendarPage} />
+
 			</Switch>
 		</Router>
 	);

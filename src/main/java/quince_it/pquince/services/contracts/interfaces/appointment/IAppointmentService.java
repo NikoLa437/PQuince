@@ -74,4 +74,6 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	boolean hasAppointmentInFuture(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO);
 
 	boolean scheduleAppointment(UUID patientId, UUID appointmentId);
+
+	List<IdentifiableDTO<AppointmentDTO>> getCalendarAppointmentsByDermatologist(UUID pharmacyId);
 }

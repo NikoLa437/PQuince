@@ -36,7 +36,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	IdentifiableDTO<PatientDTO> getPatientById();
 	
-	IdentifiableDTO<StaffDTO> getStaffById(UUID id);
+	IdentifiableDTO<StaffDTO> getStaff();
 	
 	boolean activatePatientAccount(UUID id);
 	
@@ -48,7 +48,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	List<IdentifiableDTO<StaffGradeDTO>> findAllStaffWithAvgGradeByStaffType(StaffType staffType);
 	
-	void updateStaff(UUID staffId, UserInfoChangeDTO staffInfoChangeDTO);
+	void updateStaff(UserInfoChangeDTO staffInfoChangeDTO);
 	
 	List<IdentifiableDTO<UserDTO>> findByNameAndSurname(String name, String surname);
 	
@@ -85,8 +85,9 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	IdentifiableDTO<UserDTO> getPatientById(UUID patientId);
 
-	List<IdentifiableDermatologistForPharmacyGradeDTO> findByNameSurnameAndGradeForPharmacy(
-			DermatologistFiltrationDTO dermatologistFiltrationDTO);
+	List<IdentifiableDTO<PharmacyDTO>> getPharmacies();
+
+	List<IdentifiableDermatologistForPharmacyGradeDTO> findByNameSurnameAndGradeForPharmacy(DermatologistFiltrationDTO dermatologistFiltrationDTO);
 
 	List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologist();
 

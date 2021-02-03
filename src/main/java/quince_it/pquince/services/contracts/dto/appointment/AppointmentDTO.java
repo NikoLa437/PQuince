@@ -5,12 +5,23 @@ import java.util.UUID;
 
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
+import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public class AppointmentDTO {
 	
-private IdentifiableDTO<StaffDTO> staff;
+	private IdentifiableDTO<StaffDTO> staff;
 	
+	private IdentifiableDTO<UserDTO> patient;
+	
+	public IdentifiableDTO<UserDTO> getPatient() {
+		return patient;
+	}
+
+	public void setPatient(IdentifiableDTO<UserDTO> patient) {
+		this.patient = patient;
+	}
+
 	private Date startDateTime;
     
     private Date endDateTime;
@@ -21,8 +32,9 @@ private IdentifiableDTO<StaffDTO> staff;
     
     public AppointmentDTO() {}
 
-	public AppointmentDTO(IdentifiableDTO<StaffDTO> staff,AppointmentStatus appointmentStatus, Date startDateTime, Date endDateTime, double price) {
+	public AppointmentDTO(IdentifiableDTO<StaffDTO> staff, IdentifiableDTO<UserDTO> patient, AppointmentStatus appointmentStatus, Date startDateTime, Date endDateTime, double price) {
 		super();
+		this.patient = patient;
 		this.staff = staff;
 		this.appointmentStatus = appointmentStatus;
 		this.startDateTime = startDateTime;
