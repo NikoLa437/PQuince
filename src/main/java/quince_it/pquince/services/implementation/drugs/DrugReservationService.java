@@ -11,6 +11,8 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.DrugReservation;
@@ -74,8 +76,8 @@ public class DrugReservationService implements IDrugReservationService{
 		
 		CanReserveDrug(drugReservation, patient);
 		
-		drugReservationRepository.save(drugReservation);
 		drugStorageService.reduceAmountOfReservedDrug(entityDTO.getDrugId(), entityDTO.getPharmacyId(), entityDTO.getDrugAmount());
+		drugReservationRepository.save(drugReservation);
 		
 		try {
 			emailService.sendDrugReservationNotificaitionAsync(drugReservation);
@@ -92,9 +94,11 @@ public class DrugReservationService implements IDrugReservationService{
 	
 	private void CanReserveDrug(DrugReservation drugReservation,Patient patient) {
 			
-		if(!(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0
-				&& patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"))))
-			throw new IllegalArgumentException();
+		if(!(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0))
+			throw new IllegalArgumentException("Invalid arguments.");
+
+		if(!(patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"))))
+			throw new AuthorizationServiceException("Too many penalty points.");
 		
 	}
 
@@ -111,31 +115,25 @@ public class DrugReservationService implements IDrugReservationService{
 	}
 
 	@Override
-	public boolean cancelDrugReservation(UUID id) {
+	public void cancelDrugReservation(UUID id) {
 		
-		try {
-			DrugReservation drugReservation = drugReservationRepository.getOne(id);
-						
-			if(!canReservationBeCanceled(drugReservation)) return false;
+		DrugReservation drugReservation = drugReservationRepository.getOne(id);
+		
+		canReservationBeCanceled(drugReservation);
+		
+		drugReservation.setReservationStatus(ReservationStatus.CANCELED);
+		drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
+		drugReservationRepository.save(drugReservation);
 			
-			drugReservation.setReservationStatus(ReservationStatus.CANCELED);
-			drugReservationRepository.save(drugReservation);
-			drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
-			
-			return true;
-		} catch (IllegalArgumentException e) {
-			return false;
-		}
 	}
 	
-	private boolean canReservationBeCanceled(DrugReservation drugReservation) {
+	private void canReservationBeCanceled(DrugReservation drugReservation) {
 		
 		LocalDateTime ldt = LocalDateTime.ofInstant(drugReservation.getEndDate().toInstant(), ZoneId.systemDefault());
 		ldt = ldt.minusDays(1);
 		
-		if(ldt.isBefore(LocalDateTime.now())) return false;
+		if(ldt.isBefore(LocalDateTime.now())) throw new IllegalArgumentException("Invalid arguments.");
 		
-		return true;
 	}
 
 	@Override
@@ -147,22 +145,23 @@ public class DrugReservationService implements IDrugReservationService{
 	@Override
 	public void givePenaltyForMissedDrugReservation() {
 
-		try {
-			List<DrugReservation> expiredReservations = drugReservationRepository.findExpiredDrugReservations();
-			for (DrugReservation drugReservation : expiredReservations) {
-				
-				drugReservation.setReservationStatus(ReservationStatus.EXPIRED);
-				drugReservationRepository.save(drugReservation);
-				
+		
+		List<DrugReservation> expiredReservations = drugReservationRepository.findExpiredDrugReservations();
+		for (DrugReservation drugReservation : expiredReservations) {
+			
+			try {
 				Patient patient = patientRepository.findById(drugReservation.getPatient().getId()).get();
 				patient.addPenalty(1);
 				patientRepository.save(patient);
+				
+				drugReservation.setReservationStatus(ReservationStatus.EXPIRED);
+				drugReservationRepository.save(drugReservation);
+			} catch (ObjectOptimisticLockingFailureException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		
-		
 	}
 
 	@Override

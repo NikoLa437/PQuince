@@ -3,6 +3,7 @@ package quince_it.pquince.entities.drugs;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Version;
 
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 
@@ -15,6 +16,9 @@ public class DrugStorage{
 	@Column(name = "count", nullable = false)
 	private int count;
 
+	@Version
+	private Long version;
+	
 	public DrugStorage() {}
 	
 	public DrugStorage(DrugInstance drugInstance, Pharmacy pharmacy, int count) {
@@ -53,9 +57,17 @@ public class DrugStorage{
 	
 	public void reduceAmount(int amount) {
 		if(this.count - amount < 0)
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Not enough drugs in storage.");
 		else
 			this.count -= amount;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 	
 
