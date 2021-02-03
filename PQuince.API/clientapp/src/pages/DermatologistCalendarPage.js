@@ -32,7 +32,7 @@ class DermatologistCalendarPage extends Component {
 
     handleEventClick = (appointment) => {
         let name = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.name;
-        let surname = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.surame;
+        let surname = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.surname;
 
         this.setState({
             name: name,
@@ -45,12 +45,16 @@ class DermatologistCalendarPage extends Component {
     };
 
     generateEventTitle = (appointment) => {
-
+        let name = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.name;
+        let surname = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.surname;
+        if (name === "" && surname === "")
+            return "Free appointment"
+        else
+            return name + " " + surname;
     };
 
     mapAppointmentsToEvents = () => {
-        this.setState({ events: this.state.appointments.map(appointment => ({ start: new Date(appointment.EntityDTO.startDateTime), end: new Date(appointment.EntityDTO.endDateTime), title: this.generate, allDay: false, resource: appointment })) });
-        console.log("test")
+        this.setState({ events: this.state.appointments.map(appointment => ({ start: new Date(appointment.EntityDTO.startDateTime), end: new Date(appointment.EntityDTO.endDateTime), title: this.generateEventTitle(appointment), allDay: false, resource: appointment })) });
         console.log(this.state.events);
     };
 
@@ -62,15 +66,15 @@ class DermatologistCalendarPage extends Component {
                 console.log(res.data);
 
                 Axios.get(BASE_URL + "/api/appointment/dermatologist/calendar-for-pharmacy/" + this.state.pharmacy.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
-                .then((res) => {
-                    this.setState({ appointments: res.data });
-                    console.log(res.data);
-                    this.mapAppointmentsToEvents();
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-                
+                    .then((res) => {
+                        this.setState({ appointments: res.data });
+                        console.log(res.data);
+                        this.mapAppointmentsToEvents();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+
             })
             .catch((err) => {
                 console.log(err);
@@ -79,9 +83,19 @@ class DermatologistCalendarPage extends Component {
 
     handlePharmacyChange = (event) => {
         this.setState({ pharmacy: event.target.value });
+
+        Axios.get(BASE_URL + "/api/appointment/dermatologist/calendar-for-pharmacy/" + this.state.pharmacy.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+            .then((res) => {
+                this.setState({ appointments: res.data });
+                console.log(res.data);
+                this.mapAppointmentsToEvents();
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
-    eventStyleGetter = (event, start, end, isSelected) => {
+    /*eventStyleGetter = (event, start, end, isSelected) => {
         var backgroundColor = event.resource.EntityDTO.appointmentStatus === "SCHEDULED" ? "#3C00FF" : "#948a8a";
         var style = {
             backgroundColor: backgroundColor,
@@ -94,7 +108,7 @@ class DermatologistCalendarPage extends Component {
         return {
             style: style
         };
-    }
+    }*/
 
     render() {
         return (
@@ -119,7 +133,7 @@ class DermatologistCalendarPage extends Component {
                         startAccessor="start"
                         endAccessor="end"
                         style={{ height: 500 }}
-                        eventPropGetter={(this.eventStyleGetter)}
+                    //eventPropGetter={(this.eventStyleGetter)}
                     />
                 </div>
 
