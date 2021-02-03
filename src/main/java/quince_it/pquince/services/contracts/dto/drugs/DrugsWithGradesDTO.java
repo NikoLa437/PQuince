@@ -6,8 +6,8 @@ import quince_it.pquince.entities.drugs.DrugKind;
 import quince_it.pquince.entities.drugs.FormatDrug;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
-public class DrugInstanceDTO {
-
+public class DrugsWithGradesDTO {
+	
 	private String name;
 	
 	private String code;
@@ -38,9 +38,9 @@ public class DrugInstanceDTO {
 	
 	private double avgGrade;
 	
-	public DrugInstanceDTO() {}
+	public DrugsWithGradesDTO() {}
 	
-	public DrugInstanceDTO(String name, String code, String drugInstanceName, IdentifiableDTO<ManufacturerDTO> manufacturer,
+	public DrugsWithGradesDTO(String name, String code, String drugInstanceName, IdentifiableDTO<ManufacturerDTO> manufacturer,
 			FormatDrug drugFormat, double quiantity, String sideEffects, String recommendedAmount,
 			List<IdentifiableDTO<ReplaceDrugDTO>> replacingDrugs, List<IdentifiableDTO<AllergenDTO>> allergens,
 			List<IdentifiableDTO<IngredientDTO>> ingredients, int loyalityPoints, boolean onReciept, DrugKind drugKind) {
@@ -61,7 +61,7 @@ public class DrugInstanceDTO {
 		this.loyalityPoints = loyalityPoints;
 	}
 	
-	public DrugInstanceDTO(String name, String code, String drugInstanceName, IdentifiableDTO<ManufacturerDTO> manufacturer,
+	public DrugsWithGradesDTO(String name, String code, String drugInstanceName, IdentifiableDTO<ManufacturerDTO> manufacturer,
 			FormatDrug drugFormat, double quiantity, String sideEffects, String recommendedAmount,
 			List<IdentifiableDTO<ReplaceDrugDTO>> replacingDrugs, List<IdentifiableDTO<AllergenDTO>> allergens,
 			List<IdentifiableDTO<IngredientDTO>> ingredients, int loyalityPoints, boolean onReciept, DrugKind drugKind, double avg) {
@@ -83,7 +83,7 @@ public class DrugInstanceDTO {
 		this.avgGrade = avg;
 	}
 	
-	public DrugInstanceDTO(String name, String code, String drugInstanceName,
+	public DrugsWithGradesDTO(String name, String code, String drugInstanceName,
 			FormatDrug drugFormat, double quiantity, String sideEffects, String recommendedAmount,
 			int loyalityPoints, boolean onReciept, DrugKind drugKind) {
 		super();
@@ -217,7 +217,6 @@ public class DrugInstanceDTO {
 	public void setAvgGrade(double avgGrade) {
 		this.avgGrade = avgGrade;
 	}
-	
 	
 	
 }
