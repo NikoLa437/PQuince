@@ -26,6 +26,7 @@ import LoyaltyProgram from "./pages/loyalty-program/LoyaltyProgram";
 import ObservePatientsCosultation from "./pages/pharmacist-appointment/ObservePatientsCosultation";
 import ObservePatientsCosultationHistory from "./pages/pharmacist-appointment/ObservePatientsConsultationHistory";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
+import AppointmentFromHomePage from "./pages/dermatologist-appointment/AppointmentFromHomePage";
 
 function App() {
 	return (
@@ -46,7 +47,6 @@ function App() {
 				<Link exact to="/drugs-reservation-history" path="/drugs-reservation-history" component={PatientsDrugReservationHistory} />
 				<Link exact to="/drugs" path="/drugs" component={DrugReservation} />
 				<Link exact to="/admin-complaints" path="/admin-complaints" component={AdminComplaints} />
-				<Link exact to="/reserve-appointment" path="/reserve-appointment" component={Appointments} />
 				<Link exact to="/patients-appointments" path="/patients-appointments" component={PatientsAppointments} />
 				<Link exact to="/dermatologist-history" path="/dermatologist-history" component={HistoryDermatologistAppointments} />
 				<Link exact to="/dermatologists" path="/dermatologists" component={DermatologistsPage} />
@@ -56,7 +56,9 @@ function App() {
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
 				<Link exact to="/observe-consultations-history" path="/observe-consultations-history" component={ObservePatientsCosultationHistory} />
 				<Link exact to="/unauthorized" path="/unauthorized" component={UnauthorizedPage} />
+				<Link exact to="/home-dermatologist-reservation" path="/home-dermatologist-reservation" component={AppointmentFromHomePage} />
 
+				<Route path="/reserve-appointment/:id" children={<Appointments />} />
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
 				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />

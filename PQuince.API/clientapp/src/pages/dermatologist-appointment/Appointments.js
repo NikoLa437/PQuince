@@ -8,9 +8,11 @@ import ModalDialog from "../../components/ModalDialog";
 import { Redirect } from "react-router-dom";
 import getAuthHeader from "../../GetHeader";
 import HeadingAlert from "../../components/HeadingAlert";
+import { withRouter } from "react-router";
 
 class Appointments extends Component {
 	state = {
+		pharmacyId: "",
 		appointments: [],
 		openModalSuccess: false,
 		showingSorted: false,
@@ -21,8 +23,17 @@ class Appointments extends Component {
 		unauthorizedRedirect: false,
 	};
 
+	fetchData = (id) => {
+		this.setState({
+			pharmacyId: id,
+		});
+	};
+
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/" + "cafeddee-56cb-11eb-ae93-0242ac130002", {
+		const id = this.props.match.params.id;
+		this.fetchData(id);
+
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/" + id, {
 			validateStatus: () => true,
 			headers: { Authorization: getAuthHeader() },
 		})
@@ -276,4 +287,4 @@ class Appointments extends Component {
 	}
 }
 
-export default Appointments;
+export default withRouter(Appointments);
