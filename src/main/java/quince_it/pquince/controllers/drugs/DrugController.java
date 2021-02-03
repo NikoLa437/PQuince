@@ -82,6 +82,12 @@ public class DrugController {
 		return new ResponseEntity<>(drugFeedbackService.findDrugsWithGrades() ,HttpStatus.CREATED);
 	}
 	
+	@CrossOrigin
+	@GetMapping("/search-drugs") 
+	public ResponseEntity<List<IdentifiableDTO<DrugsWithGradesDTO>>> searchDrugs(@RequestParam String name, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam String drugKind) {
+		return new ResponseEntity<>(drugFeedbackService.searchDrugs(name, gradeFrom, gradeTo, drugKind) ,HttpStatus.CREATED);
+	}
+	
 	@PutMapping("/ingredient/{drugId}") 
 	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")

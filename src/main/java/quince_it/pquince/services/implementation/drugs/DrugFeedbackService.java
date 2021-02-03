@@ -116,4 +116,64 @@ public class DrugFeedbackService implements IDrugFeedbackService{
 		return drugsWithGrades;
 	}
 	
+
+	private List<DrugInstance> checkDrugKind(List<DrugInstance> drugs, String drugKind)
+	{
+		List<DrugInstance> drugsWithKind = new ArrayList<DrugInstance>();
+		if(!drugKind.equals(""))
+			for (DrugInstance var : drugs) 
+			{
+				if(var.getDrugKind().toString().equals(drugKind))
+					drugsWithKind.add(var);
+			}
+		else
+			drugsWithKind = drugs;
+		
+		return drugsWithKind;
+	}
+	
+	
+	private List<IdentifiableDTO<DrugsWithGradesDTO>> checkDrugGrades(List<DrugInstance> drugsWithKind, double gradeFrom, double gradeTo){
+		List<IdentifiableDTO<DrugsWithGradesDTO>> drugsWithGrades = new ArrayList<IdentifiableDTO<DrugsWithGradesDTO>>();
+		double grade;
+		
+		for (DrugInstance var : drugsWithKind) 
+		{ 
+			grade = findAvgGradeForDrug(var.getId());
+			
+			if(!(gradeFrom == -1.0 || gradeTo == -1.0)) {
+				if(grade >= gradeFrom && grade <= gradeTo) {
+					drugsWithGrades.add(DrugsWithGradesMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(var, grade));
+				}
+			}else {
+				if(gradeFrom == -1.0 & gradeTo != -1.0) {
+					if(grade <= gradeTo)
+						drugsWithGrades.add(DrugsWithGradesMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(var, grade));
+				}else if (gradeTo == -1.0 & gradeFrom != -1.0){
+					if(grade >= gradeFrom)
+						drugsWithGrades.add(DrugsWithGradesMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(var, grade));
+				}else {
+					drugsWithGrades.add(DrugsWithGradesMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(var, grade));
+				}
+			}
+			
+		}
+		
+		return drugsWithGrades;
+	}
+	
+	@Override
+	public List<IdentifiableDTO<DrugsWithGradesDTO>> searchDrugs(String name, double gradeFrom, double gradeTo, String drugKind) {
+		List<DrugInstance> drugs;
+		if(!name.equals("")) {
+			drugs = drugInstanceRepository.findByName(name);
+		}else
+			drugs = drugInstanceRepository.findAll();
+		
+		List<DrugInstance> drugsWithKind = checkDrugKind(drugs, drugKind);
+		List<IdentifiableDTO<DrugsWithGradesDTO>> drugsWithGrades = checkDrugGrades(drugsWithKind, gradeFrom, gradeTo);
+		
+		return drugsWithGrades;
+	}
+	
 }
