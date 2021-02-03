@@ -7,6 +7,7 @@ import Axios from "axios";
 import ModalDialog from "../../components/ModalDialog";
 import { Redirect } from "react-router-dom";
 import getAuthHeader from "../../GetHeader";
+import { withRouter } from "react-router";
 import HeadingAlert from "../../components/HeadingAlert";
 
 class Appointments extends Component {
@@ -15,13 +16,25 @@ class Appointments extends Component {
 		openModalSuccess: false,
 		showingSorted: false,
 		redirect: false,
+		pharmacyId:'',
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
 	};
 
+	fetchData = id => {
+		this.setState({
+			pharmacyId:id
+		});
+		
+	};
+
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/" + "cafeddee-56cb-11eb-ae93-0242ac130002", {
+
+		const id = this.props.match.params.id;
+		this.fetchData(id);
+
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/" + id, {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -61,7 +74,7 @@ class Appointments extends Component {
 	};
 
 	handleResetSort = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/" + "cafeddee-56cb-11eb-ae93-0242ac130002", {
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -74,7 +87,7 @@ class Appointments extends Component {
 	};
 
 	handleSortByGradeAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/sort-by-grade-ascending/" + "cafeddee-56cb-11eb-ae93-0242ac130002", {
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/sort-by-grade-ascending/" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -87,7 +100,7 @@ class Appointments extends Component {
 	};
 
 	handleSortByGradeDesscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-descending/" + "cafeddee-56cb-11eb-ae93-0242ac130002", {
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-descending/" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -100,7 +113,7 @@ class Appointments extends Component {
 	};
 
 	handleSortByPriceAscending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-ascending/" + "cafeddee-56cb-11eb-ae93-0242ac130002", {
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-ascending/" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -113,7 +126,7 @@ class Appointments extends Component {
 	};
 
 	handleSortByPriceDescending = () => {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-descending/" + "cafeddee-56cb-11eb-ae93-0242ac130002", {
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/find-by-pharmacy/sort-by-price-descending/" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -256,6 +269,8 @@ class Appointments extends Component {
 							))}
 						</tbody>
 					</table>
+
+
 				</div>
 				<ModalDialog
 					show={this.state.openModalSuccess}
@@ -268,4 +283,4 @@ class Appointments extends Component {
 	}
 }
 
-export default Appointments;
+export default withRouter(Appointments);

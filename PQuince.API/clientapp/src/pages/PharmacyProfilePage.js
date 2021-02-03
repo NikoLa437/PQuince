@@ -11,6 +11,7 @@ import ComplaintCreateModal from "../components/ComplaintCreateModal";
 import getAuthHeader from "../GetHeader";
 import { withRouter } from "react-router";
 import ReserveDrugsInPharmacy from "../components/ReserveDrugsInPharmacyModal";
+import { Redirect } from "react-router-dom";
 
 class PharmacyProfilePage extends Component {
 	state = {
@@ -31,6 +32,9 @@ class PharmacyProfilePage extends Component {
 		complaint: "",
 		dermatologists:[],
 		drugsInPharmacy:[],
+		isPatient:false,
+		redirect:false,
+		redirectUrl:''
 	};
 
 	fetchData = id => {
@@ -42,6 +46,12 @@ class PharmacyProfilePage extends Component {
 	componentDidMount() {
 		const id = this.props.match.params.id;
 		this.fetchData(id);
+
+		if(localStorage.getItem("keyRole")==='["ROLE_PATIENT"]'){
+			this.setState({
+				isPatient:true
+			})
+		}
 
 		
 		Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId="+id)
@@ -85,6 +95,14 @@ class PharmacyProfilePage extends Component {
 		this.setState({
 			showReserveDrugsInPharmacy: true,
 		});
+	}
+
+	handleAddExaminationClick = () => {
+		this.setState({
+			redirect:true,
+			redirectUrl : "/reserve-appointment/" + this.state.pharmacyId
+		})
+		//window.location.href = "/reserve-appointment/" + this.state.pharmacyId
 	}
 
 	handleOurDrugs = () => {
@@ -298,6 +316,7 @@ class PharmacyProfilePage extends Component {
 	};
 
 	render() {
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
 		const { pharmacy, pharmacyName, pharmacyDescription, pharmacyAdress, pharmacyCity, x, y } = this.state;
 		const mapState = { center: [x, y], zoom: 17 };
 		const myStyle = {
@@ -310,7 +329,7 @@ class PharmacyProfilePage extends Component {
 				<Header />
 
 				<nav className="nav-menu d-none d-lg-block" style={{ marginTop: "8%" }}>
-					<ul style={{ marginLeft: "28%" }}>
+					<ul hidden={!this.state.isPatient} style={{ marginLeft: "28%" }}>
 						<li>
 							<a onClick={this.handleReserveDrugsClick} className="appointment-btn scrollto" style={myStyle}>
 								Reserve drug
@@ -327,7 +346,7 @@ class PharmacyProfilePage extends Component {
 							</a>
 							<ul>
 								<li>
-									<a href="/">Examination *** </a>
+									<a onClick={this.handleAddExaminationClick}>Examination</a>
 								</li>
 								<li>
 									<a href="/">Consultation ***</a>
@@ -383,7 +402,7 @@ class PharmacyProfilePage extends Component {
 							</button>
 							<br></br>
 
-							<button
+							<button hidden={!this.state.isPatient}
 								type="button"
 								hidden={!this.hasRole("ROLE_PATIENT")}
 								onClick={this.handleFeedbackClick}
@@ -392,7 +411,7 @@ class PharmacyProfilePage extends Component {
 								Give feedback
 							</button>
 							<br></br>
-							<button type="button" onClick={this.handleComplaintClick} className="btn btn-outline-secondary mt-3">
+							<button hidden={!this.state.isPatient} type="button" onClick={this.handleComplaintClick} className="btn btn-outline-secondary mt-3">
 								Make complaint
 							</button>
 						</div>
