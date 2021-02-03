@@ -26,6 +26,7 @@ import LoyaltyProgram from "./pages/loyalty-program/LoyaltyProgram";
 import ObservePatientsCosultation from "./pages/pharmacist-appointment/ObservePatientsCosultation";
 import ObservePatientsCosultationHistory from "./pages/pharmacist-appointment/ObservePatientsConsultationHistory";
 import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
+import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
 
 function App() {
 	return (
@@ -69,6 +70,7 @@ function App() {
 				<Route path="/patient-profile/:id" children={<PatientProfilePage/>}/>
 				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage/>}/>
 				<Route path="/create-and-schedule-appointment/:id" children={<CreateAndScheduleAppointmentPage/>}/>
+				<Link exact to="/dermatologist-calendar" path="/dermatologist-calendar" component={DermatologistCalendarPage} />
 				
 
 			</Switch>

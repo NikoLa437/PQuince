@@ -103,12 +103,12 @@ public class UsersController {
 		}
 	}
 	
-	@PutMapping("/staff/{staffId}") 
+	@PutMapping("/staff") 
 	@CrossOrigin
-	public ResponseEntity<?> updateStaffInformation(@PathVariable UUID staffId,@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
+	public ResponseEntity<?> updateStaffInformation(@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
 	  
 		try {
-			userService.updateStaff(staffId, userInfoChangeDTO);
+			userService.updateStaff(userInfoChangeDTO);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -146,11 +146,13 @@ public class UsersController {
 		}
 	}
 	
-	@GetMapping("/staff/{staffId}") 
-	public ResponseEntity<IdentifiableDTO<StaffDTO>> getStaffById(@PathVariable UUID staffId) {
+	@GetMapping("/staff") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	public ResponseEntity<IdentifiableDTO<StaffDTO>> getStaffById() {
 	  
 		try {
-			IdentifiableDTO<StaffDTO> staff = userService.getStaffById(staffId);
+			IdentifiableDTO<StaffDTO> staff = userService.getStaff();
 			return new ResponseEntity<>(staff,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
@@ -270,6 +272,21 @@ public class UsersController {
 	  
 		try {
 			List<IdentifiableDTO<PharmacyDTO>> pharmacies = userService.getPharmaciesWhereDermatologistWork(dermatologistId);
+			return new ResponseEntity<>(pharmacies,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/dermatologist/pharmacies") 
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> getPharmcies() {
+	  
+		try {
+			List<IdentifiableDTO<PharmacyDTO>> pharmacies = userService.getPharmacies();
 			return new ResponseEntity<>(pharmacies,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 

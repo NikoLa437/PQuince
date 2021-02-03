@@ -292,8 +292,9 @@ public class UserService implements IUserService{
 	}
 	
 	@Override
-	public IdentifiableDTO<StaffDTO> getStaffById(UUID id) {	
-		return UserMapper.MapStaffPersistenceToStaffIdentifiableDTO(staffRepository.getOne(id));
+	public IdentifiableDTO<StaffDTO> getStaff() {	
+		UUID staffId = getLoggedUserId();
+		return UserMapper.MapStaffPersistenceToStaffIdentifiableDTO(staffRepository.getOne(staffId));
 	}
 	
 	@Override
@@ -358,7 +359,8 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public void updateStaff(UUID staffId, UserInfoChangeDTO staffInfoChangeDTO) {
+	public void updateStaff(UserInfoChangeDTO staffInfoChangeDTO) {
+		UUID staffId = getLoggedUserId();
 		Staff staff = staffRepository.getOne(staffId);		
 		
 		staff.setAddress(staffInfoChangeDTO.getAddress());
@@ -517,6 +519,19 @@ public class UserService implements IUserService{
 	@Override
 	public List<IdentifiableDTO<PharmacyDTO>> getPharmaciesWhereDermatologistWork(UUID dermatologistId) {
 		try {
+			Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
+			List<IdentifiableDTO<PharmacyDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyDTO>>();
+			dermatologist.getPharmacies().forEach((p) -> pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(p)));
+			return pharmacies;
+		}catch(Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacyDTO>> getPharmacies() {
+		try {
+			UUID dermatologistId = getLoggedUserId();
 			Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
 			List<IdentifiableDTO<PharmacyDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyDTO>>();
 			dermatologist.getPharmacies().forEach((p) -> pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(p)));

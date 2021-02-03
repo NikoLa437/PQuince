@@ -5,7 +5,6 @@ class Header extends Component {
 	hasRole = (reqRole) => {
 		
 		let roles = JSON.parse(localStorage.getItem("keyRole"));
-		console.log(roles);
 
 		if (roles === null) return false;
 

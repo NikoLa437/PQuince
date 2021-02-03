@@ -9,7 +9,6 @@ class TopBar extends React.Component {
 
 	hasRole = (reqRole) => {
 		let roles = JSON.parse(localStorage.getItem("keyRole"));
-		console.log(roles);
 
 		if (roles === null) return false;
 
@@ -51,7 +50,10 @@ class TopBar extends React.Component {
 						<Link onClick={this.handleLogout} to="/login" hidden={!this.hasRole("*")}>
 							Logout
 						</Link>
-						<Link to="/profile" style={myStyle} className="profile" hidden={!this.hasRole("*")}>
+						<Link to="/profile" style={myStyle} className="profile" hidden={!this.hasRole("ROLE_PATIENT")}>
+							<i className="icofont-user"></i>Profile
+						</Link>
+						<Link to="/staff-profile" style={myStyle} className="profile" hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
 							<i className="icofont-user"></i>Profile
 						</Link>
 					</div>
