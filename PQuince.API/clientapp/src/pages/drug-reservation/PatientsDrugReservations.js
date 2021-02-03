@@ -27,13 +27,19 @@ class PatientsDrugReservations extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+		reservationCode: "",
+		unauthorizedRedirect: false,
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/drug/future-reservations", { headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/drug/future-reservations", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				this.setState({ drugReservations: res.data });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else {
+					this.setState({ drugReservations: res.data });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -97,6 +103,7 @@ class PatientsDrugReservations extends Component {
 			endDate: drugReservation.EntityDTO.endDate,
 			drugAmount: drugReservation.EntityDTO.amount,
 			reservationStatus: drugReservation.EntityDTO.reservationStatus,
+			reservationCode: drugReservation.Id,
 		});
 	};
 
@@ -106,6 +113,7 @@ class PatientsDrugReservations extends Component {
 
 	render() {
 		if (this.state.redirect) return <Redirect push to="/" />;
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
 
 		return (
 			<React.Fragment>
@@ -136,6 +144,9 @@ class PatientsDrugReservations extends Component {
 										<img className="img-fluid" src={CapsuleLogo} width="110em" />
 									</td>
 									<td onClick={() => this.handleSelectReservation(drugReservation)}>
+										<div>
+											<b>Reservation code:</b> {drugReservation.Id}
+										</div>
 										<div>
 											<b>Name:</b> {drugReservation.EntityDTO.drugInstance.EntityDTO.drugInstanceName}
 										</div>
@@ -190,6 +201,7 @@ class PatientsDrugReservations extends Component {
 					header="Reservation info"
 					onCloseModal={this.handleModalInfoClose}
 					show={this.state.showInfoModal}
+					reservationCode={this.state.reservationCode}
 					pharmacyName={this.state.pharmacyName}
 					pharmacyAddress={this.state.pharmacyAddress}
 					drugName={this.state.drugName}

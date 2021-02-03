@@ -5,7 +5,7 @@ import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import FeedbackCreateModal from "../../components/FeedbackCreateModal";
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import getAuthHeader from "../../GetHeader";
 import ComplaintCreateModal from "../../components/ComplaintCreateModal";
 import HeadingAlert from "../../components/HeadingAlert";
@@ -29,13 +29,18 @@ class HistoryDermatologistAppointments extends Component {
 		hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
+		unauthorizedRedirect: false,
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist-history", { headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/appointment/dermatologist-history", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				this.setState({ appointments: res.data });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else {
+					this.setState({ appointments: res.data });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -96,7 +101,7 @@ class HistoryDermatologistAppointments extends Component {
 			text: this.state.complaint,
 			staffName: this.state.StaffName,
 			staffSurname: this.state.StaffSurame,
-			profession: 'dermathologist'
+			profession: "dermathologist",
 		};
 		Axios.post(BASE_URL + "/api/staff/complaint", entityDTO)
 			.then((resp) => {
@@ -311,6 +316,8 @@ class HistoryDermatologistAppointments extends Component {
 	};
 
 	render() {
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />

@@ -6,7 +6,7 @@ import AppointmentDetailsModal from "../../components/AppointmentDetailsModal";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import ModalDialog from "../../components/ModalDialog";
-import { NavLink } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import getAuthHeader from "../../GetHeader";
 import HeadingAlert from "../../components/HeadingAlert";
 
@@ -28,13 +28,21 @@ class PatientsAppointments extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+		unauthorizedRedirect: false,
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/appointment/dermatologist/pending/find-by-patient", { headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/pending/find-by-patient", {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((res) => {
-				this.setState({ appointments: res.data });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else {
+					this.setState({ appointments: res.data });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -99,6 +107,8 @@ class PatientsAppointments extends Component {
 	};
 
 	render() {
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
