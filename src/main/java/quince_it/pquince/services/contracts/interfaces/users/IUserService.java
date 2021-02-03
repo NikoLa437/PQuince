@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.StaffType;
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
@@ -35,7 +36,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	IdentifiableDTO<PatientDTO> getPatientById();
 	
-	IdentifiableDTO<StaffDTO> getStaffById(UUID id);
+	IdentifiableDTO<StaffDTO> getStaff();
 	
 	boolean activatePatientAccount(UUID id);
 	
@@ -47,7 +48,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	List<IdentifiableDTO<StaffGradeDTO>> findAllStaffWithAvgGradeByStaffType(StaffType staffType);
 	
-	void updateStaff(UUID staffId, UserInfoChangeDTO staffInfoChangeDTO);
+	void updateStaff(UserInfoChangeDTO staffInfoChangeDTO);
 	
 	List<IdentifiableDTO<UserDTO>> findByNameAndSurname(String name, String surname);
 	
@@ -84,12 +85,17 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	
 	IdentifiableDTO<UserDTO> getPatientById(UUID patientId);
 
-	List<IdentifiableDermatologistForPharmacyGradeDTO> findByNameSurnameAndGradeForPharmacy(
-			DermatologistFiltrationDTO dermatologistFiltrationDTO);
+	List<IdentifiableDTO<PharmacyDTO>> getPharmacies();
+
+	List<IdentifiableDermatologistForPharmacyGradeDTO> findByNameSurnameAndGradeForPharmacy(DermatologistFiltrationDTO dermatologistFiltrationDTO);
 
 	List<IdentifiableDermatologistForPharmacyGradeDTO> findAllDermatologist();
 
 	UUID getPharmacyIdForPharmacyAdmin();
 
+	boolean subscribeToPharmacy(EntityIdDTO pharmacyIdDTO);
 
+	boolean unsubscribeFromPharmacy(EntityIdDTO pharmacyIdDTO);
+
+	boolean checkIfPatientSubscribed(UUID pharmacyId);
 }

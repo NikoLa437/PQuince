@@ -12,6 +12,10 @@ import getAuthHeader from "../GetHeader";
 import { withRouter } from "react-router";
 import ReserveDrugsInPharmacy from "../components/ReserveDrugsInPharmacyModal";
 import { Redirect } from "react-router-dom";
+import Star from "../static/star.png";
+import StarOutline from "../static/star-outline.png";
+import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
+import HeadingAlert from "../components/HeadingAlert";
 
 class PharmacyProfilePage extends Component {
 	state = {
@@ -34,13 +38,29 @@ class PharmacyProfilePage extends Component {
 		drugsInPharmacy:[],
 		isPatient:false,
 		redirect:false,
-		redirectUrl:''
+		redirectUrl:'',
+		isPatientSubscribed:false,
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
 	};
 
 	fetchData = id => {
 		this.setState({
 			pharmacyId:id
 		});
+	};
+
+	handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+	};
+
+	
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
 	};
 
 	componentDidMount() {
@@ -51,6 +71,21 @@ class PharmacyProfilePage extends Component {
 			this.setState({
 				isPatient:true
 			})
+
+			Axios.get(BASE_URL + "/api/users/check-if-patient-subscribed-to-pharmacy",{
+				params:{
+					pharmacyId:id
+				},
+				headers: { Authorization: getAuthHeader() },
+			})
+			.then((response) => {
+				this.setState({
+					isPatientSubscribed : response.data
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 		}
 
 		
@@ -73,15 +108,64 @@ class PharmacyProfilePage extends Component {
 			});
 	}
 
-	handleSubscribe = () => {
-		this.setState({
-			showCreateAppointment: true,
-		});
-	};
+	handleSubscribeClick = () => {
+
+		let pharmacyIdDTO = {
+            id : this.state.pharmacyId
+		};
+		
+		Axios
+        .put(BASE_URL + "/api/users/subscribe-to-pharmacy", pharmacyIdDTO, {
+            headers: { Authorization: getAuthHeader() },
+        }).then((res) =>{
+			this.setState({
+				isPatientSubscribed:true,
+				hiddenSuccessAlert: false,
+				successHeader: "Success",
+				successMessage: "You successfully subscribed to own pharmacy.",
+			})
+        }).catch((err) => {
+			this.setState({ 
+				isPatientSubscribed:true,
+				hiddenFailAlert: false, 
+				failHeader: "Unsuccess", 
+				failMessage: "We have a problem with subscribe.Try later." });
+        });
+	}
+
+	handleUnSubscribeClick = () =>{
+
+		let pharmacyIdDTO = {
+            id : this.state.pharmacyId
+		};
+		
+		Axios
+        .put(BASE_URL + "/api/users/unsubscribe-from-pharmacy", pharmacyIdDTO, {
+            headers: { Authorization: getAuthHeader() },
+        }).then((res) =>{
+			this.setState({
+				isPatientSubscribed:false
+			})
+            this.setState({
+				isPatientSubscribed:false,
+				hiddenSuccessAlert: false,
+				successHeader: "Success",
+				successMessage: "You successfully unsubscribed from own pharmacy.",
+			})
+        }).catch((err) => {
+            this.setState({ 
+				isPatientSubscribed:true,
+				hiddenFailAlert: false, 
+				failHeader: "Unsuccess", 
+				failMessage: "We have a problem with subscribe.Try later." });
+        });
+
+	}
 
 	handleComplaintChange = (event) => {
 		this.setState({ complaint: event.target.value });
 	};
+
 
 	handleReserveDrugsClick = () => {
 		Axios
@@ -102,7 +186,6 @@ class PharmacyProfilePage extends Component {
 			redirect:true,
 			redirectUrl : "/reserve-appointment/" + this.state.pharmacyId
 		})
-		//window.location.href = "/reserve-appointment/" + this.state.pharmacyId
 	}
 
 	handleOurDrugs = () => {
@@ -327,8 +410,20 @@ class PharmacyProfilePage extends Component {
 			<React.Fragment>
 				<TopBar />
 				<Header />
-
+				
 				<nav className="nav-menu d-none d-lg-block" style={{ marginTop: "8%" }}>
+				<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
+				<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+				/>
 					<ul hidden={!this.state.isPatient} style={{ marginLeft: "28%" }}>
 						<li>
 							<a onClick={this.handleReserveDrugsClick} className="appointment-btn scrollto" style={myStyle}>
@@ -360,13 +455,97 @@ class PharmacyProfilePage extends Component {
 					<div className="row" style={{ verticalAlign: "center" }}></div>
 					<div className="row" style={{ marginTop: "3%" }}>
 						<div className="col-xs-4" style={{ width: "50%" }}>
-							<div>
-								<h1>{pharmacyName}</h1>
-
-								<i className="icofont-star" style={{ color: "#1977cc" }}>
-									{this.state.grade}
-								</i>
+							<div class="row">
+								<div className="ml-3">
+									<h1>{pharmacyName}</h1>
+								</div>
+								<div className="ml-3 mt-2">
+									<img
+									hidden={this.state.grade >= 1}
+									className="img-fluid ml-1"
+									src={StarOutline}
+									width="30em"
+									height="30em"
+									/>
+									<img
+										hidden={this.state.grade < 1}
+										className="img-fluid ml-1"
+										src={Star}
+										width="30em"
+										height="30em"
+									/>
+									<img
+										hidden={this.state.grade >= 2}
+										className="img-fluid ml-1"
+										src={StarOutline}
+										width="30em"
+										height="30em"
+									/>
+									<img
+										hidden={this.state.grade < 2}
+										className="img-fluid ml-1"
+										src={Star}
+										width="30em"
+										height="30em"
+									/>
+									<img
+										hidden={this.state.grade >= 3}
+										className="img-fluid ml-1"
+										src={StarOutline}
+										width="30em"
+										height="30em"
+									/>
+									<img
+										hidden={this.state.grade < 3}
+										className="img-fluid ml-1"
+										src={Star}
+										width="30em"
+										height="30em"
+									/>
+									<img
+										hidden={this.state.grade >= 4}
+										className="img-fluid ml-1"
+										src={StarOutline}
+										width="30em"
+										height="30em"
+									/>
+									<img
+										hidden={this.state.grade < 4}
+										className="img-fluid ml-1"
+										src={Star}
+										width="30em"
+										height="30em"
+									/>
+									<img
+										hidden={this.state.grade >= 5}
+										className="img-fluid ml-1"
+										src={StarOutline}
+										width="30em"
+										height="30em"
+									/>
+									<img
+										hidden={this.state.grade < 5}
+										className="img-fluid ml-1"
+										src={Star}
+										width="30em"
+										height="30em"
+									/>
+								</div>
 							</div>
+							<button hidden={!this.state.isPatient || this.state.isPatientSubscribed}
+								type="button"
+								onClick={this.handleSubscribeClick}
+								className="btn btn-outline-secondary mt-1 mb-3"
+								>
+								Subscribe
+							</button>
+							<button hidden={!this.state.isPatient || !this.state.isPatientSubscribed}
+								type="button"
+								onClick={this.handleUnSubscribeClick}
+								className="btn btn-outline-secondary mt-1 mb-3"
+								>
+								Unsubscribe
+							</button>
 							<br></br>
 							<h7>
 								Address: {pharmacyAdress}, {pharmacyCity}

@@ -6,6 +6,7 @@ import Axios from "axios";
 import PasswordChangeModal from "../components/PasswordChangeModal";
 import ModalDialog from "../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
+import getAuthHeader from "../GetHeader";
 
 const mapState = {
 	center: [44, 21],
@@ -64,7 +65,7 @@ class StaffProfilePage extends Component {
 	componentDidMount() {
 		this.addressInput = React.createRef();
 
-		Axios.get(BASE_URL + "/api/users/staff/11355678-52d3-11eb-ae93-0242ac130002")
+		Axios.get(BASE_URL + "/api/users/staff", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({
@@ -161,7 +162,7 @@ class StaffProfilePage extends Component {
 
 				if (this.validateForm(userDTO)) {
 					console.log(userDTO);
-					Axios.put(BASE_URL + "/api/users/staff/" + this.state.id, userDTO)
+					Axios.put(BASE_URL + "/api/users/staff", userDTO, { headers: { Authorization: getAuthHeader() } })
 						.then((res) => {
 							console.log("Success");
 							this.setState({ openSuccessModal: true });

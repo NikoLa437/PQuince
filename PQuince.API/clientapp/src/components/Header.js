@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 class Header extends Component {
 	hasRole = (reqRole) => {
 		let roles = JSON.parse(localStorage.getItem("keyRole"));
-		console.log(roles);
 
 		if (roles === null) return false;
 
@@ -35,6 +34,9 @@ class Header extends Component {
 							</li>
 							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
 								<Link to="/patients">Patients</Link>
+							</li>
+							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
+								<Link to="/dermatologist-calendar">Calendar</Link>
 							</li>
 							<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/pharmacies">Pharmacies</Link>

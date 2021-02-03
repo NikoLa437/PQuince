@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
@@ -104,12 +105,12 @@ public class UsersController {
 		}
 	}
 	
-	@PutMapping("/staff/{staffId}") 
+	@PutMapping("/staff") 
 	@CrossOrigin
-	public ResponseEntity<?> updateStaffInformation(@PathVariable UUID staffId,@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
+	public ResponseEntity<?> updateStaffInformation(@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
 	  
 		try {
-			userService.updateStaff(staffId, userInfoChangeDTO);
+			userService.updateStaff(userInfoChangeDTO);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -147,11 +148,13 @@ public class UsersController {
 		}
 	}
 	
-	@GetMapping("/staff/{staffId}") 
-	public ResponseEntity<IdentifiableDTO<StaffDTO>> getStaffById(@PathVariable UUID staffId) {
+	@GetMapping("/staff") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	public ResponseEntity<IdentifiableDTO<StaffDTO>> getStaffById() {
 	  
 		try {
-			IdentifiableDTO<StaffDTO> staff = userService.getStaffById(staffId);
+			IdentifiableDTO<StaffDTO> staff = userService.getStaff();
 			return new ResponseEntity<>(staff,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
@@ -214,6 +217,36 @@ public class UsersController {
 				return new ResponseEntity<>(HttpStatus.OK); 
 			
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@PutMapping("/subscribe-to-pharmacy") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> subscribeToPharmacy(@RequestBody EntityIdDTO pharmacyIdDTO ) {
+	  
+		try {
+			userService.subscribeToPharmacy(pharmacyIdDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@PutMapping("/unsubscribe-from-pharmacy") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> unsubscribeToPharmacy(@RequestBody EntityIdDTO pharmacyIdDTO ) {
+	  
+		try {
+			userService.unsubscribeFromPharmacy(pharmacyIdDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
@@ -285,6 +318,21 @@ public class UsersController {
 	  
 		try {
 			List<IdentifiableDTO<PharmacyDTO>> pharmacies = userService.getPharmaciesWhereDermatologistWork(dermatologistId);
+			return new ResponseEntity<>(pharmacies,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/dermatologist/pharmacies") 
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> getPharmcies() {
+	  
+		try {
+			List<IdentifiableDTO<PharmacyDTO>> pharmacies = userService.getPharmacies();
 			return new ResponseEntity<>(pharmacies,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
@@ -369,6 +417,19 @@ public class UsersController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/check-if-patient-subscribed-to-pharmacy")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<Boolean> checkIfPatientSubscribed(@RequestParam UUID pharmacyId) {
+		try {
+			if (userService.checkIfPatientSubscribed(pharmacyId))
+				return new ResponseEntity<>(true,HttpStatus.OK);
+			
+			return new ResponseEntity<>(false,HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(false,HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
 	}
 }

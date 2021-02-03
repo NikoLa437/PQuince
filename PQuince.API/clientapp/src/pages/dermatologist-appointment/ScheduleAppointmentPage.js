@@ -25,7 +25,7 @@ class ScheduleAppointmentPage extends Component {
 		const id = this.props.match.params.id;
 		this.fetchData(id);
 
-		Axios.get(BASE_URL + "/api/appointment/dermatologist", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/created", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ appointments: res.data });
 				console.log(res.data);
