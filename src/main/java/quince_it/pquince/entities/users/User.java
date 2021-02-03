@@ -21,6 +21,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import quince_it.pquince.entities.pharmacy.Pharmacy;
+
 @Entity
 @Table(name="USERS")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -59,7 +61,8 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private List<Authority> authorities;
-	
+  
+
 	public User() {}
 	
 	public User(String email, String password, String name, String surname, Address address,

@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.StaffType;
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
@@ -91,5 +92,9 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 
 	UUID getPharmacyIdForPharmacyAdmin();
 
+	boolean subscribeToPharmacy(EntityIdDTO pharmacyIdDTO);
 
+	boolean unsubscribeFromPharmacy(EntityIdDTO pharmacyIdDTO);
+
+	boolean checkIfPatientSubscribed(UUID pharmacyId);
 }

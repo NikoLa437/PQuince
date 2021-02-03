@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
@@ -219,6 +220,36 @@ public class UsersController {
 		}
 	}
 	
+	@PutMapping("/subscribe-to-pharmacy") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> subscribeToPharmacy(@RequestBody EntityIdDTO pharmacyIdDTO ) {
+	  
+		try {
+			userService.subscribeToPharmacy(pharmacyIdDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@PutMapping("/unsubscribe-from-pharmacy") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> unsubscribeToPharmacy(@RequestBody EntityIdDTO pharmacyIdDTO ) {
+	  
+		try {
+			userService.unsubscribeFromPharmacy(pharmacyIdDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 	@PutMapping("/add-dermatologist-to-pharmacy") 
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
@@ -369,6 +400,19 @@ public class UsersController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/check-if-patient-subscribed-to-pharmacy")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<Boolean> checkIfPatientSubscribed(@RequestParam UUID pharmacyId) {
+		try {
+			if (userService.checkIfPatientSubscribed(pharmacyId))
+				return new ResponseEntity<>(true,HttpStatus.OK);
+			
+			return new ResponseEntity<>(false,HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(false,HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
 	}
 }

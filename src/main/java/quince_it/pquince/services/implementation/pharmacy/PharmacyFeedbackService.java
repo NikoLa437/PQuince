@@ -86,7 +86,6 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 
 	private IdentifiableDTO<PharmacyGradeDTO> MapPharmacyFiltrationDTOToIdentifiablePharmacyGradeDTO(PharmacyFiltrationRepositoryDTO pharmacy) {
 		if(pharmacy == null) return null;
-		
 		return new IdentifiableDTO<PharmacyGradeDTO>(pharmacy.getPharmacyId(), new PharmacyGradeDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(), pharmacy.getGrade()));
 	}
 

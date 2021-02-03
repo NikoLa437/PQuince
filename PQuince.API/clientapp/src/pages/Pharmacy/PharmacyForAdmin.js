@@ -4,13 +4,9 @@ import Header from "../../components/Header";
 import Axios from "axios";
 import { BASE_URL } from "../../constants.js";
 import { YMaps, Map, GeoObject, Placemark } from "react-yandex-maps";
-import PharmacyDermatologistModal from "../../components/PharmacyDermatologistModal";
-import DrugsInPharmacyModal from "../../components/DrugsInPharmacyModal";
-import FeedbackCreateModal from "../../components/FeedbackCreateModal";
-import ComplaintCreateModal from "../../components/ComplaintCreateModal";
 import getAuthHeader from "../../GetHeader";
-import { withRouter } from "react-router";
-import ReserveDrugsInPharmacy from "../../components/ReserveDrugsInPharmacyModal";
+import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
+import HeadingAlert from "../../components/HeadingAlert";
 
 class PharmacyForAdmin extends Component {
 	state = {
@@ -34,8 +30,17 @@ class PharmacyForAdmin extends Component {
 		drugsInPharmacy:[],
         isPatient:false,
         hiddenEditInfo: true,
-		consultationPrice:'',
-		hiddenEditInfo:true
+		consultationPrice:0,
+		nameError: "none",
+		descriptionError: "none",
+		addressError: "none",
+		consultationPriceError: "none",
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
 
     };
     
@@ -45,6 +50,7 @@ class PharmacyForAdmin extends Component {
 	}
 
     handleChangeInfo = () => {
+
 		this.setState({
 			hiddenSuccessAlert: true,
 			successHeader: "",
@@ -52,7 +58,8 @@ class PharmacyForAdmin extends Component {
 			hiddenFailAlert: true,
 			failHeader: "",
 			failMessage: "",
-		});
+
+		})
 
 		let street;
 		let city;
@@ -74,17 +81,17 @@ class PharmacyForAdmin extends Component {
 				city = firstGeoObject.getLocalities().join(", ");
 			})
 			.then((res) => {
-				let userDTO = {
-					name: this.state.name,
-					surname: this.state.surname,
+				let pharmacyDTO = {
+					pharmacyId: this.state.pharmacyId,
+					name: this.state.pharmacyName,
+					description: this.state.pharmacyDescription,
 					address: { street, country, city, latitude, longitude },
-					phoneNumber: this.state.phoneNumber,
+					consultationPrice: this.state.consultationPrice,
 				};
-				console.log(userDTO);
 
-				if (this.validateForm(userDTO)) {
-					console.log(userDTO);
-					Axios.put(BASE_URL + "/api/users/patient", userDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+
+				if (this.validateForm(pharmacyDTO)) {
+					Axios.put(BASE_URL + "/api/pharmacy/", pharmacyDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 						.then((res) => {
 							if (res.status === 400) {
 								this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Illegal argument." });
@@ -99,12 +106,38 @@ class PharmacyForAdmin extends Component {
 									hiddenEditInfo: true,
 								});
 							}
+
 						})
 						.catch((err) => {
 							console.log(err);
 						});
 				}
 			});
+	};
+
+	validateForm = (pharmacyDTO) => {
+		alert(pharmacyDTO.name)
+		this.setState({
+			nameError: "none",
+			descriptionError: "none",
+			addressError: "none",
+			consultationPriceError: "none",
+		});
+
+		if (pharmacyDTO.name === "") {
+			this.setState({ nameError: "initial" });
+			return false;
+		} else if (pharmacyDTO.description === "") {
+			this.setState({ descriptionError: "initial" });
+			return false;
+		} else if (this.addressInput.current.value === "") {
+			this.setState({ addressError: "initial" });
+			return false;
+		} else if (pharmacyDTO.consultationPrice === "") {
+			this.setState({ consultationPriceError: "initial" });
+			return false;
+		}
+		return true;
 	};
 
 	handleEditInfoClick = () => {
@@ -163,6 +196,27 @@ class PharmacyForAdmin extends Component {
 		}
 	};
 
+	handleNameChange = (event) => {
+		this.setState({ pharmacyName: event.target.value });
+	};
+
+	handleDescriptionChange= (event) => {
+		this.setState({ pharmacyDescription: event.target.value });
+	};
+
+	handleConsultationPriceChange = (event) => {
+		this.setState({ consultationPrice: event.target.value });
+	};
+
+	
+	handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+	};
+
+	
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
 	render() {
 		const { pharmacy, pharmacyName, pharmacyDescription, pharmacyAdress, pharmacyCity, x, y } = this.state;
 		const mapState = { center: [x, y], zoom: 17 };
@@ -177,9 +231,23 @@ class PharmacyForAdmin extends Component {
 
 
 				<div className="container" style={{ marginTop: "8%" }}>
+					<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
 					<div className="row" style={{ verticalAlign: "center" }}></div>
 					<div className="row" style={{ marginTop: "3%" }}>
                         <div className="col-xs-4" style={{width:'45%'}}>
+							<div className="col shadow p-3 bg-white rounded">
+
 							<h5 className=" text-center text-uppercase">{pharmacyName}</h5>
 							<form id="contactForm" name="sentMessage">
 								<div className="control-group">
@@ -236,12 +304,12 @@ class PharmacyForAdmin extends Component {
 											className={!this.state.hiddenEditInfo === false ? "form-control-plaintext" : "form-control"}
 											placeholder="Description"
 											type="text"
-											onChange={this.handleSurnameChange}
+											onChange={this.handleDescriptionChange}
 											value={this.state.pharmacyDescription}
 										/>
 									</div>
-									<div className="text-danger" style={{ display: this.state.surnameError }}>
-										Surname must be entered.
+									<div className="text-danger" style={{ display: this.state.descriptionError }}>
+										Description must be entered.
 									</div>
 								</div>
 								
@@ -253,12 +321,12 @@ class PharmacyForAdmin extends Component {
 											readOnly={this.state.hiddenEditInfo}
 											className={!this.state.hiddenEditInfo === false ? "form-control-plaintext" : "form-control"}
 											type="text"
-											onChange={this.handlePhoneNumberChange}
+											onChange={this.handleConsultationPriceChange}
 											value={this.state.consultationPrice}
 										/>
 									</div>
-									<div className="text-danger" style={{ display: this.state.phoneError }}>
-										Phone number must be entered.
+									<div className="text-danger" style={{ display: this.state.consultationPriceError }}>
+										Consultation price must be entered.
 									</div>
 								</div>
 								<div className="form-group text-center" hidden={this.state.hiddenEditInfo}>
@@ -291,10 +359,11 @@ class PharmacyForAdmin extends Component {
 									</div>
 								</div>
 							</form>
+							</div>
                         </div>
 						<div className="col-xs-8" style={{marginLeft:'3%'}}>
 							<YMaps>
-								<Map state={mapState} width="35em" height="500px">
+								<Map state={mapState} width="33em" height="470px">
 									<GeoObject
 										geometry={{
 											type: "Point",
@@ -312,9 +381,6 @@ class PharmacyForAdmin extends Component {
 							</YMaps>
 						</div>
 					</div>
-                    <div>
-                        Test
-                    </div>
 				</div>
 
 			</React.Fragment>
