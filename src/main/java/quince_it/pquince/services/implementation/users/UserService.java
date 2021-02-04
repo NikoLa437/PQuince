@@ -24,6 +24,7 @@ import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.Pharmacist;
 import quince_it.pquince.entities.users.PharmacyAdmin;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
@@ -31,6 +32,7 @@ import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.PharmacistRepository;
 import quince_it.pquince.repository.users.PharmacyAdminRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
@@ -46,6 +48,7 @@ import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
@@ -113,6 +116,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private PharmacyAdminRepository pharmacyAdminRepository;
+	
+	@Autowired
+	private PharmacistRepository pharmacistRepository;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -732,6 +738,43 @@ public class UserService implements IUserService{
 		catch (EntityNotFoundException e) { return false; } 
 		catch (IllegalArgumentException e) { return false; }	
 	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacistsForPharmacy(UUID pharmacyId) {
+		List<Pharmacist> pharmacists = pharmacistRepository.findAllPharmacistsForPharmacy(pharmacyId);
+		
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> retPharmacist = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+
+		pharmacists.forEach((p) ->  retPharmacist.add(MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(p)));
+		
+		return retPharmacist;
+	}
+
+	private IdentifiableDTO<PharmacistForPharmacyGradeDTO> MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(
+			Pharmacist pharmacist) {
+		return new IdentifiableDTO<PharmacistForPharmacyGradeDTO>(pharmacist.getId(), new PharmacistForPharmacyGradeDTO(pharmacist.getName(),pharmacist.getSurname(),staffFeedbackService.findAvgGradeForStaff(pharmacist.getId()),pharmacist.getPharmacy().getName()));
+	}
+	
+	@Override
+	public boolean removePharmacistFromPharmacy(RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO) {
+		try {
+			if(!appointmentService.hasAppointmentInFutureForPharmacist(removePharmacistFromPharmacyDTO)) {
+				Pharmacist pharmacist = pharmacistRepository.getOne(removePharmacistFromPharmacyDTO.getPharmacistId());
+				pharmacist.removePharmacy();
+				
+				pharmacistRepository.save(pharmacist);
+				
+				workTimeService.removeWorkTimeForPharmacistForPharmacy(removePharmacistFromPharmacyDTO);
+				return true;
+			}else {
+				return false;
+			}
+		} 
+		
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }
+	}
+	
 
 	
 }

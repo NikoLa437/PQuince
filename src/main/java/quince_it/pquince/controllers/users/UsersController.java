@@ -31,6 +31,7 @@ import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
@@ -214,6 +215,21 @@ public class UsersController {
 		
 		try {
 			if(userService.removeDermatologistFromPharmacy(removeDermatologistFromPharmacyDTO))
+				return new ResponseEntity<>(HttpStatus.OK); 
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@PutMapping("/remove-pharmacyist-from-pharmacy") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<?> removePharmacistFromPharmacy(@RequestBody RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO) {
+		
+		try {
+			if(userService.removePharmacistFromPharmacy(removePharmacistFromPharmacyDTO))
 				return new ResponseEntity<>(HttpStatus.OK); 
 			
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
@@ -432,4 +448,19 @@ public class UsersController {
 			return new ResponseEntity<>(false,HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
 	}
+	
+	@CrossOrigin
+	@GetMapping("/pharmacist-for-pharmacy/{pharmacyId}") 
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> getPharmacistForPharmacy(@PathVariable UUID pharmacyId) {
+	  
+		try {
+			List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = userService.findAllPharmacistsForPharmacy(pharmacyId);
+			return new ResponseEntity<>(pharmacists,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 }

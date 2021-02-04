@@ -29,6 +29,20 @@ public class Pharmacist extends Staff {
 		super(id, email, password, name, surname, address, phoneNumber, absences, StaffType.PHARMACIST);
 		this.pharmacy= pharmacy;
 	}
+
+	public Pharmacy getPharmacy() {
+		return pharmacy;
+	}
+
+	public void setPharmacy(Pharmacy pharmacy) {
+		this.pharmacy = pharmacy;
+	}
+
+	public void removePharmacy() {
+		this.pharmacy = null;
+	}
+	
+	
 	
 
 }

@@ -40,6 +40,7 @@ import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestD
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
@@ -643,6 +644,16 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
 		
 		return returnAppointments;
+	}
+
+	@Override
+	public boolean hasAppointmentInFutureForPharmacist(
+			RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO) {
+		List<Appointment> listOfAppointment = appointmentRepository.findAllAppointmentForPharmacistInFutureInPharmacy(removePharmacistFromPharmacyDTO.getPharmacistId(),removePharmacistFromPharmacyDTO.getPharmacyId());
+		if(listOfAppointment.size()>0)
+			return true;
+		
+		return false;
 	}
 
 }

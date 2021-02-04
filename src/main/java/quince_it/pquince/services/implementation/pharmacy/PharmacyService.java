@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
-import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.UserRepository;
@@ -326,7 +325,6 @@ public class PharmacyService implements IPharmacyService {
 
 	@Override
 	public void updatePharmacy(EditPharmacyDTO editPharmacyDTO) {
-		// TODO Auto-generated method stub
 		Pharmacy pharmacy = pharmacyRepository.getOne(editPharmacyDTO.getPharmacyId());		
 		
 		pharmacy.setAddress(editPharmacyDTO.getAddress());

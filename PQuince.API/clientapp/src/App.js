@@ -31,6 +31,7 @@ import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPag
 import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
 import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
 import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
+import PharmacistPage from "./pages/pharmacist/PharmacistsPage";
 
 function App() {
 	return (
@@ -75,8 +76,10 @@ function App() {
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
 				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />
-
+				
 				<Link exact to="/dermatologist-calendar" path="/dermatologist-calendar" component={DermatologistCalendarPage} />
+
+				<Link exact to="/pharmacist" path="/pharmacist" component={PharmacistPage} />
 
 			</Switch>
 		</Router>
