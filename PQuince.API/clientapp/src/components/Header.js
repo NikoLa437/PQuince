@@ -1,6 +1,20 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 class Header extends Component {
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
+	};
+
 	render() {
 		const myStyle = {
 			color: "white",
@@ -10,64 +24,96 @@ class Header extends Component {
 			<header id="header" className="fixed-top">
 				<div className="container d-flex align-items-center">
 					<h1 className="logo mr-auto">
-						<a href="/">PQuince</a>
+						<Link to="/">PQuince</Link>
 					</h1>
 
 					<nav className="nav-menu d-none d-lg-block">
 						<ul>
-							<li className="active">
-								<a href="/">Home</a>
+							<li className="active" hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
+								<a to="/">Home</a>
 							</li>
-							<li>
-								<a href="/pharmacies">Pharmacies</a>
+							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
+								<Link to="/patients">Patients</Link>
 							</li>
-							<li>
-								<a href="/drugs">Drugs</a>
+							<li hidden={!this.hasRole("ROLE_PATIENT")}>
+								<Link to="/patient-complaint">Make complaint</Link>
 							</li>
-							<li>
-								<a href="/drugs-reservation">Drugs reservations</a>
+							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
+								<Link to="/dermatologist-calendar">Calendar</Link>
 							</li>
-							<li className="drop-down">
+
+							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#">My record</a>
 								<ul>
 									<li>
-										<a href="/dermatologist-history">Dermatologist visits</a>
+										<Link to="/patients-appointments">Dermatologist visits</Link>
 									</li>
 									<li>
-										<a href="/">Consultations with a pharmacist</a>
+										<Link to="/observe-consultations">Consultations with a pharmacist</Link>
 									</li>
 									<li>
-										<a href="/patients-appointments">Observe appointments</a>
+										<Link to="/">eReciepts</Link>
 									</li>
 									<li>
-										<a href="/">eReciepts</a>
-									</li>
-									<li>
-										<a href="/">Reserved medicines</a>
+										<Link to="/drugs-reservation">Reserved medicines</Link>
 									</li>
 								</ul>
 							</li>
-							<li className="drop-down">
-								<a href="#">Pharmacy</a>
+							<li hidden={this.hasRole("*")}>
+								<Link to="/pharmacies">Pharmacies</Link>
+							</li>
+							<li hidden={this.hasRole("*")}>
+								<Link to="/drugs">Drugs</Link>
+							</li>
+							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
+								<a href="#">Services</a>
 								<ul>
-									<li>
-										<a href="/pharmacy">Profile</a>
+									<li hidden={!this.hasRole("ROLE_PATIENT")}>
+										<Link to="/dermatologists-for-patient">Dermatologist</Link>
 									</li>
-									<li>
-										<a href="/dermatologists">Dermatologist</a>
+									<li hidden={!this.hasRole("ROLE_PATIENT")}>
+										<Link to="/pharmacist-for-patient">Pharmacist</Link>
+									</li>
+									<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
+										<Link to="/pharmacies">Pharmacies</Link>
+									</li>
+									<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
+										<Link to="/drugs">Drugs</Link>
 									</li>
 								</ul>
 							</li>
-							<li className="drop-down">
+
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<Link to="/pharmacy-for-admin">Pharmacy</Link>
+							</li>
+
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<Link to="/dermatologists">Dermatologist</Link>
+							</li>
+
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<Link to="/pharmacist">Pharmacist</Link>
+							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<Link to="/drugs-in-pharmacy">Drugs</Link>
+							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<Link to="/narudzbine">Narudzbine</Link>
+							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<Link to="/absence-for-administrator">Absence</Link>
+							</li>
+
+							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#" className="appointment-btn scrollto" style={myStyle}>
 									Make an Appointment
 								</a>
 								<ul>
 									<li>
-										<a href="/reserve-appointment">Dermatologist</a>
+										<Link to="/home-dermatologist-reservation">Dermatologist</Link>
 									</li>
 									<li>
-										<a href="/">Farmaceut</a>
+										<Link to="/schedule-consultation">Pharmacist</Link>
 									</li>
 								</ul>
 							</li>

@@ -1,5 +1,7 @@
 package quince_it.pquince.services.contracts.dto.pharmacy;
 
+import javax.persistence.Column;
+
 import quince_it.pquince.entities.users.Address;
 
 public class PharmacyDTO {
@@ -10,13 +12,16 @@ public class PharmacyDTO {
 	
 	private String description;
 
+    private double consultationPrice;
+    
 	public PharmacyDTO() {}
 	
-	public PharmacyDTO(String name, Address address, String description) {
+	public PharmacyDTO(String name, Address address, String description, double consultationPrice) {
 		super();
 		this.name = name;
 		this.address = address;
 		this.description = description;
+		this.consultationPrice = consultationPrice;
 	}
 
 	public String getName() {
@@ -43,5 +48,11 @@ public class PharmacyDTO {
 		this.description = description;
 	}
 	
-	
+	public double getConsultationPrice() {
+		return consultationPrice;
+	}
+
+	public void setConsultationPrice(double consultationPrice) {
+		this.consultationPrice = consultationPrice;
+	}
 }

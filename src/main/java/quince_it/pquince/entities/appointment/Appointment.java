@@ -39,6 +39,9 @@ public class Appointment {
     @Column(name = "price")
     private double price;
     
+    @Column(name = "priceToPay")
+    private double priceToPay;
+    
     @Enumerated(EnumType.STRING)
 	@Column(name = "appointmentType", nullable = false)
 	private AppointmentType appointmentType;
@@ -66,6 +69,7 @@ public class Appointment {
 		this.price = price;
 		this.appointmentType = appointmentType;
 		this.appointmentStatus = appointmentStatus;
+		this.priceToPay = price;
 	}
 
 	public Patient getPatient() {
@@ -114,6 +118,14 @@ public class Appointment {
 
 	public AppointmentType getAppointmentType() {
 		return appointmentType;
+	}
+
+	public double getPriceToPay() {
+		return priceToPay;
+	}
+
+	public void setPriceToPay(double priceToPay) {
+		this.priceToPay = priceToPay;
 	}
     
     

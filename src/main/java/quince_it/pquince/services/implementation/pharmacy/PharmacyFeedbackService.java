@@ -25,6 +25,7 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.util.pharmacy.PharmacyFeedbackMapper;
 
 @Service
@@ -48,6 +49,9 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 	
 	@Autowired
 	private DrugReservationRepository drugReservationRepository;
+	
+	@Autowired
+	private IUserService userService;
 
 	@Override
 	public double findAvgGradeForPharmacy(UUID pharmacyId) {
@@ -82,16 +86,15 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 
 	private IdentifiableDTO<PharmacyGradeDTO> MapPharmacyFiltrationDTOToIdentifiablePharmacyGradeDTO(PharmacyFiltrationRepositoryDTO pharmacy) {
 		if(pharmacy == null) return null;
-		
 		return new IdentifiableDTO<PharmacyGradeDTO>(pharmacy.getPharmacyId(), new PharmacyGradeDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(), pharmacy.getGrade()));
 	}
 
 	@Override
 	public void create(PharmacyFeedbackDTO entityDTO) {
-		//TODO : get logged patient
 		
 		try {
-			Patient patient = patientRepository.findById(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")).get();
+			UUID patientId = userService.getLoggedUserId();
+			Patient patient = patientRepository.findById(patientId).get();		
 			
 			if(!CanPatientGiveFeedback(patient.getId(), entityDTO.getPharmacyId())) throw new FeedbackNotAllowedException();
 			
@@ -112,11 +115,10 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 
 	@Override
 	public void update(PharmacyFeedbackDTO entityDTO) {
-		// TODO get logged patient
 		
 		try {
-
-			Patient patient = patientRepository.findById(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")).get();
+			UUID patientId = userService.getLoggedUserId();
+			Patient patient = patientRepository.findById(patientId).get();
 			Pharmacy pharmacy = pharmacyRepository.findById(entityDTO.getPharmacyId()).get();
 						
 			PharmacyFeedback pharmacyFeedback = pharmacyFeedbackRepository.findById(new PharmacyFeedbackId(pharmacy, patient)).get();
@@ -132,7 +134,8 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 	}
 
 	@Override
-	public PharmacyFeedbackDTO findByPatientAndPharmacy(UUID patientId, UUID pharmacyId) {
+	public PharmacyFeedbackDTO findByPatientAndPharmacy(UUID pharmacyId) {
+		UUID patientId = userService.getLoggedUserId();
 		return PharmacyFeedbackMapper.MapPharmacyFeedbackPersistenceToPharmacyFeedbackDTO(pharmacyFeedbackRepository.findByPatientAndPharmacy(patientId, pharmacyId));
 	}
 

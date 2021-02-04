@@ -13,7 +13,7 @@ import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDru
 public interface DrugPriceForPharmacyRepository extends JpaRepository<DrugPriceForPharmacy, DrugPriceForPharmacyId>{
 
 	@Query(value = "SELECT new quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO"
-				 + "(d.drugPriceForPharmacyId.pharmacy.id, d.drugPriceForPharmacyId.pharmacy.name, d.drugPriceForPharmacyId.pharmacy.address, d.drugPriceForPharmacyId.pharmacy.description, d.price, 0) "
+				 + "(d.drugPriceForPharmacyId.pharmacy.id, d.drugPriceForPharmacyId.pharmacy.name, d.drugPriceForPharmacyId.pharmacy.address, d.drugPriceForPharmacyId.pharmacy.description, d.price, 0, 0.0) "
 			 	 + "FROM DrugPriceForPharmacy d WHERE d.drugPriceForPharmacyId.drugInstance.id = ?1 and d.dateFrom <= CURRENT_DATE and d.dateTo >= CURRENT_DATE")
 	List<IdentifiablePharmacyDrugPriceAmountDTO> findByDrugId(UUID id);
 }

@@ -5,19 +5,27 @@ import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import ModalDialog from "../../components/ModalDialog";
+import getAuthHeader from "../../GetHeader";
+import { withRouter } from "react-router";
 
 class ScheduleAppointmentPage extends Component {
 	state = {
+		id: "",
 		appointments: [],
 		openModalSuccess: false,
 	};
 
+	fetchData = id => {
+		this.setState({
+			id:id
+		});
+	};
+
 	componentDidMount() {
-		Axios.get(
-			BASE_URL +
-				"/api/appointment/dermatologist/" +
-				"11355678-52d3-11eb-ae93-0242ac130002"
-		)
+		const id = this.props.match.params.id;
+		this.fetchData(id);
+
+		Axios.get(BASE_URL + "/api/appointment/dermatologist/created", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				this.setState({ appointments: res.data });
 				console.log(res.data);
@@ -28,7 +36,10 @@ class ScheduleAppointmentPage extends Component {
 	}
 
 	handleAppointmentClick = (appointmentId) => {
-		Axios.post(BASE_URL + "/api/appointment/reserve-appointment/" + appointmentId)
+		Axios.post(BASE_URL + "/api/appointment/schedule-appointment",
+			{ appointmentId: appointmentId, patientId: this.state.id },
+			{ headers: { Authorization: getAuthHeader() } }
+		)
 			.then((res) => {
 				this.setState({ openModalSuccess: true });
 				console.log(res.data);
@@ -57,7 +68,7 @@ class ScheduleAppointmentPage extends Component {
 
 					<table
 						className="table table-hover"
-						style={{ width: "100%", marginTop: "3rem" }}
+						style={{ width: "70%", marginTop: "3rem" }}
 					>
 						<tbody>
 							{this.state.appointments.map((appointment) => (
@@ -72,7 +83,7 @@ class ScheduleAppointmentPage extends Component {
 										<img
 											className="img-fluid"
 											src={AppointmentIcon}
-											width="150em"
+											width="100em"
 										/>
 									</td>
 									<td>
@@ -115,14 +126,14 @@ class ScheduleAppointmentPage extends Component {
 				</div>
 				<ModalDialog
 					show={this.state.openModalSuccess}
-					href="/"
+					href={"/patient-profile/" + this.state.id}
 					onCloseModal={this.handleModalSuccessClose}
-					header="Successfully reserved"
-					text="Your appointment is reserved. Further details are sent to your email address."
+					header="Successfully scheduled appointment for patient"
+					text="Start examination for scheduled appointment."
 				/>
 			</React.Fragment>
 		);
 	}
 }
 
-export default ScheduleAppointmentPage;
+export default withRouter(ScheduleAppointmentPage);

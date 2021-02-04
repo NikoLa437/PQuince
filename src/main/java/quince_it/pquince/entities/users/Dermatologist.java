@@ -1,5 +1,6 @@
 package quince_it.pquince.entities.users;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,10 +25,9 @@ public class Dermatologist extends Staff{
 	
 	public Dermatologist() {}
 	
-
 	public Dermatologist(UUID id, String email, String password, String name, String surname, Address address,
-			String phoneNumber, boolean active, int penalty, List<Absence> absences,int points,LoyalityCategory loyalityCategory, List<Pharmacy> pharmacies) {
-		super(id, email, password, name, surname, address, phoneNumber, active,penalty,absences,points,loyalityCategory, StaffType.DERMATOLOGIST);
+			String phoneNumber,List<Absence> absences,List<Pharmacy> pharmacies) {
+		super(id, email, password, name, surname, address, phoneNumber, absences, StaffType.DERMATOLOGIST);
 		this.pharmacies= pharmacies;
 	}
 
@@ -38,5 +38,24 @@ public class Dermatologist extends Staff{
 
 	public void setPharmacies(List<Pharmacy> pharmacies) {
 		this.pharmacies = pharmacies;
+	}
+	
+	public void addPharmacy(Pharmacy pharmacy) {
+		if(this.pharmacies == null)
+			this.pharmacies = new ArrayList<Pharmacy>();
+		
+		this.pharmacies.add(pharmacy);
+	}
+	
+	public void removePharmacy(UUID pharmacyId) {
+		if(this.pharmacies == null)
+			return;
+		
+		for(Pharmacy workInPharmacy : pharmacies) {
+			if(pharmacyId.equals(workInPharmacy.getId())) {
+				pharmacies.remove(workInPharmacy);
+				return;
+			}
+		}
 	}
 }

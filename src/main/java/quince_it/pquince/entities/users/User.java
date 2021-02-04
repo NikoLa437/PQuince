@@ -15,11 +15,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Entity
 @Table(name="USERS")
@@ -59,6 +62,9 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private List<Authority> authorities;
+    
+	@Version
+	private Long version;
 	
 	public User() {}
 	
@@ -126,6 +132,12 @@ public class User implements UserDetails {
         return this.authorities;
     }
 
+    
+	
+    public void setUserAuthorities(List<Authority> authorities) {
+        this.authorities = authorities;
+    }
+    
 	@Override
 	public String getUsername() {
 		return this.email;
@@ -177,6 +189,14 @@ public class User implements UserDetails {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 	

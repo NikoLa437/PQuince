@@ -13,17 +13,12 @@ class ReservationModalInfo extends Component {
 				onHide={this.props.onCloseModal}
 			>
 				<Modal.Header closeButton>
-					<Modal.Title id="contained-modal-title-vcenter">
-						{this.props.header}
-					</Modal.Title>
+					<Modal.Title id="contained-modal-title-vcenter">{this.props.header}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<form className="ml-3">
 						<div className="control-group">
-							<div
-								className="form-group controls"
-								style={{ color: "#6c757d", opacity: 1 }}
-							>
+							<div className="form-group controls" style={{ color: "#6c757d", opacity: 1 }}>
 								<div className="form-row" width="130em">
 									<div className="form-col">
 										<img className="img-fluid" src={CapsuleLogo} width="90em" />
@@ -39,11 +34,17 @@ class ReservationModalInfo extends Component {
 											<b>Quantity: </b> {this.props.drugQuantity} <b>mg</b>
 										</div>
 										<div>
-											<b>Price by peace: </b> {this.props.drugPrice}{" "}
-											<b>din</b>
+											<b>Price by peace: </b> {(Math.round(this.props.drugPrice * 100) / 100).toFixed(2)} <b>din</b>
 										</div>
 									</div>
 								</div>
+							</div>
+							<br />
+							<div className="form-row mt-3" style={{ fontSize: "1.3em" }}>
+								<b>Reservation code: </b>
+							</div>
+							<div className="form-row" style={{ fontSize: "1.3em" }}>
+								<b>{this.props.reservationCode}</b>
 							</div>
 							<br />
 							<div className="form-row mt-3">
@@ -51,8 +52,7 @@ class ReservationModalInfo extends Component {
 									<b>Pharmacy name: </b> {this.props.pharmacyName}
 								</div>
 								<div>
-									<b>Pharmacy address: </b> {this.props.pharmacyAddress.street},{" "}
-									{this.props.pharmacyAddress.city},{" "}
+									<b>Pharmacy address: </b> {this.props.pharmacyAddress.street}, {this.props.pharmacyAddress.city},{" "}
 									{this.props.pharmacyAddress.country}
 								</div>
 							</div>
@@ -81,8 +81,8 @@ class ReservationModalInfo extends Component {
 							<div className="form-row mt-3">
 								<div className="form-col">
 									<div>
-										<b>Total price: </b>{" "}
-										{this.props.drugAmount * this.props.drugPrice} <b>din</b>
+										<b>Total price: </b> {(Math.round(this.props.drugAmount * this.props.drugPrice * 100) / 100).toFixed(2)}{" "}
+										<b>din</b>
 									</div>
 								</div>
 							</div>

@@ -25,9 +25,9 @@ public class AllergenService implements IAllergenService {
 	private AllergenRepository allergenRepository;
 	
 	@Override
-	public List<IdentifiableDTO<AllergenDTO>> getPatientAllergens(UUID patientId) {
+	public List<IdentifiableDTO<AllergenDTO>> getPatientAllergens() {
 		
-		IdentifiableDTO<PatientDTO> patient = userService.getPatientById(patientId);
+		IdentifiableDTO<PatientDTO> patient = userService.getPatientById();
 				
 		return patient.EntityDTO.getAllergens();
 	}

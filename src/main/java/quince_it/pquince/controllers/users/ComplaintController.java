@@ -1,10 +1,12 @@
 package quince_it.pquince.controllers.users;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.ComplaintReplyDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintStaffDTO;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IComplaintService;
@@ -32,7 +37,15 @@ public class ComplaintController {
 	
 	@Autowired
 	private IPharmacyComplaintService pharmacyComplaintService;
-	
+
+	@CrossOrigin
+	@GetMapping
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<ComplaintStaffDTO>>> findAll() {
+		return new ResponseEntity<>(complaintService.findAll(),HttpStatus.OK);
+	}
+
+	@CrossOrigin
 	@GetMapping("/{staffId}")
 	public ResponseEntity<ComplaintStaffDTO> findByStaffIdAndPatientId(@PathVariable UUID staffId) {
 		try {
@@ -42,6 +55,16 @@ public class ComplaintController {
 		}
 	}
 
+	@CrossOrigin
+	@PostMapping("/reply")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> replyComplaintStuff(@RequestBody ComplaintReplyDTO complaintReplyDTO) {
+		
+		complaintService.replyComplaint(complaintReplyDTO.getId(), complaintReplyDTO.getReply(), complaintReplyDTO.getEmail());
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+	
 	
 	@PostMapping
 	public ResponseEntity<?> createComplaintStuff(@RequestBody ComplaintStaffDTO complaintStaffDTO) {

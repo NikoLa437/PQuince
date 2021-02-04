@@ -48,7 +48,26 @@ public class EmailService {
 	}
 	
 	@Async
-	public void sendDermatologistAppointmentReservation(Appointment appointment) throws MessagingException {
+	public void sendComplaintReplyAsync(String email, String reply)
+			throws MailException, InterruptedException, MessagingException {
+		System.out.println("Slanje emaila...");
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Dir sir/madam,</p>" +
+					"<p>This is reply for your complaint: </p>" + 
+					reply +"<p>Feel free to write us anytime! </p>"
+					+ "<p>Kind Regards, PQuince</p>"; 
+		helper.setText(htmlMsg, true);
+		helper.setTo(email);
+		helper.setSubject("Complaint reply");
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
+		System.out.println("Email poslat!");
+	}
+	
+	@Async
+	public void sendAppointmentReservationNotificationAsync(Appointment appointment, String atWho) throws MessagingException {
 		
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		DateFormat formatterTime = new SimpleDateFormat("HH:mm");
@@ -56,7 +75,7 @@ public class EmailService {
 		
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-		String htmlMsg = "<p>Hello " + appointment.getPatient().getName() + ",</p>" + "<p>You successfully reserved appointment at dr. " + appointment.getStaff().getName() + " "
+		String htmlMsg = "<p>Hello " + appointment.getPatient().getName() + ",</p>" + "<p>You successfully reserved appointment at " + atWho + " " + appointment.getStaff().getName() + " "
 						+ appointment.getStaff().getSurname() + ", for date " + formatter.format(appointment.getStartDateTime()) + ", at " + formatterTime.format(appointment.getStartDateTime()) + " o'clock."+
 						"</p> <p>Kind Regards, PQuince</p>";
 
@@ -90,5 +109,5 @@ public class EmailService {
 
 		System.out.println("Email poslat!");
 	}
-
+	
 }

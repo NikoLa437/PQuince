@@ -9,12 +9,24 @@ public class IdentifiablePharmacyDrugPriceAmountDTO extends IdentifiableDTO<Phar
 	
 	private double price;
 	
+	private double priceWithDiscount;
+	
 	private int count;
 	
-	public IdentifiablePharmacyDrugPriceAmountDTO(UUID id, String name, Address address, String description, double price, int count) {
-		super(id, new PharmacyDTO(name, address,description));
+	
+	public IdentifiablePharmacyDrugPriceAmountDTO(UUID id, String name, Address address, String description, double consultationPrice, double price, int count, double priceWithDiscount) {
+		super(id, new PharmacyDTO(name, address,description, consultationPrice));
 		this.price = price;
 		this.count = count;
+		this.priceWithDiscount = priceWithDiscount;
+	}
+	
+	// ovde mora consulting price da se doda negde na frontu, pa obrisati posle ovaj konstruktor
+	public IdentifiablePharmacyDrugPriceAmountDTO(UUID id, String name, Address address, String description, double price, int count, double priceWithDiscount) {
+		super(id, new PharmacyDTO(name, address,description, 0));
+		this.price = price;
+		this.count = count;
+		this.priceWithDiscount = priceWithDiscount;
 	}
 
 	public IdentifiablePharmacyDrugPriceAmountDTO() {
@@ -37,6 +49,14 @@ public class IdentifiablePharmacyDrugPriceAmountDTO extends IdentifiableDTO<Phar
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+
+	public double getPriceWithDiscount() {
+		return priceWithDiscount;
+	}
+
+	public void setPriceWithDiscount(double priceWithDiscount) {
+		this.priceWithDiscount = priceWithDiscount;
 	}
 	
 	

@@ -76,33 +76,21 @@ public class DrugStorageService implements IDrugStorageService {
 	}
 
 	@Override
-	public boolean reduceAmountOfReservedDrug(UUID drugId, UUID pharmacyId, int amount) {
+	public void reduceAmountOfReservedDrug(UUID drugId, UUID pharmacyId, int amount) {
 		
-		try {
-			DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacyId);
-			drugStorage.reduceAmount(amount);
+		DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacyId);
+		drugStorage.reduceAmount(amount);
 
-			drugStorageRepository.save(drugStorage);
-						
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		drugStorageRepository.save(drugStorage);	
 	}
 
 	@Override
-	public boolean addAmountOfCanceledDrug(UUID drugId, UUID pharmacyId, int amount) {
-		try {
-			DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacyId);
-			drugStorage.addAmount(amount);
+	public void addAmountOfCanceledDrug(UUID drugId, UUID pharmacyId, int amount) {
+		
+		DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacyId);
+		drugStorage.addAmount(amount);
 
-			drugStorageRepository.save(drugStorage);
-						
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		drugStorageRepository.save(drugStorage);
 	}
 
 }

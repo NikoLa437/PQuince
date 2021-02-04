@@ -6,14 +6,13 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import quince_it.pquince.entities.drugs.Allergen;
+import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Entity
 public class Patient extends User {
@@ -32,10 +31,10 @@ public class Patient extends User {
             inverseJoinColumns = @JoinColumn(name = "allergen_id", referencedColumnName = "id"))
     private List<Allergen> allergens;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name="loyality_category")
-	private LoyalityCategory loyalityCategory;
-
+	@ManyToMany
+	@JoinTable(name = "patient_pharmacy_subscribe")
+    private List<Pharmacy> pharmacies;
+	
 	public Patient() {
 		super();
 	}
@@ -46,7 +45,6 @@ public class Patient extends User {
 		this.allergens = new ArrayList<Allergen>();
 		this.penalty = 0;
 		this.points = 0;
-		this.loyalityCategory = LoyalityCategory.REGULAR;
 	}
 
 	public Patient(UUID id, String email, String password, String name, String surname, Address address,
@@ -56,7 +54,6 @@ public class Patient extends User {
 		this.penalty = penalty;
 		this.allergens = allergens;
 		this.points = points;
-		this.loyalityCategory = loyalityCategory;
 	}
 
 	public int getPenalty() {
@@ -87,6 +84,28 @@ public class Patient extends User {
 			}
 		}
 	}
+	
+	public void addSubscribeToPharmacy(Pharmacy pharmacy) {
+		
+		if(pharmacy == null)
+			this.pharmacies = new ArrayList<Pharmacy>();
+		
+		this.pharmacies.add(pharmacy);
+	}
+
+	public void removeSubscribeFromPharmacy(UUID pharmacyId) {
+		
+		if(pharmacies == null)
+			return;
+		
+		for (Pharmacy pharmacy : this.pharmacies) {
+			if(pharmacy.getId().equals(pharmacyId)) {
+				this.pharmacies.remove(pharmacy);
+				break;
+			}
+		}
+	}
+	
 	public List<Allergen> getAllergens() {
 		return allergens;
 	}
@@ -102,17 +121,21 @@ public class Patient extends User {
 	public void setPoints(int points) {
 		this.points = points;
 	}
-
-	public LoyalityCategory getLoyalityCategory() {
-		return loyalityCategory;
-	}
-
-	public void setLoyalityCategory(LoyalityCategory loyalityCategory) {
-		this.loyalityCategory = loyalityCategory;
-	}
 	
 	public void addPenalty(int amount) {
 		this.penalty += amount;
+	}
+
+	public boolean isPatientSubscribedToPharmacy(UUID pharmacyId) {
+		if(pharmacies == null)
+			return false;
+		
+		for (Pharmacy pharmacy : this.pharmacies) {
+			if(pharmacy.getId().equals(pharmacyId)) 
+				return true;
+		}
+		
+		return false;
 	}
 	
 }

@@ -40,21 +40,12 @@ class PharmacyPage extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">
-						Available in pharmacies
-					</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Available in pharmacies</h5>
 					<form>
 						<div className="control-group">
-							<div
-								className="form-group controls mb-0 pb-2"
-								style={{ color: "#6c757d", opacity: 1 }}
-							>
+							<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 								<div className="form-row">
-									<button
-										onClick={() => this.props.onBackIcon()}
-										className="btn btn-link btn-xl"
-										type="button"
-									>
+									<button onClick={() => this.props.onBackIcon()} className="btn btn-link btn-xl" type="button">
 										<i className="icofont-rounded-left mr-1"></i>
 										Back
 									</button>
@@ -78,36 +69,24 @@ class PharmacyPage extends Component {
 							</div>
 						</div>
 					</form>
-					<h5
-						className=" text-center mb-0 mt-2 text-uppercase"
-						hidden={this.props.pharmacies.length !== 0}
-					>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase" hidden={this.props.pharmacies.length !== 0}>
 						Currently unavailable
 					</h5>
 
-					<table
-						className="table table-hover"
-						style={{ width: "100%", marginTop: "3rem" }}
-					>
+					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.props.pharmacies.map((pharmacy) => (
 								<tr
 									id={pharmacy.Id}
 									key={pharmacy.Id}
-									onClick={() =>
-										this.props.onPharmacyClick(
-											pharmacy.Id,
-											pharmacy.price,
-											pharmacy.count
-										)
-									}
+									onClick={() => this.props.onPharmacyClick(pharmacy.Id, pharmacy.priceWithDiscount, pharmacy.count)}
 									style={{ cursor: "pointer" }}
 								>
 									<td width="130em">
 										<img
 											className="img-fluid"
 											src={PharmacyLogo}
-											width="70em"
+											width={pharmacy.price === pharmacy.priceWithDiscount ? "70em" : "90em"}
 										/>
 									</td>
 									<td>
@@ -115,12 +94,19 @@ class PharmacyPage extends Component {
 											<b>Name:</b> {pharmacy.EntityDTO.name}
 										</div>
 										<div>
-											<b>Address:</b> {pharmacy.EntityDTO.address.street},{" "}
-											{pharmacy.EntityDTO.address.city},{" "}
+											<b>Address:</b> {pharmacy.EntityDTO.address.street}, {pharmacy.EntityDTO.address.city},{" "}
 											{pharmacy.EntityDTO.address.country}
 										</div>
 										<div>
-											<b>Drug price:</b> {pharmacy.price}
+											<b>Drug price:</b>{" "}
+											<span style={pharmacy.price !== pharmacy.priceWithDiscount ? { textDecoration: "line-through" } : {}}>
+												{" "}
+												{(Math.round(pharmacy.price * 100) / 100).toFixed(2)}
+											</span>
+											<b> din</b>
+										</div>
+										<div hidden={pharmacy.price === pharmacy.priceWithDiscount}>
+											<b>Drug price with discount:</b> {(Math.round(pharmacy.priceWithDiscount * 100) / 100).toFixed(2)}
 											<b> din</b>
 										</div>
 									</td>

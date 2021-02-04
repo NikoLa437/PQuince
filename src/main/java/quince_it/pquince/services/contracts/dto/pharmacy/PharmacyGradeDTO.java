@@ -12,12 +12,26 @@ public class PharmacyGradeDTO {
 
 	private double grade;
 	
+	private double consultationPrice;
+	
+	public PharmacyGradeDTO() {}
+	
+	public PharmacyGradeDTO(String name, Address address, String description, double grade,double consultationPrice) {
+		super();
+		this.name = name;
+		this.address = address;
+		this.description = description;
+		this.grade = grade;
+		this.consultationPrice=consultationPrice;
+	}
+	
 	public PharmacyGradeDTO(String name, Address address, String description, double grade) {
 		super();
 		this.name = name;
 		this.address = address;
 		this.description = description;
 		this.grade = grade;
+		this.consultationPrice=0;
 	}
 
 	public String getName() {
@@ -50,5 +64,13 @@ public class PharmacyGradeDTO {
 
 	public void setGrade(double grade) {
 		this.grade = grade;
+	}
+
+	public double getConsultationPrice() {
+		return consultationPrice;
+	}
+
+	public void setConsultationPrice(double consultationPrice) {
+		this.consultationPrice = consultationPrice;
 	}
 }
