@@ -98,4 +98,6 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	boolean unsubscribeFromPharmacy(EntityIdDTO pharmacyIdDTO);
 
 	boolean checkIfPatientSubscribed(UUID pharmacyId);
+
+	List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies();
 }

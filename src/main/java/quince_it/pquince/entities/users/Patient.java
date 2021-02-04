@@ -87,7 +87,7 @@ public class Patient extends User {
 	
 	public void addSubscribeToPharmacy(Pharmacy pharmacy) {
 		
-		if(pharmacy == null)
+		if(pharmacies == null)
 			this.pharmacies = new ArrayList<Pharmacy>();
 		
 		this.pharmacies.add(pharmacy);
