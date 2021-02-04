@@ -8,6 +8,7 @@ import getAuthHeader from "../../GetHeader";
 import { withRouter } from "react-router";
 import { Button, Modal } from 'react-bootstrap';
 import DatePicker from "react-datepicker";
+import PeriodIcon from "../../static/period-icon.png";
 
 class CreateAndScheduleAppointmentPage extends Component {
 	state = {
@@ -21,6 +22,8 @@ class CreateAndScheduleAppointmentPage extends Component {
 	handleDateChange = (date) => {
 		this.setState({
 			selectedDate: date,
+		}, () => {
+			this.fetchPeriods();
 		});
 	}
 
@@ -60,8 +63,9 @@ class CreateAndScheduleAppointmentPage extends Component {
 		if (event.target.value >= 10 && event.target.value <= 60) {
 			this.setState({
 				duration: event.target.value
+			}, () => {
+				this.fetchPeriods();
 			});
-			this.fetchPeriods();
 		}
 	}
 
@@ -96,11 +100,10 @@ class CreateAndScheduleAppointmentPage extends Component {
 	handleAppointment = (selectedPeriod) => {
 
 		let appointmentDTO = {
-			patient: this.state.id,
+			patientId: this.state.id,
 			startDateTime: selectedPeriod.startDate,
 			endDateTime: selectedPeriod.endDate,
-			price: this.state.price,
-			appointmentStatus: 1
+			price: this.state.price,			
 		};
 
 		Axios
@@ -155,7 +158,7 @@ class CreateAndScheduleAppointmentPage extends Component {
 											<h6 className="text-right mr-3 mt-2">Price:</h6>
 										</td>
 										<td>
-											<input style={{width: "12.5em"}} placeholder="Price" className="form-control" type="number" min="1" onChange={this.handlePriceChange} value={this.state.price} />
+											<input style={{width: "12.5em"}} placeholder="Price" className="form-control" type="number" min="50" step="50" onChange={this.handlePriceChange} value={this.state.price} />
 										</td>
 									</tr>
 									<tr>
@@ -166,7 +169,7 @@ class CreateAndScheduleAppointmentPage extends Component {
 									</tr>
 								</tbody>
 								</table>
-								<table className="table table-hover" style={{ width: "70%", marginTop: "3rem" }} >
+								<table className="table table-hover" style={{ width: "27%"}} >
 									<tbody>
 										{this.state.periods.map((period, index) => (
 											<tr
@@ -177,31 +180,22 @@ class CreateAndScheduleAppointmentPage extends Component {
 												style={{ cursor: "pointer" }}
 											>
 												<td>
-													<div>
-														<b>Date: </b>{" "}
-														{new Date(
-															period.startDate
-														).toLocaleDateString("en-US", {
-															day: "2-digit",
-															month: "2-digit",
-															year: "numeric",
-														})}
-													</div>
+												<img
+													style={{float: "left"}}
+													className="img-fluid"
+													src={PeriodIcon}
+													width="25em"
+												/>
 												</td>
 												<td>
 													<div>
-														<b>Time from: </b>{" "}
 														{new Date(
 															period.startDate
 														).toLocaleTimeString("en-US", {
 															hour: "2-digit",
 															minute: "2-digit",
 														})}
-													</div>
-												</td>
-												<td>
-													<div>
-														<b>Time to: </b>{" "}
+														{" - "}
 														{new Date(
 															period.endDate
 														).toLocaleTimeString("en-US", {
@@ -209,6 +203,9 @@ class CreateAndScheduleAppointmentPage extends Component {
 															minute: "2-digit",
 														})}
 													</div>
+												</td>
+												<td>
+													
 												</td>
 											</tr>
 										))}
