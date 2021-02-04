@@ -32,6 +32,7 @@ class RegisterPage extends Component {
 		addressError: "none",
 		phoneError: "none",
 		emailNotValid: "none",
+		addressNotFoundError: "none",
 		openModal: false,
 		coords: [],
 	};
@@ -81,6 +82,7 @@ class RegisterPage extends Component {
 			nameError: "none",
 			surnameError: "none",
 			addressError: "none",
+			addressNotFoundError: "none",
 			phoneError: "none",
 			passwordError: "none",
 		});
@@ -120,19 +122,22 @@ class RegisterPage extends Component {
 		let country;
 		let latitude;
 		let longitude;
-
+		let found = true;
 		this.ymaps
 			.geocode(this.addressInput.current.value, {
 				results: 1,
 			})
 			.then(function (res) {
-				var firstGeoObject = res.geoObjects.get(0),
-					coords = firstGeoObject.geometry.getCoordinates();
-				latitude = coords[0];
-				longitude = coords[1];
-				country = firstGeoObject.getCountry();
-				street = firstGeoObject.getThoroughfare();
-				city = firstGeoObject.getLocalities().join(", ");
+				if (typeof res.geoObjects.get(0) === "undefined") found = false;
+				else {
+					var firstGeoObject = res.geoObjects.get(0),
+						coords = firstGeoObject.geometry.getCoordinates();
+					latitude = coords[0];
+					longitude = coords[1];
+					country = firstGeoObject.getCountry();
+					street = firstGeoObject.getThoroughfare();
+					city = firstGeoObject.getLocalities().join(", ");
+				}
 			})
 			.then((res) => {
 				let userDTO = {
@@ -146,25 +151,29 @@ class RegisterPage extends Component {
 				console.log(userDTO);
 
 				if (this.validateForm(userDTO)) {
-					console.log(userDTO);
-					Axios.post(BASE_URL + "/auth/signup", userDTO, { validateStatus: () => true })
-						.then((res) => {
-							if (res.status === 409) {
-								this.setState({
-									errorHeader: "Resource conflict!",
-									errorMessage: "Email already exist.",
-									hiddenErrorAlert: false,
-								});
-							} else if (res.status === 500) {
-								this.setState({ errorHeader: "Internal server error!", errorMessage: "Server error.", hiddenErrorAlert: false });
-							} else {
-								console.log("Success");
-								this.setState({ openModal: true });
-							}
-						})
-						.catch((err) => {
-							console.log(err);
-						});
+					if (found === false) {
+						this.setState({ addressNotFoundError: "initial" });
+					} else {
+						console.log(userDTO);
+						Axios.post(BASE_URL + "/auth/signup", userDTO, { validateStatus: () => true })
+							.then((res) => {
+								if (res.status === 409) {
+									this.setState({
+										errorHeader: "Resource conflict!",
+										errorMessage: "Email already exist.",
+										hiddenErrorAlert: false,
+									});
+								} else if (res.status === 500) {
+									this.setState({ errorHeader: "Internal server error!", errorMessage: "Server error.", hiddenErrorAlert: false });
+								} else {
+									console.log("Success");
+									this.setState({ openModal: true });
+								}
+							})
+							.catch((err) => {
+								console.log(err);
+							});
+					}
 				}
 			});
 	};
@@ -269,6 +278,9 @@ class RegisterPage extends Component {
 									</YMaps>
 									<div className="text-danger" style={{ display: this.state.addressError }}>
 										Address must be entered.
+									</div>
+									<div className="text-danger" style={{ display: this.state.addressNotFoundError }}>
+										Sorry. Address not found. Try different one.
 									</div>
 								</div>
 								<div className="control-group">

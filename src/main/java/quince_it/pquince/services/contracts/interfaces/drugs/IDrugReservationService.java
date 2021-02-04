@@ -23,7 +23,7 @@ public interface IDrugReservationService{
 
 	boolean delete(UUID id) ;
 	
-	boolean cancelDrugReservation(UUID id);
+	void cancelDrugReservation(UUID id);
 	
 	void givePenaltyForMissedDrugReservation();
 
