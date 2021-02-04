@@ -77,8 +77,8 @@ public class DrugController {
 	}
 
 	@CrossOrigin
-	@GetMapping("/boze") 
-	public ResponseEntity<List<IdentifiableDTO<DrugsWithGradesDTO>>> boze() {
+	@GetMapping("/grade") 
+	public ResponseEntity<List<IdentifiableDTO<DrugsWithGradesDTO>>> findDrugsWithGrades() {
 		return new ResponseEntity<>(drugFeedbackService.findDrugsWithGrades() ,HttpStatus.CREATED);
 	}
 	
