@@ -58,6 +58,16 @@ public class PharmacyController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@GetMapping("/subscribed")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAllSubscribedPharmacies() {
+		try {
+			return new ResponseEntity<>(pharmacyService.findAllSubscribedPharmaciesWithGrades(),HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@CrossOrigin
 	@PostMapping

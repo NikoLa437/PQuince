@@ -137,5 +137,9 @@ public class Patient extends User {
 		
 		return false;
 	}
+
+	public List<Pharmacy> getPharmacies() {
+		return pharmacies;
+	}
 	
 }

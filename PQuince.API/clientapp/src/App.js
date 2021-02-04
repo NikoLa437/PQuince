@@ -32,6 +32,7 @@ import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
 import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
 import PatientsRedirectComplaints from "./pages/complaints/PatientsRedirectComplaints";
 import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
+import PatientsSubscribedPharmacies from "./pages/subscribed-pharmacies/PatientsSubscribedPharmacies";
 
 function App() {
 	return (
@@ -62,6 +63,8 @@ function App() {
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
 				<Link exact to="/observe-consultations-history" path="/observe-consultations-history" component={ObservePatientsCosultationHistory} />
 				<Link exact to="/patient-complaint" path="/patient-complaint" component={PatientsRedirectComplaints} />
+
+				<Link exact to="/patient-pharmacies-subscription" path="/patient-pharmacies-subscription" component={PatientsSubscribedPharmacies} />
 
 				<Link exact to="/unauthorized" path="/unauthorized" component={UnauthorizedPage} />
 				<Link exact to="/home-dermatologist-reservation" path="/home-dermatologist-reservation" component={AppointmentFromHomePage} />
