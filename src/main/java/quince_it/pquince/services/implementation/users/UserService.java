@@ -731,6 +731,22 @@ public class UserService implements IUserService{
 		catch (EntityNotFoundException e) { return false; } 
 		catch (IllegalArgumentException e) { return false; }	
 	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies() {
+		List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies = new ArrayList<IdentifiableDTO<PharmacyDTO>>();
+	
+		try {
+			UUID loggedUser= this.getLoggedUserId();
 
+			Patient patient = patientRepository.getOne(loggedUser);
+			
+			patient.getPharmacies().forEach((p) -> subscribedPharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(p)));
+			
+			return subscribedPharmacies;
+		} 
+		catch (EntityNotFoundException e) { return null; } 
+		catch (IllegalArgumentException e) { return null; }	
+	}
 	
 }

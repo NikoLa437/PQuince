@@ -33,6 +33,7 @@ import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceServic
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 
 @RestController
 @RequestMapping(value = "api/pharmacy")
@@ -40,6 +41,9 @@ public class PharmacyController {
 
 	@Autowired
 	private IPharmacyService pharmacyService;
+
+	@Autowired
+	private IUserService userService;
 	
 	@Autowired
 	private IPharmacyComplaintService pharmacyComplaintService;
@@ -51,6 +55,7 @@ public class PharmacyController {
 	private IPharmacyFeedbackService pharmacyFeedbackService;
 		
 	@GetMapping
+	@CrossOrigin
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAll() {
 		try {
 			return new ResponseEntity<>(pharmacyService.findAllPharmaciesWithGrades(),HttpStatus.OK);
@@ -71,13 +76,12 @@ public class PharmacyController {
 
 	@CrossOrigin
 	@PostMapping
-	@PreAuthorize("hasRole('PATIENT')") //????
+	@PreAuthorize("hasRole('ADMIN')") 
 	public ResponseEntity<UUID> addPharmacy(@RequestBody PharmacyDTO pharmacyDTO) {
 		
 		return new ResponseEntity<>(pharmacyService.create(pharmacyDTO) ,HttpStatus.CREATED);
 	}
 
-	@CrossOrigin
 	@GetMapping("/find-by-drug/{drugId}")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiablePharmacyDrugPriceAmountDTO>> findPharmaciesWithPriceForDrug(@PathVariable UUID drugId) {

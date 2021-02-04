@@ -78,6 +78,7 @@ class PharmacyProfilePage extends Component {
 				headers: { Authorization: getAuthHeader() },
 			})
 				.then((response) => {
+					console.log(response.data,"SUB");
 					this.setState({
 						isPatientSubscribed: response.data,
 					});

@@ -63,6 +63,17 @@ public class UsersController {
 		}
 	}
 	
+
+	@GetMapping("/subscribed-pharmacies")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> findSubscribed() {
+		try {
+			return new ResponseEntity<>(userService.subscribedPharmacies(),HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	@GetMapping("/{userId}")
 	@PreAuthorize("hasRole('PATIENT')") //Nadovezuje se sa 'or hasRole('...') or hasRole....'
@@ -425,6 +436,7 @@ public class UsersController {
 	
 	@GetMapping("/check-if-patient-subscribed-to-pharmacy")
 	@PreAuthorize("hasRole('PATIENT')")
+	@CrossOrigin
 	public ResponseEntity<Boolean> checkIfPatientSubscribed(@RequestParam UUID pharmacyId) {
 		try {
 			if (userService.checkIfPatientSubscribed(pharmacyId))
