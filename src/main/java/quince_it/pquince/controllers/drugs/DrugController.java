@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
@@ -29,7 +30,6 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ReplaceDrugIdDTO;
-import quince_it.pquince.services.contracts.dto.users.AbsenceDTO;
 import quince_it.pquince.services.contracts.dto.users.DrugManufacturerDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -126,12 +126,16 @@ public class DrugController {
 	
 	@PostMapping("/reserve")
 	@PreAuthorize("hasRole('PATIENT')")
-	public ResponseEntity<UUID> reserveDrug(@RequestBody DrugReservationRequestDTO drugReservationRequestDTO) {
+	public ResponseEntity<?> reserveDrug(@RequestBody DrugReservationRequestDTO drugReservationRequestDTO) {
 		try {
 			UUID reservationId = drugReservationService.create(drugReservationRequestDTO);
 			return new ResponseEntity<>(reservationId ,HttpStatus.CREATED);
+		} catch (ObjectOptimisticLockingFailureException e) {
+			return new ResponseEntity<>("Not enough drugs in storage.",HttpStatus.BAD_REQUEST);
+		} catch (AuthorizationServiceException e) {
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
 		} catch (IllegalArgumentException e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -224,10 +228,12 @@ public class DrugController {
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> cancelReservation(@RequestBody EntityIdDTO reservationId) {
 		try {
-			if(drugReservationService.cancelDrugReservation(reservationId.getId()))
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			drugReservationService.cancelDrugReservation(reservationId.getId());
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} catch (ObjectOptimisticLockingFailureException e) {
+			return new ResponseEntity<>("Not enough drugs in storage.",HttpStatus.BAD_REQUEST);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

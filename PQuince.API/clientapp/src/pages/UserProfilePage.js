@@ -62,6 +62,7 @@ class UserProfilePage extends Component {
 		hiddenAllergenFailAlert: true,
 		failAllergenHeader: "",
 		failAllergenMessage: "",
+		addressNotFoundError: "none",
 	};
 
 	constructor(props) {
@@ -168,7 +169,15 @@ class UserProfilePage extends Component {
 	};
 
 	handleModalClose = () => {
-		this.setState({ openModal: false });
+		this.setState({
+			openModal: false,
+			hiddenAllergenSuccessAlert: true,
+			successAllergenHeader: "",
+			successAllergenMessage: "",
+			hiddenAllergenFailAlert: true,
+			failAllergenHeader: "",
+			failAllergenMessage: "",
+		});
 	};
 
 	handleSuccessModalClose = () => {
@@ -194,19 +203,23 @@ class UserProfilePage extends Component {
 		let country;
 		let latitude;
 		let longitude;
+		let found = true;
 
 		this.ymaps
 			.geocode(this.addressInput.current.value, {
 				results: 1,
 			})
 			.then(function (res) {
-				var firstGeoObject = res.geoObjects.get(0),
-					coords = firstGeoObject.geometry.getCoordinates();
-				latitude = coords[0];
-				longitude = coords[1];
-				country = firstGeoObject.getCountry();
-				street = firstGeoObject.getThoroughfare();
-				city = firstGeoObject.getLocalities().join(", ");
+				if (typeof res.geoObjects.get(0) === "undefined") found = false;
+				else {
+					var firstGeoObject = res.geoObjects.get(0),
+						coords = firstGeoObject.geometry.getCoordinates();
+					latitude = coords[0];
+					longitude = coords[1];
+					country = firstGeoObject.getCountry();
+					street = firstGeoObject.getThoroughfare();
+					city = firstGeoObject.getLocalities().join(", ");
+				}
 			})
 			.then((res) => {
 				let userDTO = {
@@ -218,26 +231,35 @@ class UserProfilePage extends Component {
 				console.log(userDTO);
 
 				if (this.validateForm(userDTO)) {
-					console.log(userDTO);
-					Axios.put(BASE_URL + "/api/users/patient", userDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
-						.then((res) => {
-							if (res.status === 400) {
-								this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Illegal argument." });
-							} else if (res.status === 500) {
-								this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
-							} else if (res.status === 204) {
-								console.log("Success");
-								this.setState({
-									hiddenSuccessAlert: false,
-									successHeader: "Success",
-									successMessage: "You successfully updated your information.",
-									hiddenEditInfo: true,
-								});
-							}
+					if (found === false) {
+						this.setState({ addressNotFoundError: "initial" });
+					} else {
+						console.log(userDTO);
+						Axios.put(BASE_URL + "/api/users/patient", userDTO, {
+							validateStatus: () => true,
+							headers: { Authorization: getAuthHeader() },
 						})
-						.catch((err) => {
-							console.log(err);
-						});
+							.then((res) => {
+								if (res.status === 400) {
+									if (res.data !== "" && res.data !== undefined && res.data !== null)
+										this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: res.data });
+									else this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Invalid argument." });
+								} else if (res.status === 500) {
+									this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+								} else if (res.status === 204) {
+									console.log("Success");
+									this.setState({
+										hiddenSuccessAlert: false,
+										successHeader: "Success",
+										successMessage: "You successfully updated your information.",
+										hiddenEditInfo: true,
+									});
+								}
+							})
+							.catch((err) => {
+								console.log(err);
+							});
+					}
 				}
 			});
 	};
@@ -537,6 +559,9 @@ class UserProfilePage extends Component {
 									</YMaps>
 									<div className="text-danger" style={{ display: this.state.addressError }}>
 										Address must be entered.
+									</div>
+									<div className="text-danger" style={{ display: this.state.addressNotFoundError }}>
+										Sorry. Address not found. Try different one.
 									</div>
 								</div>
 								<div className="control-group">

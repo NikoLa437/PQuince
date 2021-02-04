@@ -28,6 +28,7 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.ScheduleAppointmentDTO;
 import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
@@ -47,6 +48,20 @@ public class AppointmentController {
 	public ResponseEntity<?> createAppointment(@RequestBody AppointmentCreateDTO appointmentDTO ) {
 		try {
 			if(appointmentService.createTerminForDermatologist(appointmentDTO)!=null)
+				return new ResponseEntity<>(HttpStatus.OK);
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PostMapping("/create-and-schedule-appointment")
+	@CrossOrigin
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	public ResponseEntity<?> createAppointment(@RequestBody DermatologistCreateAppointmentDTO appointmentDTO ) {
+		try {
+			if(appointmentService.createAndSchuduleAppointment(appointmentDTO)!=null)
 				return new ResponseEntity<>(HttpStatus.OK);
 			
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

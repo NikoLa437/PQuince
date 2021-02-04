@@ -22,15 +22,18 @@ import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.DateRange;
+import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
+import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.PharmacistRepository;
 import quince_it.pquince.repository.users.StaffRepository;
+import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
@@ -39,6 +42,7 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
@@ -59,6 +63,9 @@ public class AppointmentService implements IAppointmentService{
 	
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private DermatologistRepository dermatologistRepository;
 			
 	@Autowired
 	private AppointmentRepository appointmentRepository;
@@ -106,6 +113,24 @@ public class AppointmentService implements IAppointmentService{
 	}
 	
 	@Override
+	public UUID createAndSchuduleAppointment(DermatologistCreateAppointmentDTO appointmentDTO) {
+		try {
+			UUID dermatologistId = userService.getLoggedUserId();
+			UUID patientId = appointmentDTO.getPatientId();
+			Patient patient = patientRepository.getOne(patientId);
+			Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
+			Pharmacy pharmacy = getCurrentPharamacyForLoggedDermatologist();
+			if(pharmacy == null)
+				throw new IllegalArgumentException("Dermatologist can't create and schedule appointment outside work hours");
+			Appointment newAppointment = new Appointment(pharmacy,dermatologist,patient, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),appointmentDTO.getPrice(),AppointmentType.EXAMINATION,AppointmentStatus.SCHEDULED);
+			appointmentRepository.save(newAppointment);
+			return newAppointment.getId();
+		}catch(Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
 	public List<IdentifiableDTO<DermatologistAppointmentDTO>> findAll() {
 		return null;
 	}
@@ -139,6 +164,17 @@ public class AppointmentService implements IAppointmentService{
 		}
 	}
 	
+	private Pharmacy getCurrentPharamacyForLoggedDermatologist() {
+		UUID dermatologistId = userService.getLoggedUserId();
+		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);
+		Pharmacy pharmacy = null;
+		for(WorkTime wt : workTimes){
+			Date currentDate = new Date();
+			pharmacy = wt.getPharmacy();
+		}
+		return pharmacy;
+	}
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public List<AppointmentPeriodResponseDTO> getFreePeriodsDermatologist(Date date, int duration) {
@@ -146,16 +182,13 @@ public class AppointmentService implements IAppointmentService{
 		
 		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);
 		
-		UUID pharmacyId = null;
-		for(WorkTime wt : workTimes){
-			Date currentDate = new Date();
-			if(currentDate.getHours() > wt.getStartTime() && currentDate.getHours() < wt.getEndTime())
-				pharmacyId = wt.getPharmacy().getId();
-		}
+		Pharmacy pharmacy = getCurrentPharamacyForLoggedDermatologist();
 		
-		if(pharmacyId==null) {
+		if(pharmacy==null) {
 			return new ArrayList<AppointmentPeriodResponseDTO>();
 		}
+		
+		UUID pharmacyId = pharmacy.getId();
 		
 		WorkTime workTime = workTimeRepository.getWorkTimeForDermatologistForDateForPharmacy(dermatologistId, date, pharmacyId);
 		List<Appointment> scheduledAppointments = appointmentRepository.getCreatedAppoitntmentsByDermatologistByDate(dermatologistId, date, pharmacyId);
