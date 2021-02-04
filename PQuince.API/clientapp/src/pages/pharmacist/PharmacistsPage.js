@@ -10,7 +10,7 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
-import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
+import AddPharmacistToPharmacy from "../../components/AddPharmacistToPharmacy"
 
 class PharmacistPage extends Component {
 	state = {
@@ -56,6 +56,20 @@ class PharmacistPage extends Component {
 			});
     }
 
+    updatePharmacist = () =>{
+        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
+			headers: { Authorization: getAuthHeader() },
+		})
+			.then((res) => {
+				this.setState({ pharmacists: res.data });
+                console.log(res.data);
+            
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+    }
+
 
     handleAddPharmacistModalClose = () => {
         Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
@@ -74,7 +88,7 @@ class PharmacistPage extends Component {
     
     
     handleAddPharmacistClick = () => {
-        Axios.get(BASE_URL + "/api/users/pharmacists-for-emplooye-in-pharmacy/"+ this.state.pharmacyId, {
+        Axios.get(BASE_URL + "/api/users/pharmacists-for-employment", {
 			headers: { Authorization: getAuthHeader() },
 		}).then((res) => {
                 this.setState({ pharmacistsToEmploye: res.data });
@@ -85,7 +99,7 @@ class PharmacistPage extends Component {
 				console.log(err);
 		});
         this.setState({
-			showAddDermatologistModal: true,
+			showAddPharmacistModal: true,
 		});
     }
 
@@ -271,7 +285,8 @@ class PharmacistPage extends Component {
     render() {
         const myStyle = {
 			color: "white",
-			textAlign: "center",
+            textAlign: "center",
+            marginLeft:'195%'
 		};
 		return (
         <React.Fragment>
@@ -286,18 +301,18 @@ class PharmacistPage extends Component {
 
                     
                     <div className="container" style={{ marginTop: "10%" }} >
-                    <HeadingSuccessAlert
-						hidden={this.state.hiddenSuccessAlert}
-						header={this.state.successHeader}
-						message={this.state.successMessage}
-						handleCloseAlert={this.handleCloseAlertSuccess}
-					/>
-                    <HeadingAlert
-                            hidden={this.state.hiddenFailAlert}
-                            header={this.state.failHeader}
-                            message={this.state.failMessage}
-                            handleCloseAlert={this.handleCloseAlertFail}
-                    />
+                        <HeadingSuccessAlert
+                            hidden={this.state.hiddenSuccessAlert}
+                            header={this.state.successHeader}
+                            message={this.state.successMessage}
+                            handleCloseAlert={this.handleCloseAlertSuccess}
+                        />
+                        <HeadingAlert
+                                hidden={this.state.hiddenFailAlert}
+                                header={this.state.failHeader}
+                                message={this.state.failMessage}
+                                handleCloseAlert={this.handleCloseAlertFail}
+                        />
                         <nav className="nav-menu d-none d-lg-block">
                             <ul>
                                 <li>
@@ -448,6 +463,14 @@ class PharmacistPage extends Component {
                     </div>
                     <div>
                         <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} forPharmacy={this.state.forPharmacy} forStaff={this.state.forStaff} header="WorkTimes" />
+                        <AddPharmacistToPharmacy
+					        show={this.state.showAddPharmacistModal}
+					        onCloseModal={this.handleAddPharmacistModalClose}
+                            pharmacyId={this.state.pharmacyId}
+                            pharmacists={this.state.pharmacistsToEmploye}
+                            updatePharmacist={this.updatePharmacist}
+					        header="Add pharmacist"
+				        />
                     </div>
                 </React.Fragment>
 		);

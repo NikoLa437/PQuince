@@ -95,6 +95,7 @@ class DermatologistsPage extends Component {
 		});
     };
 
+
     updateDermatologistList = () =>{
         Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },

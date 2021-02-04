@@ -16,4 +16,7 @@ public interface PharmacistRepository extends JpaRepository<Pharmacist, UUID>{
 	
 	@Query(value = "SELECT p FROM Pharmacist p WHERE p.pharmacy.id = ?1")
 	List<Pharmacist> findAllPharmacistsForPharmacy(UUID pharmacyId);
+	
+	@Query(value = "SELECT p FROM Pharmacist p WHERE p.pharmacy.id is null")
+	List<Pharmacist> findAllPharmacistForEmployment();
 }

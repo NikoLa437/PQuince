@@ -27,6 +27,7 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.AddPharmacistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
@@ -458,6 +459,36 @@ public class UsersController {
 			return new ResponseEntity<>(pharmacists,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/pharmacists-for-employment") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> getPharmacistForEmployment() {
+	  
+		try {
+			List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = userService.findAllPharmacistForEmployment();
+			return new ResponseEntity<>(pharmacists,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@PutMapping("/add-pharmacist-to-pharmacy") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<?> addPharmacistToPharmacy(@RequestBody AddPharmacistToPharmacyDTO addPharmacistToPharmacyDTO) {
+		
+		try {
+			if(userService.addPharmacistToPharmacy(addPharmacistToPharmacyDTO))
+				return new ResponseEntity<>(HttpStatus.OK); 
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
