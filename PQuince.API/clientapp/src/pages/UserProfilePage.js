@@ -169,7 +169,15 @@ class UserProfilePage extends Component {
 	};
 
 	handleModalClose = () => {
-		this.setState({ openModal: false });
+		this.setState({
+			openModal: false,
+			hiddenAllergenSuccessAlert: true,
+			successAllergenHeader: "",
+			successAllergenMessage: "",
+			hiddenAllergenFailAlert: true,
+			failAllergenHeader: "",
+			failAllergenMessage: "",
+		});
 	};
 
 	handleSuccessModalClose = () => {

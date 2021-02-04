@@ -27,6 +27,7 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
+import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
@@ -189,9 +190,15 @@ public class PharmacyController {
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> createFeedback(@RequestBody PharmacyFeedbackDTO pharmacyFeedbackDTO) {
 		
-		pharmacyFeedbackService.create(pharmacyFeedbackDTO);
+		try {
+			pharmacyFeedbackService.create(pharmacyFeedbackDTO);
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		} catch (FeedbackNotAllowedException e) {
+			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
-		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	@PostMapping("/complaint-pharmacy")
@@ -207,9 +214,14 @@ public class PharmacyController {
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> updateFeedback(@RequestBody PharmacyFeedbackDTO pharmacyFeedbackDTO) {
 		
-		pharmacyFeedbackService.update(pharmacyFeedbackDTO);
-		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		try {
+			pharmacyFeedbackService.update(pharmacyFeedbackDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@GetMapping("/search/sort-by/name-ascending")
