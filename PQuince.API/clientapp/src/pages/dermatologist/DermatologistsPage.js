@@ -22,7 +22,6 @@ class DermatologistsPage extends Component {
         showCreateAppointmentModal: false,
         showAddDermatologistModal: false,
         workTimes:[],
-        forPharmacy:'cafeddee-56cb-11eb-ae93-0242ac130202',
         forStaff:'',
         formShowed:false,
         searchName:'',
@@ -53,7 +52,12 @@ class DermatologistsPage extends Component {
 
     componentDidMount() {
 
-		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202" , {
+        let pharmacyId=localStorage.getItem("keyPharmacyId")
+		this.setState({
+			pharmacyId: pharmacyId
+		})
+
+		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/" +localStorage.getItem("keyPharmacyId"), {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -71,7 +75,7 @@ class DermatologistsPage extends Component {
     };
 
     handleAddDermatologistModalClose = () => {
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202" , {
+        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy"  + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -90,13 +94,26 @@ class DermatologistsPage extends Component {
 			showCreateAppointmentModal: true,
 		});
     };
+
+    updateDermatologistList = () =>{
+        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/" + this.state.pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		})
+			.then((res) => {
+				this.setState({ dermatologists: res.data });
+                console.log(res.data);
+            
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+    }
     
     handleAddDermatologistClick = () => {
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-emplooye-in-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202", {
+        Axios.get(BASE_URL + "/api/users/dermatologist-for-emplooye-in-pharmacy/"+ this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		}).then((res) => {
                 this.setState({ dermatologistToEmploye: res.data });
-
 				console.log(res.data);
 		})
 			.catch((err) => {
@@ -161,7 +178,7 @@ class DermatologistsPage extends Component {
                 label: 'Yes',
                 onClick: () => {
                     let removeDermatologistDTO = {
-                        pharmacyId : 'cafeddee-56cb-11eb-ae93-0242ac130202',
+                        pharmacyId : this.state.pharmacyId,
                         dermatologistId: id,
                     };
             
@@ -176,23 +193,15 @@ class DermatologistsPage extends Component {
                             successHeader: "Success",
                             successMessage: "You successfully remove dermatologist.",
                         })
-                        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202", {
-                            headers: { Authorization: getAuthHeader() },
-                        }).then((res) => {
-                            this.setState({ dermatologists: res.data });
-                            console.log(res.data);
-                        
-                        })
-                        .catch((err) => {
-                            this.setState({ 
-                                hiddenSuccessAlert: true,
-                                hiddenFailAlert: false, 
-                                failHeader: "Unsuccess", 
-                                failMessage: "It is not possible to remove the dermatologist"});
-                        });
+                        this.updateDermatologistList();
                         
                     }).catch((err) => {
-                        alert("Nije moguce obrisati datog dermatologa! ")
+                        this.setState({ 
+                            hiddenSuccessAlert: true,
+                            hiddenFailAlert: false, 
+                            failHeader: "Unsuccess", 
+                            failMessage: "It is not possible to remove the dermatologist"});
+
                     });
                 }
               },
@@ -272,7 +281,7 @@ class DermatologistsPage extends Component {
 					"&gradeTo=" +
 					gradeTo +
 					"&pharmacyId=" +
-					'cafeddee-56cb-11eb-ae93-0242ac130202';
+					this.state.pharmacyId;
 
 				Axios.get(SEARCH_URL, {
                     headers: { Authorization: getAuthHeader() },
@@ -294,7 +303,7 @@ class DermatologistsPage extends Component {
 
      handleResetSearch = () => {
 
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202" , {
+        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/" + this.state.pharmacyId , {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -507,7 +516,7 @@ class DermatologistsPage extends Component {
 
                     </div>
                     <div>
-                        <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} forPharmacy={this.state.forPharmacy} forStaff={this.state.forStaff} header="WorkTimes" />
+                        <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} forPharmacy={this.state.pharmacyId} forStaff={this.state.forStaff} header="WorkTimes" />
                         <CreateAppointmentForDermatologistModal
 					        show={this.state.showCreateAppointmentModal}
 					        onCloseModal={this.handleCreateAppoitmentClose}
@@ -520,6 +529,7 @@ class DermatologistsPage extends Component {
 					        onCloseModal={this.handleAddDermatologistModalClose}
                             pharmacyId={this.state.pharmacyId}
                             dermatologists={this.state.dermatologistToEmploye}
+                            updateDermatologist={this.updateDermatologistList}
 					        header="Add dermatologist"
 				        />
                         <PharmaciesForDermatologistModal

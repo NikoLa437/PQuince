@@ -10,13 +10,14 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
+import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 
 class PharmacistPage extends Component {
 	state = {
         pharmacists: [],
         staffIdForWorkTimes:'',
         showWorkTimesModal: false,
-        showAddDermatologistModal: false,
+        showAddPharmacistModal: false,
         workTimes:[],
         forStaff:'',
         formShowed:false,
@@ -25,9 +26,7 @@ class PharmacistPage extends Component {
         searchGradeFrom:'',
         searchGradeTo:'',
         showingSearched: false,
-        pharmaciesForDermatologist:[],
-        dermatologistToEmploye:[],
-        showingSorted:false,
+        pharmacistsToEmploye:[],
         pharmacyId:'',
         hiddenSuccessAlert: true,
 		successHeader: "",
@@ -59,7 +58,7 @@ class PharmacistPage extends Component {
 
 
     handleAddPharmacistModalClose = () => {
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/"  + this.state.pharmacyId , {
+        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
@@ -70,15 +69,15 @@ class PharmacistPage extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
-        this.setState({ showAddDermatologistModal: false });
+        this.setState({ showAddPharmacistModal: false });
     }
     
     
     handleAddPharmacistClick = () => {
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-emplooye-in-pharmacy/"+this.state.pharmacyId, {
+        Axios.get(BASE_URL + "/api/users/pharmacists-for-emplooye-in-pharmacy/"+ this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		}).then((res) => {
-                this.setState({ dermatologistToEmploye: res.data });
+                this.setState({ pharmacistsToEmploye: res.data });
 
 				console.log(res.data);
 		})
@@ -211,7 +210,7 @@ class PharmacistPage extends Component {
 
 				const SEARCH_URL =
 					BASE_URL +
-					"/api/users/search-dermatologist-for-pharmacy?name=" +
+					"/api/users/search-pharmacists-for-pharmacy?name=" +
                     name +
                     "&surname=" +
 					surname +
@@ -220,7 +219,7 @@ class PharmacistPage extends Component {
 					"&gradeTo=" +
 					gradeTo +
 					"&pharmacyId=" +
-					'cafeddee-56cb-11eb-ae93-0242ac130202';
+					this.state.pharmacyId;
 
 				Axios.get(SEARCH_URL, {
                     headers: { Authorization: getAuthHeader() },
@@ -240,20 +239,18 @@ class PharmacistPage extends Component {
      }
 
      handleResetSearch = () => {
-
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/cafeddee-56cb-11eb-ae93-0242ac130202" , {
+        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
-				this.setState({ 
-                    pharmacists: res.data ,
+                this.setState({ 
+                    pharmacists: res.data,
                     formShowed: false,
 					showingSearched: false,
 					searchName: "",
                     searchSurname: "",
                     searchGradeFrom: "",
-					searchGradeTo: "",
-
+                    searchGradeTo: "", 
                 });
                 console.log(res.data);
             
@@ -261,8 +258,6 @@ class PharmacistPage extends Component {
 			.catch((err) => {
 				console.log(err);
             });
-            
-	
 	};
 
     handleCloseAlertSuccess = () => {

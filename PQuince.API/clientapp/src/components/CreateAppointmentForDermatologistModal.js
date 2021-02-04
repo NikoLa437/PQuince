@@ -26,7 +26,7 @@ class CreateAppointmentForDermatologistModal extends Component {
         if(this.state.dermatologist!='' && this.state.duration !='' && this.state.selectedPeriod!=''){
             let appointmentDTO = {
                 staff : this.state.dermatologist,
-                pharmacy: "cafeddee-56cb-11eb-ae93-0242ac130202", 
+                pharmacy: this.props.pharmacyId, 
                 patient: null, 
                 startDateTime: this.state.selectedPeriod.startDate, 
                 endDateTime:this.state.selectedPeriod.endDate,
@@ -126,7 +126,7 @@ class CreateAppointmentForDermatologistModal extends Component {
             Axios.get(BASE_URL + "/api/appointment/getFreePeriod", {
                 params:{
                     dermatologistId: this.state.dermatologist,
-                    pharmacyId:"cafeddee-56cb-11eb-ae93-0242ac130202",
+                    pharmacyId:this.props.pharmacyId,
                     date: this.convertDate(this.state.selectedDate),
                     duration: event.target.value
                 },

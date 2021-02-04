@@ -341,7 +341,9 @@ public class UserService implements IUserService{
 	@Override
 	public boolean removeDermatologistFromPharmacy(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
 		try {
+			System.out.println("TESTTTTTTTTTTTTTTTTTTTTTTTTT----1");
 			if(!appointmentService.hasAppointmentInFuture(removeDermatologistFromPharmacyDTO)) {
+				System.out.println("TESTTTTTTTTTTTTTTTTTTTTTTTTT----2");
 				Dermatologist dermatologist = dermatologistRepository.getOne(removeDermatologistFromPharmacyDTO.getDermatologistId());
 				dermatologist.removePharmacy(removeDermatologistFromPharmacyDTO.getPharmacyId());
 				

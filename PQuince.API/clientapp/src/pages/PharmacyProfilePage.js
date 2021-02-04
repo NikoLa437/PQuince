@@ -16,6 +16,7 @@ import Star from "../static/star.png";
 import StarOutline from "../static/star-outline.png";
 import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
 import HeadingAlert from "../components/HeadingAlert";
+import PharmacyPharmacistsModal from "../components/PharmacyPharmacistsModal";
 
 class PharmacyProfilePage extends Component {
 	state = {
@@ -46,6 +47,8 @@ class PharmacyProfilePage extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+		pharmacists:[],
+		showPharmacistsModal:false,
 	};
 
 	fetchData = id => {
@@ -207,6 +210,10 @@ class PharmacyProfilePage extends Component {
 		this.setState({ showDermatologistModal: false });
 	};
 
+	onClosePharmacistsModal = () => {
+		this.setState({ showPharmacistsModal: false });
+
+	}
 	handleCreateAppoitmentClose = () => {
 		this.setState({ showCreateAppointment: false });
 	};
@@ -329,6 +336,20 @@ class PharmacyProfilePage extends Component {
 	handleListOfDermatologistCloseModal = () => {
 		this.setState({
 			showDermatologistModal:false
+		})
+	}
+
+	handleOurPharmaciesModalOpen =() =>{
+		Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/" + this.state.pharmacyId).then((res) => {
+				this.setState({ pharmacists: res.data });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+
+		this.setState({
+			showPharmacistsModal:true
 		})
 	}
 
@@ -564,7 +585,7 @@ class PharmacyProfilePage extends Component {
 							<br></br>
 							<button
 								style={({ background: "#1977cc" }, { height: "30px" }, { verticalAlign: "center" }, { marginTop: "1%" })}
-								onClick={this.handleSubscribe}
+								onClick={this.handleOurPharmaciesModalOpen}
 								className="btn btn-primary btn-xl"
 								type="button"
 							>
@@ -621,6 +642,13 @@ class PharmacyProfilePage extends Component {
 						pharmacyId={this.state.pharmacyId}
 						dermatologists={this.state.dermatologists}
 						header="Our dermatologist"
+					/>
+					<PharmacyPharmacistsModal
+						show={this.state.showPharmacistsModal}
+						onCloseModal={this.onClosePharmacistsModal}
+						pharmacyId={this.state.pharmacyId}
+						pharmacists={this.state.pharmacists}
+						header="Our pharmacists"
 					/>
 					<DrugsInPharmacyModal
 						show={this.state.showDrugsInPharmacy}
