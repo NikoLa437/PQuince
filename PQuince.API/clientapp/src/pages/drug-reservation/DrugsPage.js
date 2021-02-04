@@ -34,7 +34,7 @@ class DrugsPage extends Component {
 
 	componentDidMount() {
 
-		Axios.get(BASE_URL + "/api/drug/boze")
+		Axios.get(BASE_URL + "/api/drug/grade")
 			.then((res) => {
 				this.setState({ drugs: res.data });
 				
