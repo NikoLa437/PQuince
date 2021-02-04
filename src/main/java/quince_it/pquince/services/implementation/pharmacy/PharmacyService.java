@@ -18,6 +18,7 @@ import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
+import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
@@ -52,6 +53,9 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private PatientRepository patientRepository;
 	
 	@Override
 	public List<IdentifiableDTO<PharmacyDTO>> findAll() {
@@ -126,12 +130,10 @@ public class PharmacyService implements IPharmacyService {
 	public IdentifiableDTO<PharmacyGradePriceDTO> MapPharmacyPersistenceToPharmacyGradePriceIdentifiableDTO(Pharmacy pharmacy){
 		if(pharmacy == null) throw new IllegalArgumentException();
 		
-		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-		String email = currentUser.getName();
-		User user = userRepository.findByEmail(email);
+		UUID patientId = getLoggedUserId();
 		
 		double avgGrade = getAvgGradeForPharmacy(pharmacy.getId());
-		double getDiscountConsultationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, user.getId());
+		double getDiscountConsultationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, patientId);
 		
 		return new IdentifiableDTO<PharmacyGradePriceDTO>(pharmacy.getId(), new PharmacyGradePriceDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade, pharmacy.getConsultationPrice(), getDiscountConsultationPrice));
 	}
@@ -335,6 +337,27 @@ public class PharmacyService implements IPharmacyService {
 		pharmacy.setConsultationPrice(editPharmacyDTO.getConsultationPrice());
 		
 		pharmacyRepository.save(pharmacy);
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findAllSubscribedPharmaciesWithGrades() {
+
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+		UUID patientId = getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();	
+				
+		patient.getPharmacies().forEach((p) -> pharmacies.add(MapPharmacyPersistenceToPharmacyGradeIdentifiableDTO(p)));
+	
+		return pharmacies;
+	}
+	
+	private UUID getLoggedUserId() {
+		
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		String email = currentUser.getName();
+		User user = userRepository.findByEmail(email);	
+		
+		return user.getId();
 	}
 
 
