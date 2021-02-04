@@ -16,6 +16,7 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
@@ -76,4 +77,6 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	boolean scheduleAppointment(UUID patientId, UUID appointmentId);
 
 	List<IdentifiableDTO<AppointmentDTO>> getCalendarAppointmentsByDermatologist(UUID pharmacyId);
+	
+	UUID createAndSchuduleAppointment(DermatologistCreateAppointmentDTO appointmentDTO);
 }
