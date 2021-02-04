@@ -99,8 +99,6 @@ public class UsersController {
 		try {
 			userService.updatePatient(userInfoChangeDTO);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
-		}  catch (ObjectOptimisticLockingFailureException e) {
-			return new ResponseEntity<>("Conflicting resource. Try again.",HttpStatus.BAD_REQUEST);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
