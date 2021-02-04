@@ -13,6 +13,7 @@ class ObservePatientsPage extends Component {
         surname:"",
         patients: []
     }
+
     handleNameChange = (event) => {
         this.setState({name: event.target.value});
       }
@@ -63,7 +64,7 @@ class ObservePatientsPage extends Component {
                 <Header/>
 
                 <div className="container" style={{marginTop:"10%"}}>
-                    <h5 className=" text-left mb-0 text-uppercase" style={{marginTop: "2rem"}}>Patients</h5>
+                    <h3 className=" text-left mb-0 text-uppercase" style={{marginTop: "2rem"}}>Patients</h3>
  
                     <div className="row section-design">
                         <div className="col-lg-8 mx-auto">

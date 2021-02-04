@@ -251,6 +251,29 @@ public class AppointmentController {
 		return new ResponseEntity<>(appointmentService.getDermatologistAppointmentsByPatient(patientId),HttpStatus.OK);
 	}
 	
+	@GetMapping("/{appointmentId}")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
+	public ResponseEntity<?> getAppointment(@PathVariable UUID appointmentId) {
+		try {
+			return new ResponseEntity<>(appointmentService.getAppointment(appointmentId),HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PutMapping("/finish")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
+	public ResponseEntity<?> Appointment(@RequestBody EntityIdDTO appointmentId) {
+		try {
+			appointmentService.finishAppointment(appointmentId.getId());
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	@GetMapping("/getFreePeriod")
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin

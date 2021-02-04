@@ -6,7 +6,9 @@ import { BASE_URL } from "../constants.js";
 import Axios from "axios";
 import DrugsModal from "../components/DrugsModal";
 import TherapyDrugModal from "../components/TherapyDrugModal";
-
+import { withRouter } from "react-router";
+import getAuthHeader from "../GetHeader";
+import ModalDialog from "../components/ModalDialog";
 
 class TreatmentReportPage extends Component {
 	state = {
@@ -18,8 +20,33 @@ class TreatmentReportPage extends Component {
         drug: {},
         name: "",
         manufacturer: "",
-        quantity: ""
+		quantity: "",
+		openModalSuccess: false,
+		appointment: {},
+		id: "",
+		patientId: ""
 	};
+
+	handleModalSuccessClose = () => {
+		this.setState({ openModalSuccess: false });
+	};
+
+	componentDidMount() {
+		const id = this.props.match.params.id;
+		this.setState({
+			id:id
+		});
+
+		Axios.get(BASE_URL + "/api/appointment/" + id, 
+			{headers: { Authorization: getAuthHeader() }}
+		)
+			.then((res) => {
+				this.setState({ appointment: res.data, patientId: res.data.EntityDTO.patient.Id});
+			})
+			.catch((err) => {
+				console.log(err);
+			})
+	}
 
     handleAnamnesisChange = (event) => {
 		this.setState({ anamnesis: event.target.value });
@@ -34,6 +61,7 @@ class TreatmentReportPage extends Component {
     };
 
     handleDrugsModalOpen = () => {
+
 		this.setState({ openDrugsModal: true });
     };
     
@@ -46,26 +74,56 @@ class TreatmentReportPage extends Component {
 	};
     
     handleSubmit = (event) => {
-		console.log(event);
-    };
+		let therapy = "drug : number of days" + "\n";
+		this.state.drugs.forEach((value, index) => {
+			therapy += value.drug.EntityDTO.manufacturer.EntityDTO.name + " " + value.drug.EntityDTO.name + " : " + value.amount + "\n";
+		});
+		console.log(therapy);
+
+		Axios.post(BASE_URL + "/api/treatment-report",
+			{anamnesis: this.state.anamnesis, diagnosis: this.state.diagnosis, therapy: therapy, appointmentId: this.state.id},
+			{headers: { Authorization: getAuthHeader() }}
+		)
+			.then((res) => {
+
+				Axios.put(BASE_URL + "/api/appointment/finish",
+					{id: this.state.id},
+					{headers: { Authorization: getAuthHeader() }}
+				)
+				.catch((err) => {
+					console.log(err);
+				})
+
+				this.setState({ openModalSuccess: true});
+			})
+			.catch((err) => {
+				console.log(err);
+			})
+		};
 
     handleDrugDetails = (drug) => {
         console.log(drug); 
         this.setState({
             drug: drug,
             name: drug.EntityDTO.name,
-            quantity: drug.EntityDTO.drug,
+            quantity: drug.EntityDTO.quantity,
             manufacturer: drug.EntityDTO.manufacturer.EntityDTO.name
         });
         this.handleDrugsModalClose(); 
         this.handleDrugDetailsModalOpen();
     };
 
-    handleAddDrug = (drugAmount, selectedDate) => {
+    handleAddDrug = (drugAmount) => {
         console.log(this.state.drug); 
         this.handleDrugDetailsModalClose();
-        this.state.drugs.push(this.state.drug);   
-    };
+        this.state.drugs.push({drug: this.state.drug, amount: drugAmount});   
+	};
+	
+	handleRemoveTherapyDrug = (e, index) => {
+		console.log(index)
+		this.state.drugs.splice(index, 1);
+		this.setState({drugs: this.state.drugs});
+	};
 
 	render() {
 		return (
@@ -75,51 +133,19 @@ class TreatmentReportPage extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Treatment report</h5>
+					<h4 className=" text-center mb-0 mt-2 text-uppercase">Treatment report</h4>
 
                     <form>
                         <div class="form-group">
-                            <label>Anamnesis</label>
+                            <h5>Anamnesis</h5>
                             <textarea class="form-control" value={this.state.anamnesis} onChange={this.handleAnamnesisChange} rows="5"></textarea>		
                         </div>
                         <div class="form-group">
-                            <label>Diagnosis</label>
+                            <h5>Diagnosis</h5>
                             <textarea class="form-control" value={this.state.diagnosis} onChange={this.handleDiagnosisChange} rows="3"></textarea>
                         </div>
                     </form>
-
-					<table
-						className="table table-hover"
-						style={{ width: "50%", marginTop: "3rem" }}
-					>
-						<tbody>
-							{this.state.drugs.map((drug) => (
-								<tr
-									id={drug.Id}
-									key={drug.Id}
-									onClick={() => this.props.onDrugSelect(drug)}
-									style={{ cursor: "pointer" }}
-								>
-									<td width="130em">
-										<img className="img-fluid" src={CapsuleLogo} width="70em" />
-									</td>
-									<td>
-										<div>
-											<b>Name:</b> {drug.EntityDTO.drugInstanceName}
-										</div>
-										<div>
-											<b>Manufacturer:</b>{" "}
-											{drug.EntityDTO.manufacturer.EntityDTO.name}
-										</div>
-										<div>
-											<b>Quantity:</b> {drug.EntityDTO.quantity} <b>mg</b>
-										</div>
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-                    <div className="form-group text-left">
+					<div className="form-group text-left">
 									<button
 										style={{ background: "#1977cc" }}
 										onClick={this.handleDrugsModalOpen}
@@ -129,6 +155,50 @@ class TreatmentReportPage extends Component {
 										Add therapy drug
 									</button>
 				    </div>
+					<form style={{minHeight: "50px"}} className="border border-secondary">
+					<table
+						className="table table-hover m-0"
+					>
+						<tbody>
+							{this.state.drugs.map((drug, index) => (
+								<tr
+									id={drug.Id}
+									key={drug.Id}
+									style={{ cursor: "pointer" }}
+								>
+									<td width="130em">
+										<img className="img-fluid" src={CapsuleLogo} width="70em" />
+									</td>
+									<td>
+										<div>
+											<b>Name:</b> {drug.drug.EntityDTO.drugInstanceName}
+										</div>
+										<div>
+											<b>Manufacturer:</b>{" "}
+											{drug.drug.EntityDTO.manufacturer.EntityDTO.name}
+										</div>
+										<div>
+											<b>Quantity:</b> {drug.drug.EntityDTO.quantity} <b>mg</b>
+										</div>
+										<div>
+											<b>Number of days:</b> {drug.amount}
+										</div>
+									</td>
+									<td>
+									<button
+										onClick={(e) => this.handleRemoveTherapyDrug(e, index)}
+										className="btn btn-danger btn-1x"
+										type="button"
+										style={{float: "right"}}
+									>
+										Remove therapy drug
+									</button>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+					</form>
                     <div className="form-group text-center">
 									<button
 										style={{ background: "#1977cc", marginTop: "50px" }}
@@ -159,9 +229,16 @@ class TreatmentReportPage extends Component {
             subheader=""
             handleAddDrug={this.handleAddDrug}
             />
+			<ModalDialog
+					show={this.state.openModalSuccess}
+					href={this.state.patientId === "" ? "/" : "/patient-profile/" + this.state.patientId}
+					onCloseModal={this.handleModalSuccessClose}
+					header="Successfully submitted treatment report for patient"
+					text="You can schedule another appointment for this patient."
+				/>
             </React.Fragment>
 		);
 	}
 }
 
-export default TreatmentReportPage;
+export default withRouter(TreatmentReportPage);

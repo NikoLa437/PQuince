@@ -6,11 +6,11 @@ import CapsuleLogo from "../static/capsuleLogo.png";
 
 class DrugsModal extends Component {
   state = {
-    drugs: []
+    drugs: [],
+    id: ""
   };
 
   componentDidMount() {
-    // TODO: only fetch drugs patient is not allergic to
     Axios.get(BASE_URL + "/api/drug")
         .then((res) => {
             this.setState({ drugs: res.data });

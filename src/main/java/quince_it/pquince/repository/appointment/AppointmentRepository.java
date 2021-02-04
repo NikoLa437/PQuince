@@ -101,5 +101,5 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 	@Query(value = "SELECT a FROM Appointment a WHERE a.staff.id = ?1"
 			+ " AND (a.appointmentStatus = 'CREATED' OR a.appointmentStatus = 'SCHEDULED') AND a.appointmentType = 'EXAMINATION' AND a.pharmacy.id=?2")
 	List<Appointment> getCalendarDermatologistAppointmentsForPharamacy(UUID dermatologistId, UUID pharmacyId);
-	
+
 }

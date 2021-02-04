@@ -47,7 +47,7 @@ class TherapyDrugModal extends Component {
                                         </div>
                                     </div>
                                     <div  className="form-group text-center">
-                                        <Button className="mt-3"  onClick = {() => this.props.handleAddDrug(this.state.numberOfDays, this.state.selectedDate)} >Prescribe drug</Button>
+                                        <Button className="mt-3"  onClick = {() => this.props.handleAddDrug(this.state.numberOfDays)} >Prescribe drug</Button>
                                     </div>
                                 </div>
                    </form>

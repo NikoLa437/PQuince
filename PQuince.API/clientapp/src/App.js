@@ -59,12 +59,7 @@ function App() {
 				<Link exact to="/dermatologists-for-patient" path="/dermatologists-for-patient" component={DermatologistsPageForPatient} />
 				<Link exact to="/patients" path="/patients" component={ObservePatientsPage} />
 
-				<Link
-					exact
-					to="/treatment-report"
-					path="/treatment-report"
-					component={TreatmentReportPage}
-				/>
+				
 				
 				
 
@@ -88,6 +83,8 @@ function App() {
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
 				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />
+
+				<Route path="/treatment-report/:id" children={<TreatmentReportPage />}/>
 
 				<Link exact to="/dermatologist-calendar" path="/dermatologist-calendar" component={DermatologistCalendarPage} />
 			</Switch>

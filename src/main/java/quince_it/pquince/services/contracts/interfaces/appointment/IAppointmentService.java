@@ -79,4 +79,8 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	List<IdentifiableDTO<AppointmentDTO>> getCalendarAppointmentsByDermatologist(UUID pharmacyId);
 	
 	UUID createAndSchuduleAppointment(DermatologistCreateAppointmentDTO appointmentDTO);
+
+	IdentifiableDTO<AppointmentDTO> getAppointment(UUID appointmentId);
+
+	void finishAppointment(UUID id);
 }

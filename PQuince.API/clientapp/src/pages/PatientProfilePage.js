@@ -58,6 +58,7 @@ class PatientProfilePage extends Component {
     }
     
     handleExamine = (appointmentId) => {
+		window.location.href = "/treatment-report/" + appointmentId;
 		console.log(appointmentId)
     };
 

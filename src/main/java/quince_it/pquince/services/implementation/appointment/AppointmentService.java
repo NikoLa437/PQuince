@@ -678,4 +678,17 @@ public class AppointmentService implements IAppointmentService{
 		return returnAppointments;
 	}
 
+	@Override
+	public IdentifiableDTO<AppointmentDTO> getAppointment(UUID appointmentId) {
+		Appointment appointment = appointmentRepository.findById(appointmentId).get();
+		return AppointmentMapper.MapAppointmentPersistenceToAppointmentIdentifiableDTO(appointment);
+	}
+
+	@Override
+	public void finishAppointment(UUID id) {
+		Appointment appointment = appointmentRepository.findById(id).get();
+		appointment.setAppointmentStatus(AppointmentStatus.FINISHED);
+		appointmentRepository.save(appointment);
+	}
+
 }
