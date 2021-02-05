@@ -198,6 +198,7 @@ public class DrugReservationService implements IDrugReservationService{
 
 	@Override
 	public UUID reserveDrugAsStaff(StaffDrugReservationDTO staffDrugReservationDTO) {
+		//TODO: validation and exceptions
 		UUID staffId = userService.getLoggedUserId();
 		Patient patient = patientRepository.getOne(staffDrugReservationDTO.getPatientId());
 		Staff staff = staffRepository.getOne(staffId);
@@ -208,13 +209,13 @@ public class DrugReservationService implements IDrugReservationService{
 			pharmacy = pharmacistRepository.getOne(staffId).getPharmacy();
 		DrugInstance drugInstance = drugInstanceRepository.getOne(staffDrugReservationDTO.getDrugInstanceId());
 		int amount = staffDrugReservationDTO.getAmount();
-		int price = drugPriceForPharmacyRepository.findCurrentDrugPrice(drugInstance.getId(), pharmacy.getId());
-		System.out.println(price);
-		int drugReservationDuration = Integer.parseInt(env.getProperty("drug_reservation_duration"));
-		Date endDate = new Date();
-		endDate = new Date(endDate.getTime() + (1000 * 60 * 60 * 24 * drugReservationDuration));
+		Integer price = drugPriceForPharmacyRepository.findCurrentDrugPrice(drugInstance.getId(), pharmacy.getId());
+		long drugReservationDuration = Integer.parseInt(env.getProperty("drug_reservation_duration"));
+		System.out.println("Drug reservation duration in days " + drugReservationDuration);
+		long currentTime = new Date().getTime();
+		Date endDate = new Date(currentTime + (1000 * 60 * 60 * 24 * drugReservationDuration));
 		DrugReservation drugReservation = new DrugReservation(pharmacy, drugInstance, patient, amount, endDate, price);
-		CanReserveDrug(drugReservation, patient);
+		//CanReserveDrug(drugReservation, patient);
 		drugStorageService.reduceAmountOfReservedDrug(drugInstance.getId(), pharmacy.getId(), amount);
 		drugReservationRepository.save(drugReservation);
 		

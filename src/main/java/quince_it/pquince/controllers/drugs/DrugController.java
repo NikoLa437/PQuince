@@ -145,11 +145,14 @@ public class DrugController {
 	
 	@PostMapping("/staff/reserve")
 	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
 	public ResponseEntity<?> reserveDrugAsStaff(@RequestBody StaffDrugReservationDTO staffDrugReservationDTO) {
 		try {
+			System.out.println("Controller enter");
 			UUID reservationId = drugReservationService.reserveDrugAsStaff(staffDrugReservationDTO);
 			return new ResponseEntity<>(reservationId ,HttpStatus.CREATED);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		

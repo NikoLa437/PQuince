@@ -739,6 +739,8 @@ public class UserService implements IUserService{
 	
 	@Override
 	public Pharmacy getPharmacyForLoggedDermatologist() {
+		//TODO: Exceptions
+		//TODO: appointments date?
 		UUID dermatologistId = getLoggedUserId();
 		Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
 		Pharmacy pharmacy = null;
