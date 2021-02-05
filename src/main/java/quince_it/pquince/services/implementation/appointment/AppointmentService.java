@@ -41,6 +41,7 @@ import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppoint
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
@@ -658,6 +659,15 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
+	public boolean hasAppointmentInFutureForPharmacist(
+			RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO) {
+		List<Appointment> listOfAppointment = appointmentRepository.findAllAppointmentForPharmacistInFutureInPharmacy(removePharmacistFromPharmacyDTO.getPharmacistId(),removePharmacistFromPharmacyDTO.getPharmacyId());
+		if(listOfAppointment.size()>0)
+			return true;
+		
+		return false;
+	}
+
 	public IdentifiableDTO<AppointmentDTO> getAppointment(UUID appointmentId) {
 		Appointment appointment = appointmentRepository.findById(appointmentId).get();
 		return AppointmentMapper.MapAppointmentPersistenceToAppointmentIdentifiableDTO(appointment);
