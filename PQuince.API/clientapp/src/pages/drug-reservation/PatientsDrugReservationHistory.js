@@ -51,14 +51,14 @@ class PatientsDrugReservationHistory extends Component {
 					this.setState({
 						selectedDrugId: drug.Id,
 						showFeedbackModal: true,
-						drugName: drug.EntityDTO.name,
+						drugName: drug.EntityDTO.drugInstanceName,
 						grade: 0,
 					});
 				} else if (res.status === 200) {
 					this.setState({
 						selectedDrugId: drug.Id,
 						showModifyFeedbackModal: true,
-						drugName: drug.EntityDTO.name,
+						drugName: drug.EntityDTO.drugInstanceName,
 						grade: res.data.grade,
 					});
 				}

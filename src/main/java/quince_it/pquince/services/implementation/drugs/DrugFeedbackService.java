@@ -64,7 +64,7 @@ public class DrugFeedbackService implements IDrugFeedbackService{
 	}
 
 	private void CanPatientGiveFeedback(UUID patientId, UUID drugId) throws FeedbackNotAllowedException {		
-		if(!(drugReservationRepository.findProcessedDrugReservationsForPatient(patientId).size() > 0 || eReceiptItemsRepository.findAllByPatientAndDrugId(patientId, drugId).size() > 0))
+		if(!(drugReservationRepository.findProcessedDrugReservationsForPatientForDrug(patientId, drugId).size() > 0 || eReceiptItemsRepository.findAllByPatientAndDrugId(patientId, drugId).size() > 0))
 			throw new FeedbackNotAllowedException();
 	}
 

@@ -7,6 +7,9 @@ import dermatologistLogo from "../../static/dermatologistLogo.png";
 import PharmaciesForDermatologistModal from "../../components/PharmaciesForDermatologistModal";
 import getAuthHeader from "../../GetHeader";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
+import HeadingAlert from "../../components/HeadingAlert";
+import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
+import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 
 class DermatologistsPageForPatient extends Component {
 	state = {
@@ -24,6 +27,16 @@ class DermatologistsPageForPatient extends Component {
 		showPharmaciesModal: false,
 		showingSorted: false,
 		pharmacies: [],
+		selectedStaffId: "",
+		StaffName: "",
+		StaffSurame: "",
+		grade: 0,
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
 	};
 
 	componentDidMount() {
@@ -168,6 +181,124 @@ class DermatologistsPageForPatient extends Component {
 			});
 	};
 
+	handleFeedbackClick = (staff) => {
+		console.log(staff);
+		Axios.get(BASE_URL + "/api/staff/feedback/" + staff.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data);
+				if (res.status === 404) {
+					this.setState({
+						selectedStaffId: staff.Id,
+						showFeedbackModal: true,
+						StaffName: staff.EntityDTO.name,
+						StaffSurame: staff.EntityDTO.surname,
+						grade: 0,
+					});
+				} else if (res.status === 200) {
+					this.setState({
+						selectedStaffId: staff.Id,
+						showModifyFeedbackModal: true,
+						StaffName: staff.EntityDTO.name,
+						StaffSurame: staff.EntityDTO.surname,
+						grade: res.data.grade,
+					});
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleFeedbackModalClose = () => {
+		this.setState({ showFeedbackModal: false });
+	};
+
+	handleModifyFeedbackModalClose = () => {
+		this.setState({ showModifyFeedbackModal: false });
+	};
+
+	handleFeedback = () => {
+		let entityDTO = {
+			staffId: this.state.selectedStaffId,
+			date: new Date(),
+			grade: this.state.grade,
+		};
+		Axios.post(BASE_URL + "/api/staff/feedback", entityDTO, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
+			.then((resp) => {
+				if (resp.status === 405) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Staff feedback not allowed." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 201) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully saved." });
+					Axios.get(BASE_URL + "/api/users/dermatologists", {
+						headers: { Authorization: getAuthHeader() },
+					})
+						.then((res) => {
+							this.setState({ dermatologists: res.data });
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				this.setState({ showFeedbackModal: false });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleModifyFeedback = () => {
+		let entityDTO = {
+			staffId: this.state.selectedStaffId,
+			date: new Date(),
+			grade: this.state.grade,
+		};
+		Axios.put(BASE_URL + "/api/staff/feedback", entityDTO, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
+			.then((resp) => {
+				if (resp.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Bad request when modifying feedback." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 204) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully modified." });
+					Axios.get(BASE_URL + "/api/users/dermatologists", {
+						headers: { Authorization: getAuthHeader() },
+					})
+						.then((res) => {
+							this.setState({ dermatologists: res.data });
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				this.setState({ showModifyFeedbackModal: false });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleClickIcon = (grade) => {
+		this.setState({ grade });
+	};
+
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
+	handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+	};
+
 	render() {
 		const myStyle = {
 			color: "white",
@@ -175,11 +306,22 @@ class DermatologistsPageForPatient extends Component {
 		};
 		return (
 			<React.Fragment>
-				<div></div>
-
 				<TopBar />
 				<Header />
 				<div className="container" style={{ marginTop: "10%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
+
+					<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
 					<button className="btn btn-outline-primary btn-xl" type="button" onClick={this.hangleFormToogle}>
 						<i className="icofont-rounded-down mr-1"></i>
 						Search dermatologists
@@ -284,7 +426,7 @@ class DermatologistsPageForPatient extends Component {
 											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 									</td>
-									<td>
+									<td className="align-middle">
 										<div style={{ marginLeft: "55%", height: "100%" }}>
 											<button
 												style={({ height: "30px" }, { verticalAlign: "center" })}
@@ -293,6 +435,13 @@ class DermatologistsPageForPatient extends Component {
 												type="button"
 											>
 												<i className="icofont-subscribe mr-1"></i>Pharmacies
+											</button>
+											<button
+												type="button"
+												onClick={() => this.handleFeedbackClick(dermatologist)}
+												className="btn btn-outline-secondary mt-2"
+											>
+												Give feedback
 											</button>
 										</div>
 									</td>
@@ -314,6 +463,28 @@ class DermatologistsPageForPatient extends Component {
 						header="Work in pharmacies"
 					/>
 				</div>
+				<FeedbackCreateModal
+					buttonName="Give feedback"
+					grade={this.state.grade}
+					header="Give feedback"
+					show={this.state.showFeedbackModal}
+					onCloseModal={this.handleFeedbackModalClose}
+					giveFeedback={this.handleFeedback}
+					name={this.state.StaffName + " " + this.state.StaffSurame}
+					forWho="dermatologist"
+					handleClickIcon={this.handleClickIcon}
+				/>
+				<FeedbackCreateModal
+					buttonName="Modify feedback"
+					grade={this.state.grade}
+					header="Modify feedback"
+					show={this.state.showModifyFeedbackModal}
+					onCloseModal={this.handleModifyFeedbackModalClose}
+					giveFeedback={this.handleModifyFeedback}
+					name={this.state.StaffName + " " + this.state.StaffSurame}
+					forWho="dermatologist"
+					handleClickIcon={this.handleClickIcon}
+				/>
 			</React.Fragment>
 		);
 	}
