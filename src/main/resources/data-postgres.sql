@@ -7,18 +7,18 @@ insert into authority (id, name) values ('ea16767c-2c1f-49fb-ac98-c7739c0036e8',
 
 
 --password - 123
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('22793162-52d3-11eb-ae93-0242ac130002',true, 'example@example.com','Stefan','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 1);
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('23793162-52d3-11eb-ae93-0242ac130002',true, 'example1@example.com','Nikola','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('22793162-52d3-11eb-ae93-0242ac130002',true, 'example@example.com','Stefan','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('23793162-52d3-11eb-ae93-0242ac130002',true, 'example1@example.com','Nikola','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('11355678-52d3-11eb-ae93-0242ac130002',true, 'example5@example.com','Jelena','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('22345678-52d3-11eb-ae93-0242ac130002',true, 'example6@example.com','Dusan','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345678-52d3-11eb-ae93-0242ac130002',true, 'example8@example.com','Nemanja','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('11355678-52d3-11eb-ae93-0242ac130002',true, 'example5@example.com','Jelena','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('22345678-52d3-11eb-ae93-0242ac130002',true, 'example6@example.com','Dusan','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345678-52d3-11eb-ae93-0242ac130002',true, 'example8@example.com','Nemanja','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 
 
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-11eb-ae93-0242ac130002',true, 'exampla11@example.com','Vidoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-12eb-ac93-0242ac130002',true, 'exampla21@example.com','Sredoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Mikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-13eb-ae93-0242ac130002',true, 'exampla31@example.com','Radoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Bikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788',true, 'pharmacyadmin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-11eb-ae93-0242ac130002',true, 'exampla11@example.com','Vidoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-12eb-ac93-0242ac130002',true, 'exampla21@example.com','Sredoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Mikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('25345278-52d3-13eb-ae93-0242ac130002',true, 'exampla31@example.com','Radoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Bikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788',true, 'pharmacyadmin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699);
 
 insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',2,152);
 insert into patient (id, penalty, points) values ('23793162-52d3-11eb-ae93-0242ac130002',0,2);
@@ -150,6 +150,23 @@ insert into drug_kind_id (id, type) values ('40345278-52d3-13eb-ae93-0242ac13000
 insert into drug_format_id (id, type) values ('38445278-52d3-13eb-ae93-0242ac130002','VACCINE');
 insert into drug_format_id (id, type) values ('39545278-52d3-13eb-ae93-0242ac130002','CAPSULE');
 insert into drug_format_id (id, type) values ('40645278-52d3-13eb-ae93-0242ac130002','INJECTION');
+
+
+insert into ereceipt (id, creation_date, status, patient_id) values ('e672e844-67ac-11eb-ae93-0242ac130002', '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, creation_date, status, patient_id, pharmacy_id) values ('15df3e98-67ad-11eb-ae93-0242ac130002', '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002');
+insert into ereceipt (id, creation_date, status, patient_id) values ('19e26092-67ad-11eb-ae93-0242ac130002', '2021-01-05', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, creation_date, status, patient_id) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002', '2021-01-13', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, creation_date, status, patient_id) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002', '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('e672e844-67ac-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',2);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('e672e844-67ac-11eb-ae93-0242ac130002','2c797174-5839-11eb-ae93-0242ac130002',3);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('e672e844-67ac-11eb-ae93-0242ac130002','dac2b818-5838-11eb-ae93-0242ac130002',1);
+
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('15df3e98-67ad-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',1);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('19e26092-67ad-11eb-ae93-0242ac130002','2c797174-5839-11eb-ae93-0242ac130002',2);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',1);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',1);
+
 
 insert into loyaltyprogram (id, points_for_appointment, points_for_consulting, points_to_enter_regular_cathegory, points_to_enter_silver_cathegory, points_to_enter_gold_cathegory, appointment_discount_regular, drug_discount_regular, consultation_discount_regular, appointment_discount_silver,drug_discount_silver, consultation_discount_silver, appointment_discount_gold,  drug_discount_gold, consultation_discount_gold) values ('791fee27-bb12-4340-9b0a-a7c9ef575278', 5, 4, 10, 50, 100, 2, 2, 2, 5, 6, 7, 15, 20, 25);
 

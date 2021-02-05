@@ -125,7 +125,7 @@ class LoginPage extends Component {
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<input
 											placeholder="Password"
-											class="form-control"
+											className="form-control"
 											id="password"
 											type="password"
 											onChange={this.handlePasswordChange}

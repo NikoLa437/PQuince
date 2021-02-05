@@ -34,6 +34,8 @@ import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/
 import PatientsRedirectComplaints from "./pages/complaints/PatientsRedirectComplaints";
 import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
 import PatientsSubscribedPharmacies from "./pages/subscribed-pharmacies/PatientsSubscribedPharmacies";
+import EReceiptsForPatient from "./pages/eReceipt-patient/EReceiptsForPatient";
+import DrugsFromEReceiptForPatient from "./pages/eReceipt-patient/DrugsFromEReceiptForPatient";
 import Subscription from "./pages/subscription/Subscription";
 
 function App() {
@@ -61,15 +63,13 @@ function App() {
 				<Link exact to="/dermatologists-for-patient" path="/dermatologists-for-patient" component={DermatologistsPageForPatient} />
 				<Link exact to="/patients" path="/patients" component={PatientsPage} />
 
-				
-				
-				
-
 				<Link exact to="/schedule-consultation" path="/schedule-consultation" component={ConsultationTimeSelectPage} />
 				<Link exact to="/loyalty-program" path="/loyalty-program" component={LoyaltyProgram} />
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
 				<Link exact to="/observe-consultations-history" path="/observe-consultations-history" component={ObservePatientsCosultationHistory} />
 				<Link exact to="/patient-complaint" path="/patient-complaint" component={PatientsRedirectComplaints} />
+				<Link exact to="/patient-ereceipts" path="/patient-ereceipts" component={EReceiptsForPatient} />
+				<Link exact to="/patient-ereceipt-drugs" path="/patient-ereceipt-drugs" component={DrugsFromEReceiptForPatient} />
 				<Link exact to="/subscription" path="/subscription" component={Subscription} />
 
 				<Link exact to="/patient-pharmacies-subscription" path="/patient-pharmacies-subscription" component={PatientsSubscribedPharmacies} />
@@ -89,7 +89,7 @@ function App() {
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
 				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />
 
-				<Route path="/treatment-report/:id" children={<TreatmentReportPage />}/>
+				<Route path="/treatment-report/:id" children={<TreatmentReportPage />} />
 
 				<Link exact to="/dermatologist-calendar" path="/dermatologist-calendar" component={DermatologistCalendarPage} />
 			</Switch>
