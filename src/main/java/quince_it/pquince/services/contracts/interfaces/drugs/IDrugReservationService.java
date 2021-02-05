@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
+import quince_it.pquince.services.contracts.dto.drugs.StaffDrugReservationDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface IDrugReservationService{
@@ -26,5 +27,7 @@ public interface IDrugReservationService{
 	void cancelDrugReservation(UUID id);
 	
 	void givePenaltyForMissedDrugReservation();
+
+	UUID reserveDrugAsStaff(StaffDrugReservationDTO staffDrugReservationDTO);
 
 }

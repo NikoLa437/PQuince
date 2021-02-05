@@ -85,21 +85,38 @@ class TreatmentReportPage extends Component {
 			{headers: { Authorization: getAuthHeader() }}
 		)
 			.then((res) => {
-
-				Axios.put(BASE_URL + "/api/appointment/finish",
-					{id: this.state.id},
-					{headers: { Authorization: getAuthHeader() }}
-				)
-				.catch((err) => {
-					console.log(err);
-				})
-
 				this.setState({ openModalSuccess: true});
 			})
 			.catch((err) => {
 				console.log(err);
 			})
-		};
+
+		Axios.put(BASE_URL + "/api/appointment/finish",
+			{id: this.state.id},
+			{headers: { Authorization: getAuthHeader() }}
+		)
+		.catch((err) => {
+			console.log(err);
+		})
+		
+		this.state.drugs.forEach((value, index) => {
+			
+			Axios.post(BASE_URL + "/api/drug/staff/reserve",
+				{ patientId: this.state.patientId, drugInstanceId: value.drug.Id, amount: value.amount},
+				{headers: { Authorization: getAuthHeader() }}
+			)
+			.catch((err) => {
+				console.log(err);
+			})
+
+		});
+
+		
+		
+		//TODO: axios post reserve drugs 
+		// drugInstance, patient, amount
+		// drugPeacePrice, endDate, pharamacy
+    };
 
     handleDrugDetails = (drug) => {
         console.log(drug); 
