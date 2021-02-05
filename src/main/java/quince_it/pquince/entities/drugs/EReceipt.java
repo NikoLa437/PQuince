@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
@@ -26,14 +28,19 @@ public class EReceipt {
 	@ManyToOne(optional = true)
 	private Pharmacy pharmacy;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	private EReceiptStatus status;
+	
 	public EReceipt() {}
 
-	public EReceipt(UUID id, Patient patient, Date creationDate, Pharmacy pharmacy) {
+	public EReceipt(UUID id, Patient patient, Date creationDate, Pharmacy pharmacy, EReceiptStatus status) {
 		super();
 		this.id = id;
 		this.patient = patient;
 		this.creationDate = creationDate;
 		this.pharmacy = pharmacy;
+		this.status = status;
 	}
 
 	public Patient getPatient() {
@@ -58,6 +65,14 @@ public class EReceipt {
 
 	public Date getCreationDate() {
 		return creationDate;
+	}
+
+	public EReceiptStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(EReceiptStatus status) {
+		this.status = status;
 	}
 		
 }

@@ -33,6 +33,7 @@ import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/
 import PatientsRedirectComplaints from "./pages/complaints/PatientsRedirectComplaints";
 import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
 import PatientsSubscribedPharmacies from "./pages/subscribed-pharmacies/PatientsSubscribedPharmacies";
+import EReceiptsForPatient from "./pages/eReceipt-patient/EReceiptsForPatient";
 
 function App() {
 	return (
@@ -63,6 +64,7 @@ function App() {
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
 				<Link exact to="/observe-consultations-history" path="/observe-consultations-history" component={ObservePatientsCosultationHistory} />
 				<Link exact to="/patient-complaint" path="/patient-complaint" component={PatientsRedirectComplaints} />
+				<Link exact to="/patient-ereceipts" path="/patient-ereceipts" component={EReceiptsForPatient} />
 
 				<Link exact to="/patient-pharmacies-subscription" path="/patient-pharmacies-subscription" component={PatientsSubscribedPharmacies} />
 
