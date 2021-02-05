@@ -30,5 +30,12 @@ public class Pharmacist extends Staff {
 		this.pharmacy= pharmacy;
 	}
 	
+	public Pharmacy getPharmacy() {
+		return pharmacy;
+	}
+
+	public void setPharmacy(Pharmacy pharmacy) {
+		this.pharmacy = pharmacy;
+	}
 
 }

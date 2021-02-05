@@ -15,15 +15,24 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.drugs.DrugInstance;
 import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.drugs.ReservationStatus;
+import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.Staff;
+import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
+import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.repository.drugs.DrugReservationRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.PharmacistRepository;
+import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
+import quince_it.pquince.services.contracts.dto.drugs.StaffDrugReservationDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugReservationService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
@@ -38,7 +47,16 @@ public class DrugReservationService implements IDrugReservationService{
 	private DrugReservationRepository drugReservationRepository;
 	
 	@Autowired
+	private DrugPriceForPharmacyRepository drugPriceForPharmacyRepository;
+	
+	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private StaffRepository staffRepository;
+	
+	@Autowired
+	private PharmacistRepository pharmacistRepository;
 	
 	@Autowired
 	private PharmacyRepository pharmacyRepository;
@@ -175,7 +193,41 @@ public class DrugReservationService implements IDrugReservationService{
 		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findProcessedDrugReservationsForPatient(patientId));
 
 	}
-	
 
+	@Override
+	public UUID reserveDrugAsStaff(StaffDrugReservationDTO staffDrugReservationDTO) {
+		//TODO: validation and exceptions
+		UUID staffId = userService.getLoggedUserId();
+		Patient patient = patientRepository.getOne(staffDrugReservationDTO.getPatientId());
+		Staff staff = staffRepository.getOne(staffId);
+		Pharmacy pharmacy;
+		if(staff.getStaffType() == StaffType.DERMATOLOGIST)
+			pharmacy = userService.getPharmacyForLoggedDermatologist();
+		else
+			pharmacy = pharmacistRepository.getOne(staffId).getPharmacy();
+		DrugInstance drugInstance = drugInstanceRepository.getOne(staffDrugReservationDTO.getDrugInstanceId());
+		int amount = staffDrugReservationDTO.getAmount();
+		Integer price = drugPriceForPharmacyRepository.findCurrentDrugPrice(drugInstance.getId(), pharmacy.getId());
+		long drugReservationDuration = Integer.parseInt(env.getProperty("drug_reservation_duration"));
+		System.out.println("Drug reservation duration in days " + drugReservationDuration);
+		long currentTime = new Date().getTime();
+		Date endDate = new Date(currentTime + (1000 * 60 * 60 * 24 * drugReservationDuration));
+		DrugReservation drugReservation = new DrugReservation(pharmacy, drugInstance, patient, amount, endDate, price);
+		//CanReserveDrug(drugReservation, patient);
+		drugStorageService.reduceAmountOfReservedDrug(drugInstance.getId(), pharmacy.getId(), amount);
+		drugReservationRepository.save(drugReservation);
+		
+		try {
+			emailService.sendDrugReservationNotificaitionAsync(drugReservation);
+		} catch (MailException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		
+		return drugReservation.getId();
+	}
 
 }

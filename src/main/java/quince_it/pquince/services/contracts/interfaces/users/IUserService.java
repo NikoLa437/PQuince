@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
@@ -98,4 +99,8 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	boolean unsubscribeFromPharmacy(EntityIdDTO pharmacyIdDTO);
 
 	boolean checkIfPatientSubscribed(UUID pharmacyId);
+	
+	Pharmacy getPharmacyForLoggedDermatologist();
+
+	List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies();
 }

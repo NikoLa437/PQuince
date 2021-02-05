@@ -58,6 +58,7 @@ class PatientProfilePage extends Component {
     }
     
     handleExamine = (appointmentId) => {
+		window.location.href = "/treatment-report/" + appointmentId;
 		console.log(appointmentId)
     };
 
@@ -178,7 +179,7 @@ class PatientProfilePage extends Component {
                                 id={appointment.Id}
                                 key={appointment.Id}
                                 className="rounded"
-                                style={{ background: appointment.EntityDTO.appointmentStatus == "SCHEDULED" && appointment.EntityDTO.staff.Id == "25345678-52d3-11eb-ae93-0242ac130002" ? "#93c2aa" : "" }}
+                                style={{ background: appointment.EntityDTO.appointmentStatus == "SCHEDULED" ? "#93c2aa" : "" }}
                             >
                                 <td
                                     width="190em"
@@ -229,7 +230,7 @@ class PatientProfilePage extends Component {
                                             type="button"
                                             style={{ width: "60%", float: "right"}}
 											hidden={
-												appointment.EntityDTO.appointmentStatus != "SCHEDULED" || appointment.EntityDTO.staff.Id != "25345678-52d3-11eb-ae93-0242ac130002"
+												appointment.EntityDTO.appointmentStatus != "SCHEDULED"
 											}
 											onClick={() =>
 												this.handleExamine(appointment.Id)
@@ -244,7 +245,7 @@ class PatientProfilePage extends Component {
                                             type="button"
                                             style={{ width: "60%", float: "right", verticalAlign: "bottom"}}
 											hidden={
-												appointment.EntityDTO.appointmentStatus != "SCHEDULED" || appointment.EntityDTO.staff.Id != "25345678-52d3-11eb-ae93-0242ac130002"
+												appointment.EntityDTO.appointmentStatus != "SCHEDULED"
 											}
 											onClick={() =>
 												this.handleNotShowUp(appointment.Id)

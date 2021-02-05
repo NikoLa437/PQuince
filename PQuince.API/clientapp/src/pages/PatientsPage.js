@@ -3,16 +3,16 @@ import Header from '../components/Header';
 import TopBar from '../components/TopBar';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
-import { Button } from 'react-bootstrap';
 import PatientLogo from "../static/patientLogo.png";
 import getAuthHeader from "../GetHeader";
 
-class ObservePatientsPage extends Component {
+class PatientsPage extends Component {
     state = {
         name:"",
         surname:"",
         patients: []
     }
+
     handleNameChange = (event) => {
         this.setState({name: event.target.value});
       }
@@ -63,7 +63,7 @@ class ObservePatientsPage extends Component {
                 <Header/>
 
                 <div className="container" style={{marginTop:"10%"}}>
-                    <h5 className=" text-left mb-0 text-uppercase" style={{marginTop: "2rem"}}>Patients</h5>
+                    <h3 className=" text-left mb-0 text-uppercase" style={{marginTop: "2rem"}}>Patients</h3>
  
                     <div className="row section-design">
                         <div className="col-lg-8 mx-auto">
@@ -90,7 +90,6 @@ class ObservePatientsPage extends Component {
                                 </div>
                                 <div>
                                     <button
-                                        style={{ background: "#1977cc", marginBottom: "8px" }}
                                         onClick={this.handleSearch}
                                         className="btn btn-primary btn-xl"
                                         type="button"
@@ -134,4 +133,4 @@ class ObservePatientsPage extends Component {
     }
 }
  
-export default ObservePatientsPage;
+export default PatientsPage;

@@ -28,12 +28,14 @@ import quince_it.pquince.entities.users.PharmacyAdmin;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
+import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.PharmacyAdminRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
+import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.security.exception.ResourceConflictException;
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
@@ -85,6 +87,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private WorkTimeService workTimeService;
+	
+	@Autowired
+	private WorkTimeRepository workTimeRepository;
 	
 	@Autowired
 	private AllergenService allergenService;
@@ -731,6 +736,36 @@ public class UserService implements IUserService{
 		catch (EntityNotFoundException e) { return false; } 
 		catch (IllegalArgumentException e) { return false; }	
 	}
+	
+	@Override
+	public Pharmacy getPharmacyForLoggedDermatologist() {
+		//TODO: Exceptions
+		//TODO: appointments date?
+		UUID dermatologistId = getLoggedUserId();
+		Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
+		Pharmacy pharmacy = null;
+		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);	
+		for(WorkTime wt : workTimes){
+			pharmacy = wt.getPharmacy();
+		}
+		return pharmacy;
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies() {
+		List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies = new ArrayList<IdentifiableDTO<PharmacyDTO>>();
+	
+		try {
+			UUID loggedUser= this.getLoggedUserId();
 
+			Patient patient = patientRepository.getOne(loggedUser);
+			
+			patient.getPharmacies().forEach((p) -> subscribedPharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(p)));
+			
+			return subscribedPharmacies;
+		} 
+		catch (EntityNotFoundException e) { return null; } 
+		catch (IllegalArgumentException e) { return null; }	
+	}
 	
 }
