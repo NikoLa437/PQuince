@@ -15,7 +15,8 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345678-52d3-11eb-ae93-0242ac130002',true, 'example8@example.com','Nemanja','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 
 
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-11eb-ae93-0242ac130002',true, 'exampla11@example.com','Vidoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-11eb-ae93-0242ac130002',true, 'example11@example.com','Vidoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Stefic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-12eb-ac93-0242ac130002',true, 'exampla21@example.com','Sredoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Mikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-13eb-ae93-0242ac130002',true, 'exampla31@example.com','Radoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Bikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788',true, 'pharmacyadmin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
@@ -29,6 +30,8 @@ insert into user_authority (user_id, authority_id) values ('11355678-52d3-11eb-a
 insert into user_authority (user_id, authority_id) values ('22345678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
 insert into user_authority (user_id, authority_id) values ('25345678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
 insert into user_authority (user_id, authority_id) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788', 'ea16767c-2c1f-49fb-ac98-c7739c0036e8');
+
+insert into user_authority (user_id, authority_id) values ('25345278-52d3-11eb-ae93-0242ac130002', 'a1e3bac1-6093-4705-b835-eed75c3e5f21');
 
 insert into allergen (id, name) values ('3b27db4c-48bb-4f78-a3da-745d9c9458ba', 'Penicilin');
 insert into allergen (id, name) values ('062d319f-f393-464c-98fb-b3db29e77626', 'Amoxicilin');

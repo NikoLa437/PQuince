@@ -24,6 +24,7 @@ import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.Pharmacist;
 import quince_it.pquince.entities.users.PharmacyAdmin;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
@@ -32,6 +33,7 @@ import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.PharmacistRepository;
 import quince_it.pquince.repository.users.PharmacyAdminRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
@@ -84,6 +86,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private DermatologistRepository dermatologistRepository;
+	
+	@Autowired
+	private PharmacistRepository pharmacistRepository;
 	
 	@Autowired
 	private WorkTimeService workTimeService;
@@ -766,6 +771,13 @@ public class UserService implements IUserService{
 		} 
 		catch (EntityNotFoundException e) { return null; } 
 		catch (IllegalArgumentException e) { return null; }	
+	}
+
+	@Override
+	public IdentifiableDTO<PharmacyDTO> getPharmacy() {
+			UUID pharmacistId = getLoggedUserId();
+			Pharmacist pharmacist = pharmacistRepository.getOne(pharmacistId);
+			return PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(pharmacist.getPharmacy());
 	}
 	
 }

@@ -8,11 +8,12 @@ import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import EventDetailsModal from "../components/EventDetailsModal";
+import { Redirect } from "react-router-dom";
 
 
 const localizer = momentLocalizer(moment)
 
-class DermatologistCalendarPage extends Component {
+class CalendarPage extends Component {
     state = {
         pharmacies: [],
         events: [],
@@ -23,13 +24,30 @@ class DermatologistCalendarPage extends Component {
         startDateTime: "",
         endDateTime: "",
         price: "",
-        pharmacy: {}
+        pharmacy: {},
+        pharmacyName : "",
+        redirect: false,
+        redirectUrl: ''
     };
+
+    hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
+	};
 
     handleModalInfoClose = () => {
         this.setState({ openModalInfo: false });
     };
 
+    //TODO: start examination
     handleEventClick = (appointment) => {
         let name = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.name;
         let surname = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.surname;
@@ -58,11 +76,18 @@ class DermatologistCalendarPage extends Component {
         console.log(this.state.events);
     };
 
-    componentDidMount() {
-
+    fetchDermatologistCalendar = () => {
         Axios.get(BASE_URL + "/api/users/dermatologist/pharmacies", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
-            .then((res) => {
-                this.setState({ pharmacies: res.data, pharmacy: res.data[0] });
+        .then((res) => {
+
+            if (res.status === 401) {
+                this.setState({
+                    redirect: true,
+                    redirectUrl: "/unauthorized"
+                });
+            } else {
+
+                this.setState({ pharmacies: res.data, pharmacy: res.data[0], pharmacyName: res.data[0].EntityDTO.name });
                 console.log(res.data);
 
                 Axios.get(BASE_URL + "/api/appointment/dermatologist/calendar-for-pharmacy/" + this.state.pharmacy.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
@@ -74,11 +99,48 @@ class DermatologistCalendarPage extends Component {
                     .catch((err) => {
                         console.log(err);
                     });
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    };
 
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+    fetchFarmacistCalendar = () => {
+        Axios.get(BASE_URL + "/api/users/pharmacist/pharmacy", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+        .then((res) => {
+
+            if (res.status === 401) {
+                this.setState({
+                    redirect: true,
+                    redirectUrl: "/unauthorized"
+                });
+            } else {
+
+                this.setState({ pharmacy: res.data, pharmacyName: res.data.EntityDTO.name });
+                console.log(res.data);
+
+                Axios.get(BASE_URL + "/api/appointment/pharmacist/calendar/" + this.state.pharmacy.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+                    .then((res) => {
+                        this.setState({ appointments: res.data });
+                        console.log(res.data);
+                        this.mapAppointmentsToEvents();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    };
+
+    componentDidMount() {
+        if(this.hasRole("ROLE_DERMATHOLOGIST"))
+            this.fetchDermatologistCalendar();
+        else
+            this.fetchFarmacistCalendar();
     }
 
     handlePharmacyChange = (event) => {
@@ -95,34 +157,28 @@ class DermatologistCalendarPage extends Component {
             });
     };
 
-    /*eventStyleGetter = (event, start, end, isSelected) => {
-        var backgroundColor = event.resource.EntityDTO.appointmentStatus === "SCHEDULED" ? "#3C00FF" : "#948a8a";
-        var style = {
-            backgroundColor: backgroundColor,
-            borderRadius: '0px',
-            opacity: 0.8,
-            color: 'black',
-            border: '0px',
-            display: 'block'
-        };
-        return {
-            style: style
-        };
-    }*/
-
     render() {
+
+        if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
         return (
             <React.Fragment>
                 <TopBar />
                 <Header />
                 <div className="container" style={{ marginTop: "10%" }}>
                     <h4 className="text-center mb-5 mt-2 text-uppercase">Calendar</h4>
-                    <h5 className="text-left mt-2">Working calendar for selected pharmacy</h5>
-                    <div className="mb-5 mt-2">
-                        <select onChange={this.handlePharmacyChange} className="form-control" >
-                            {this.state.pharmacies.map((pharmacy) => <option key={pharmacy.Id} value={pharmacy.Id}>Dr {pharmacy.EntityDTO.name}</option>)}
-                        </select>
+                    <div hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
+                        <h5 className="text-left mt-2">Working calendar for selected pharmacy</h5>
+                        <div className="mb-5 mt-2">
+                            <select onChange={this.handlePharmacyChange} className="form-control" >
+                                {this.state.pharmacies.map((pharmacy) => <option key={pharmacy.Id} value={pharmacy.Id}>Dr {pharmacy.EntityDTO.name}</option>)}
+                            </select>
+                        </div>
                     </div>
+                    <div hidden={!this.hasRole("ROLE_PHARMACIST")}>
+                    <h5 className="text-left mb-5 mt-2">{"Working calendar for " + this.state.pharmacyName + " pharmacy"}</h5>
+                    </div>
+                    
                     <Calendar
                         selectable
                         onSelectEvent={event => this.handleEventClick(event.resource)}
@@ -133,7 +189,6 @@ class DermatologistCalendarPage extends Component {
                         startAccessor="start"
                         endAccessor="end"
                         style={{ height: 500 }}
-                    //eventPropGetter={(this.eventStyleGetter)}
                     />
                 </div>
 
@@ -152,4 +207,4 @@ class DermatologistCalendarPage extends Component {
     }
 }
 
-export default DermatologistCalendarPage;
+export default CalendarPage;

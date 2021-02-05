@@ -54,7 +54,7 @@ class TopBar extends React.Component {
 						<Link to="/profile" style={myStyle} className="profile" hidden={!this.hasRole("ROLE_PATIENT")}>
 							<i className="icofont-user"></i>Profile
 						</Link>
-						<Link to="/staff-profile" style={myStyle} className="profile" hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
+						<Link to="/staff-profile" style={myStyle} className="profile" hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
 							<i className="icofont-user"></i>Profile
 						</Link>
 					</div>

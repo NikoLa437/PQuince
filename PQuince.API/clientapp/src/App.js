@@ -32,7 +32,7 @@ import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPag
 import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
 import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
 import PatientsRedirectComplaints from "./pages/complaints/PatientsRedirectComplaints";
-import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
+import CalendarPage from "./pages/CalendarPage";
 import PatientsSubscribedPharmacies from "./pages/subscribed-pharmacies/PatientsSubscribedPharmacies";
 import Subscription from "./pages/subscription/Subscription";
 
@@ -61,10 +61,6 @@ function App() {
 				<Link exact to="/dermatologists-for-patient" path="/dermatologists-for-patient" component={DermatologistsPageForPatient} />
 				<Link exact to="/patients" path="/patients" component={PatientsPage} />
 
-				
-				
-				
-
 				<Link exact to="/schedule-consultation" path="/schedule-consultation" component={ConsultationTimeSelectPage} />
 				<Link exact to="/loyalty-program" path="/loyalty-program" component={LoyaltyProgram} />
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
@@ -91,7 +87,7 @@ function App() {
 
 				<Route path="/treatment-report/:id" children={<TreatmentReportPage />}/>
 
-				<Link exact to="/dermatologist-calendar" path="/dermatologist-calendar" component={DermatologistCalendarPage} />
+				<Link exact to="/calendar" path="/calendar" component={CalendarPage} />
 			</Switch>
 		</Router>
 	);

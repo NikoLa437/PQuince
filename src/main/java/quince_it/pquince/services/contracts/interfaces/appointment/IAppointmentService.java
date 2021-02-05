@@ -57,8 +57,6 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	void reserveAppointment(UUID appointmentId) throws AppointmentTimeOverlappingWithOtherAppointmentException;
 	
 	void cancelAppointment(UUID appointmentId) throws AuthorizationServiceException;
-
-	List<IdentifiableDTO<AppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId);
 	
 	List<Pharmacy> findAllDistinctPharmaciesForAppointmentTime(Date startDateTime, Date endDateTime);
 
@@ -83,4 +81,8 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	IdentifiableDTO<AppointmentDTO> getAppointment(UUID appointmentId);
 
 	void finishAppointment(UUID id);
+
+	List<IdentifiableDTO<AppointmentDTO>> getAppointmentsByPatientAsStaff(UUID patientId);
+
+	List<IdentifiableDTO<AppointmentDTO>> getCalendarAppointmentsByPharmacist(UUID pharmacyId);
 }

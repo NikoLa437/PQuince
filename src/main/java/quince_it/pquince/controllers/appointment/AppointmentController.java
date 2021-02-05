@@ -152,6 +152,12 @@ public class AppointmentController {
 		return new ResponseEntity<>(appointmentService.getCalendarAppointmentsByDermatologist(pharmacyId),HttpStatus.OK);
 	}
 	
+	@GetMapping("/pharmacist/calendar/{pharmacyId}")
+	@PreAuthorize("hasRole('PHARMACIST')")
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getCalendarAppointmentsByPharmacist(@PathVariable UUID pharmacyId) {
+		return new ResponseEntity<>(appointmentService.getCalendarAppointmentsByPharmacist(pharmacyId),HttpStatus.OK);
+	}
+	
 	@GetMapping("/dermatologist/find-by-pharmacy/{pharmacyId}")
 	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllFreeAppointmentsByPharmacyAndAppointmentType(@PathVariable UUID pharmacyId) {
 		return new ResponseEntity<>(appointmentService.findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, AppointmentType.EXAMINATION),HttpStatus.OK);
@@ -247,8 +253,8 @@ public class AppointmentController {
 	}
 	
 	@GetMapping("/patient/{patientId}")
-	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatient(@PathVariable UUID patientId) {
-		return new ResponseEntity<>(appointmentService.getDermatologistAppointmentsByPatient(patientId),HttpStatus.OK);
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatientAsStaff(@PathVariable UUID patientId) {
+		return new ResponseEntity<>(appointmentService.getAppointmentsByPatientAsStaff(patientId),HttpStatus.OK);
 	}
 	
 	@GetMapping("/{appointmentId}")
