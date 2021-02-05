@@ -31,6 +31,7 @@ import quince_it.pquince.services.contracts.dto.users.AddPharmacistToPharmacyDTO
 import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
@@ -404,6 +405,20 @@ public class UsersController {
 			List<IdentifiableDermatologistForPharmacyGradeDTO> dermatologist = userService.findByNameSurnameAndGradeForPharmacy(dermatologistFiltrationDTO);
 			
 			return new ResponseEntity<>(dermatologist, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/search-pharmacists-for-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> findPharmacist(@RequestParam String name,@RequestParam String surname, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam UUID pharmacyId) {
+		
+		try {
+			PharmacistFiltrationDTO pharmacistFiltrationDTO = new PharmacistFiltrationDTO(name, surname, gradeFrom, gradeTo,pharmacyId);
+			List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacist = userService.findPharmacistByNameSurnameGradeAndPharmacy(pharmacistFiltrationDTO);
+			
+			return new ResponseEntity<>(pharmacist, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

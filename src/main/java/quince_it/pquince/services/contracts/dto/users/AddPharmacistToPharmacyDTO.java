@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public class AddPharmacistToPharmacyDTO {
+	
 	private UUID pharmacyId;
 	
 	private UUID pharmacistId;

@@ -48,6 +48,7 @@ import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
@@ -783,17 +784,13 @@ public class UserService implements IUserService{
 	
 	@Override
 	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacistForEmployment() {
-		System.out.println("TEST");
 		List<Pharmacist> pharmacists = pharmacistRepository.findAllPharmacistForEmployment();
 		System.out.println(pharmacists.size());
 
-		System.out.println("TES11111111111111111T");
 
 		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> retPharmacist = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
-		System.out.println("TES3333333333T");
 
 		pharmacists.forEach((p) ->  retPharmacist.add(MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(p)));
-		System.out.println("TES2222222222222T");
 
 		return retPharmacist;
 	}
@@ -801,31 +798,53 @@ public class UserService implements IUserService{
 	@Override
 	public boolean addPharmacistToPharmacy(AddPharmacistToPharmacyDTO addPharmacistToPharmacyDTO) {
 		try {
-			System.out.println("TESTTTT11");
 
-			System.out.println(addPharmacistToPharmacyDTO.getPharmacistId());
 			Pharmacist pharmacist = pharmacistRepository.getOne(addPharmacistToPharmacyDTO.getPharmacistId());
-			
-			System.out.println("TESTTTT88");
-
 			Pharmacy pharmacy = pharmacyRepository.getOne(addPharmacistToPharmacyDTO.getPharmacyId());
 			
-			System.out.println("TESTTTT44");
 			
 			pharmacist.setPharmacy(pharmacy);
 			pharmacistRepository.save(pharmacist);
 			
-			System.out.println("TESTTTT22");
 
 			WorkTimeDTO workTimeDTO = new WorkTimeDTO(addPharmacistToPharmacyDTO.getPharmacyId(),addPharmacistToPharmacyDTO.getPharmacistId(), addPharmacistToPharmacyDTO.getStartDate(), addPharmacistToPharmacyDTO.getEndDate(), addPharmacistToPharmacyDTO.getStartTime(), addPharmacistToPharmacyDTO.getEndTime(),"");
 			workTimeService.create(workTimeDTO);
 			
-			System.out.println("TESTTTT33");
-
 			return true;
 		} 
 		catch (EntityNotFoundException e) { return false; } 
 		catch (IllegalArgumentException e) { return false; }
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findPharmacistByNameSurnameGradeAndPharmacy(
+			PharmacistFiltrationDTO pharmacistFiltrationDTO) {
+		List<Pharmacist> pharmacists = pharmacistRepository.findPharmacistByNameSurnameAndPharmacy(pharmacistFiltrationDTO.getName().toLowerCase(),pharmacistFiltrationDTO.getSurname().toLowerCase(),pharmacistFiltrationDTO.getPharmacyId());
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>  retVal = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+		
+		System.out.println("SIZEEE: " + pharmacists.size());
+		
+		pharmacists.forEach(c -> retVal.add(MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(c)));
+		
+		System.out.println("SIZEEE: " + retVal.size());
+
+		
+		if(pharmacistFiltrationDTO.getGradeFrom()!=-1 || pharmacistFiltrationDTO.getGradeTo()!=-1)
+			return findPharmacistByGrade(retVal,pharmacistFiltrationDTO);	
+		
+		return retVal;
+	}
+
+	private List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findPharmacistByGrade(List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists,
+			PharmacistFiltrationDTO pharmacistFiltrationDTO) {
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> retVal = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+		
+		for(IdentifiableDTO<PharmacistForPharmacyGradeDTO> pharmacist : pharmacists) {
+			if(pharmacist.EntityDTO.getGrade()>= pharmacistFiltrationDTO.getGradeFrom() && (pharmacist.EntityDTO.getGrade()< pharmacistFiltrationDTO.getGradeTo() || pharmacistFiltrationDTO.getGradeTo()==-1))
+				retVal.add(pharmacist);
+		}
+		
+		return retVal;
 	}
 	
 

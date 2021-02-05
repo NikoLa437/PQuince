@@ -15,6 +15,7 @@ import quince_it.pquince.services.contracts.dto.users.AddPharmacistToPharmacyDTO
 import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
@@ -108,4 +109,7 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacistForEmployment();
 
 	boolean addPharmacistToPharmacy(AddPharmacistToPharmacyDTO addPharmacistToPharmacyDTO);
+
+	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findPharmacistByNameSurnameGradeAndPharmacy(
+			PharmacistFiltrationDTO pharmacistFiltrationDTO);
 }
