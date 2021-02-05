@@ -1,8 +1,9 @@
 import React, { Component } from "react";
+import { BASE_URL } from "../../constants.js";
 import TopBar from "../../components/TopBar";
 import Header from "../../components/Header";
 import Axios from "axios";
-import { BASE_URL } from "../../constants.js";
+import getAuthHeader from "../../GetHeader";
 import PharmacyLogo from "../../static/pharmacyLogo.png";
 import '../../App.js'
 import { Redirect } from "react-router-dom";
@@ -29,8 +30,9 @@ class QRpharmacies extends Component {
 	};
 
 	fetchData = (id) => {
+	console.log("ID", id);
 		this.setState({
-			eReciptId: id,
+			eReciptId: this.props.match.params.id,
 		});
 	};
 
@@ -50,12 +52,20 @@ class QRpharmacies extends Component {
 	};
 
 	componentDidMount() {
+		const id = this.props.match.params.id;
+		
+		this.fetchData(id);
 		this.getCurrentCoords();
-
-		Axios.get(BASE_URL + "/api/pharmacy")
+		
+		let eReceiptIdDTO = {
+			id: this.props.match.params.id,
+		}
+		
+		console.log("IDDDD", eReceiptIdDTO);
+		Axios.get(BASE_URL + "/api/pharmacy/qrpharmacies/" + this.props.match.params.id, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
+				console.log(res.data, "FARMACIJE");
 				this.setState({ pharmacies: res.data });
-				console.log(res.data);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -194,7 +204,7 @@ class QRpharmacies extends Component {
 	};
 
 	handleResetSearch = () => {
-		Axios.get(BASE_URL + "/api/pharmacy")
+		Axios.get(BASE_URL + "/api/pharmacy/qrpharmacies" + this.state.eReciptId)
 			.then((res) => {
 				this.setState({
 					pharmacies: res.data,
@@ -219,7 +229,7 @@ class QRpharmacies extends Component {
 		if (this.state.showingSearched === true) {
 			this.handleSearch();
 		} else {
-			Axios.get(BASE_URL + "/api/pharmacy")
+			Axios.get(BASE_URL + "/api/pharmacy/qrpharmacies" + this.state.eReciptId)
 				.then((res) => {
 					this.setState({ pharmacies: res.data });
 					console.log(res.data);
@@ -506,15 +516,18 @@ class QRpharmacies extends Component {
 									</td>
 									<td>
 										<div>
-											<b>Name: </b> {pharmacy.EntityDTO.name}
+											<b>Name: </b> {pharmacy.EntityDTO.pharmacy.EntityDTO.name}
 										</div>
 										<div>
-											<b>Address: </b> {pharmacy.EntityDTO.address.street}, {pharmacy.EntityDTO.address.city},{" "}
-											{pharmacy.EntityDTO.address.country}
+											<b>Address: </b> {pharmacy.EntityDTO.pharmacy.EntityDTO.address.street}, {pharmacy.EntityDTO.pharmacy.EntityDTO.address.city},{" "}
+											{pharmacy.EntityDTO.pharmacy.EntityDTO.address.country}
 										</div>
 										<div>
-											<b>Grade: </b> {pharmacy.EntityDTO.grade}
+											<b>Grade: </b> {pharmacy.EntityDTO.pharmacy.EntityDTO.grade}
 											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
+										</div>
+										<div>
+											<b>Price for all drugs: </b> {pharmacy.EntityDTO.price}
 										</div>
 									</td>
 								</tr>

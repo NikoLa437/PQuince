@@ -81,7 +81,6 @@ class QRreader extends Component {
 					Submit QR Code
 				</button>
                 
-                <p>{this.state.result}</p>
             </div>
             </div>
 		</React.Fragment>
