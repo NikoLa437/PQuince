@@ -3,11 +3,10 @@ import Header from '../components/Header';
 import TopBar from '../components/TopBar';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
-import { Button } from 'react-bootstrap';
 import PatientLogo from "../static/patientLogo.png";
 import getAuthHeader from "../GetHeader";
 
-class ObservePatientsPage extends Component {
+class PatientsPage extends Component {
     state = {
         name:"",
         surname:"",
@@ -91,7 +90,6 @@ class ObservePatientsPage extends Component {
                                 </div>
                                 <div>
                                     <button
-                                        style={{ background: "#1977cc", marginBottom: "8px" }}
                                         onClick={this.handleSearch}
                                         className="btn btn-primary btn-xl"
                                         type="button"
@@ -135,4 +133,4 @@ class ObservePatientsPage extends Component {
     }
 }
  
-export default ObservePatientsPage;
+export default PatientsPage;

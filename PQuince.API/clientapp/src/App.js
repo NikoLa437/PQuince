@@ -17,7 +17,7 @@ import PatientsAppointments from "./pages/dermatologist-appointment/PatientsAppo
 import HistoryDermatologistAppointments from "./pages/appointment-history/HistoryDermatologistAppointments";
 import PatientsDrugReservationHistory from "./pages/drug-reservation/PatientsDrugReservationHistory";
 import DermatologistsPage from "./pages/dermatologist/DermatologistsPage";
-import ObservePatientsPage from "./pages/ObservePatientsPage";
+import PatientsPage from "./pages/PatientsPage";
 import PatientProfilePage from "./pages/PatientProfilePage";
 import ScheduleAppointmentPage from "./pages/dermatologist-appointment/ScheduleAppointmentPage";
 import TreatmentReportPage from "./pages/TreatmentReportPage";
@@ -57,7 +57,7 @@ function App() {
 				<Link exact to="/dermatologist-history" path="/dermatologist-history" component={HistoryDermatologistAppointments} />
 				<Link exact to="/dermatologists" path="/dermatologists" component={DermatologistsPage} />
 				<Link exact to="/dermatologists-for-patient" path="/dermatologists-for-patient" component={DermatologistsPageForPatient} />
-				<Link exact to="/patients" path="/patients" component={ObservePatientsPage} />
+				<Link exact to="/patients" path="/patients" component={PatientsPage} />
 
 				
 				
