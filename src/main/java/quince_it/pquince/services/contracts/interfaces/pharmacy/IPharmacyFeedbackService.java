@@ -6,6 +6,7 @@ import java.util.UUID;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
+import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface IPharmacyFeedbackService {
@@ -14,7 +15,7 @@ public interface IPharmacyFeedbackService {
 	
 	List<IdentifiableDTO<PharmacyGradeDTO>> findByNameCityAndGrade(PharmacyFiltrationDTO pharmacyFiltrationDTO);
 	
-	void create(PharmacyFeedbackDTO entityDTO);
+	void create(PharmacyFeedbackDTO entityDTO) throws FeedbackNotAllowedException;
 	
 	void update(PharmacyFeedbackDTO entityDTO);
 	

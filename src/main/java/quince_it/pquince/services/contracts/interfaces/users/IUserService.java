@@ -101,4 +101,6 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	boolean checkIfPatientSubscribed(UUID pharmacyId);
 	
 	Pharmacy getPharmacyForLoggedDermatologist();
+
+	List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies();
 }

@@ -90,47 +90,40 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 	}
 
 	@Override
-	public void create(PharmacyFeedbackDTO entityDTO) {
+	public void create(PharmacyFeedbackDTO entityDTO) throws FeedbackNotAllowedException {
 		
-		try {
-			UUID patientId = userService.getLoggedUserId();
-			Patient patient = patientRepository.findById(patientId).get();		
-			
-			if(!CanPatientGiveFeedback(patient.getId(), entityDTO.getPharmacyId())) throw new FeedbackNotAllowedException();
-			
-			Pharmacy pharmacy = pharmacyRepository.findById(entityDTO.getPharmacyId()).get();
-			PharmacyFeedback pharmacyFeedback = new PharmacyFeedback(pharmacy, entityDTO.getGrade(), patient);
-			pharmacyFeedbackRepository.save(pharmacyFeedback);
-			
-		} catch (Exception e) {
-		}
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();		
+		
+		CanPatientGiveFeedback(patient.getId(), entityDTO.getPharmacyId());
+		
+		Pharmacy pharmacy = pharmacyRepository.findById(entityDTO.getPharmacyId()).get();
+		PharmacyFeedback pharmacyFeedback = new PharmacyFeedback(pharmacy, entityDTO.getGrade(), patient);
+		pharmacyFeedbackRepository.save(pharmacyFeedback);
+		
 	}
 
-	private boolean CanPatientGiveFeedback(UUID patientId, UUID pharmacyId) {
+	private void CanPatientGiveFeedback(UUID patientId, UUID pharmacyId) throws FeedbackNotAllowedException {
 		// TODO : eReciept check, consultation check!
-		return appointmentRepository.findAllPreviousAppointmentsForPatientForPharmacy(patientId, pharmacyId, AppointmentType.CONSULTATION).size() > 0 ||
+		if(!(appointmentRepository.findAllPreviousAppointmentsForPatientForPharmacy(patientId, pharmacyId, AppointmentType.CONSULTATION).size() > 0 ||
 			   appointmentRepository.findAllPreviousAppointmentsForPatientForPharmacy(patientId, pharmacyId, AppointmentType.EXAMINATION).size() > 0  ||
-			   drugReservationRepository.findProcessedDrugReservationsForPatient(patientId).size() > 0;
+			   drugReservationRepository.findProcessedDrugReservationsForPatientForPharmacy(patientId, pharmacyId).size() > 0))
+			throw new FeedbackNotAllowedException();
 	}
 
 	@Override
 	public void update(PharmacyFeedbackDTO entityDTO) {
 		
-		try {
-			UUID patientId = userService.getLoggedUserId();
-			Patient patient = patientRepository.findById(patientId).get();
-			Pharmacy pharmacy = pharmacyRepository.findById(entityDTO.getPharmacyId()).get();
-						
-			PharmacyFeedback pharmacyFeedback = pharmacyFeedbackRepository.findById(new PharmacyFeedbackId(pharmacy, patient)).get();
-			
-			pharmacyFeedback.setDate(new Date());
-			pharmacyFeedback.setGrade(entityDTO.getGrade());
-			
-			pharmacyFeedbackRepository.save(pharmacyFeedback);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();
+		Pharmacy pharmacy = pharmacyRepository.findById(entityDTO.getPharmacyId()).get();
+					
+		PharmacyFeedback pharmacyFeedback = pharmacyFeedbackRepository.findById(new PharmacyFeedbackId(pharmacy, patient)).get();
+		
+		pharmacyFeedback.setDate(new Date());
+		pharmacyFeedback.setGrade(entityDTO.getGrade());
+		
+		pharmacyFeedbackRepository.save(pharmacyFeedback);
 	}
 
 	@Override

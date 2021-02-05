@@ -57,6 +57,9 @@ class Header extends Component {
 									<li>
 										<Link to="/drugs-reservation">Reserved medicines</Link>
 									</li>
+									<li>
+										<Link to="/patient-pharmacies-subscription">Pharmacy subscription</Link>
+									</li>
 								</ul>
 							</li>
 							<li hidden={this.hasRole("*")}>
