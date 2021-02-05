@@ -52,7 +52,7 @@ class Header extends Component {
 										<Link to="/observe-consultations">Consultations with a pharmacist</Link>
 									</li>
 									<li>
-										<Link to="/">eReciepts</Link>
+										<Link to="/patient-ereceipts">eReciepts</Link>
 									</li>
 									<li>
 										<Link to="/drugs-reservation">Reserved medicines</Link>

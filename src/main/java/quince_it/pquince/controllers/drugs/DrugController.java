@@ -30,6 +30,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ReplaceDrugIdDTO;
+import quince_it.pquince.services.contracts.dto.drugs.StaffDrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.users.DrugManufacturerDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -137,6 +138,20 @@ public class DrugController {
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	@PostMapping("/staff/reserve")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
+	public ResponseEntity<?> reserveDrugAsStaff(@RequestBody StaffDrugReservationDTO staffDrugReservationDTO) {
+		try {
+			UUID reservationId = drugReservationService.reserveDrugAsStaff(staffDrugReservationDTO);
+			return new ResponseEntity<>(reservationId ,HttpStatus.CREATED);
+		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
