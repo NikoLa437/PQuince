@@ -37,6 +37,8 @@ import PatientsSubscribedPharmacies from "./pages/subscribed-pharmacies/Patients
 import EReceiptsForPatient from "./pages/eReceipt-patient/EReceiptsForPatient";
 import DrugsFromEReceiptForPatient from "./pages/eReceipt-patient/DrugsFromEReceiptForPatient";
 import Subscription from "./pages/subscription/Subscription";
+import QRreader from "./pages/QRcode/QRreader";
+import QRpharmacies from "./pages/QRcode/QRpharmacies";
 
 function App() {
 	return (
@@ -71,6 +73,8 @@ function App() {
 				<Link exact to="/patient-ereceipts" path="/patient-ereceipts" component={EReceiptsForPatient} />
 				<Link exact to="/patient-ereceipt-drugs" path="/patient-ereceipt-drugs" component={DrugsFromEReceiptForPatient} />
 				<Link exact to="/subscription" path="/subscription" component={Subscription} />
+				<Link exact to="/qr" path="/qr" component={QRreader} />
+				<Link exact to="/qrpharmacies" path="/qrpharmacies" component={QRpharmacies} />
 
 				<Link exact to="/patient-pharmacies-subscription" path="/patient-pharmacies-subscription" component={PatientsSubscribedPharmacies} />
 
@@ -78,6 +82,7 @@ function App() {
 				<Link exact to="/home-dermatologist-reservation" path="/home-dermatologist-reservation" component={AppointmentFromHomePage} />
 
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
+				<Route path="/qrpharmacies/:id" children={<QRpharmacies />} />
 				<Route path="/reserve-appointment/:id" children={<Appointments />} />
 				<Link exact to="/pharmacy-for-admin" path="/pharmacy-for-admin" component={PharmacyForAdmin} />
 

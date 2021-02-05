@@ -6,6 +6,7 @@ import { BASE_URL } from "../../constants.js";
 import PharmacyLogo from "../../static/pharmacyLogo.png";
 import "../../App.js";
 import { Redirect } from "react-router-dom";
+import { withRouter } from "react-router";
 import getAuthHeader from "../../GetHeader";
 
 class PatientsSubscribedPharmacies extends Component {
@@ -86,4 +87,4 @@ class PatientsSubscribedPharmacies extends Component {
 	}
 }
 
-export default PatientsSubscribedPharmacies;
+export default withRouter(PatientsSubscribedPharmacies);
