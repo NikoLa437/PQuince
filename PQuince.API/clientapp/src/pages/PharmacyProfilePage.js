@@ -589,7 +589,7 @@ class PharmacyProfilePage extends Component {
 								className="btn btn-primary btn-xl"
 								type="button"
 							>
-								<i className="icofont-subscribe mr-1"></i>List of pharmacists ***
+								<i className="icofont-subscribe mr-1"></i>List of pharmacists 
 							</button>
 							<br></br>
 							<button

@@ -112,4 +112,6 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 
 	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findPharmacistByNameSurnameGradeAndPharmacy(
 			PharmacistFiltrationDTO pharmacistFiltrationDTO);
+
+	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacists();
 }

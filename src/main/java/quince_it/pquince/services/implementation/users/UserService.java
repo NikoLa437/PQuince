@@ -819,20 +819,21 @@ public class UserService implements IUserService{
 	@Override
 	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findPharmacistByNameSurnameGradeAndPharmacy(
 			PharmacistFiltrationDTO pharmacistFiltrationDTO) {
-		List<Pharmacist> pharmacists = pharmacistRepository.findPharmacistByNameSurnameAndPharmacy(pharmacistFiltrationDTO.getName().toLowerCase(),pharmacistFiltrationDTO.getSurname().toLowerCase(),pharmacistFiltrationDTO.getPharmacyId());
-		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>  retVal = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+		List<Pharmacist> pharmacists;
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>  retPharmacists = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
 		
-		System.out.println("SIZEEE: " + pharmacists.size());
+		if(pharmacistFiltrationDTO.getPharmacyId().toString().equals("00000000-0000-0000-0000-000000000000"))
+			pharmacists = pharmacistRepository.findPharmacistByNameAndSurname(pharmacistFiltrationDTO.getName().toLowerCase(),pharmacistFiltrationDTO.getSurname().toLowerCase());
+		else
+			pharmacists = pharmacistRepository.findPharmacistByNameSurnameAndPharmacy(pharmacistFiltrationDTO.getName().toLowerCase(),pharmacistFiltrationDTO.getSurname().toLowerCase(),pharmacistFiltrationDTO.getPharmacyId());
 		
-		pharmacists.forEach(c -> retVal.add(MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(c)));
+		pharmacists.forEach(c -> retPharmacists.add(MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(c)));
 		
-		System.out.println("SIZEEE: " + retVal.size());
 
-		
 		if(pharmacistFiltrationDTO.getGradeFrom()!=-1 || pharmacistFiltrationDTO.getGradeTo()!=-1)
-			return findPharmacistByGrade(retVal,pharmacistFiltrationDTO);	
+			return findPharmacistByGrade(retPharmacists,pharmacistFiltrationDTO);	
 		
-		return retVal;
+		return retPharmacists;
 	}
 
 	private List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findPharmacistByGrade(List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists,
@@ -845,6 +846,15 @@ public class UserService implements IUserService{
 		}
 		
 		return retVal;
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacists() {
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> retPharmacists = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+				
+		pharmacistRepository.findAll().forEach((pharmacist) -> retPharmacists.add(this.MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(pharmacist)));
+
+		return retPharmacists;
 	}
 	
 

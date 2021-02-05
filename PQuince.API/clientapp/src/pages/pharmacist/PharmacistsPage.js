@@ -3,7 +3,7 @@ import TopBar from "../../components/TopBar";
 import Header from "../../components/Header"
 import Axios from "axios";
 import { BASE_URL } from "../../constants.js";
-import dermatologistLogo from "../../static/dermatologistLogo.png";
+import pharmacistLogo from "../../static/pharmacistLogo.png";
 import WorkTimesModal from "../../components/WorkTimesModal";
 import getAuthHeader from "../../GetHeader";
 import { confirmAlert } from 'react-confirm-alert'; // Import
@@ -417,7 +417,7 @@ class PharmacistPage extends Component {
                                         <td width="130em">
                                             <img
                                                 className="img-fluid"
-                                                src={dermatologistLogo}
+                                                src={pharmacistLogo}
                                                 width="70em"
                                             />
                                         </td>
