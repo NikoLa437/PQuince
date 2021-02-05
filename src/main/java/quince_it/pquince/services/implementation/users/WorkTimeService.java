@@ -14,6 +14,7 @@ import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.users.IWorkTimeService;
@@ -83,19 +84,7 @@ public class WorkTimeService implements IWorkTimeService{
 	}
 	
 	private boolean isDateOverlap(WorkTime workTime, WorkTimeDTO workTimeDTO){
-		System.out.println("WORKTIME STARTDATE: "+workTime.getStartDate());
-		System.out.println("WORKTIME ENDDATE: "+workTime.getEndDate());
-		System.out.println("WORKTIME STARTTIME: "+workTime.getStartTime());
-		System.out.println("WORKTIME ENDTIME: "+workTime.getEndTime());
-		System.out.println("WORKTIMEDTO STARTDATE: "+workTimeDTO.getStartDate());
-		System.out.println("WORKTIMEDTO ENDDATE: "+workTimeDTO.getEndDate());
-		System.out.println("WORKTIMEDTO STARTTIME: "+workTimeDTO.getStartTime());
-		System.out.println("WORKTIMEDTO ENDTIME: "+workTimeDTO.getEndTime());
-
-
 	    if(workTime.getStartDate().before(workTimeDTO.getEndDate()) && workTimeDTO.getStartDate().before(workTime.getEndDate())) {
-			System.out.println("TESTTTT");
-
 	    	if(workTime.getStartTime()<=workTimeDTO.getEndTime() && workTimeDTO.getStartTime()<=workTime.getEndTime()) {
 	    		return true;
 	    	}
@@ -128,6 +117,20 @@ public class WorkTimeService implements IWorkTimeService{
 		}catch(Exception e) {
 			
 		}
+	}
+
+
+
+
+	public void removeWorkTimeForPharmacistForPharmacy(
+			RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO) {
+		try {
+			List<WorkTime> workTimes = workTimeRepository.findWorkTimesForPharmacistForPharmacy(removePharmacistFromPharmacyDTO.getPharmacistId(),removePharmacistFromPharmacyDTO.getPharmacyId());
+			workTimeRepository.deleteAll(workTimes);
+		}catch(Exception e) {
+			
+		}
+		
 	}
 
 }

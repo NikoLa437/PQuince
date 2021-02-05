@@ -38,4 +38,8 @@ public class Pharmacist extends Staff {
 		this.pharmacy = pharmacy;
 	}
 
+
+	public void removePharmacy() {
+		this.pharmacy = null;
+	}
 }

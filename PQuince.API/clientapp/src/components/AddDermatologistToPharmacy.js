@@ -16,10 +16,10 @@ class AddDermatologistToPharmacy extends Component {
         selectedEndDate:new Date(),
         timeFrom:1,
         timeTo:2,    
+        pharmacyId:''
     }
 
     componentDidMount() {
-
     }
 
     onAddClick = (id) =>{
@@ -32,7 +32,7 @@ class AddDermatologistToPharmacy extends Component {
 
     handleAdd = () => {
         let addDermatologistToPharmacyDTO = {
-            pharmacyId : 'cafeddee-56cb-11eb-ae93-0242ac130202',
+            pharmacyId : this.props.pharmacyId,
             dermatologistId: this.state.dermatologistIdToAdd, 
             startDate: this.state.selectedStartDate, 
             endDate:this.state.selectedEndDate,
@@ -45,11 +45,12 @@ class AddDermatologistToPharmacy extends Component {
             headers: { Authorization: getAuthHeader() },
         }).then((res) =>{
             console.log(res.data);
+            this.props.updateDermatologist();
             this.setState({showAddWorkTime: false, modalSize:'lg'});
             alert("Uspesno dodat dermatolog u apoteku")
             this.handleClickOnClose();
         }).catch((err) => {
-            alert('Nije moguce kreirati termin u naznacenom roku');
+            alert('Nije moguce dodati dermatologa');
         });
     }
 

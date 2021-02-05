@@ -3,24 +3,19 @@ import TopBar from "../../components/TopBar";
 import Header from "../../components/Header"
 import Axios from "axios";
 import { BASE_URL } from "../../constants.js";
-import dermatologistLogo from "../../static/dermatologistLogo.png";
-import WorkTimesModal from "../../components/WorkTimesModal";
-import CreateAppointmentForDermatologistModal from "../../components/CreateAppointmentForDermatologistModal";
-import AddDermatologistToPharmacy from "../../components/AddDermatologistToPharmacy";
-import PharmaciesForDermatologistModal from "../../components/PharmaciesForDermatologistModal";
+import CapsuleLogo from "../../static/capsuleLogo.png";
 import getAuthHeader from "../../GetHeader";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
 
-class DermatologistsPage extends Component {
+class DrugPageForPharmacyAdmin extends Component {
 	state = {
-        dermatologists: [],
+        drugs: [],
         staffIdForWorkTimes:'',
         showWorkTimesModal: false,
-        showCreateAppointmentModal: false,
-        showAddDermatologistModal: false,
+        showAddPharmacistModal: false,
         workTimes:[],
         forStaff:'',
         formShowed:false,
@@ -29,10 +24,8 @@ class DermatologistsPage extends Component {
         searchGradeFrom:'',
         searchGradeTo:'',
         showingSearched: false,
-        pharmaciesForDermatologist:[],
-        showPharmaciesModal:false,
-        dermatologistToEmploye:[],
-        showingSorted:false,
+        pharmacistsToEmploye:[],
+        pharmacyId:'',
         hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
@@ -41,27 +34,25 @@ class DermatologistsPage extends Component {
 		failMessage: "",
     };
 
-    handleCloseAlertSuccess = () => {
-		this.setState({ hiddenSuccessAlert: true });
-    };
-    
-    handleCloseAlertFail = () => {
-		this.setState({ hiddenFailAlert: true });
-	};
-
-
     componentDidMount() {
-
-        let pharmacyId=localStorage.getItem("keyPharmacyId")
+		let pharmacyId=localStorage.getItem("keyPharmacyId")
 		this.setState({
 			pharmacyId: pharmacyId
 		})
 
-		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/" +localStorage.getItem("keyPharmacyId"), {
+        Axios
+        .get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId="+ pharmacyId).then((res) =>{
+            this.setState({drugs : res.data});
+            console.log(res.data);
+        }).catch((err) => {console.log(err);});
+    }
+
+    updatePharmacist = () =>{
+        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
-				this.setState({ dermatologists: res.data });
+				this.setState({ pharmacists: res.data });
                 console.log(res.data);
             
 			})
@@ -70,58 +61,36 @@ class DermatologistsPage extends Component {
 			});
     }
 
-    handleCreateAppoitmentClose = () => {
-		this.setState({ showCreateAppointmentModal: false });
-    };
 
-    handleAddDermatologistModalClose = () => {
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy"  + this.state.pharmacyId, {
+    handleAddPharmacistModalClose = () => {
+        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
-				this.setState({ dermatologists: res.data });
+				this.setState({ pharmacists: res.data });
                 console.log(res.data);
             
 			})
 			.catch((err) => {
 				console.log(err);
 			});
-        this.setState({ showAddDermatologistModal: false });
-    }
-    
-    handleAddAppointmentClick = () => {
-		this.setState({
-			showCreateAppointmentModal: true,
-		});
-    };
-
-
-    updateDermatologistList = () =>{
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/" + this.state.pharmacyId, {
-			headers: { Authorization: getAuthHeader() },
-		})
-			.then((res) => {
-				this.setState({ dermatologists: res.data });
-                console.log(res.data);
-            
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+        this.setState({ showAddPharmacistModal: false });
     }
     
-    handleAddDermatologistClick = () => {
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-emplooye-in-pharmacy/"+ this.state.pharmacyId, {
+    
+    handleAddPharmacistClick = () => {
+        Axios.get(BASE_URL + "/api/users/pharmacists-for-employment", {
 			headers: { Authorization: getAuthHeader() },
 		}).then((res) => {
-                this.setState({ dermatologistToEmploye: res.data });
+                this.setState({ pharmacistsToEmploye: res.data });
+
 				console.log(res.data);
 		})
 			.catch((err) => {
 				console.log(err);
 		});
         this.setState({
-			showAddDermatologistModal: true,
+			showAddPharmacistModal: true,
 		});
     }
 
@@ -129,9 +98,6 @@ class DermatologistsPage extends Component {
         this.setState({showWorkTimesModal: false});
     }
 
-    handlePharmaciesModalClose = () =>{
-        this.setState({showPharmaciesModal: false});
-    }
 
     onWorkTimeClick = (id) =>{
         
@@ -150,41 +116,21 @@ class DermatologistsPage extends Component {
         });
     }
 
-    showPharmacies = (id) => {
-        Axios.get(BASE_URL + "/api/users/pharmacies-where-dermatologist-work",{
-            params:{
-                dermatologistId:id
-            },
-            headers: { Authorization: getAuthHeader() }
-            
-        })
-			.then((res) => {
-				this.setState({ pharmaciesForDermatologist: res.data });
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-        this.setState({
-            showPharmaciesModal: true
-        });
-    }
-
-    removeDermatologistClick = (id) =>{
+    removePharmacistClick = (id) =>{
 
         confirmAlert({
-            message: 'Are you sure to remove dermatologist.',
+            message: 'Are you sure to remove pharmacist.',
             buttons: [
               {
                 label: 'Yes',
                 onClick: () => {
-                    let removeDermatologistDTO = {
+                    let removePharmacistDTO = {
                         pharmacyId : this.state.pharmacyId,
-                        dermatologistId: id,
+                        pharmacistId: id,
                     };
             
                     Axios
-                    .put(BASE_URL + "/api/users/remove-dermatologist-from-pharmacy", removeDermatologistDTO, {
+                    .put(BASE_URL + "/api/users/remove-pharmacyist-from-pharmacy", removePharmacistDTO, {
                         headers: { Authorization: getAuthHeader() },
                     }).then((res) =>{
                         console.log(res.data);
@@ -192,17 +138,26 @@ class DermatologistsPage extends Component {
                             hiddenSuccessAlert: false,
                             hiddenFailAlert:true,
                             successHeader: "Success",
-                            successMessage: "You successfully remove dermatologist.",
+                            successMessage: "You successfully remove pharmacist.",
                         })
-                        this.updateDermatologistList();
+                        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
+                            headers: { Authorization: getAuthHeader() },
+                        })
+                            .then((res) => {
+                                this.setState({ pharmacists: res.data });
+                                console.log(res.data);
+                            
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
                         
                     }).catch((err) => {
                         this.setState({ 
                             hiddenSuccessAlert: true,
                             hiddenFailAlert: false, 
                             failHeader: "Unsuccess", 
-                            failMessage: "It is not possible to remove the dermatologist"});
-
+                            failMessage: "It is not possible to remove the pharmacist"});
                     });
                 }
               },
@@ -237,22 +192,9 @@ class DermatologistsPage extends Component {
 		this.setState({ searchGradeTo: event.target.value });
     };
 
-    handleSortByGradeAscending = () =>{
 
-    }
-
-    handleSortByGradeDescending = () =>{
-
-    }
     
     handleSearchClick = () =>{
-
-		if (this.state.showingSorted === true) {
-			this.setState({ showingSearched: true }, () => {
-				if (this.state.sortIndicator === 1) this.handleSortByGradeAscending();
-				else if (this.state.sortIndicator === 2) this.handleSortByGradeDescending();
-			});
-		} else {
 			if (
 				!(
 					this.state.searchGradeFrom === "" &&
@@ -273,7 +215,7 @@ class DermatologistsPage extends Component {
 
 				const SEARCH_URL =
 					BASE_URL +
-					"/api/users/search-dermatologist-for-pharmacy?name=" +
+					"/api/users/search-pharmacists-for-pharmacy?name=" +
                     name +
                     "&surname=" +
 					surname +
@@ -289,7 +231,7 @@ class DermatologistsPage extends Component {
                 })
 					.then((res) => {
 						this.setState({
-							dermatologists: res.data,
+							pharmacists: res.data,
 							formShowed: false,
 							showingSearched: true,
 						});
@@ -299,24 +241,21 @@ class DermatologistsPage extends Component {
 						console.log(err);
 					});
 			}
-        }   
      }
 
      handleResetSearch = () => {
-
-        Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/" + this.state.pharmacyId , {
+        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
-				this.setState({ 
-                    dermatologists: res.data ,
+                this.setState({ 
+                    pharmacists: res.data,
                     formShowed: false,
 					showingSearched: false,
 					searchName: "",
                     searchSurname: "",
                     searchGradeFrom: "",
-					searchGradeTo: "",
-
+                    searchGradeTo: "", 
                 });
                 console.log(res.data);
             
@@ -324,14 +263,21 @@ class DermatologistsPage extends Component {
 			.catch((err) => {
 				console.log(err);
             });
-            
-	
+	};
+
+    handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
     };
     
+    handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
     render() {
         const myStyle = {
 			color: "white",
-			textAlign: "center",
+            textAlign: "center",
+            marginLeft:'195%'
 		};
 		return (
         <React.Fragment>
@@ -358,28 +304,14 @@ class DermatologistsPage extends Component {
                                 message={this.state.failMessage}
                                 handleCloseAlert={this.handleCloseAlertFail}
                         />
-                        <nav className="nav-menu d-none d-lg-block">
-                            <ul style={{ marginLeft: "27%" }}>
-                                <li>
-                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddDermatologistClick}>
-                                        Add dermatologist
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddAppointmentClick}>
-                                        Add appointments
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
 
                         <button
-                            className="btn btn-outline-primary btn-xl"
+                            className="btn btn-outline-primary btn-xl "
                             type="button"
                             onClick={this.hangleFormToogle}
                         >
                             <i className="icofont-rounded-down mr-1"></i>
-                            Search dermatologists
+                            Search drugs
                         </button>
                         <form
                             className={
@@ -460,89 +392,42 @@ class DermatologistsPage extends Component {
 						</button>
 					</div>
 
-                        <table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+                        <table className="table mt-5" style={{width:"100%"}}>
                             <tbody>
-                                {this.state.dermatologists.map((dermatologist) => (
-                                    <tr id={dermatologist.Id} key={dermatologist.Id}>
+                                {this.state.drugs.map(drug => 
+                                    <tr hidden={false} id={drug.Id} key={drug.Id} >
                                         <td width="130em">
-                                            <img
-                                                className="img-fluid"
-                                                src={dermatologistLogo}
-                                                width="70em"
-                                            />
+                                            <img className="img-fluid" src={CapsuleLogo} width="70em"/>
                                         </td>
-
                                         <td>
-                                            <div>
-                                                <b>Name: </b> {dermatologist.EntityDTO.name}
-                                            </div>
-                                            <div>
-                                                <b>Surname: </b> {dermatologist.EntityDTO.surname}
-                                            </div>
-                                            <div>
-                                                <b>Email: </b> {dermatologist.EntityDTO.email}
-                                            </div>
-                                            <div>
-                                                <b>Phone number: </b> {dermatologist.EntityDTO.phoneNumber}
-                                            </div>
-                                            <div>
-                                                <b>Grade: </b> {dermatologist.EntityDTO.grade}
-                                                <i
-                                                    className="icofont-star"
-                                                    style={{ color: "#1977cc" }}
-                                                ></i>
-                                            </div>
+                                            <div><b>Drug:</b> {drug.EntityDTO.name}</div>
+                                            <div><b>Name:</b> {drug.EntityDTO.drugInstanceName}</div>
+                                            <div><b>Manufacturer:</b> {drug.EntityDTO.manufacturer.EntityDTO.name}</div>
+                                            <div><b>Quantity:</b> {drug.EntityDTO.quantity} <b>mg</b></div>
+                                            <div><b>Format:</b> {drug.EntityDTO.drugFormat}</div>
+                                        </td>
+                                        <td>
+                                            <div><b>Actual price:</b> {drug.EntityDTO.name}</div>
+
                                         </td>
                                         <td >
-                                            <div style={{marginLeft:'55%'}}>
-                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-outline-secondary" onClick={() => this.onWorkTimeClick(dermatologist.Id)} type="button"><i className="icofont-subscribe mr-1"></i>WorkTimes</button>
+                                            <div className="mt-3" style={{marginLeft:'25%'}}>
+                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-outline-secondary" onClick={() => this.onWorkTimeClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit</button>
                                                 <br></br>
-                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary mt-1" onClick={() => this.showPharmacies(dermatologist.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Pharmacies</button>
-                                                <br></br>
-                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary mt-1" onClick={() => this.removeDermatologistClick(dermatologist.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Remove dermatologist</button>
+                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary mt-1" onClick={() => this.removePharmacistClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Remove drug</button>
                                             </div>
                                                
                                         </td>
                                     </tr>
-
-                                ))}
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-
-                                </tr>
+                                    )}
                             </tbody>
                         </table>
-
                     </div>
                     <div>
-                        <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} forPharmacy={this.state.pharmacyId} forStaff={this.state.forStaff} header="WorkTimes" />
-                        <CreateAppointmentForDermatologistModal
-					        show={this.state.showCreateAppointmentModal}
-					        onCloseModal={this.handleCreateAppoitmentClose}
-					        pharmacyId={this.state.pharmacyId}
-					        header="Create appointment"
-					        dermatologists={this.state.dermatologists}
-				        />
-                        <AddDermatologistToPharmacy
-					        show={this.state.showAddDermatologistModal}
-					        onCloseModal={this.handleAddDermatologistModalClose}
-                            pharmacyId={this.state.pharmacyId}
-                            dermatologists={this.state.dermatologistToEmploye}
-                            updateDermatologist={this.updateDermatologistList}
-					        header="Add dermatologist"
-				        />
-                        <PharmaciesForDermatologistModal
-					        show={this.state.showPharmaciesModal}
-					        onCloseModal={this.handlePharmaciesModalClose}
-					        pharmacies={this.state.pharmaciesForDermatologist}
-					        header="Work in pharmacies"
-				        />
                     </div>
                 </React.Fragment>
 		);
 	}
 }
 
-export default DermatologistsPage
+export default DrugPageForPharmacyAdmin

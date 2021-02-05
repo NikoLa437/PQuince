@@ -1,5 +1,6 @@
 package quince_it.pquince.repository.drugs;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,8 @@ public interface DrugStorageRepository extends JpaRepository<DrugStorage, DrugSt
 	
 	@Query(value = "SELECT d FROM DrugStorage d WHERE d.drugStorageId.drugInstance.id = ?1 AND d.drugStorageId.pharmacy.id = ?2")
 	DrugStorage findByDrugIdAndPharmacyId(UUID drugId, UUID pharmacyId);
+	
+	@Query(value = "SELECT d FROM DrugStorage d WHERE d.drugStorageId.pharmacy.id = ?1")
+	List<DrugStorage> findAllBPharmacyId(UUID pharmacyId);
+	
 }
