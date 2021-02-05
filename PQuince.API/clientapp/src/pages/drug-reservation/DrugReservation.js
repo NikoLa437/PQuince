@@ -52,7 +52,7 @@ class DrugReservation extends Component {
 		Axios.post(BASE_URL + "/api/drug/reserve", reservationDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				if (res.status === 400) {
-					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Bad request when resving drug." });
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: res.data });
 				} else if (res.status === 500) {
 					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
 				} else if (res.status === 201) {
@@ -110,12 +110,12 @@ class DrugReservation extends Component {
 					drugManufacturer: drug.EntityDTO.manufacturer.EntityDTO.name,
 					drugQuantity: drug.EntityDTO.quantity,
 					drugId: drug.Id,
-					drugSideEffects:  drug.EntityDTO.sideEffects,
-					drugRecommendedAmount:  drug.EntityDTO.recommendedAmount,
-					loyaltyPoints:  drug.EntityDTO.loyalityPoints,
+					drugSideEffects: drug.EntityDTO.sideEffects,
+					drugRecommendedAmount: drug.EntityDTO.recommendedAmount,
+					loyaltyPoints: drug.EntityDTO.loyalityPoints,
 					drugFormat: drug.EntityDTO.drugFormat,
 					drugKind: drug.EntityDTO.drugKind,
- 				});
+				});
 			})
 			.catch((err) => {
 				console.log(err);
@@ -132,7 +132,7 @@ class DrugReservation extends Component {
 		return (
 			<React.Fragment>
 				<DrugsPage hidden={this.state.drugsPageHidden} onDrugSelect={this.handleDrugSelect} />
-			
+
 				<PharmacyPage
 					onBackIcon={this.handleBackIcon}
 					onPharmacyClick={this.handlePharmacyClick}

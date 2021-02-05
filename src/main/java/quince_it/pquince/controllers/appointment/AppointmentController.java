@@ -28,8 +28,8 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.ScheduleAppointmentDTO;
-import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
@@ -47,6 +47,20 @@ public class AppointmentController {
 	public ResponseEntity<?> createAppointment(@RequestBody AppointmentCreateDTO appointmentDTO ) {
 		try {
 			if(appointmentService.createTerminForDermatologist(appointmentDTO)!=null)
+				return new ResponseEntity<>(HttpStatus.OK);
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PostMapping("/create-and-schedule-appointment")
+	@CrossOrigin
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	public ResponseEntity<?> createAppointment(@RequestBody DermatologistCreateAppointmentDTO appointmentDTO ) {
+		try {
+			if(appointmentService.createAndSchuduleAppointment(appointmentDTO)!=null)
 				return new ResponseEntity<>(HttpStatus.OK);
 			
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -202,8 +216,6 @@ public class AppointmentController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (AuthorizationServiceException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (AlreadyBeenScheduledConsultationException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
@@ -234,6 +246,29 @@ public class AppointmentController {
 	@GetMapping("/patient/{patientId}")
 	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatient(@PathVariable UUID patientId) {
 		return new ResponseEntity<>(appointmentService.getDermatologistAppointmentsByPatient(patientId),HttpStatus.OK);
+	}
+	
+	@GetMapping("/{appointmentId}")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
+	public ResponseEntity<?> getAppointment(@PathVariable UUID appointmentId) {
+		try {
+			return new ResponseEntity<>(appointmentService.getAppointment(appointmentId),HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PutMapping("/finish")
+	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@CrossOrigin
+	public ResponseEntity<?> Appointment(@RequestBody EntityIdDTO appointmentId) {
+		try {
+			appointmentService.finishAppointment(appointmentId.getId());
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@GetMapping("/getFreePeriod")

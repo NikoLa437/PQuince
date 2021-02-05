@@ -16,6 +16,7 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
@@ -64,7 +65,7 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 
 	List<Staff> findAllDistinctPharmacistsForAppointmentTimeForPharmacy(Date startDateTime, Date endDateTime, UUID pharmacyId);
 	
-	UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException;
+	UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException,  AppointmentTimeOverlappingWithOtherAppointmentException;
 
 	List<AppointmentPeriodResponseDTO> getFreePeriods(AppointmentRequestDTO appointmentRequestDTO);
 	
@@ -79,4 +80,10 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	boolean scheduleAppointment(UUID patientId, UUID appointmentId);
 
 	List<IdentifiableDTO<AppointmentDTO>> getCalendarAppointmentsByDermatologist(UUID pharmacyId);
+	
+	UUID createAndSchuduleAppointment(DermatologistCreateAppointmentDTO appointmentDTO);
+
+	IdentifiableDTO<AppointmentDTO> getAppointment(UUID appointmentId);
+
+	void finishAppointment(UUID id);
 }

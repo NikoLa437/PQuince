@@ -33,14 +33,14 @@ class PharmacyProfilePage extends Component {
 		showDermatologistModal: false,
 		showCreateAppointment: false,
 		showDrugsInPharmacy: false,
-		showReserveDrugsInPharmacy:false,
+		showReserveDrugsInPharmacy: false,
 		complaint: "",
-		dermatologists:[],
-		drugsInPharmacy:[],
-		isPatient:false,
-		redirect:false,
-		redirectUrl:'',
-		isPatientSubscribed:false,
+		dermatologists: [],
+		drugsInPharmacy: [],
+		isPatient: false,
+		redirect: false,
+		redirectUrl: "",
+		isPatientSubscribed: false,
 		hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
@@ -51,9 +51,9 @@ class PharmacyProfilePage extends Component {
 		showPharmacistsModal:false,
 	};
 
-	fetchData = id => {
+	fetchData = (id) => {
 		this.setState({
-			pharmacyId:id
+			pharmacyId: id,
 		});
 	};
 
@@ -61,7 +61,6 @@ class PharmacyProfilePage extends Component {
 		this.setState({ hiddenSuccessAlert: true });
 	};
 
-	
 	handleCloseAlertFail = () => {
 		this.setState({ hiddenFailAlert: true });
 	};
@@ -70,29 +69,29 @@ class PharmacyProfilePage extends Component {
 		const id = this.props.match.params.id;
 		this.fetchData(id);
 
-		if(localStorage.getItem("keyRole")==='["ROLE_PATIENT"]'){
+		if (localStorage.getItem("keyRole") === '["ROLE_PATIENT"]') {
 			this.setState({
-				isPatient:true
-			})
+				isPatient: true,
+			});
 
-			Axios.get(BASE_URL + "/api/users/check-if-patient-subscribed-to-pharmacy",{
-				params:{
-					pharmacyId:id
+			Axios.get(BASE_URL + "/api/users/check-if-patient-subscribed-to-pharmacy", {
+				params: {
+					pharmacyId: id,
 				},
 				headers: { Authorization: getAuthHeader() },
 			})
-			.then((response) => {
-				this.setState({
-					isPatientSubscribed : response.data
+				.then((response) => {
+					console.log(response.data,"SUB");
+					this.setState({
+						isPatientSubscribed: response.data,
+					});
+				})
+				.catch((err) => {
+					console.log(err);
 				});
-			})
-			.catch((err) => {
-				console.log(err);
-			});
 		}
 
-		
-		Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId="+id)
+		Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=" + id)
 			.then((response) => {
 				this.setState({
 					pharmacy: response.data,
@@ -112,95 +111,100 @@ class PharmacyProfilePage extends Component {
 	}
 
 	handleSubscribeClick = () => {
-
 		let pharmacyIdDTO = {
-            id : this.state.pharmacyId
+			id: this.state.pharmacyId,
 		};
-		
-		Axios
-        .put(BASE_URL + "/api/users/subscribe-to-pharmacy", pharmacyIdDTO, {
-            headers: { Authorization: getAuthHeader() },
-        }).then((res) =>{
-			this.setState({
-				isPatientSubscribed:true,
-				hiddenSuccessAlert: false,
-				successHeader: "Success",
-				successMessage: "You successfully subscribed to own pharmacy.",
+
+		Axios.put(BASE_URL + "/api/users/subscribe-to-pharmacy", pharmacyIdDTO, {
+			headers: { Authorization: getAuthHeader() },
+		})
+			.then((res) => {
+				this.setState({
+					isPatientSubscribed: true,
+					hiddenSuccessAlert: false,
+					successHeader: "Success",
+					successMessage: "You successfully subscribed to own pharmacy.",
+				});
 			})
-        }).catch((err) => {
-			this.setState({ 
-				isPatientSubscribed:true,
-				hiddenFailAlert: false, 
-				failHeader: "Unsuccess", 
-				failMessage: "We have a problem with subscribe.Try later." });
-        });
-	}
+			.catch((err) => {
+				this.setState({
+					isPatientSubscribed: true,
+					hiddenFailAlert: false,
+					failHeader: "Unsuccess",
+					failMessage: "We have a problem with subscribe.Try later.",
+				});
+			});
+	};
 
-	handleUnSubscribeClick = () =>{
-
+	handleUnSubscribeClick = () => {
 		let pharmacyIdDTO = {
-            id : this.state.pharmacyId
+			id: this.state.pharmacyId,
 		};
-		
-		Axios
-        .put(BASE_URL + "/api/users/unsubscribe-from-pharmacy", pharmacyIdDTO, {
-            headers: { Authorization: getAuthHeader() },
-        }).then((res) =>{
-			this.setState({
-				isPatientSubscribed:false
-			})
-            this.setState({
-				isPatientSubscribed:false,
-				hiddenSuccessAlert: false,
-				successHeader: "Success",
-				successMessage: "You successfully unsubscribed from own pharmacy.",
-			})
-        }).catch((err) => {
-            this.setState({ 
-				isPatientSubscribed:true,
-				hiddenFailAlert: false, 
-				failHeader: "Unsuccess", 
-				failMessage: "We have a problem with subscribe.Try later." });
-        });
 
-	}
+		Axios.put(BASE_URL + "/api/users/unsubscribe-from-pharmacy", pharmacyIdDTO, {
+			headers: { Authorization: getAuthHeader() },
+		})
+			.then((res) => {
+				this.setState({
+					isPatientSubscribed: false,
+				});
+				this.setState({
+					isPatientSubscribed: false,
+					hiddenSuccessAlert: false,
+					successHeader: "Success",
+					successMessage: "You successfully unsubscribed from own pharmacy.",
+				});
+			})
+			.catch((err) => {
+				this.setState({
+					isPatientSubscribed: true,
+					hiddenFailAlert: false,
+					failHeader: "Unsuccess",
+					failMessage: "We have a problem with subscribe.Try later.",
+				});
+			});
+	};
 
 	handleComplaintChange = (event) => {
 		this.setState({ complaint: event.target.value });
 	};
 
-
 	handleReserveDrugsClick = () => {
-		Axios
-        .get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId="+ this.state.pharmacyId, {
+		Axios.get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId=" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
-		}).then((res) =>{
-            this.setState({drugsInPharmacy : res.data});
-            console.log(res.data);
-        }).catch((err) => {console.log(err);});
-	
+		})
+			.then((res) => {
+				this.setState({ drugsInPharmacy: res.data });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+
 		this.setState({
 			showReserveDrugsInPharmacy: true,
 		});
-	}
+	};
 
 	handleAddExaminationClick = () => {
 		this.setState({
-			redirect:true,
-			redirectUrl : "/reserve-appointment/" + this.state.pharmacyId
-		})
-	}
+			redirect: true,
+			redirectUrl: "/reserve-appointment/" + this.state.pharmacyId,
+		});
+	};
 
 	handleOurDrugs = () => {
-
-		Axios
-        .get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId="+ this.state.pharmacyId, {
+		Axios.get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId=" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
-		}).then((res) =>{
-            this.setState({drugsInPharmacy : res.data});
-            console.log(res.data);
-        }).catch((err) => {console.log(err);});
-	
+		})
+			.then((res) => {
+				this.setState({ drugsInPharmacy: res.data });
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+
 		this.setState({
 			showDrugsInPharmacy: true,
 		});
@@ -217,8 +221,7 @@ class PharmacyProfilePage extends Component {
 	handleCreateAppoitmentClose = () => {
 		this.setState({ showCreateAppointment: false });
 	};
-	
-	
+
 	handleComplaintModalClose = () => {
 		this.setState({ showComplaintModal: false });
 	};
@@ -229,8 +232,7 @@ class PharmacyProfilePage extends Component {
 
 	handleReserveDrugsInPharmacyClose = () => {
 		this.setState({ showReserveDrugsInPharmacy: false });
-
-	}
+	};
 
 	handleFeedbackClick = () => {
 		Axios.get(BASE_URL + "/api/pharmacy/feedback/" + this.state.pharmacyId, {
@@ -244,7 +246,7 @@ class PharmacyProfilePage extends Component {
 						showFeedbackModal: true,
 						patientsGrade: 0,
 					});
-				} else {
+				} else if (res.status === 200) {
 					this.setState({
 						showModifyFeedbackModal: true,
 						patientsGrade: res.data.grade,
@@ -298,18 +300,26 @@ class PharmacyProfilePage extends Component {
 			date: new Date(),
 			grade: this.state.patientsGrade,
 		};
-		Axios.post(BASE_URL + "/api/pharmacy/feedback", entityDTO, { headers: { Authorization: getAuthHeader() } })
+		Axios.post(BASE_URL + "/api/pharmacy/feedback", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=" + this.state.pharmacyId)
-					.then((response) => {
-						this.setState({
-							grade: response.data.EntityDTO.grade,
-							showFeedbackModal: false,
+				if (resp.status === 405) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Pharmacy feedback not allowed." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 201) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully saved." });
+					Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=" + this.state.pharmacyId)
+						.then((response) => {
+							this.setState({
+								grade: response.data.EntityDTO.grade,
+								showFeedbackModal: false,
+							});
+						})
+						.catch((err) => {
+							console.log(err);
 						});
-					})
-					.catch((err) => {
-						console.log(err);
-					});
+				}
+				this.setState({ showFeedbackModal: false });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -317,10 +327,10 @@ class PharmacyProfilePage extends Component {
 	};
 
 	handleListOfDermatologistOpenModal = () => {
-
 		Axios.get(BASE_URL + "/api/users/dermatologist-for-pharmacy/" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
-		}).then((res) => {
+		})
+			.then((res) => {
 				this.setState({ dermatologists: res.data });
 				console.log(res.data);
 			})
@@ -329,15 +339,15 @@ class PharmacyProfilePage extends Component {
 			});
 
 		this.setState({
-			showDermatologistModal:true
-		})
-	}
+			showDermatologistModal: true,
+		});
+	};
 
 	handleListOfDermatologistCloseModal = () => {
 		this.setState({
-			showDermatologistModal:false
-		})
-	}
+			showDermatologistModal: false,
+		});
+	};
 
 	handleOurPharmaciesModalOpen =() =>{
 		Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/" + this.state.pharmacyId).then((res) => {
@@ -385,16 +395,24 @@ class PharmacyProfilePage extends Component {
 		};
 		Axios.put(BASE_URL + "/api/pharmacy/feedback", entityDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId="+this.state.pharmacyId)
-					.then((response) => {
-						this.setState({
-							grade: response.data.EntityDTO.grade,
-							showModifyFeedbackModal: false,
+				if (resp.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Bad request when modifying feedback." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 204) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully modified." });
+					Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=" + this.state.pharmacyId)
+						.then((response) => {
+							this.setState({
+								grade: response.data.EntityDTO.grade,
+								showModifyFeedbackModal: false,
+							});
+						})
+						.catch((err) => {
+							console.log(err);
 						});
-					})
-					.catch((err) => {
-						console.log(err);
-					});
+				}
+				this.setState({ showModifyFeedbackModal: false });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -431,20 +449,8 @@ class PharmacyProfilePage extends Component {
 			<React.Fragment>
 				<TopBar />
 				<Header />
-				
+
 				<nav className="nav-menu d-none d-lg-block" style={{ marginTop: "8%" }}>
-				<HeadingSuccessAlert
-						hidden={this.state.hiddenSuccessAlert}
-						header={this.state.successHeader}
-						message={this.state.successMessage}
-						handleCloseAlert={this.handleCloseAlertSuccess}
-					/>
-				<HeadingAlert
-						hidden={this.state.hiddenFailAlert}
-						header={this.state.failHeader}
-						message={this.state.failMessage}
-						handleCloseAlert={this.handleCloseAlertFail}
-				/>
 					<ul hidden={!this.state.isPatient} style={{ marginLeft: "28%" }}>
 						<li>
 							<a onClick={this.handleReserveDrugsClick} className="appointment-btn scrollto" style={myStyle}>
@@ -458,7 +464,7 @@ class PharmacyProfilePage extends Component {
 						</li>
 						<li className="drop-down">
 							<a href="#" className="appointment-btn scrollto" style={myStyle}>
-								Make an Appointment *** 
+								Make an Appointment ***
 							</a>
 							<ul>
 								<li>
@@ -473,6 +479,18 @@ class PharmacyProfilePage extends Component {
 				</nav>
 
 				<div className="container" style={{ marginTop: "0%" }}>
+					<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
 					<div className="row" style={{ verticalAlign: "center" }}></div>
 					<div className="row" style={{ marginTop: "3%" }}>
 						<div className="col-xs-4" style={{ width: "50%" }}>
@@ -481,90 +499,32 @@ class PharmacyProfilePage extends Component {
 									<h1>{pharmacyName}</h1>
 								</div>
 								<div className="ml-3 mt-2">
-									<img
-									hidden={this.state.grade >= 1}
-									className="img-fluid ml-1"
-									src={StarOutline}
-									width="30em"
-									height="30em"
-									/>
-									<img
-										hidden={this.state.grade < 1}
-										className="img-fluid ml-1"
-										src={Star}
-										width="30em"
-										height="30em"
-									/>
-									<img
-										hidden={this.state.grade >= 2}
-										className="img-fluid ml-1"
-										src={StarOutline}
-										width="30em"
-										height="30em"
-									/>
-									<img
-										hidden={this.state.grade < 2}
-										className="img-fluid ml-1"
-										src={Star}
-										width="30em"
-										height="30em"
-									/>
-									<img
-										hidden={this.state.grade >= 3}
-										className="img-fluid ml-1"
-										src={StarOutline}
-										width="30em"
-										height="30em"
-									/>
-									<img
-										hidden={this.state.grade < 3}
-										className="img-fluid ml-1"
-										src={Star}
-										width="30em"
-										height="30em"
-									/>
-									<img
-										hidden={this.state.grade >= 4}
-										className="img-fluid ml-1"
-										src={StarOutline}
-										width="30em"
-										height="30em"
-									/>
-									<img
-										hidden={this.state.grade < 4}
-										className="img-fluid ml-1"
-										src={Star}
-										width="30em"
-										height="30em"
-									/>
-									<img
-										hidden={this.state.grade >= 5}
-										className="img-fluid ml-1"
-										src={StarOutline}
-										width="30em"
-										height="30em"
-									/>
-									<img
-										hidden={this.state.grade < 5}
-										className="img-fluid ml-1"
-										src={Star}
-										width="30em"
-										height="30em"
-									/>
+									<img hidden={this.state.grade >= 1} className="img-fluid ml-1" src={StarOutline} width="30em" height="30em" />
+									<img hidden={this.state.grade < 1} className="img-fluid ml-1" src={Star} width="30em" height="30em" />
+									<img hidden={this.state.grade >= 2} className="img-fluid ml-1" src={StarOutline} width="30em" height="30em" />
+									<img hidden={this.state.grade < 2} className="img-fluid ml-1" src={Star} width="30em" height="30em" />
+									<img hidden={this.state.grade >= 3} className="img-fluid ml-1" src={StarOutline} width="30em" height="30em" />
+									<img hidden={this.state.grade < 3} className="img-fluid ml-1" src={Star} width="30em" height="30em" />
+									<img hidden={this.state.grade >= 4} className="img-fluid ml-1" src={StarOutline} width="30em" height="30em" />
+									<img hidden={this.state.grade < 4} className="img-fluid ml-1" src={Star} width="30em" height="30em" />
+									<img hidden={this.state.grade >= 5} className="img-fluid ml-1" src={StarOutline} width="30em" height="30em" />
+									<img hidden={this.state.grade < 5} className="img-fluid ml-1" src={Star} width="30em" height="30em" />
 								</div>
 							</div>
-							<button hidden={!this.state.isPatient || this.state.isPatientSubscribed}
+							<button
+								hidden={!this.state.isPatient || this.state.isPatientSubscribed}
 								type="button"
 								onClick={this.handleSubscribeClick}
 								className="btn btn-outline-secondary mt-1 mb-3"
-								>
+							>
 								Subscribe
 							</button>
-							<button hidden={!this.state.isPatient || !this.state.isPatientSubscribed}
+							<button
+								hidden={!this.state.isPatient || !this.state.isPatientSubscribed}
 								type="button"
 								onClick={this.handleUnSubscribeClick}
 								className="btn btn-outline-secondary mt-1 mb-3"
-								>
+							>
 								Unsubscribe
 							</button>
 							<br></br>
@@ -602,7 +562,8 @@ class PharmacyProfilePage extends Component {
 							</button>
 							<br></br>
 
-							<button hidden={!this.state.isPatient}
+							<button
+								hidden={!this.state.isPatient}
 								type="button"
 								hidden={!this.hasRole("ROLE_PATIENT")}
 								onClick={this.handleFeedbackClick}
@@ -611,7 +572,12 @@ class PharmacyProfilePage extends Component {
 								Give feedback
 							</button>
 							<br></br>
-							<button hidden={!this.state.isPatient} type="button" onClick={this.handleComplaintClick} className="btn btn-outline-secondary mt-3">
+							<button
+								hidden={!this.state.isPatient}
+								type="button"
+								onClick={this.handleComplaintClick}
+								className="btn btn-outline-secondary mt-3"
+							>
 								Make complaint
 							</button>
 						</div>

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
+import { withRouter } from "react-router";
 import ModalDialog from "../../components/ModalDialog";
 import Axios from "axios";
 import getAuthHeader from "../../GetHeader";
@@ -573,4 +574,4 @@ state = {
 	}
 }
 
-export default LoyaltyProgram
+export default withRouter(LoyaltyProgram);

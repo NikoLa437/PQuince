@@ -9,6 +9,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,6 +66,17 @@ public class UsersController {
 		}
 	}
 	
+
+	@GetMapping("/subscribed-pharmacies")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> findSubscribed() {
+		try {
+			return new ResponseEntity<>(userService.subscribedPharmacies(),HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 	
 	@GetMapping("/{userId}")
 	@PreAuthorize("hasRole('PATIENT')") //Nadovezuje se sa 'or hasRole('...') or hasRole....'
@@ -102,7 +114,7 @@ public class UsersController {
 			userService.updatePatient(userInfoChangeDTO);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
 		} catch (IllegalArgumentException e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
@@ -455,6 +467,7 @@ public class UsersController {
 	
 	@GetMapping("/check-if-patient-subscribed-to-pharmacy")
 	@PreAuthorize("hasRole('PATIENT')")
+	@CrossOrigin
 	public ResponseEntity<Boolean> checkIfPatientSubscribed(@RequestParam UUID pharmacyId) {
 		try {
 			if (userService.checkIfPatientSubscribed(pharmacyId))

@@ -6,8 +6,6 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -89,7 +87,7 @@ public class Patient extends User {
 	
 	public void addSubscribeToPharmacy(Pharmacy pharmacy) {
 		
-		if(pharmacy == null)
+		if(pharmacies == null)
 			this.pharmacies = new ArrayList<Pharmacy>();
 		
 		this.pharmacies.add(pharmacy);
@@ -138,6 +136,10 @@ public class Patient extends User {
 		}
 		
 		return false;
+	}
+
+	public List<Pharmacy> getPharmacies() {
+		return pharmacies;
 	}
 	
 }

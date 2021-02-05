@@ -13,8 +13,6 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.AuthorizationServiceException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
@@ -22,12 +20,14 @@ import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.DateRange;
+import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
+import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.PharmacistRepository;
 import quince_it.pquince.repository.users.StaffRepository;
@@ -39,10 +39,10 @@ import quince_it.pquince.services.contracts.dto.appointment.AppointmentRequestDT
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
-import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -60,6 +60,9 @@ public class AppointmentService implements IAppointmentService{
 	
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private DermatologistRepository dermatologistRepository;
 			
 	@Autowired
 	private AppointmentRepository appointmentRepository;
@@ -99,6 +102,24 @@ public class AppointmentService implements IAppointmentService{
 			Staff dermatologist = staffRepository.getOne(appointmentDTO.getStaff());
 			
 			Appointment newAppointment = new Appointment(pharmacy,dermatologist,null, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),appointmentDTO.getPrice(),AppointmentType.EXAMINATION,AppointmentStatus.CREATED);
+			appointmentRepository.save(newAppointment);
+			return newAppointment.getId();
+		}catch(Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public UUID createAndSchuduleAppointment(DermatologistCreateAppointmentDTO appointmentDTO) {
+		try {
+			UUID dermatologistId = userService.getLoggedUserId();
+			UUID patientId = appointmentDTO.getPatientId();
+			Patient patient = patientRepository.getOne(patientId);
+			Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
+			Pharmacy pharmacy = userService.getPharmacyForLoggedDermatologist();
+			if(pharmacy == null)
+				throw new IllegalArgumentException("Dermatologist can't create and schedule appointment outside work hours");
+			Appointment newAppointment = new Appointment(pharmacy,dermatologist,patient, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),appointmentDTO.getPrice(),AppointmentType.EXAMINATION,AppointmentStatus.SCHEDULED);
 			appointmentRepository.save(newAppointment);
 			return newAppointment.getId();
 		}catch(Exception e) {
@@ -147,16 +168,13 @@ public class AppointmentService implements IAppointmentService{
 		
 		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);
 		
-		UUID pharmacyId = null;
-		for(WorkTime wt : workTimes){
-			Date currentDate = new Date();
-			if(currentDate.getHours() > wt.getStartTime() && currentDate.getHours() < wt.getEndTime())
-				pharmacyId = wt.getPharmacy().getId();
-		}
+		Pharmacy pharmacy = userService.getPharmacyForLoggedDermatologist();
 		
-		if(pharmacyId==null) {
+		if(pharmacy==null) {
 			return new ArrayList<AppointmentPeriodResponseDTO>();
 		}
+		
+		UUID pharmacyId = pharmacy.getId();
 		
 		WorkTime workTime = workTimeRepository.getWorkTimeForDermatologistForDateForPharmacy(dermatologistId, date, pharmacyId);
 		List<Appointment> scheduledAppointments = appointmentRepository.getCreatedAppoitntmentsByDermatologistByDate(dermatologistId, date, pharmacyId);
@@ -536,7 +554,7 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException {
+	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AppointmentTimeOverlappingWithOtherAppointmentException {
 		
 		long time = requestDTO.getStartDateTime().getTime();
 		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
@@ -556,19 +574,13 @@ public class AppointmentService implements IAppointmentService{
 		return appointment.getId();
 	}
 	
-	private void CanCreateConsultation(Appointment appointment) throws AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException {
+	private void CanCreateConsultation(Appointment appointment) throws AppointmentTimeOverlappingWithOtherAppointmentException {
 		
 		if(doesPatientHaveAppointmentInDesiredTime(appointment, appointment.getPatient()))
 			throw new AppointmentTimeOverlappingWithOtherAppointmentException("Cannot reserve appointment at same time as other appointment");
 		
 		if(appointment.getPatient().getPenalty() >= Integer.parseInt(env.getProperty("max_penalty_count")))
 			throw new AuthorizationServiceException("Too many penalty points");
-
-		if(appointmentRepository.findConsultationsByAppointmentTimePharmacistAndPatient(appointment.getStartDateTime(),
-																						appointment.getStaff().getId(),
-																						appointment.getPatient().getId()) != null)
-			
-			throw new AlreadyBeenScheduledConsultationException("Cannot schedule appointment at same pharmacist at same time more than once");
 	
 		if (!(appointment.getStartDateTime().after(new Date())))
 				throw new IllegalArgumentException("Bad request");
@@ -654,6 +666,18 @@ public class AppointmentService implements IAppointmentService{
 			return true;
 		
 		return false;
+	}
+
+	public IdentifiableDTO<AppointmentDTO> getAppointment(UUID appointmentId) {
+		Appointment appointment = appointmentRepository.findById(appointmentId).get();
+		return AppointmentMapper.MapAppointmentPersistenceToAppointmentIdentifiableDTO(appointment);
+	}
+
+	@Override
+	public void finishAppointment(UUID id) {
+		Appointment appointment = appointmentRepository.findById(id).get();
+		appointment.setAppointmentStatus(AppointmentStatus.FINISHED);
+		appointmentRepository.save(appointment);
 	}
 
 }

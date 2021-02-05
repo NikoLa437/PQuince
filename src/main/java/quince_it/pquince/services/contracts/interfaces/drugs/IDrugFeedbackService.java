@@ -20,4 +20,7 @@ public interface IDrugFeedbackService {
 
 	List<IdentifiableDTO<DrugsWithGradesDTO>> findDrugsWithGrades();
 
+	List<IdentifiableDTO<DrugsWithGradesDTO>> searchDrugs(String name, double gradeFrom, double gradeTo,
+			String drugKind);
+
 }

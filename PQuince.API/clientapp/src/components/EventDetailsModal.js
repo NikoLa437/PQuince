@@ -53,7 +53,7 @@ class EventDetailsModal extends Component {
 											<b>Patient: </b> {this.props.name + " " + this.props.surname}
 										</div>
 										<div hidden={this.props.name !== "" && this.props.surname !== ""}>
-											<h4 className="text-secondary">Appointment is not scheduled by patient</h4>
+											<h4 className="text-secondary">Appointment has not been scheduled by patient</h4>
 										</div>
 									</div>
 								</div>

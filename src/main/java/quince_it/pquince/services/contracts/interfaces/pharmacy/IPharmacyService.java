@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
@@ -15,6 +16,8 @@ import quince_it.pquince.services.contracts.interfaces.IService;
 public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<PharmacyDTO>>{
 
 	List<IdentifiableDTO<PharmacyGradeDTO>> findAllPharmaciesWithGrades();
+	
+	List<IdentifiableDTO<PharmacyGradeDTO>> findAllSubscribedPharmaciesWithGrades();
 	
 	List<IdentifiableDTO<PharmacyGradeDTO>> findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(PharmacyFiltrationDTO pharmacyFiltrationDTO);
 	
@@ -43,4 +46,6 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceDescending(Date startDateTime);
 
 	void updatePharmacy(EditPharmacyDTO editPharmacyDTO);
+
+	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findWithQR(UUID id);
 }

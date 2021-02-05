@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
+import { withRouter } from "react-router";
 import ModalDialog from "../../components/ModalDialog";
 import getAuthHeader from "../../GetHeader";
 
@@ -613,4 +614,4 @@ class RegisterDrug extends Component {
 	}
 }
 
-export default RegisterDrug;
+export default withRouter(RegisterDrug);

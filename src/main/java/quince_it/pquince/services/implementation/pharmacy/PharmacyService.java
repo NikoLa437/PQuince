@@ -14,17 +14,27 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.drugs.DrugStorage;
+import quince_it.pquince.entities.drugs.EReceiptItems;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
+import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
+import quince_it.pquince.repository.drugs.DrugStorageRepository;
+import quince_it.pquince.repository.drugs.EReceiptItemsRepository;
+import quince_it.pquince.repository.drugs.EReceiptRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
+import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IEReceiptService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
@@ -34,6 +44,10 @@ import quince_it.pquince.services.implementation.util.pharmacy.PharmacyMapper;
 @Service
 public class PharmacyService implements IPharmacyService {
 
+
+	@Autowired 
+	private EReceiptItemsRepository eReceiptItemsRepository;
+	
 	@Autowired
 	private PharmacyRepository pharmacyRepository;
 	
@@ -51,6 +65,15 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private PatientRepository patientRepository;
+	
+	@Autowired
+	private DrugStorageRepository drugStorageRepository;
+	
+	@Autowired
+	private DrugPriceForPharmacyRepository drugPriceForPharmacyRepository;
 	
 	@Override
 	public List<IdentifiableDTO<PharmacyDTO>> findAll() {
@@ -125,12 +148,10 @@ public class PharmacyService implements IPharmacyService {
 	public IdentifiableDTO<PharmacyGradePriceDTO> MapPharmacyPersistenceToPharmacyGradePriceIdentifiableDTO(Pharmacy pharmacy){
 		if(pharmacy == null) throw new IllegalArgumentException();
 		
-		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
-		String email = currentUser.getName();
-		User user = userRepository.findByEmail(email);
+		UUID patientId = getLoggedUserId();
 		
 		double avgGrade = getAvgGradeForPharmacy(pharmacy.getId());
-		double getDiscountConsultationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, user.getId());
+		double getDiscountConsultationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, patientId);
 		
 		return new IdentifiableDTO<PharmacyGradePriceDTO>(pharmacy.getId(), new PharmacyGradePriceDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade, pharmacy.getConsultationPrice(), getDiscountConsultationPrice));
 	}
@@ -335,6 +356,67 @@ public class PharmacyService implements IPharmacyService {
 		pharmacyRepository.save(pharmacy);
 	}
 
+	@Override
+	public List<IdentifiableDTO<PharmacyGradeDTO>> findAllSubscribedPharmaciesWithGrades() {
+
+		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyGradeDTO>>();
+		UUID patientId = getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();	
+				
+		patient.getPharmacies().forEach((p) -> pharmacies.add(MapPharmacyPersistenceToPharmacyGradeIdentifiableDTO(p)));
+	
+		return pharmacies;
+	}
+	
+	private UUID getLoggedUserId() {
+		
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		String email = currentUser.getName();
+		User user = userRepository.findByEmail(email);	
+		
+		return user.getId();
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findWithQR(UUID id) {
+		
+		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(id);
+		List<Pharmacy> allPharmacies = pharmacyRepository.findAll();
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyDrugPriceDTO>>();
+		int price;
+		
+		for(Pharmacy p : allPharmacies) {
+			if((price = allDrugsAreInPharmacy(items,p)) != -1)
+				pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyDrugPriceIdentifiableDTO(p, price));
+		}
+		
+		return pharmacies;
+	}
+
+	private int allDrugsAreInPharmacy(List<EReceiptItems> items, Pharmacy p) {
+		boolean var = false;
+		int price = 0;
+		Integer priceForDrug;
+		List<DrugStorage> drugs = drugStorageRepository.findAllBPharmacyId(p.getId());
+		
+		for(EReceiptItems item: items) {
+			var = false;
+			for(DrugStorage drug: drugs) {
+				if(drug.getDrugInstance().getId().equals(item.getDrugInstance().getId())) {
+					if(drug.getCount() >= item.getAmount()) {
+						var = true;
+						priceForDrug = drugPriceForPharmacyRepository.findCurrentDrugPrice(drug.getDrugInstance().getId(), p.getId());
+						price = price + priceForDrug;
+						continue;
+					}
+				}
+			}
+			if(!var)
+				return -1;
+		}
+		
+		return price;
+	}
 
 	
 }

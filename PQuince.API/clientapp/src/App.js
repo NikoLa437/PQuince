@@ -17,9 +17,10 @@ import PatientsAppointments from "./pages/dermatologist-appointment/PatientsAppo
 import HistoryDermatologistAppointments from "./pages/appointment-history/HistoryDermatologistAppointments";
 import PatientsDrugReservationHistory from "./pages/drug-reservation/PatientsDrugReservationHistory";
 import DermatologistsPage from "./pages/dermatologist/DermatologistsPage";
-import ObservePatientsPage from "./pages/ObservePatientsPage";
+import PatientsPage from "./pages/PatientsPage";
 import PatientProfilePage from "./pages/PatientProfilePage";
 import ScheduleAppointmentPage from "./pages/dermatologist-appointment/ScheduleAppointmentPage";
+import TreatmentReportPage from "./pages/TreatmentReportPage";
 import ConsultationTimeSelectPage from "./pages/pharmacist-appointment/ConsultationTimeSelectPage";
 import AdminComplaints from "./pages/complaints/AdminComplaints";
 import LoyaltyProgram from "./pages/loyalty-program/LoyaltyProgram";
@@ -30,10 +31,18 @@ import AppointmentFromHomePage from "./pages/dermatologist-appointment/Appointme
 import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPageForPatient";
 import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
 import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
+import PatientsRedirectComplaints from "./pages/complaints/PatientsRedirectComplaints";
 import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
 import PharmacistPage from "./pages/pharmacist/PharmacistsPage";
 import PharmacistPageForPatient from "./pages/pharmacist/PharmacistPageForPatient";
 import DrugPageForPharmacyAdmin from "./pages/drug/DrugPageForPharmacyAdmin";
+
+import PatientsSubscribedPharmacies from "./pages/subscribed-pharmacies/PatientsSubscribedPharmacies";
+import EReceiptsForPatient from "./pages/eReceipt-patient/EReceiptsForPatient";
+import DrugsFromEReceiptForPatient from "./pages/eReceipt-patient/DrugsFromEReceiptForPatient";
+import Subscription from "./pages/subscription/Subscription";
+import QRreader from "./pages/QRcode/QRreader";
+import QRpharmacies from "./pages/QRcode/QRpharmacies";
 
 function App() {
 	return (
@@ -58,16 +67,26 @@ function App() {
 				<Link exact to="/dermatologist-history" path="/dermatologist-history" component={HistoryDermatologistAppointments} />
 				<Link exact to="/dermatologists" path="/dermatologists" component={DermatologistsPage} />
 				<Link exact to="/dermatologists-for-patient" path="/dermatologists-for-patient" component={DermatologistsPageForPatient} />
-				<Link exact to="/patients" path="/patients" component={ObservePatientsPage} />
+				<Link exact to="/patients" path="/patients" component={PatientsPage} />
+
 				<Link exact to="/schedule-consultation" path="/schedule-consultation" component={ConsultationTimeSelectPage} />
 				<Link exact to="/loyalty-program" path="/loyalty-program" component={LoyaltyProgram} />
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
 				<Link exact to="/observe-consultations-history" path="/observe-consultations-history" component={ObservePatientsCosultationHistory} />
+				<Link exact to="/patient-complaint" path="/patient-complaint" component={PatientsRedirectComplaints} />
+				<Link exact to="/patient-ereceipts" path="/patient-ereceipts" component={EReceiptsForPatient} />
+				<Link exact to="/patient-ereceipt-drugs" path="/patient-ereceipt-drugs" component={DrugsFromEReceiptForPatient} />
+				<Link exact to="/subscription" path="/subscription" component={Subscription} />
+				<Link exact to="/qr" path="/qr" component={QRreader} />
+				<Link exact to="/qrpharmacies" path="/qrpharmacies" component={QRpharmacies} />
+
+				<Link exact to="/patient-pharmacies-subscription" path="/patient-pharmacies-subscription" component={PatientsSubscribedPharmacies} />
 
 				<Link exact to="/unauthorized" path="/unauthorized" component={UnauthorizedPage} />
 				<Link exact to="/home-dermatologist-reservation" path="/home-dermatologist-reservation" component={AppointmentFromHomePage} />
 
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
+				<Route path="/qrpharmacies/:id" children={<QRpharmacies />} />
 				<Route path="/reserve-appointment/:id" children={<Appointments />} />
 				<Link exact to="/pharmacy-for-admin" path="/pharmacy-for-admin" component={PharmacyForAdmin} />
 
@@ -78,12 +97,13 @@ function App() {
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
 				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />
-				
+
 				<Link exact to="/dermatologist-calendar" path="/dermatologist-calendar" component={DermatologistCalendarPage} />
 
 				<Link exact to="/pharmacist" path="/pharmacist" component={PharmacistPage} />
 				<Link exact to="/pharmacist-for-patient" path="/pharmacist-for-patient" component={PharmacistPageForPatient} />
 				<Link exact to="/drugs-in-pharmacy" path="/drugs-in-pharmacy" component={DrugPageForPharmacyAdmin} />
+				<Route path="/treatment-report/:id" children={<TreatmentReportPage />} />
 
 			</Switch>
 		</Router>

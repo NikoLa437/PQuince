@@ -11,17 +11,28 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.drugs.DrugInstance;
 import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.drugs.ReservationStatus;
+import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.Staff;
+import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
+import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.repository.drugs.DrugReservationRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.users.PharmacistRepository;
+import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
+import quince_it.pquince.services.contracts.dto.drugs.StaffDrugReservationDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugReservationService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
@@ -36,7 +47,16 @@ public class DrugReservationService implements IDrugReservationService{
 	private DrugReservationRepository drugReservationRepository;
 	
 	@Autowired
+	private DrugPriceForPharmacyRepository drugPriceForPharmacyRepository;
+	
+	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private StaffRepository staffRepository;
+	
+	@Autowired
+	private PharmacistRepository pharmacistRepository;
 	
 	@Autowired
 	private PharmacyRepository pharmacyRepository;
@@ -74,8 +94,8 @@ public class DrugReservationService implements IDrugReservationService{
 		
 		CanReserveDrug(drugReservation, patient);
 		
-		drugReservationRepository.save(drugReservation);
 		drugStorageService.reduceAmountOfReservedDrug(entityDTO.getDrugId(), entityDTO.getPharmacyId(), entityDTO.getDrugAmount());
+		drugReservationRepository.save(drugReservation);
 		
 		try {
 			emailService.sendDrugReservationNotificaitionAsync(drugReservation);
@@ -92,9 +112,11 @@ public class DrugReservationService implements IDrugReservationService{
 	
 	private void CanReserveDrug(DrugReservation drugReservation,Patient patient) {
 			
-		if(!(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0
-				&& patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"))))
-			throw new IllegalArgumentException();
+		if(!(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0))
+			throw new IllegalArgumentException("Invalid arguments.");
+
+		if(!(patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"))))
+			throw new AuthorizationServiceException("Too many penalty points.");
 		
 	}
 
@@ -111,31 +133,25 @@ public class DrugReservationService implements IDrugReservationService{
 	}
 
 	@Override
-	public boolean cancelDrugReservation(UUID id) {
+	public void cancelDrugReservation(UUID id) {
 		
-		try {
-			DrugReservation drugReservation = drugReservationRepository.getOne(id);
-						
-			if(!canReservationBeCanceled(drugReservation)) return false;
+		DrugReservation drugReservation = drugReservationRepository.getOne(id);
+		
+		canReservationBeCanceled(drugReservation);
+		
+		drugReservation.setReservationStatus(ReservationStatus.CANCELED);
+		drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
+		drugReservationRepository.save(drugReservation);
 			
-			drugReservation.setReservationStatus(ReservationStatus.CANCELED);
-			drugReservationRepository.save(drugReservation);
-			drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
-			
-			return true;
-		} catch (IllegalArgumentException e) {
-			return false;
-		}
 	}
 	
-	private boolean canReservationBeCanceled(DrugReservation drugReservation) {
+	private void canReservationBeCanceled(DrugReservation drugReservation) {
 		
 		LocalDateTime ldt = LocalDateTime.ofInstant(drugReservation.getEndDate().toInstant(), ZoneId.systemDefault());
 		ldt = ldt.minusDays(1);
 		
-		if(ldt.isBefore(LocalDateTime.now())) return false;
+		if(ldt.isBefore(LocalDateTime.now())) throw new IllegalArgumentException("Invalid arguments.");
 		
-		return true;
 	}
 
 	@Override
@@ -147,22 +163,21 @@ public class DrugReservationService implements IDrugReservationService{
 	@Override
 	public void givePenaltyForMissedDrugReservation() {
 
-		try {
-			List<DrugReservation> expiredReservations = drugReservationRepository.findExpiredDrugReservations();
-			for (DrugReservation drugReservation : expiredReservations) {
-				
-				drugReservation.setReservationStatus(ReservationStatus.EXPIRED);
-				drugReservationRepository.save(drugReservation);
-				
+		
+		List<DrugReservation> expiredReservations = drugReservationRepository.findExpiredDrugReservations();
+		for (DrugReservation drugReservation : expiredReservations) {
+			
+			try {
 				Patient patient = patientRepository.findById(drugReservation.getPatient().getId()).get();
 				patient.addPenalty(1);
 				patientRepository.save(patient);
+				
+				drugReservation.setReservationStatus(ReservationStatus.EXPIRED);
+				drugReservationRepository.save(drugReservation);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-		
-		
 	}
 
 	@Override
@@ -178,7 +193,41 @@ public class DrugReservationService implements IDrugReservationService{
 		return DrugReservationMapper.MapDrugReservationPersistenceListToDrugReservationIdentifiableDTOList(drugReservationRepository.findProcessedDrugReservationsForPatient(patientId));
 
 	}
-	
 
+	@Override
+	public UUID reserveDrugAsStaff(StaffDrugReservationDTO staffDrugReservationDTO) {
+		//TODO: validation and exceptions
+		UUID staffId = userService.getLoggedUserId();
+		Patient patient = patientRepository.getOne(staffDrugReservationDTO.getPatientId());
+		Staff staff = staffRepository.getOne(staffId);
+		Pharmacy pharmacy;
+		if(staff.getStaffType() == StaffType.DERMATOLOGIST)
+			pharmacy = userService.getPharmacyForLoggedDermatologist();
+		else
+			pharmacy = pharmacistRepository.getOne(staffId).getPharmacy();
+		DrugInstance drugInstance = drugInstanceRepository.getOne(staffDrugReservationDTO.getDrugInstanceId());
+		int amount = staffDrugReservationDTO.getAmount();
+		Integer price = drugPriceForPharmacyRepository.findCurrentDrugPrice(drugInstance.getId(), pharmacy.getId());
+		long drugReservationDuration = Integer.parseInt(env.getProperty("drug_reservation_duration"));
+		System.out.println("Drug reservation duration in days " + drugReservationDuration);
+		long currentTime = new Date().getTime();
+		Date endDate = new Date(currentTime + (1000 * 60 * 60 * 24 * drugReservationDuration));
+		DrugReservation drugReservation = new DrugReservation(pharmacy, drugInstance, patient, amount, endDate, price);
+		//CanReserveDrug(drugReservation, patient);
+		drugStorageService.reduceAmountOfReservedDrug(drugInstance.getId(), pharmacy.getId(), amount);
+		drugReservationRepository.save(drugReservation);
+		
+		try {
+			emailService.sendDrugReservationNotificaitionAsync(drugReservation);
+		} catch (MailException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		
+		return drugReservation.getId();
+	}
 
 }
