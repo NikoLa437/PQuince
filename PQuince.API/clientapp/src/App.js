@@ -33,6 +33,7 @@ import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/
 import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
 import PharmacistPage from "./pages/pharmacist/PharmacistsPage";
 import PharmacistPageForPatient from "./pages/pharmacist/PharmacistPageForPatient";
+import DrugPageForPharmacyAdmin from "./pages/drug/DrugPageForPharmacyAdmin";
 
 function App() {
 	return (
@@ -82,6 +83,7 @@ function App() {
 
 				<Link exact to="/pharmacist" path="/pharmacist" component={PharmacistPage} />
 				<Link exact to="/pharmacist-for-patient" path="/pharmacist-for-patient" component={PharmacistPageForPatient} />
+				<Link exact to="/drugs-in-pharmacy" path="/drugs-in-pharmacy" component={DrugPageForPharmacyAdmin} />
 
 			</Switch>
 		</Router>
