@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Button, Modal } from "react-bootstrap";
-import CapsuleLogo from "../static/capsuleLogo.png";
+import receiptLogo from "../static/receiptLogo.png";
 
-class EReceiptDrugsModal extends Component {
+class EReceiptsForDrugModal extends Component {
 	render() {
 		return (
 			<Modal
@@ -16,27 +16,30 @@ class EReceiptDrugsModal extends Component {
 					<Modal.Title id="contained-modal-title-vcenter">{this.props.header}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<h4>{this.props.subheader}</h4>
-
 					<table className="table" style={{ width: "100%" }}>
 						<tbody>
-							{this.props.drugs.map((drug) => (
-								<tr id={drug.Id} key={drug.Id}>
+							{this.props.ereceipts.map((ereceipt) => (
+								<tr id={ereceipt.Id} key={ereceipt.Id}>
 									<td width="130em">
-										<img className="img-fluid" src={CapsuleLogo} width="90em" />
+										<img className="img-fluid" src={receiptLogo} width="90em" />
 									</td>
 									<td>
 										<div>
-											<b>Name:</b> {drug.EntityDTO.drugInstanceName}
+											<b>Status:</b> <span style={{ color: "#1977cc" }}>{ereceipt.EntityDTO.status}</span>
 										</div>
 										<div>
-											<b>Kind:</b> {drug.EntityDTO.drugKind}
+											<b>Date of creation:</b>{" "}
+											{new Date(ereceipt.EntityDTO.creationDate).toLocaleDateString("en-US", {
+												day: "2-digit",
+												month: "2-digit",
+												year: "numeric",
+											})}
 										</div>
 										<div>
-											<b>Format:</b> {drug.EntityDTO.drugFormat}
+											<b>Pharmacy name:</b> {ereceipt.EntityDTO.pharmacyName}
 										</div>
 										<div>
-											<b>Amount:</b> {drug.EntityDTO.drugAmount}
+											<b>Amount:</b> {ereceipt.EntityDTO.drugAmount}
 										</div>
 									</td>
 								</tr>
@@ -52,4 +55,4 @@ class EReceiptDrugsModal extends Component {
 	}
 }
 
-export default EReceiptDrugsModal;
+export default EReceiptsForDrugModal;

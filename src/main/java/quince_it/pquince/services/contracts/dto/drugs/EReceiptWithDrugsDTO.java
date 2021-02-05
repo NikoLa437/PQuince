@@ -1,10 +1,9 @@
-package quince_it.pquince.services.contracts.dto.appointment;
+package quince_it.pquince.services.contracts.dto.drugs;
 
 import java.util.Date;
 import java.util.List;
 
 import quince_it.pquince.entities.drugs.EReceiptStatus;
-import quince_it.pquince.services.contracts.dto.drugs.DrugEReceiptDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public class EReceiptWithDrugsDTO {

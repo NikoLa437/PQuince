@@ -153,7 +153,7 @@ insert into drug_format_id (id, type) values ('40645278-52d3-13eb-ae93-0242ac130
 
 
 insert into ereceipt (id, creation_date, status, patient_id) values ('e672e844-67ac-11eb-ae93-0242ac130002', '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, creation_date, status, patient_id) values ('15df3e98-67ad-11eb-ae93-0242ac130002', '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, creation_date, status, patient_id, pharmacy_id) values ('15df3e98-67ad-11eb-ae93-0242ac130002', '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002');
 insert into ereceipt (id, creation_date, status, patient_id) values ('19e26092-67ad-11eb-ae93-0242ac130002', '2021-01-05', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
 insert into ereceipt (id, creation_date, status, patient_id) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002', '2021-01-13', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
 insert into ereceipt (id, creation_date, status, patient_id) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002', '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');

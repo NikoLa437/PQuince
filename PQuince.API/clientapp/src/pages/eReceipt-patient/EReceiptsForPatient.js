@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+import { NavLink, Redirect } from "react-router-dom";
 import receiptLogo from "../../static/receiptLogo.png";
 import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
@@ -180,52 +180,17 @@ class EReceiptsForPatient extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">My E-Receipts</h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">E-Receipts</h5>
+					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
+						<NavLink className="nav-link active" exact to="/patient-ereceipts">
+							All e-Receipts
+						</NavLink>
+						<NavLink className="nav-link" exact to="/patient-ereceipt-drugs">
+							Processed drugs from e-Receipts{" "}
+						</NavLink>
+					</nav>
 
-					<form className="form-inline mt-3" width="100%" id="formCollapse">
-						<div className="form-group mb" width="100%">
-							<select
-								placeholder="Status"
-								onChange={this.handlePharmacyChange}
-								value={this.state.searchStatus}
-								style={{ width: "9em" }}
-								className="form-control mr-3"
-							>
-								<option key="1" value="Status" selected disabled>
-									Status
-								</option>
-								<option key="2" value="NEW">
-									New
-								</option>
-								<option key="3" value="REJECTED">
-									Rejected
-								</option>
-								<option key="4" value="PROCESSED">
-									Processed
-								</option>
-							</select>
-						</div>
-						<div>
-							<button
-								style={{ background: "#1977cc" }}
-								onClick={this.handleSearch}
-								className="btn btn-primary btn-xl mr-2"
-								type="button"
-							>
-								<i className="icofont-search mr-3"></i>
-								Search
-							</button>
-							<button
-								hidden={!this.state.showingSearched}
-								className="ml-2"
-								type="button"
-								className="btn btn-outline-secondary"
-								onClick={this.handleResetSearch}
-							>
-								<i className="icofont-close-line mr-1"></i>Reset search criteria
-							</button>
-						</div>
-					</form>
+					<form className="form-inline mt-3" width="100%" id="formCollapse"></form>
 
 					<div className="form-group">
 						<div className="form-group controls mb-0 pb-2">
@@ -259,9 +224,53 @@ class EReceiptsForPatient extends Component {
 										</button>
 									</div>
 								</div>
+								<div className="form-col ml-3">
+									<select
+										placeholder="Status"
+										onChange={this.handlePharmacyChange}
+										value={this.state.searchStatus}
+										style={{ width: "9em" }}
+										className="form-control mr-3"
+									>
+										<option key="1" value="Status" selected disabled>
+											Status
+										</option>
+										<option key="2" value="NEW">
+											New
+										</option>
+										<option key="3" value="REJECTED">
+											Rejected
+										</option>
+										<option key="4" value="PROCESSED">
+											Processed
+										</option>
+									</select>
+								</div>
+								<div className="form-col ml-3">
+									<button
+										style={{ background: "#1977cc" }}
+										onClick={this.handleSearch}
+										className="btn btn-primary btn-xl mr-2"
+										type="button"
+									>
+										<i className="icofont-search mr-3"></i>
+										Search
+									</button>
+									<button
+										hidden={!this.state.showingSearched}
+										className="ml-2"
+										type="button"
+										className="btn btn-outline-secondary"
+										onClick={this.handleResetSearch}
+									>
+										<i className="icofont-close-line mr-1"></i>Reset search criteria
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
+
+					<p className="mb-4 mt-4 text-uppercase">Click on eReceipt to see drugs</p>
 
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>

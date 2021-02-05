@@ -14,7 +14,8 @@ import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.drugs.EReceiptItemsRepository;
 import quince_it.pquince.repository.drugs.EReceiptRepository;
 import quince_it.pquince.repository.users.UserRepository;
-import quince_it.pquince.services.contracts.dto.appointment.EReceiptWithDrugsDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugWithEReceiptsDTO;
+import quince_it.pquince.services.contracts.dto.drugs.EReceiptWithDrugsDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IEReceiptService;
 import quince_it.pquince.services.implementation.util.drugs.EReceiptMapper;
@@ -109,6 +110,18 @@ public class EReceiptService implements IEReceiptService{
 												add(EReceiptMapper.MapEReceiptPersistenceToEReceiptWithDrugsIdentifiableDTO(e, eReceiptItemsRepository.findAllByEReceiptId(e.getId()))));
 		
 		return eReceipts;
+	}
+
+	@Override
+	public List<IdentifiableDTO<DrugWithEReceiptsDTO>> findAllProcessedDistinctDrugsByPatientId() {
+
+		UUID patientId = getLoggedUserId();
+		List<IdentifiableDTO<DrugWithEReceiptsDTO>> drugs = new ArrayList<IdentifiableDTO<DrugWithEReceiptsDTO>>();
+
+		eReceiptItemsRepository.findAllProcessedDistinctDrugsByPatientId(patientId).forEach((d) -> drugs
+											.add(EReceiptMapper.MapDrugInstancePersistenceToDrugInstanceWithERecieptsIdentifiableDTO(d, eReceiptItemsRepository.findAllProcessedByPatientAndDrugId(patientId, d.getId()))));
+		
+		return drugs;
 	}
 
 }

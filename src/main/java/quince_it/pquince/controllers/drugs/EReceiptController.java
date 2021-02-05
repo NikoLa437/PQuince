@@ -1,7 +1,5 @@
 package quince_it.pquince.controllers.drugs;
 
-import javax.websocket.server.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,5 +53,11 @@ public class EReceiptController {
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> findAllSearchSortByDateDescending(@RequestParam EReceiptStatus status) {
 		return new ResponseEntity<>(eReceiptService.findAllByPatientSearchByStatusSortByDateDescending(status),HttpStatus.OK);
+	}
+	
+	@GetMapping("/processed-drugs")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> findAllProcessedDistinctDrugsByPatientId() {
+		return new ResponseEntity<>(eReceiptService.findAllProcessedDistinctDrugsByPatientId(),HttpStatus.OK);
 	}
 }
