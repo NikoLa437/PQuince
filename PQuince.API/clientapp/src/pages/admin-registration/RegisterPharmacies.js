@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
+import { withRouter } from "react-router";
 import ModalDialog from "../../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
 
@@ -246,4 +247,4 @@ class RegisterPharmacies extends Component {
 	}
 }
 
-export default RegisterPharmacies;
+export default withRouter(RegisterPharmacies);

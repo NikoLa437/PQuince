@@ -4,6 +4,7 @@ import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
+import { withRouter } from "react-router";
 import ComplaintCreateModal from "../../components/ComplaintReplyModal";
 import getAuthHeader from "../../GetHeader";
 
@@ -206,4 +207,4 @@ class AdminComplaints extends Component {
 	}
 }
 
-export default AdminComplaints;
+export default withRouter(AdminComplaints);
