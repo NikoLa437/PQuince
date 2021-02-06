@@ -174,8 +174,6 @@ public class DrugReservationService implements IDrugReservationService{
 				
 				drugReservation.setReservationStatus(ReservationStatus.EXPIRED);
 				drugReservationRepository.save(drugReservation);
-			} catch (ObjectOptimisticLockingFailureException e) {
-				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -30,7 +30,6 @@ import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppoint
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.ScheduleAppointmentDTO;
-import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
@@ -222,8 +221,6 @@ public class AppointmentController {
 		} catch (AppointmentTimeOverlappingWithOtherAppointmentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (AuthorizationServiceException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} catch (AlreadyBeenScheduledConsultationException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -4,9 +4,8 @@ import Header from "../components/Header";
 import Axios from "axios";
 import { BASE_URL } from "../constants.js";
 import PharmacyLogo from "../static/pharmacyLogo.png";
-import '../App.js'
+import "../App.js";
 import { Redirect } from "react-router-dom";
-
 
 class PharmaciesPage extends Component {
 	state = {
@@ -23,8 +22,8 @@ class PharmaciesPage extends Component {
 		currentLatitude: null,
 		currentLongitude: null,
 		sortIndicator: 0,
-		redirect:false,
-		redirectUrl:''
+		redirect: false,
+		redirectUrl: "",
 	};
 
 	handleNameChange = (event) => {
@@ -313,13 +312,13 @@ class PharmaciesPage extends Component {
 			});
 	};
 
-	handleClickOnPharmacy = (id) =>{
+	handleClickOnPharmacy = (id) => {
 		this.setState({
-			redirect:true,
-			redirectUrl : "/pharmacy/"+id
-		})
+			redirect: true,
+			redirectUrl: "/pharmacy/" + id,
+		});
 		//window.location.href = "pharmacy/" + id
-	}
+	};
 
 	handleSortByGradeDescending = () => {
 		let URL = BASE_URL + "/api/pharmacy";
@@ -489,10 +488,15 @@ class PharmaciesPage extends Component {
 						</div>
 					</div>
 
-					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.pharmacies.map((pharmacy) => (
-								<tr id={pharmacy.Id} key={pharmacy.Id} onClick={() => this.handleClickOnPharmacy(pharmacy.Id)}>
+								<tr
+									id={pharmacy.Id}
+									key={pharmacy.Id}
+									style={{ cursor: "pointer" }}
+									onClick={() => this.handleClickOnPharmacy(pharmacy.Id)}
+								>
 									<td width="130em">
 										<img className="img-fluid" src={PharmacyLogo} width="70em" />
 									</td>

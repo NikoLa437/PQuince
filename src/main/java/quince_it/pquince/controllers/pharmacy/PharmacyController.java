@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
+import quince_it.pquince.services.contracts.dto.drugs.EReceiptIdDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
@@ -30,6 +32,7 @@ import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IEReceiptService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
@@ -41,7 +44,7 @@ public class PharmacyController {
 
 	@Autowired
 	private IPharmacyService pharmacyService;
-
+	
 	@Autowired
 	private IUserService userService;
 	
@@ -62,6 +65,15 @@ public class PharmacyController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	@GetMapping("/qrpharmacies/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findWithQR(@PathVariable UUID id) {
+		System.out.println("AAAAA" + id);
+	
+		return new ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>>(pharmacyService.findWithQR(id),HttpStatus.OK);
+		
 	}
 	
 	@GetMapping("/subscribed")

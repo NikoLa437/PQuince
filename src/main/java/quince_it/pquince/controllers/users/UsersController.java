@@ -28,10 +28,13 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.AddPharmacistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
@@ -110,8 +113,6 @@ public class UsersController {
 		try {
 			userService.updatePatient(userInfoChangeDTO);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
-		}  catch (ObjectOptimisticLockingFailureException e) {
-			return new ResponseEntity<>("Conflicting resource. Try again.",HttpStatus.BAD_REQUEST);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
@@ -236,6 +237,21 @@ public class UsersController {
 		}
 	}
 	
+	@PutMapping("/remove-pharmacyist-from-pharmacy") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<?> removePharmacistFromPharmacy(@RequestBody RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO) {
+		
+		try {
+			if(userService.removePharmacistFromPharmacy(removePharmacistFromPharmacyDTO))
+				return new ResponseEntity<>(HttpStatus.OK); 
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 	@PutMapping("/subscribe-to-pharmacy") 
 	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
@@ -309,6 +325,7 @@ public class UsersController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
 	}
+
 	
 	@GetMapping("/dermatologist-for-emplooye-in-pharmacy/{pharmacyId}") 
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
@@ -421,6 +438,20 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/search-pharmacists-for-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN') or hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> findPharmacist(@RequestParam String name,@RequestParam String surname, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam UUID pharmacyId) {
+		
+		try {
+			PharmacistFiltrationDTO pharmacistFiltrationDTO = new PharmacistFiltrationDTO(name, surname, gradeFrom, gradeTo,pharmacyId);
+			List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacist = userService.findPharmacistByNameSurnameGradeAndPharmacy(pharmacistFiltrationDTO);
+			
+			return new ResponseEntity<>(pharmacist, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	@GetMapping("/search-dermatologist")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDermatologistForPharmacyGradeDTO>> findByNameSurnameGradeAndPharmacy(@RequestParam String name,@RequestParam String surname, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam UUID pharmacyId) {
@@ -462,4 +493,64 @@ public class UsersController {
 			return new ResponseEntity<>(false,HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
 	}
+	
+	@CrossOrigin
+	@GetMapping("/pharmacist-for-pharmacy/{pharmacyId}") 
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> getPharmacistForPharmacy(@PathVariable UUID pharmacyId) {
+	  
+		try {
+			List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = userService.findAllPharmacistsForPharmacy(pharmacyId);
+			return new ResponseEntity<>(pharmacists,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/pharmacists-for-employment") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> getPharmacistForEmployment() {
+	  
+		try {
+			List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = userService.findAllPharmacistForEmployment();
+			return new ResponseEntity<>(pharmacists,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@PutMapping("/add-pharmacist-to-pharmacy") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<?> addPharmacistToPharmacy(@RequestBody AddPharmacistToPharmacyDTO addPharmacistToPharmacyDTO) {
+		
+		try {
+			if(userService.addPharmacistToPharmacy(addPharmacistToPharmacyDTO))
+				return new ResponseEntity<>(HttpStatus.OK); 
+			
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);	
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/pharmacists") 
+	@PreAuthorize("hasRole('PATIENT')")
+	@CrossOrigin
+	public ResponseEntity<List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>> getAllPharmacists() {
+	  
+		try {
+			List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists = userService.findAllPharmacists();
+			return new ResponseEntity<>(pharmacists,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 }

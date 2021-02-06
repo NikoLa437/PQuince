@@ -241,9 +241,7 @@ class UserProfilePage extends Component {
 						})
 							.then((res) => {
 								if (res.status === 400) {
-									if (res.data !== "" && res.data !== undefined && res.data !== null)
-										this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: res.data });
-									else this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Invalid argument." });
+									this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Invalid argument." });
 								} else if (res.status === 500) {
 									this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
 								} else if (res.status === 204) {

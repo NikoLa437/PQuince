@@ -13,8 +13,6 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.AuthorizationServiceException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
@@ -33,7 +31,6 @@ import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.PharmacistRepository;
 import quince_it.pquince.repository.users.StaffRepository;
-import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
 import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
@@ -44,8 +41,8 @@ import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppoint
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
-import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -566,7 +563,7 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
-	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException {
+	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AppointmentTimeOverlappingWithOtherAppointmentException {
 		
 		long time = requestDTO.getStartDateTime().getTime();
 		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
@@ -586,19 +583,13 @@ public class AppointmentService implements IAppointmentService{
 		return appointment.getId();
 	}
 	
-	private void CanCreateConsultation(Appointment appointment) throws AlreadyBeenScheduledConsultationException, AppointmentTimeOverlappingWithOtherAppointmentException {
+	private void CanCreateConsultation(Appointment appointment) throws AppointmentTimeOverlappingWithOtherAppointmentException {
 		
 		if(doesPatientHaveAppointmentInDesiredTime(appointment, appointment.getPatient()))
 			throw new AppointmentTimeOverlappingWithOtherAppointmentException("Cannot reserve appointment at same time as other appointment");
 		
 		if(appointment.getPatient().getPenalty() >= Integer.parseInt(env.getProperty("max_penalty_count")))
 			throw new AuthorizationServiceException("Too many penalty points");
-
-		if(appointmentRepository.findConsultationsByAppointmentTimePharmacistAndPatient(appointment.getStartDateTime(),
-																						appointment.getStaff().getId(),
-																						appointment.getPatient().getId()) != null)
-			
-			throw new AlreadyBeenScheduledConsultationException("Cannot schedule appointment at same pharmacist at same time more than once");
 	
 		if (!(appointment.getStartDateTime().after(new Date())))
 				throw new IllegalArgumentException("Bad request");
@@ -686,6 +677,15 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
+	public boolean hasAppointmentInFutureForPharmacist(
+			RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO) {
+		List<Appointment> listOfAppointment = appointmentRepository.findAllAppointmentForPharmacistInFutureInPharmacy(removePharmacistFromPharmacyDTO.getPharmacistId(),removePharmacistFromPharmacyDTO.getPharmacyId());
+		if(listOfAppointment.size()>0)
+			return true;
+		
+		return false;
+	}
+
 	public IdentifiableDTO<AppointmentDTO> getAppointment(UUID appointmentId) {
 		Appointment appointment = appointmentRepository.findById(appointmentId).get();
 		return AppointmentMapper.MapAppointmentPersistenceToAppointmentIdentifiableDTO(appointment);

@@ -5,6 +5,8 @@ import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
 import getAuthHeader from "../GetHeader";
+import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
+import HeadingAlert from "../components/HeadingAlert";
 
 class WorkTimesModal extends Component {
     state = {
@@ -14,7 +16,13 @@ class WorkTimesModal extends Component {
         selectedEndDate:new Date(),
         timeFrom:1,
         timeTo:2,
-        modalSize:'lg',        
+        modalSize:'lg',    
+        hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",    
     }
 
     handleBack = (event) =>{
@@ -102,10 +110,19 @@ class WorkTimesModal extends Component {
         }).then((res) =>{
             console.log(res.data);
             this.setState({showAddWorkTime: false, modalSize:'lg'});
-            alert("Uspesno dodat worktime")
-            this.handleClickOnClose();
+            this.setState({
+                hiddenSuccessAlert: false,
+                hiddenFailAlert:true,
+                successHeader: "Success",
+                successMessage: "You successfully add worktime for staff.",
+            })
+
         }).catch((err) => {
-            alert('Nije moguce kreirati termin u naznacenom roku');
+            this.setState({ 
+                hiddenSuccessAlert: true,
+                hiddenFailAlert: false, 
+                failHeader: "Unsuccess", 
+                failMessage: "It is not possible to add worktime"});
         });
     }
 
@@ -117,9 +134,19 @@ class WorkTimesModal extends Component {
             selectedEndDate:new Date(),
             timeFrom:1,
             timeTo:2,
+            hiddenSuccessAlert:true,
+            hiddenFailAlert:true,
         });
         this.props.onCloseModal();
     }
+
+    handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+    };
+    
+    handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
 
     render() { 
         return ( 
@@ -138,6 +165,18 @@ class WorkTimesModal extends Component {
 
                 </Modal.Header>
                 <Modal.Body>
+                    <HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
+                    <HeadingAlert
+                            hidden={this.state.hiddenFailAlert}
+                            header={this.state.failHeader}
+                            message={this.state.failMessage}
+                            handleCloseAlert={this.handleCloseAlertFail}
+                    />
                     <div hidden={this.state.showAddWorkTime}>
                         <Button style={{marginBottom:'3%'}} onClick = {() => this.handleAddWorkTimeModal()}>Add worktime</Button>
 

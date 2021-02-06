@@ -44,10 +44,14 @@ import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.AddPharmacistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.AuthorityDTO;
 import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
+import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
@@ -344,7 +348,9 @@ public class UserService implements IUserService{
 	@Override
 	public boolean removeDermatologistFromPharmacy(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO) {
 		try {
+			System.out.println("TESTTTTTTTTTTTTTTTTTTTTTTTTT----1");
 			if(!appointmentService.hasAppointmentInFuture(removeDermatologistFromPharmacyDTO)) {
+				System.out.println("TESTTTTTTTTTTTTTTTTTTTTTTTTT----2");
 				Dermatologist dermatologist = dermatologistRepository.getOne(removeDermatologistFromPharmacyDTO.getDermatologistId());
 				dermatologist.removePharmacy(removeDermatologistFromPharmacyDTO.getPharmacyId());
 				
@@ -743,6 +749,120 @@ public class UserService implements IUserService{
 	}
 	
 	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacistsForPharmacy(UUID pharmacyId) {
+		List<Pharmacist> pharmacists = pharmacistRepository.findAllPharmacistsForPharmacy(pharmacyId);
+		
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> retPharmacist = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+
+		pharmacists.forEach((p) ->  retPharmacist.add(MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(p)));
+		
+		return retPharmacist;
+	}
+
+	private IdentifiableDTO<PharmacistForPharmacyGradeDTO> MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(
+			Pharmacist pharmacist) {
+		if(pharmacist.getPharmacy()!=null)
+			return new IdentifiableDTO<PharmacistForPharmacyGradeDTO>(pharmacist.getId(), new PharmacistForPharmacyGradeDTO(pharmacist.getName(),pharmacist.getSurname(),staffFeedbackService.findAvgGradeForStaff(pharmacist.getId()),pharmacist.getPharmacy().getName()));
+		else
+			return new IdentifiableDTO<PharmacistForPharmacyGradeDTO>(pharmacist.getId(), new PharmacistForPharmacyGradeDTO(pharmacist.getName(),pharmacist.getSurname(),staffFeedbackService.findAvgGradeForStaff(pharmacist.getId()),null));
+	}
+	
+	@Override
+	public boolean removePharmacistFromPharmacy(RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO) {
+		try {
+			if(!appointmentService.hasAppointmentInFutureForPharmacist(removePharmacistFromPharmacyDTO)) {
+				Pharmacist pharmacist = pharmacistRepository.getOne(removePharmacistFromPharmacyDTO.getPharmacistId());
+				pharmacist.removePharmacy();
+				
+				pharmacistRepository.save(pharmacist);
+				
+				workTimeService.removeWorkTimeForPharmacistForPharmacy(removePharmacistFromPharmacyDTO);
+				return true;
+			}else {
+				return false;
+			}
+		} 
+		
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacistForEmployment() {
+		List<Pharmacist> pharmacists = pharmacistRepository.findAllPharmacistForEmployment();
+		System.out.println(pharmacists.size());
+
+
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> retPharmacist = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+
+		pharmacists.forEach((p) ->  retPharmacist.add(MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(p)));
+
+		return retPharmacist;
+	}
+
+	@Override
+	public boolean addPharmacistToPharmacy(AddPharmacistToPharmacyDTO addPharmacistToPharmacyDTO) {
+		try {
+
+			Pharmacist pharmacist = pharmacistRepository.getOne(addPharmacistToPharmacyDTO.getPharmacistId());
+			Pharmacy pharmacy = pharmacyRepository.getOne(addPharmacistToPharmacyDTO.getPharmacyId());
+			
+			
+			pharmacist.setPharmacy(pharmacy);
+			pharmacistRepository.save(pharmacist);
+			
+
+			WorkTimeDTO workTimeDTO = new WorkTimeDTO(addPharmacistToPharmacyDTO.getPharmacyId(),addPharmacistToPharmacyDTO.getPharmacistId(), addPharmacistToPharmacyDTO.getStartDate(), addPharmacistToPharmacyDTO.getEndDate(), addPharmacistToPharmacyDTO.getStartTime(), addPharmacistToPharmacyDTO.getEndTime(),"");
+			workTimeService.create(workTimeDTO);
+			
+			return true;
+		} 
+		catch (EntityNotFoundException e) { return false; } 
+		catch (IllegalArgumentException e) { return false; }
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findPharmacistByNameSurnameGradeAndPharmacy(
+			PharmacistFiltrationDTO pharmacistFiltrationDTO) {
+		List<Pharmacist> pharmacists;
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>  retPharmacists = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+		
+		if(pharmacistFiltrationDTO.getPharmacyId().toString().equals("00000000-0000-0000-0000-000000000000"))
+			pharmacists = pharmacistRepository.findPharmacistByNameAndSurname(pharmacistFiltrationDTO.getName().toLowerCase(),pharmacistFiltrationDTO.getSurname().toLowerCase());
+		else
+			pharmacists = pharmacistRepository.findPharmacistByNameSurnameAndPharmacy(pharmacistFiltrationDTO.getName().toLowerCase(),pharmacistFiltrationDTO.getSurname().toLowerCase(),pharmacistFiltrationDTO.getPharmacyId());
+		
+		pharmacists.forEach(c -> retPharmacists.add(MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(c)));
+		
+
+		if(pharmacistFiltrationDTO.getGradeFrom()!=-1 || pharmacistFiltrationDTO.getGradeTo()!=-1)
+			return findPharmacistByGrade(retPharmacists,pharmacistFiltrationDTO);	
+		
+		return retPharmacists;
+	}
+
+	private List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findPharmacistByGrade(List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> pharmacists,
+			PharmacistFiltrationDTO pharmacistFiltrationDTO) {
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> retVal = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+		
+		for(IdentifiableDTO<PharmacistForPharmacyGradeDTO> pharmacist : pharmacists) {
+			if(pharmacist.EntityDTO.getGrade()>= pharmacistFiltrationDTO.getGradeFrom() && (pharmacist.EntityDTO.getGrade()< pharmacistFiltrationDTO.getGradeTo() || pharmacistFiltrationDTO.getGradeTo()==-1))
+				retVal.add(pharmacist);
+		}
+		
+		return retVal;
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacists() {
+		List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> retPharmacists = new ArrayList<IdentifiableDTO<PharmacistForPharmacyGradeDTO>>();
+				
+		pharmacistRepository.findAll().forEach((pharmacist) -> retPharmacists.add(this.MapPharmacistPersistenceToPharmacistForPharmacyGradeIdentifiableDTO(pharmacist)));
+
+		return retPharmacists;
+	}
+	
+
 	public Pharmacy getPharmacyForLoggedDermatologist() {
 		//TODO: Exceptions
 		//TODO: appointments date?

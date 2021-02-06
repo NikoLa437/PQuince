@@ -30,7 +30,7 @@ class Header extends Component {
 					<nav className="nav-menu d-none d-lg-block">
 						<ul>
 							<li className="active" hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a to="/">Home</a>
+								<Link to="/">Home</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
 								<Link to="/patients">Patients</Link>
@@ -52,7 +52,7 @@ class Header extends Component {
 										<Link to="/observe-consultations">Consultations with a pharmacist</Link>
 									</li>
 									<li>
-										<Link to="/">eReciepts</Link>
+										<Link to="/patient-ereceipts">eReciepts</Link>
 									</li>
 									<li>
 										<Link to="/drugs-reservation">Reserved medicines</Link>
