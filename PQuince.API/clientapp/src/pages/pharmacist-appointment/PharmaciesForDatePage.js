@@ -65,6 +65,13 @@ class PharmaciesForDatePage extends Component {
 							</div>
 						</div>
 					</div>
+					<p hidden={this.props.pharmacies.length === 0} className="mb-4 mt-4 text-uppercase">
+						Click on pharmacy where you want to schedule appointment
+					</p>
+
+					<h5 className=" text-center mb-0 mt-5 text-uppercase text-danger" hidden={this.props.pharmacies.length !== 0}>
+						Sorry, we couldn't find pharmacies with free pharmacists at desired time. Try changing date and time.
+					</h5>
 
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>

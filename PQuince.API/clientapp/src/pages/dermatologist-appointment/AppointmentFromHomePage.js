@@ -483,6 +483,7 @@ class AppointmentFromHomePage extends Component {
 						</div>
 					</div>
 
+					<p className="mb-4 mt-4 text-uppercase">Click on pharmacy where you want to schedule appointment</p>
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.pharmacies.map((pharmacy) => (
