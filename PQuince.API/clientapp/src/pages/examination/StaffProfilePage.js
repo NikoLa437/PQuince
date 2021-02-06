@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import Header from "../components/Header";
-import TopBar from "../components/TopBar";
-import { BASE_URL } from "../constants.js";
+import Header from "../../components/Header";
+import TopBar from "../../components/TopBar";
+import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
-import PasswordChangeModal from "../components/PasswordChangeModal";
-import ModalDialog from "../components/ModalDialog";
+import PasswordChangeModal from "../../components/PasswordChangeModal";
+import ModalDialog from "../../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
-import getAuthHeader from "../GetHeader";
+import getAuthHeader from "../../GetHeader";
 
 const mapState = {
 	center: [44, 21],

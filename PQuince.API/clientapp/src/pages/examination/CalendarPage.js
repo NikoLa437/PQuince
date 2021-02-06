@@ -1,15 +1,15 @@
 import React, { Component } from "react";
-import Header from "../components/Header";
-import TopBar from "../components/TopBar";
-import { BASE_URL } from "../constants.js";
+import Header from "../../components/Header";
+import TopBar from "../../components/TopBar";
+import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
-import getAuthHeader from "../GetHeader";
+import getAuthHeader from "../../GetHeader";
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import EventDetailsModal from "../components/EventDetailsModal";
+import EventDetailsModal from "../../components/EventDetailsModal";
 import { Redirect } from "react-router-dom";
-import ModalDialog from "../components/ModalDialog";
+import ModalDialog from "../../components/ModalDialog";
 
 const localizer = momentLocalizer(moment)
 
