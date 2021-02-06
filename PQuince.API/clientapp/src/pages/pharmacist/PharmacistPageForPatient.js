@@ -3,17 +3,16 @@ import TopBar from "../../components/TopBar";
 import Header from "../../components/Header";
 import Axios from "axios";
 import { BASE_URL } from "../../constants.js";
-import dermatologistLogo from "../../static/dermatologistLogo.png";
-import PharmaciesForDermatologistModal from "../../components/PharmaciesForDermatologistModal";
+import pharmacistLogo from "../../static/pharmacistLogo.png";
 import getAuthHeader from "../../GetHeader";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 import HeadingAlert from "../../components/HeadingAlert";
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import FeedbackCreateModal from "../../components/FeedbackCreateModal";
 
-class DermatologistsPageForPatient extends Component {
+class PharmacistPageForPatient extends Component {
 	state = {
-		dermatologists: [],
+		pharmacists: [],
 		forPharmacy: "cafeddee-56cb-11eb-ae93-0242ac130202",
 		forStaff: "",
 		formShowed: false,
@@ -40,11 +39,11 @@ class DermatologistsPageForPatient extends Component {
 	};
 
 	componentDidMount() {
-		Axios.get(BASE_URL + "/api/users/dermatologists", {
+		Axios.get(BASE_URL + "/api/users/pharmacists", {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
-				this.setState({ dermatologists: res.data });
+				this.setState({ pharmacists: res.data });
 				console.log(res.data);
 			})
 			.catch((err) => {
@@ -60,29 +59,6 @@ class DermatologistsPageForPatient extends Component {
 				console.log(err);
 			});
 	}
-
-	handlePharmaciesModalClose = () => {
-		this.setState({ showPharmaciesModal: false });
-	};
-
-	showPharmacies = (id) => {
-		Axios.get(BASE_URL + "/api/users/pharmacies-where-dermatologist-work", {
-			params: {
-				dermatologistId: id,
-			},
-			headers: { Authorization: getAuthHeader() },
-		})
-			.then((res) => {
-				this.setState({ pharmaciesForDermatologist: res.data });
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-		this.setState({
-			showPharmaciesModal: true,
-		});
-	};
 
 	hangleFormToogle = () => {
 		this.setState({ formShowed: !this.state.formShowed });
@@ -132,7 +108,7 @@ class DermatologistsPageForPatient extends Component {
 
 			const SEARCH_URL =
 				BASE_URL +
-				"/api/users/search-dermatologist?name=" +
+				"/api/users/search-pharmacists-for-pharmacy?name=" +
 				name +
 				"&surname=" +
 				surname +
@@ -148,7 +124,7 @@ class DermatologistsPageForPatient extends Component {
 			})
 				.then((res) => {
 					this.setState({
-						dermatologists: res.data,
+						pharmacists: res.data,
 						formShowed: false,
 						showingSearched: true,
 					});
@@ -161,12 +137,12 @@ class DermatologistsPageForPatient extends Component {
 	};
 
 	handleResetSearch = () => {
-		Axios.get(BASE_URL + "/api/users/dermatologists", {
+		Axios.get(BASE_URL + "/api/users/pharmacists", {
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((res) => {
 				this.setState({
-					dermatologists: res.data,
+					pharmacists: res.data,
 					formShowed: false,
 					showingSearched: false,
 					searchName: "",
@@ -234,11 +210,11 @@ class DermatologistsPageForPatient extends Component {
 					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
 				} else if (resp.status === 201) {
 					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully saved." });
-					Axios.get(BASE_URL + "/api/users/dermatologists", {
+					Axios.get(BASE_URL + "/api/users/pharmacists", {
 						headers: { Authorization: getAuthHeader() },
 					})
 						.then((res) => {
-							this.setState({ dermatologists: res.data });
+							this.setState({ pharmacists: res.data });
 							console.log(res.data);
 						})
 						.catch((err) => {
@@ -269,11 +245,11 @@ class DermatologistsPageForPatient extends Component {
 					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
 				} else if (resp.status === 204) {
 					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully modified." });
-					Axios.get(BASE_URL + "/api/users/dermatologists", {
+					Axios.get(BASE_URL + "/api/users/pharmacists", {
 						headers: { Authorization: getAuthHeader() },
 					})
 						.then((res) => {
-							this.setState({ dermatologists: res.data });
+							this.setState({ pharmacists: res.data });
 							console.log(res.data);
 						})
 						.catch((err) => {
@@ -324,7 +300,7 @@ class DermatologistsPageForPatient extends Component {
 					/>
 					<button className="btn btn-outline-primary btn-xl" type="button" onClick={this.hangleFormToogle}>
 						<i className="icofont-rounded-down mr-1"></i>
-						Search dermatologists
+						Search pharmacists
 					</button>
 					<form className={this.state.formShowed ? "form-inline mt-3" : "form-inline mt-3 collapse"} width="100%" id="formCollapse">
 						<div className="form-group mb-2" width="100%">
@@ -402,43 +378,32 @@ class DermatologistsPageForPatient extends Component {
 
 					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
-							{this.state.dermatologists.map((dermatologist) => (
-								<tr id={dermatologist.Id} key={dermatologist.Id}>
+							{this.state.pharmacists.map((pharmacist) => (
+								<tr id={pharmacist.Id} key={pharmacist.Id}>
 									<td width="130em">
-										<img className="img-fluid" src={dermatologistLogo} width="70em" />
+										<img className="img-fluid" src={pharmacistLogo} width="70em" />
 									</td>
 
 									<td>
 										<div>
-											<b>Name: </b> {dermatologist.EntityDTO.name}
+											<b>Name: </b> {pharmacist.EntityDTO.name}
 										</div>
 										<div>
-											<b>Surname: </b> {dermatologist.EntityDTO.surname}
+											<b>Surname: </b> {pharmacist.EntityDTO.surname}
 										</div>
 										<div>
-											<b>Email: </b> {dermatologist.EntityDTO.email}
+											<b>Pharmacy: </b> {pharmacist.EntityDTO.pharmacyName}
 										</div>
 										<div>
-											<b>Phone number: </b> {dermatologist.EntityDTO.phoneNumber}
-										</div>
-										<div>
-											<b>Grade: </b> {dermatologist.EntityDTO.grade}
+											<b>Grade: </b> {pharmacist.EntityDTO.grade}
 											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 									</td>
 									<td className="align-middle">
-										<div style={{ marginLeft: "55%", height: "100%" }}>
-											<button
-												style={({ height: "30px" }, { verticalAlign: "center" })}
-												className="btn btn-outline-secondary mt-1"
-												onClick={() => this.showPharmacies(dermatologist.Id)}
-												type="button"
-											>
-												<i className="icofont-subscribe mr-1"></i>Pharmacies
-											</button>
+										<div style={{ marginLeft: "55%" }}>
 											<button
 												type="button"
-												onClick={() => this.handleFeedbackClick(dermatologist)}
+												onClick={() => this.handleFeedbackClick(pharmacist)}
 												className="btn btn-outline-secondary mt-2"
 											>
 												Give feedback
@@ -455,14 +420,6 @@ class DermatologistsPageForPatient extends Component {
 						</tbody>
 					</table>
 				</div>
-				<div>
-					<PharmaciesForDermatologistModal
-						show={this.state.showPharmaciesModal}
-						onCloseModal={this.handlePharmaciesModalClose}
-						pharmacies={this.state.pharmaciesForDermatologist}
-						header="Work in pharmacies"
-					/>
-				</div>
 				<FeedbackCreateModal
 					buttonName="Give feedback"
 					grade={this.state.grade}
@@ -471,7 +428,7 @@ class DermatologistsPageForPatient extends Component {
 					onCloseModal={this.handleFeedbackModalClose}
 					giveFeedback={this.handleFeedback}
 					name={this.state.StaffName + " " + this.state.StaffSurame}
-					forWho="dermatologist"
+					forWho="pharmacist"
 					handleClickIcon={this.handleClickIcon}
 				/>
 				<FeedbackCreateModal
@@ -482,7 +439,7 @@ class DermatologistsPageForPatient extends Component {
 					onCloseModal={this.handleModifyFeedbackModalClose}
 					giveFeedback={this.handleModifyFeedback}
 					name={this.state.StaffName + " " + this.state.StaffSurame}
-					forWho="dermatologist"
+					forWho="pharmacist"
 					handleClickIcon={this.handleClickIcon}
 				/>
 			</React.Fragment>
@@ -490,4 +447,4 @@ class DermatologistsPageForPatient extends Component {
 	}
 }
 
-export default DermatologistsPageForPatient;
+export default PharmacistPageForPatient;

@@ -137,11 +137,15 @@ class ConsultationTimeSelectPage extends Component {
 	};
 
 	handleMinutesChange = (event) => {
-		this.setState({ minutes: event.target.value });
+		if (event.target.value > 59) this.setState({ minutes: 59 });
+		else if (event.target.value < 0) this.setState({ minutes: 0 });
+		else this.setState({ minutes: event.target.value });
 	};
 
 	handleHoursChange = (event) => {
-		this.setState({ hours: event.target.value });
+		if (event.target.value > 23) this.setState({ hours: 23 });
+		else if (event.target.value < 0) this.setState({ hours: 0 });
+		else this.setState({ hours: event.target.value });
 	};
 
 	handleCheckAvailability = () => {

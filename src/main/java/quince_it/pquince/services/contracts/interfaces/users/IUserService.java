@@ -12,10 +12,13 @@ import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.AddPharmacistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
@@ -99,8 +102,23 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	boolean unsubscribeFromPharmacy(EntityIdDTO pharmacyIdDTO);
 
 	boolean checkIfPatientSubscribed(UUID pharmacyId);
+
+	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacistsForPharmacy(UUID pharmacyId);
+
+	boolean removePharmacistFromPharmacy(RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO);
+
+	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacistForEmployment();
+
+	boolean addPharmacistToPharmacy(AddPharmacistToPharmacyDTO addPharmacistToPharmacyDTO);
+
+	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findPharmacistByNameSurnameGradeAndPharmacy(
+			PharmacistFiltrationDTO pharmacistFiltrationDTO);
+
+	List<IdentifiableDTO<PharmacistForPharmacyGradeDTO>> findAllPharmacists();
 	
 	Pharmacy getPharmacyForLoggedDermatologist();
 
 	List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies();
+	
+	IdentifiableDTO<PharmacyDTO> getPharmacy();
 }

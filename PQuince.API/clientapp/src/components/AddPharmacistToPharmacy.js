@@ -1,45 +1,61 @@
 import React, { Component } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import DermatologistLogo from '../static/dermatologistLogo.png';
+import PharmacistLogo from '../static/pharmacistLogo.png';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
 import getAuthHeader from "../GetHeader";
-import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
-import HeadingAlert from "../components/HeadingAlert";
 
-class WorkTimesModal extends Component {
+class AddPharmacistToPharmacy extends Component {
     state = {
-        workTimes:[],
+        pharmacists:[],
         showAddWorkTime:false,
+        pharmacistIdToAdd:'',
+        modalSize:'lg',    
         selectedStartDate:new Date(),
         selectedEndDate:new Date(),
         timeFrom:1,
-        timeTo:2,
-        modalSize:'lg',    
-        hiddenSuccessAlert: true,
-		successHeader: "",
-		successMessage: "",
-		hiddenFailAlert: true,
-		failHeader: "",
-		failMessage: "",    
+        timeTo:2,    
+        pharmacyId:''
     }
 
-    handleBack = (event) =>{
+    componentDidMount() {
+    }
+
+    onAddClick = (id) =>{
         this.setState({
-            showAddWorkTime: false, 
-            modalSize:'lg',
-            selectedStartDate:new Date(),
-            selectedEndDate:new Date(),
-            timeFrom:1,
-            timeTo:2,
+            showAddWorkTime: true,
+            pharmacistIdToAdd:id,
+            modalSize:'md'
         });
     }
 
+    handleAdd = () => {
+        let addPharmacistToPharmacyDTO = {
+            pharmacyId : this.props.pharmacyId,
+            pharmacistId: this.state.pharmacistIdToAdd, 
+            startDate: this.state.selectedStartDate, 
+            endDate:this.state.selectedEndDate,
+            startTime: this.state.timeFrom, 
+            endTime:this.state.timeTo
+        };
 
+        Axios
+        .put(BASE_URL + "/api/users/add-pharmacist-to-pharmacy", addPharmacistToPharmacyDTO, {
+            headers: { Authorization: getAuthHeader() },
+        }).then((res) =>{
+            console.log(res.data);
+            this.props.updatePharmacist();
+            this.setState({showAddWorkTime: false, modalSize:'lg'});
+            alert("Uspesno dodat dermatolog u apoteku")
+            this.handleClickOnClose();
+        }).catch((err) => {
+            alert('Nije moguce dodati dermatologa');
+        });
+    }
 
-    handleAddWorkTimeModal = (event) =>{
-        this.setState({showAddWorkTime: true, modalSize:'md'});
+    handleBack = (event) =>{
+        this.setState({showAddWorkTime: false,modalSize:'lg'});
     }
 
     handleStartDateChange = (date) => {
@@ -93,39 +109,6 @@ class WorkTimesModal extends Component {
             }
     }
 
-    handleAdd = () => {
-        let workTimeDTO = {
-            forPharmacy : this.props.forPharmacy,
-            forStaff: this.props.forStaff, 
-            pharmacyName: '', 
-            startDate: this.state.selectedStartDate, 
-            endDate:this.state.selectedEndDate,
-            startTime: this.state.timeFrom, 
-            endTime:this.state.timeTo
-        };
-
-        Axios
-        .post(BASE_URL + "/api/worktime/", workTimeDTO, {
-            headers: { Authorization: getAuthHeader() },
-        }).then((res) =>{
-            console.log(res.data);
-            this.setState({showAddWorkTime: false, modalSize:'lg'});
-            this.setState({
-                hiddenSuccessAlert: false,
-                hiddenFailAlert:true,
-                successHeader: "Success",
-                successMessage: "You successfully add worktime for staff.",
-            })
-
-        }).catch((err) => {
-            this.setState({ 
-                hiddenSuccessAlert: true,
-                hiddenFailAlert: false, 
-                failHeader: "Unsuccess", 
-                failMessage: "It is not possible to add worktime"});
-        });
-    }
-
     handleClickOnClose = () => {
         this.setState({
             showAddWorkTime: false, 
@@ -134,76 +117,56 @@ class WorkTimesModal extends Component {
             selectedEndDate:new Date(),
             timeFrom:1,
             timeTo:2,
-            hiddenSuccessAlert:true,
-            hiddenFailAlert:true,
         });
         this.props.onCloseModal();
     }
-
-    handleCloseAlertSuccess = () => {
-		this.setState({ hiddenSuccessAlert: true });
-    };
-    
-    handleCloseAlertFail = () => {
-		this.setState({ hiddenFailAlert: true });
-	};
 
     render() { 
         return ( 
             <Modal
                 show = {this.props.show}
                 size = {this.state.modalSize}
-                dialogClassName="modal-120w-100h"
+                dialogClassName="modal-80w-100h"
                 aria-labelledby="contained-modal-title-vcenter"
                 centered
                 >
                 <Modal.Header >
                     <Modal.Title style={{marginLeft:'37%'}} id="contained-modal-title-vcenter">
                         {this.props.header}
-
                     </Modal.Title>
-
                 </Modal.Header>
                 <Modal.Body>
-                    <HeadingSuccessAlert
-						hidden={this.state.hiddenSuccessAlert}
-						header={this.state.successHeader}
-						message={this.state.successMessage}
-						handleCloseAlert={this.handleCloseAlertSuccess}
-					/>
-                    <HeadingAlert
-                            hidden={this.state.hiddenFailAlert}
-                            header={this.state.failHeader}
-                            message={this.state.failMessage}
-                            handleCloseAlert={this.handleCloseAlertFail}
-                    />
-                    <div hidden={this.state.showAddWorkTime}>
-                        <Button style={{marginBottom:'3%'}} onClick = {() => this.handleAddWorkTimeModal()}>Add worktime</Button>
-
-                            <table  border='1' style={{width:'100%'}}>
-                                <tr>
-                                    <th>Pharmacy</th>
-                                    <th>StartDate</th>
-                                    <th>EndDate</th>
-                                    <th>StartTime</th>
-                                    <th>EndTime</th>
-                                </tr>
-                                {this.props.workTimesForStaff.map((workTime) => (
-                                
-                                <tr>
-                                    <td>{workTime.EntityDTO.pharmacyName}</td>
-                                    <td>{new Date(workTime.EntityDTO.startDate).toDateString()}</td>
-                                    <td>{new Date(workTime.EntityDTO.endDate).toDateString()}</td>
-                                    <td>{workTime.EntityDTO.startTime}</td>
-                                    <td>{workTime.EntityDTO.endTime}</td>
+                <div className="container">      
+                    <table hidden={this.state.showAddWorkTime} className="table" style={{ width: "100%", marginTop: "3rem" }}>
+                        <tbody>
+                            {this.props.pharmacists.map((pharmacist) => (
+                                <tr id={pharmacist.Id} key={pharmacist.Id}>
+                                    <td width="130em">
+                                        <img
+                                            className="img-fluid"
+                                            src={PharmacistLogo}
+                                            width="70em"
+                                        />
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <b>Name: </b> {pharmacist.EntityDTO.name}
+                                        </div>
+                                        <div>
+                                            <b>Surname: </b> {pharmacist.EntityDTO.surname}
+                                        </div>
+                                    </td>
+                                    <td >
+                                        <div style={{marginLeft:'25%'}}>
+                                            <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'17%'}} className="btn btn-primary btn-xl" onClick={() => this.onAddClick(pharmacist.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Add</button>
+                                        </div>
+                                    </td>
                                 </tr>
                             ))}
-                            </table>
-                        </div>
-                    
-                    
+                        </tbody>
+                    </table>
                     <div hidden={!this.state.showAddWorkTime}>
-                        <form >
+                                <form >
                                     <div  className="control-group" >
                                         <div className="form-row">
                                             <button  onClick = {() => this.handleBack()} className="btn btn-link btn-xl" type="button">
@@ -247,11 +210,12 @@ class WorkTimesModal extends Component {
                                             </tr>
                                         </table>
                                         <div  className="form-group text-center">
-                                            <Button className="mt-3"  onClick = {() => this.handleAdd()} >Add worktime</Button>
+                                            <Button className="mt-3"  onClick = {() => this.handleAdd()} >Add pharmacist</Button>
                                         </div>
                                     </div>
                                 </form>
-                            </div>
+                    </div>
+                </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={() => this.handleClickOnClose()}>Close</Button>
@@ -261,4 +225,4 @@ class WorkTimesModal extends Component {
     }
 }
  
-export default WorkTimesModal;
+export default AddPharmacistToPharmacy;

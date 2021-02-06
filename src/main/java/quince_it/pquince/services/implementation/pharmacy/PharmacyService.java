@@ -346,7 +346,6 @@ public class PharmacyService implements IPharmacyService {
 
 	@Override
 	public void updatePharmacy(EditPharmacyDTO editPharmacyDTO) {
-		// TODO Auto-generated method stub
 		Pharmacy pharmacy = pharmacyRepository.getOne(editPharmacyDTO.getPharmacyId());		
 		
 		pharmacy.setAddress(editPharmacyDTO.getAddress());

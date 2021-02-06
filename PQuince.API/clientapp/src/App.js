@@ -32,7 +32,10 @@ import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPag
 import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
 import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
 import PatientsRedirectComplaints from "./pages/complaints/PatientsRedirectComplaints";
-import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
+import CalendarPage from "./pages/CalendarPage";
+import PharmacistPage from "./pages/pharmacist/PharmacistsPage";
+import PharmacistPageForPatient from "./pages/pharmacist/PharmacistPageForPatient";
+import DrugPageForPharmacyAdmin from "./pages/drug/DrugPageForPharmacyAdmin";
 import PatientsSubscribedPharmacies from "./pages/subscribed-pharmacies/PatientsSubscribedPharmacies";
 import EReceiptsForPatient from "./pages/eReceipt-patient/EReceiptsForPatient";
 import DrugsFromEReceiptForPatient from "./pages/eReceipt-patient/DrugsFromEReceiptForPatient";
@@ -94,9 +97,14 @@ function App() {
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
 				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />
 
+
+				<Link exact to="/calendar" path="/calendar" component={CalendarPage} />
+
+				<Link exact to="/pharmacist" path="/pharmacist" component={PharmacistPage} />
+				<Link exact to="/pharmacist-for-patient" path="/pharmacist-for-patient" component={PharmacistPageForPatient} />
+				<Link exact to="/drugs-in-pharmacy" path="/drugs-in-pharmacy" component={DrugPageForPharmacyAdmin} />
 				<Route path="/treatment-report/:id" children={<TreatmentReportPage />} />
 
-				<Link exact to="/dermatologist-calendar" path="/dermatologist-calendar" component={DermatologistCalendarPage} />
 			</Switch>
 		</Router>
 	);

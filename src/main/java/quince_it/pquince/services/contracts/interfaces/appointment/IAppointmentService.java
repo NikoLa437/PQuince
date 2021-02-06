@@ -18,6 +18,8 @@ import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppoint
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -56,8 +58,6 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	void reserveAppointment(UUID appointmentId) throws AppointmentTimeOverlappingWithOtherAppointmentException;
 	
 	void cancelAppointment(UUID appointmentId) throws AuthorizationServiceException;
-
-	List<IdentifiableDTO<AppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId);
 	
 	List<Pharmacy> findAllDistinctPharmaciesForAppointmentTime(Date startDateTime, Date endDateTime);
 
@@ -73,6 +73,8 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 
 	boolean hasAppointmentInFuture(RemoveDermatologistFromPharmacyDTO removeDermatologistFromPharmacyDTO);
 
+	boolean hasAppointmentInFutureForPharmacist(RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO);
+
 	boolean scheduleAppointment(UUID patientId, UUID appointmentId);
 
 	List<IdentifiableDTO<AppointmentDTO>> getCalendarAppointmentsByDermatologist(UUID pharmacyId);
@@ -82,4 +84,10 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	IdentifiableDTO<AppointmentDTO> getAppointment(UUID appointmentId);
 
 	void finishAppointment(UUID id);
+
+	List<IdentifiableDTO<AppointmentDTO>> getAppointmentsByPatientAsStaff(UUID patientId);
+
+	List<IdentifiableDTO<AppointmentDTO>> getCalendarAppointmentsByPharmacist(UUID pharmacyId);
+
+	void didNotShowUpToAppointment(UUID id);
 }

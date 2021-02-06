@@ -241,9 +241,7 @@ class HistoryDermatologistAppointments extends Component {
 			date: new Date(),
 			grade: this.state.grade,
 		};
-		Axios.post(BASE_URL + "/api/staff/feedback", entityDTO, {
-			headers: { Authorization: getAuthHeader() },
-		})
+		Axios.post(BASE_URL + "/api/staff/feedback", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
 				if (resp.status === 405) {
 					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Staff feedback not allowed." });
@@ -276,6 +274,7 @@ class HistoryDermatologistAppointments extends Component {
 			grade: this.state.grade,
 		};
 		Axios.put(BASE_URL + "/api/staff/feedback", entityDTO, {
+			validateStatus: () => true,
 			headers: { Authorization: getAuthHeader() },
 		})
 			.then((resp) => {

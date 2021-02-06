@@ -7,28 +7,34 @@ import Axios from "axios";
 import ModalDialog from "../../components/ModalDialog";
 import getAuthHeader from "../../GetHeader";
 import { withRouter } from "react-router";
+import { Redirect } from "react-router-dom";
 
 class ScheduleAppointmentPage extends Component {
 	state = {
 		id: "",
 		appointments: [],
 		openModalSuccess: false,
-	};
-
-	fetchData = id => {
-		this.setState({
-			id:id
-		});
+		redirect: false,
+        redirectUrl: ''
 	};
 
 	componentDidMount() {
 		const id = this.props.match.params.id;
-		this.fetchData(id);
+		this.setState({
+			id:id
+		});
 
 		Axios.get(BASE_URL + "/api/appointment/dermatologist/created", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				this.setState({ appointments: res.data });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({
+						redirect: true,
+						redirectUrl: "/unauthorized"
+					});
+				} else {
+					this.setState({ appointments: res.data });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -50,21 +56,28 @@ class ScheduleAppointmentPage extends Component {
 	};
 
 	handleModalSuccessClose = () => {
-		this.setState({ openModalSuccess: false });
+		this.setState({
+			openModalSuccess: false,
+			redirect: true,
+			redirectUrl: "/patient-profile/" + this.state.id
+		});
 	};
 
 	render() {
+
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Schedule Appointment</h5>
+					<h3 className=" text-center mb-0 mt-2 text-uppercase">Schedule Appointment</h3>
 
-					<p className="mb-0 mt-2 text-uppercase">
+					<h5 className="mb-0 mt-5">
 						Click on appointment to schedule
-					</p>
+					</h5>
 
 					<table
 						className="table table-hover"
@@ -126,7 +139,6 @@ class ScheduleAppointmentPage extends Component {
 				</div>
 				<ModalDialog
 					show={this.state.openModalSuccess}
-					href={"/patient-profile/" + this.state.id}
 					onCloseModal={this.handleModalSuccessClose}
 					header="Successfully scheduled appointment for patient"
 					text="Start examination for scheduled appointment."

@@ -28,4 +28,7 @@ public interface EReceiptRepository extends JpaRepository<EReceipt, UUID> {
 	
 	@Query(value = "SELECT e FROM EReceipt e where e.patient.id = ?1 AND e.status = ?2 ORDER BY e.creationDate DESC")
 	List<EReceipt> findAllByPatientSearchByStatusSortByDateDescending(UUID patientId, EReceiptStatus status);
+	
+	@Query(value = "SELECT e FROM EReceipt e where e.patient.id = ?1 AND e.pharmacy.id = ?2")
+	List<EReceipt> findAllByPatienIdAndPharmacy(UUID patientId, UUID pharmacyId);
 }
