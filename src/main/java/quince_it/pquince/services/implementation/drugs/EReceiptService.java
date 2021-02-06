@@ -135,9 +135,7 @@ public class EReceiptService implements IEReceiptService{
 	@Override
 	public boolean checkIfRefused(UUID id) {
 		EReceipt receipt = eReceiptRepository.getOne(id);
-		System.out.println("BLAA" + receipt.getStatus() + receipt.getId());
 		if(receipt.getStatus().equals(EReceiptStatus.REJECTED)) {
-			System.out.println("USO");
 			return true;
 		}
 		

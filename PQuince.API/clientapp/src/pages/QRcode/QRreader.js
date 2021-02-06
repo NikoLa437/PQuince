@@ -37,7 +37,6 @@ class QRreader extends Component {
 	
 		Axios.get(BASE_URL + "/api/users/patient", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				console.log(res.data.EntityDTO.penalty, "PATIENT");
 				if(res.data.EntityDTO.penalty > 2){
 					this.setState({
 						openModal: true ,
@@ -77,7 +76,7 @@ class QRreader extends Component {
 	    let RefuseReceiptDTO = {
 	    	id: data
 	    }
-    	console.log(RefuseReceiptDTO, "AAA")
+	    
     	Axios.post(BASE_URL + "/api/ereceipt/check-if-refused", RefuseReceiptDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data)

@@ -34,7 +34,6 @@ class QRpharmacies extends Component {
 	};
 
 	fetchData = (id) => {
-	console.log("ID", id);
 		this.setState({
 			eReciptId: this.props.match.params.id,
 		});
@@ -94,7 +93,6 @@ class QRpharmacies extends Component {
 		Axios.post(BASE_URL + "/api/ereceipt/check-if-refused", RefuseReceiptDTO, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				if(res.data.allergic == true){
-					console.log("REJECT")
 					this.setState({
 						openModalRefused: true ,
 						redirectUrl : "/",
