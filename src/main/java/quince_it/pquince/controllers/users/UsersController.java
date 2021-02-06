@@ -93,7 +93,7 @@ public class UsersController {
 	}
 	@GetMapping("/search") 
 	@CrossOrigin
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<List<IdentifiableDTO<UserDTO>>> findByNameAndSurname(@RequestParam String name,@RequestParam String surname) {
 		try {
 			List<IdentifiableDTO<UserDTO>> users = userService.findByNameAndSurname(name, surname);
@@ -136,7 +136,7 @@ public class UsersController {
 	
 	@GetMapping("/patient/{patientId}")
 	@CrossOrigin
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<IdentifiableDTO<UserDTO>> getPatientById(@PathVariable UUID patientId) {
 		try {
 			IdentifiableDTO<UserDTO> patient = userService.getPatientById(patientId);
@@ -360,10 +360,25 @@ public class UsersController {
 	@GetMapping("/dermatologist/pharmacies") 
 	@PreAuthorize("hasRole('DERMATHOLOGIST')")
 	@CrossOrigin
-	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> getPharmcies() {
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> getPharmacies() {
 	  
 		try {
 			List<IdentifiableDTO<PharmacyDTO>> pharmacies = userService.getPharmacies();
+			return new ResponseEntity<>(pharmacies,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/pharmacist/pharmacy") 
+	@PreAuthorize("hasRole('PHARMACIST')")
+	@CrossOrigin
+	public ResponseEntity<IdentifiableDTO<PharmacyDTO>> getPharmacy() {
+	  
+		try {
+			IdentifiableDTO<PharmacyDTO> pharmacies = userService.getPharmacy();
 			return new ResponseEntity<>(pharmacies,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 

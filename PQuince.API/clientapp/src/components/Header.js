@@ -32,14 +32,14 @@ class Header extends Component {
 							<li className="active" hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/">Home</Link>
 							</li>
-							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
+							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
 								<Link to="/patients">Patients</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PATIENT")}>
 								<Link to="/patient-complaint">Make complaint</Link>
 							</li>
-							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
-								<Link to="/dermatologist-calendar">Calendar</Link>
+							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
+								<Link to="/calendar">Calendar</Link>
 							</li>
 
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>

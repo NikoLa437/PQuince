@@ -10,6 +10,7 @@ import { withRouter } from "react-router";
 import getAuthHeader from "../GetHeader";
 import ModalDialog from "../components/ModalDialog";
 
+//TODO: add redirection, check support for pharmacist, work on recommend drugs feature
 class TreatmentReportPage extends Component {
 	state = {
         anamnesis: "",
@@ -110,12 +111,6 @@ class TreatmentReportPage extends Component {
 			})
 
 		});
-
-		
-		
-		//TODO: axios post reserve drugs 
-		// drugInstance, patient, amount
-		// drugPeacePrice, endDate, pharamacy
     };
 
     handleDrugDetails = (drug) => {

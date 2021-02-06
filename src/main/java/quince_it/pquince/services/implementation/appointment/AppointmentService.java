@@ -119,7 +119,9 @@ public class AppointmentService implements IAppointmentService{
 			Pharmacy pharmacy = userService.getPharmacyForLoggedDermatologist();
 			if(pharmacy == null)
 				throw new IllegalArgumentException("Dermatologist can't create and schedule appointment outside work hours");
-			Appointment newAppointment = new Appointment(pharmacy,dermatologist,patient, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),appointmentDTO.getPrice(),AppointmentType.EXAMINATION,AppointmentStatus.SCHEDULED);
+			Appointment newAppointment = new Appointment(pharmacy,dermatologist,patient, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),appointmentDTO.getPrice(),AppointmentType.EXAMINATION,AppointmentStatus.CREATED);
+			CanReserveAppointment(newAppointment, patient);
+			newAppointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 			appointmentRepository.save(newAppointment);
 			return newAppointment.getId();
 		}catch(Exception e) {
@@ -435,15 +437,22 @@ public class AppointmentService implements IAppointmentService{
 		
 		return returnAppointments;
 	}
-
+	
 	@Override
-	public List<IdentifiableDTO<AppointmentDTO>> getDermatologistAppointmentsByPatient(UUID patientId) {
-		List<Appointment> appointments = appointmentRepository.getDermatologistAppointmentsByPatient(patientId);
-		
+	public List<IdentifiableDTO<AppointmentDTO>> getAppointmentsByPatientAsStaff(UUID patientId) {
+		UUID staffId = userService.getLoggedUserId();
+		Staff staff = staffRepository.getOne(staffId);
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		if(staff.getStaffType() == StaffType.DERMATOLOGIST) {
+			appointments = appointmentRepository.getDermatologistAppointmentsByPatient(patientId, staffId);
+		} else {
+			appointments = appointmentRepository.getPharmacistAppointmentsByPatient(patientId, staffId);
+		}
+			
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
-		
 		return returnAppointments;
 	}
+
 	@Override
 	public List<IdentifiableDTO<AppointmentDTO>> getCreatedAppointmentsByDermatologist() {
 		List<Appointment> appointments = appointmentRepository.getCreatedAppointmentsByDermatologist(userService.getLoggedUserId());
@@ -657,6 +666,15 @@ public class AppointmentService implements IAppointmentService{
 		
 		return returnAppointments;
 	}
+	
+	@Override
+	public List<IdentifiableDTO<AppointmentDTO>> getCalendarAppointmentsByPharmacist(UUID pharmacyId) {
+		List<Appointment> appointments = appointmentRepository.getCalendarAppointmentsByPharmacist(userService.getLoggedUserId(), pharmacyId);
+		
+		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
+		
+		return returnAppointments;
+	}
 
 	@Override
 	public boolean hasAppointmentInFutureForPharmacist(
@@ -677,6 +695,15 @@ public class AppointmentService implements IAppointmentService{
 	public void finishAppointment(UUID id) {
 		Appointment appointment = appointmentRepository.findById(id).get();
 		appointment.setAppointmentStatus(AppointmentStatus.FINISHED);
+		appointmentRepository.save(appointment);
+	}
+	
+	@Override
+	public void didNotShowUpToAppointment(UUID id) {
+		Appointment appointment = appointmentRepository.findById(id).get();
+		appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
+		Patient patient = patientRepository.getOne(appointment.getPatient().getId());
+		patient.setPenalty(patient.getPenalty() + 1); 
 		appointmentRepository.save(appointment);
 	}
 

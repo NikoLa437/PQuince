@@ -151,6 +151,12 @@ public class AppointmentController {
 		return new ResponseEntity<>(appointmentService.getCalendarAppointmentsByDermatologist(pharmacyId),HttpStatus.OK);
 	}
 	
+	@GetMapping("/pharmacist/calendar/{pharmacyId}")
+	@PreAuthorize("hasRole('PHARMACIST')")
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getCalendarAppointmentsByPharmacist(@PathVariable UUID pharmacyId) {
+		return new ResponseEntity<>(appointmentService.getCalendarAppointmentsByPharmacist(pharmacyId),HttpStatus.OK);
+	}
+	
 	@GetMapping("/dermatologist/find-by-pharmacy/{pharmacyId}")
 	public ResponseEntity<List<IdentifiableDTO<DermatologistAppointmentDTO>>> findAllFreeAppointmentsByPharmacyAndAppointmentType(@PathVariable UUID pharmacyId) {
 		return new ResponseEntity<>(appointmentService.findAllFreeAppointmentsByPharmacyAndAppointmentType(pharmacyId, AppointmentType.EXAMINATION),HttpStatus.OK);
@@ -244,8 +250,8 @@ public class AppointmentController {
 	}
 	
 	@GetMapping("/patient/{patientId}")
-	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatient(@PathVariable UUID patientId) {
-		return new ResponseEntity<>(appointmentService.getDermatologistAppointmentsByPatient(patientId),HttpStatus.OK);
+	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatientAsStaff(@PathVariable UUID patientId) {
+		return new ResponseEntity<>(appointmentService.getAppointmentsByPatientAsStaff(patientId),HttpStatus.OK);
 	}
 	
 	@GetMapping("/{appointmentId}")
@@ -262,9 +268,21 @@ public class AppointmentController {
 	@PutMapping("/finish")
 	@PreAuthorize("hasRole('DERMATHOLOGIST')")
 	@CrossOrigin
-	public ResponseEntity<?> Appointment(@RequestBody EntityIdDTO appointmentId) {
+	public ResponseEntity<?> finishAppointment(@RequestBody EntityIdDTO appointmentId) {
 		try {
 			appointmentService.finishAppointment(appointmentId.getId());
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PutMapping("/did-not-show-up")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
+	@CrossOrigin
+	public ResponseEntity<?> didNotShowUpToAppointment(@RequestBody EntityIdDTO appointmentId) {
+		try {
+			appointmentService.didNotShowUpToAppointment(appointmentId.getId());
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

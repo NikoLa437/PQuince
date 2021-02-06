@@ -92,6 +92,9 @@ public class UserService implements IUserService{
 	private DermatologistRepository dermatologistRepository;
 	
 	@Autowired
+	private PharmacistRepository pharmacistRepository;
+	
+	@Autowired
 	private WorkTimeService workTimeService;
 	
 	@Autowired
@@ -123,9 +126,6 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private PharmacyAdminRepository pharmacyAdminRepository;
-	
-	@Autowired
-	private PharmacistRepository pharmacistRepository;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -891,6 +891,13 @@ public class UserService implements IUserService{
 		} 
 		catch (EntityNotFoundException e) { return null; } 
 		catch (IllegalArgumentException e) { return null; }	
+	}
+
+	@Override
+	public IdentifiableDTO<PharmacyDTO> getPharmacy() {
+			UUID pharmacistId = getLoggedUserId();
+			Pharmacist pharmacist = pharmacistRepository.getOne(pharmacistId);
+			return PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(pharmacist.getPharmacy());
 	}
 	
 }
