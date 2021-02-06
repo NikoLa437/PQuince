@@ -8,6 +8,7 @@ import AppointmentIcon from "../static/appointment-icon.jpg";
 import getAuthHeader from "../GetHeader";
 import { withRouter } from "react-router";
 import { Redirect } from "react-router-dom";
+import ModalDialog from "../components/ModalDialog";
 
 class PatientProfilePage extends Component {
 	state = {
@@ -20,7 +21,8 @@ class PatientProfilePage extends Component {
 		phoneNumber: "",
 		appointments: [],
 		redirect: false,
-		redirectUrl: ''
+		redirectUrl: '',
+		openModalSuccess: false,
 	};
 
 	hasRole = (reqRole) => {
@@ -39,22 +41,22 @@ class PatientProfilePage extends Component {
 	fetchAppointments = () => {
 		const id = this.props.match.params.id;
 		Axios.get(BASE_URL + "/api/appointment/patient/" + id, { headers: { Authorization: getAuthHeader() } })
-		.then((res) => {
+			.then((res) => {
 
-			if (res.status === 401) {
-				this.setState({
-					redirect: true,
-					redirectUrl: "/unauthorized"
-				});
-			} else {
-				this.setState({ appointments: res.data });
-			}
+				if (res.status === 401) {
+					this.setState({
+						redirect: true,
+						redirectUrl: "/unauthorized"
+					});
+				} else {
+					this.setState({ appointments: res.data });
+				}
 
-			console.log(res.data);
-		})
-		.catch((err) => {
-			console.log(err);
-		});
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 
 	componentDidMount() {
@@ -89,7 +91,7 @@ class PatientProfilePage extends Component {
 				console.log(err);
 			});
 
-			this.fetchAppointments();
+		this.fetchAppointments();
 	}
 
 	handleExamine = (appointmentId) => {
@@ -102,9 +104,10 @@ class PatientProfilePage extends Component {
 	handleDidNotShowUp = (appointmentId) => {
 		console.log(appointmentId)
 		Axios.put(BASE_URL + "/api/appointment/did-not-show-up",
-		 {id: appointmentId},
-		 {headers: {Authorization: getAuthHeader()}})
+			{ id: appointmentId },
+			{ headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
+				this.setState({ openModalSuccess: true});
 				this.fetchAppointments();
 				console.log(res.data);
 			})
@@ -129,10 +132,16 @@ class PatientProfilePage extends Component {
 
 	isCurrentDate = (appointmentDate) => {
 		appointmentDate = new Date(appointmentDate);
-		appointmentDate.setHours(0,0,0,0);
+		appointmentDate.setHours(0, 0, 0, 0);
 		let currentDate = new Date();
-		currentDate.setHours(0,0,0,0);
+		currentDate.setHours(0, 0, 0, 0);
 		return appointmentDate.getTime() === currentDate.getTime();
+	};
+
+	handleModalSuccessClose = () => {
+		this.setState({
+			openModalSuccess: false,
+		});
 	};
 
 	render() {
@@ -329,6 +338,12 @@ class PatientProfilePage extends Component {
 
 					</div>
 				</div>
+				<ModalDialog
+					show={this.state.openModalSuccess}
+					onCloseModal={this.handleModalSuccessClose}
+					header="Successfully added penalty to patient"
+					text="You can start examination for another patient."
+				/>
 			</React.Fragment>
 		);
 	}

@@ -3,7 +3,17 @@ import { Button, Modal } from "react-bootstrap";
 import AppointmentIcon from "../static/appointment-icon.jpg";
 
 class EventDetailsModal extends Component {
+	
+	isCurrentDate = (appointmentDate) => {
+		appointmentDate = new Date(appointmentDate);
+		appointmentDate.setHours(0, 0, 0, 0);
+		let currentDate = new Date();
+		currentDate.setHours(0, 0, 0, 0);
+		return appointmentDate.getTime() === currentDate.getTime();
+	};
+
 	render() {
+
 		return (
 			<Modal
 				show={this.props.show}
@@ -57,6 +67,28 @@ class EventDetailsModal extends Component {
 										</div>
 									</div>
 								</div>
+								<div className="row align-items-end m-4" hidden={!this.isCurrentDate(this.props.startDateTime)}>
+											<button
+												type="button"
+												onClick={() =>
+													this.props.handleExamine()
+												}
+												className="btn btn-primary w-100 m-0"
+											>
+												Start examination
+												</button>
+											<br />
+											<br />
+											<button
+												type="button"
+												onClick={() =>
+													this.props.handleDidNotShowUp()
+												}
+												className="btn btn-danger w-100 mt-1"
+											>
+												Did not show up
+												</button>
+										</div>
 							</div>
 						</div>
 					</form>

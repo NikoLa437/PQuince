@@ -9,7 +9,7 @@ import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import EventDetailsModal from "../components/EventDetailsModal";
 import { Redirect } from "react-router-dom";
-
+import ModalDialog from "../components/ModalDialog";
 
 const localizer = momentLocalizer(moment)
 
@@ -27,7 +27,9 @@ class CalendarPage extends Component {
         pharmacy: {},
         pharmacyName : "",
         redirect: false,
-        redirectUrl: ''
+        redirectUrl: '',
+        id: '',
+        openModalSuccess: false,
     };
 
     hasRole = (reqRole) => {
@@ -47,7 +49,6 @@ class CalendarPage extends Component {
         this.setState({ openModalInfo: false });
     };
 
-    //TODO: start examination
     handleEventClick = (appointment) => {
         let name = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.name;
         let surname = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.surname;
@@ -59,6 +60,7 @@ class CalendarPage extends Component {
             endDateTime: appointment.EntityDTO.endDateTime,
             price: appointment.EntityDTO.price,
             openModalInfo: true,
+            id: appointment.Id
         });
     };
 
@@ -157,6 +159,37 @@ class CalendarPage extends Component {
             });
     };
 
+    handleExamine = () => {
+		this.setState({
+			redirect: true,
+			redirectUrl: "/treatment-report/" + this.state.id
+		});
+	};
+
+	handleDidNotShowUp = () => {
+		Axios.put(BASE_URL + "/api/appointment/did-not-show-up",
+			{ id: this.state.id },
+			{ headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+                this.handleModalInfoClose();
+				if(this.hasRole("ROLE_DERMATHOLOGIST"))
+                    this.fetchDermatologistCalendar();
+                else
+                    this.fetchFarmacistCalendar();
+                console.log(res.data);
+                this.setState({ openModalSuccess: true});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+    };
+    
+    handleModalSuccessClose = () => {
+		this.setState({
+			openModalSuccess: false,
+		});
+	};
+
     render() {
 
         if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
@@ -201,7 +234,15 @@ class CalendarPage extends Component {
                     startDateTime={this.state.startDateTime}
                     endDateTime={this.state.endDateTime}
                     price={this.state.price}
+                    handleExamine={this.handleExamine}
+                    handleDidNotShowUp={this.handleDidNotShowUp}
                 />
+                <ModalDialog
+					show={this.state.openModalSuccess}
+					onCloseModal={this.handleModalSuccessClose}
+					header="Successfully added penalty to patient"
+					text="You can start examination for another patient."
+				/>
             </React.Fragment>
         );
     }
