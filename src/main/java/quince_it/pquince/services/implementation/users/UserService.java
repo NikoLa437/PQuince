@@ -413,15 +413,15 @@ public class UserService implements IUserService{
 
 	@Override
 	public void deleteAllPatientsPenalties() {
-		try {
-			List<Patient> patients = patientRepository.findAll();
-			for(Patient patient : patients) {
-				if(patient.getPenalty() > 0) {
+		List<Patient> patients = patientRepository.findAllWithMoreThanZeroPenalties();
+		for(Patient patient : patients) {
+			if(patient.getPenalty() > 0) {
+				try {
 					patient.setPenalty(0);
 					patientRepository.save(patient);
+				} catch (Exception e) {
 				}
 			}
-		} catch (Exception e) {
 		}
 	}
 	

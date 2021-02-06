@@ -12,4 +12,7 @@ import quince_it.pquince.entities.users.User;
 public interface PatientRepository extends JpaRepository<Patient, UUID>{
 	@Query(value = "SELECT p from Patient p WHERE LOWER(p.name) LIKE %?1% AND LOWER(p.surname) LIKE %?2%")
     List<User> findByNameAndSurname(String name, String surname);
+	
+	@Query(value = "SELECT p from Patient p WHERE p.penalty > 0")
+    List<Patient> findAllWithMoreThanZeroPenalties();
 }
