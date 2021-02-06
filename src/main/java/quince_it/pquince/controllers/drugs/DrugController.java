@@ -21,11 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFormatIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugKindIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugWithPriceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
@@ -162,7 +164,22 @@ public class DrugController {
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findDrugsFromPharmacy(@RequestParam UUID pharmacyId) {
 		return new ResponseEntity<>(drugInstanceService.findDrugsByPharmacy(pharmacyId),HttpStatus.OK);
 	}
+	
+	@CrossOrigin
+	@GetMapping("/find-drugs-by-pharmacy-for-admin")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<IdentifiableDTO<DrugWithPriceDTO>>> findDrugsFromPharmacyWithPrice(@RequestParam UUID pharmacyId) {
+		return new ResponseEntity<>(drugInstanceService.findDrugsByPharmacyWithPrice(pharmacyId),HttpStatus.OK);
+	}
 
+	@CrossOrigin
+	@GetMapping("/search-drugs-for-pharmacy-admin") 
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<IdentifiableDTO<DrugWithPriceDTO>>> searchDrugsForPharmacyAdmn(@RequestParam String name,@RequestParam String manufacturer, @RequestParam double gradeFrom, @RequestParam double gradeTo, @RequestParam UUID pharmacyId) {
+		DrugFiltrationDTO drugFiltrationDTO = new DrugFiltrationDTO(name,manufacturer,gradeFrom,gradeTo,pharmacyId);
+		return new ResponseEntity<>(drugInstanceService.searchDrugsForPharmacy(drugFiltrationDTO) ,HttpStatus.OK);
+	}
+	
 	@GetMapping("/future-reservations")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<DrugReservationDTO>>> findAllFutureDrugReservationByPatientId() {

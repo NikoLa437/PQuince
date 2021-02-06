@@ -12,25 +12,32 @@ import org.springframework.stereotype.Service;
 import quince_it.pquince.entities.drugs.DrugInstance;
 import quince_it.pquince.entities.drugs.DrugPriceForPharmacy;
 import quince_it.pquince.entities.drugs.DrugStorage;
+import quince_it.pquince.entities.drugs.FormatDrug;
 import quince_it.pquince.entities.drugs.Ingredient;
 import quince_it.pquince.entities.drugs.Manufacturer;
 import quince_it.pquince.entities.users.User;
+import quince_it.pquince.repository.drugs.DrugFeedbackRepository;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.drugs.IngredientRepository;
 import quince_it.pquince.repository.drugs.ManufacturerRepository;
 import quince_it.pquince.repository.users.UserRepository;
+import quince_it.pquince.services.contracts.dto.drugs.DrugFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugWithPriceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
+import quince_it.pquince.services.implementation.util.drugs.AllergenMapper;
 import quince_it.pquince.services.implementation.util.drugs.DrugInstanceMapper;
+import quince_it.pquince.services.implementation.util.drugs.IngredientMapper;
 import quince_it.pquince.services.implementation.util.drugs.ManufacturerMapper;
 
 @Service
@@ -44,6 +51,9 @@ public class DrugInstanceService implements IDrugInstanceService{
 
 	@Autowired
 	private IngredientRepository ingredientRepository;
+	
+	@Autowired
+	private DrugFeedbackRepository drugFeedbackRepository;
 	
 	@Autowired
 	private DrugPriceForPharmacyRepository drugPriceForPharmacyRepository;
@@ -203,6 +213,51 @@ public class DrugInstanceService implements IDrugInstanceService{
 		}
 		
 		return drugs;
+	}
+
+	@Override
+	public List<IdentifiableDTO<DrugWithPriceDTO>> findDrugsByPharmacyWithPrice(UUID pharmacyId) {
+		List<IdentifiableDTO<DrugWithPriceDTO>> drugs = new ArrayList<IdentifiableDTO<DrugWithPriceDTO>>();
+		for(DrugInstance drugInstance : drugInstanceRepository.findAll()) {
+			if(drugStorageService.hasDrugInPharmacy(drugInstance.getId(), pharmacyId))
+				drugs.add(MapDrugInstancePersistenceToDrugWithPriceIdentifiableDTO(drugInstance,pharmacyId));
+		}
+		
+		return drugs;
+	}
+
+	private IdentifiableDTO<DrugWithPriceDTO> MapDrugInstancePersistenceToDrugWithPriceIdentifiableDTO(
+			DrugInstance drugInstance, UUID pharmacyId) {
+		Double grade = this.drugFeedbackRepository.findAvgGradeForDrug(drugInstance.getId());
+		return new IdentifiableDTO<DrugWithPriceDTO>(drugInstance.getId(), new DrugWithPriceDTO(drugInstance.getName(),drugInstance.getDrugInstanceName(),drugInstance.getManufacturer().getName(),drugInstance.getDrugFormat(),drugInstance.getQuantity(),drugInstance.isOnReciept(),grade==null?0:grade,this.drugPriceForPharmacyRepository.findCurrentDrugPrice(drugInstance.getId(), pharmacyId)));
+	}
+
+	@Override
+	public List<IdentifiableDTO<DrugWithPriceDTO>> searchDrugsForPharmacy(DrugFiltrationDTO drugFiltrationDTO) {
+		// TODO Auto-generated method stub
+		List<IdentifiableDTO<DrugWithPriceDTO>> drugs = new ArrayList<IdentifiableDTO<DrugWithPriceDTO>>();
+		
+		for(DrugInstance drugInstance : drugInstanceRepository.findByNameAndManufacturer(drugFiltrationDTO.getName().toLowerCase(),drugFiltrationDTO.getManufacturer().toLowerCase())) {
+			if(drugStorageService.hasDrugInPharmacy(drugInstance.getId(), drugFiltrationDTO.getPharmacyId()))
+				drugs.add(MapDrugInstancePersistenceToDrugWithPriceIdentifiableDTO(drugInstance,drugFiltrationDTO.getPharmacyId()));
+		}
+		
+		if(drugFiltrationDTO.getGradeFrom()!=-1 || drugFiltrationDTO.getGradeTo()!=-1)
+			return filterDrugsForPharmacyPerGrades(drugs,drugFiltrationDTO);
+		
+		return drugs;
+	}
+
+	private List<IdentifiableDTO<DrugWithPriceDTO>> filterDrugsForPharmacyPerGrades(
+			List<IdentifiableDTO<DrugWithPriceDTO>> drugs, DrugFiltrationDTO drugFiltrationDTO) {
+		List<IdentifiableDTO<DrugWithPriceDTO>> retVal = new ArrayList<IdentifiableDTO<DrugWithPriceDTO>>();
+		
+		for(IdentifiableDTO<DrugWithPriceDTO> drug : drugs) {
+			if(drug.EntityDTO.getAvgGrade()>= drugFiltrationDTO.getGradeFrom() && (drug.EntityDTO.getAvgGrade()< drugFiltrationDTO.getGradeTo() || drugFiltrationDTO.getGradeTo()==-1))
+				retVal.add(drug);
+		}
+		
+		return retVal;
 	}
 
 

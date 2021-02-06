@@ -14,13 +14,11 @@ class DrugPageForPharmacyAdmin extends Component {
 	state = {
         drugs: [],
         staffIdForWorkTimes:'',
-        showWorkTimesModal: false,
         showAddPharmacistModal: false,
-        workTimes:[],
         forStaff:'',
         formShowed:false,
         searchName:'',
-        searchSurname:'',
+        searchManufacturer:'',
         searchGradeFrom:'',
         searchGradeTo:'',
         showingSearched: false,
@@ -41,27 +39,25 @@ class DrugPageForPharmacyAdmin extends Component {
 		})
 
         Axios
-        .get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId="+ pharmacyId).then((res) =>{
+        .get(BASE_URL + "/api/drug/find-drugs-by-pharmacy-for-admin?pharmacyId="+ pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) =>{
             this.setState({drugs : res.data});
             console.log(res.data);
         }).catch((err) => {console.log(err);});
     }
 
-    updatePharmacist = () =>{
-        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
+    updateDrugs = () =>{
+        Axios
+        .get(BASE_URL + "/api/drug/find-drugs-by-pharmacy-for-admin?pharmacyId="+ this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
-		})
-			.then((res) => {
-				this.setState({ pharmacists: res.data });
-                console.log(res.data);
-            
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+		}).then((res) =>{
+            this.setState({drugs : res.data});
+            console.log(res.data);
+        }).catch((err) => {console.log(err);});
     }
 
-
+    //todo
     handleAddPharmacistModalClose = () => {
         Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
 			headers: { Authorization: getAuthHeader() },
@@ -77,7 +73,7 @@ class DrugPageForPharmacyAdmin extends Component {
         this.setState({ showAddPharmacistModal: false });
     }
     
-    
+    //todo
     handleAddPharmacistClick = () => {
         Axios.get(BASE_URL + "/api/users/pharmacists-for-employment", {
 			headers: { Authorization: getAuthHeader() },
@@ -99,23 +95,7 @@ class DrugPageForPharmacyAdmin extends Component {
     }
 
 
-    onWorkTimeClick = (id) =>{
-        
-		Axios.get(BASE_URL + "/api/worktime/worktime-for-staff/" + id, {
-			headers: { Authorization: getAuthHeader() },
-		})
-        .then((res) => {
-            this.setState({ workTimes: res.data , forStaff:id});
-            console.log(res.data);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-        this.setState({
-            showWorkTimesModal: true
-        });
-    }
-
+    //todo
     removePharmacistClick = (id) =>{
 
         confirmAlert({
@@ -180,8 +160,8 @@ class DrugPageForPharmacyAdmin extends Component {
 		this.setState({ searchName: event.target.value });
     };
     
-    handleSurnameChange = (event) => {
-		this.setState({ searchSurname: event.target.value });
+    handleManufacturerChange = (event) => {
+		this.setState({ searchManufacturer: event.target.value });
     };
     
     handleGradeFromChange = (event) => {
@@ -206,19 +186,19 @@ class DrugPageForPharmacyAdmin extends Component {
 				let gradeFrom = this.state.searchGradeFrom;
 				let gradeTo = this.state.searchGradeTo;
 				let name = this.state.searchName;
-				let surname = this.state.searchSurname;
+				let manufacturer = this.state.searchManufacturer;
 
 				if (gradeFrom === "") gradeFrom = -1;
 				if (gradeTo === "") gradeTo = -1;
 				if (name === "") name = '';
-				if (surname === "") surname = '';
+				if (manufacturer === "") manufacturer = '';
 
 				const SEARCH_URL =
 					BASE_URL +
-					"/api/users/search-pharmacists-for-pharmacy?name=" +
+					"/api/drug/search-drugs-for-pharmacy-admin?name=" +
                     name +
-                    "&surname=" +
-					surname +
+                    "&manufacturer=" +
+					manufacturer +
 					"&gradeFrom=" +
 					gradeFrom +
 					"&gradeTo=" +
@@ -231,7 +211,7 @@ class DrugPageForPharmacyAdmin extends Component {
                 })
 					.then((res) => {
 						this.setState({
-							pharmacists: res.data,
+							drugs: res.data,
 							formShowed: false,
 							showingSearched: true,
 						});
@@ -244,25 +224,15 @@ class DrugPageForPharmacyAdmin extends Component {
      }
 
      handleResetSearch = () => {
-        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + this.state.pharmacyId, {
-			headers: { Authorization: getAuthHeader() },
-		})
-			.then((res) => {
-                this.setState({ 
-                    pharmacists: res.data,
-                    formShowed: false,
-					showingSearched: false,
-					searchName: "",
-                    searchSurname: "",
-                    searchGradeFrom: "",
-                    searchGradeTo: "", 
-                });
-                console.log(res.data);
-            
-			})
-			.catch((err) => {
-				console.log(err);
-            });
+        this.updateDrugs();
+        this.setState({
+            formShowed: false,
+            showingSearched: false,
+            searchName: "",
+            searchSurname: "",
+            searchGradeFrom: "",
+            searchGradeTo: "", 
+        })
 	};
 
     handleCloseAlertSuccess = () => {
@@ -331,12 +301,12 @@ class DrugPageForPharmacyAdmin extends Component {
                                 />
 
                                 <input
-                                    placeholder="LastName"
+                                    placeholder="Manufacturer"
                                     className="form-control mr-3"
                                     style={{ width: "9em" }}
                                     type="text"
-                                    onChange={this.handleSurnameChange}
-                                    value={this.state.searchSurname}
+                                    onChange={this.handleManufacturerChange}
+                                    value={this.state.searchManufacturer}
                                 />
 
                                 <input
@@ -402,13 +372,13 @@ class DrugPageForPharmacyAdmin extends Component {
                                         <td>
                                             <div><b>Drug:</b> {drug.EntityDTO.name}</div>
                                             <div><b>Name:</b> {drug.EntityDTO.drugInstanceName}</div>
-                                            <div><b>Manufacturer:</b> {drug.EntityDTO.manufacturer.EntityDTO.name}</div>
+                                            <div><b>Manufacturer:</b> {drug.EntityDTO.manufacturerName}</div>
                                             <div><b>Quantity:</b> {drug.EntityDTO.quantity} <b>mg</b></div>
-                                            <div><b>Format:</b> {drug.EntityDTO.drugFormat}</div>
                                         </td>
                                         <td>
-                                            <div><b>Actual price:</b> {drug.EntityDTO.name}</div>
-
+                                            <div><b>Format:</b> {drug.EntityDTO.drugFormat}</div>
+                                            <div><b>Actual price:</b> {drug.EntityDTO.price}</div>
+                                            <div><b>Grade:</b> {drug.EntityDTO.avgGrade}</div>
                                         </td>
                                         <td >
                                             <div className="mt-3" style={{marginLeft:'25%'}}>

@@ -36,7 +36,6 @@ import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
 import PharmacistPage from "./pages/pharmacist/PharmacistsPage";
 import PharmacistPageForPatient from "./pages/pharmacist/PharmacistPageForPatient";
 import DrugPageForPharmacyAdmin from "./pages/drug/DrugPageForPharmacyAdmin";
-
 import PatientsSubscribedPharmacies from "./pages/subscribed-pharmacies/PatientsSubscribedPharmacies";
 import EReceiptsForPatient from "./pages/eReceipt-patient/EReceiptsForPatient";
 import DrugsFromEReceiptForPatient from "./pages/eReceipt-patient/DrugsFromEReceiptForPatient";
