@@ -704,6 +704,7 @@ public class AppointmentService implements IAppointmentService{
 		appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
 		Patient patient = patientRepository.getOne(appointment.getPatient().getId());
 		patient.setPenalty(patient.getPenalty() + 1); 
+		patientRepository.save(patient);
 		appointmentRepository.save(appointment);
 	}
 
