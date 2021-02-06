@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import Header from '../components/Header';
-import TopBar from '../components/TopBar';
+import Header from '../../components/Header';
+import TopBar from '../../components/TopBar';
 import Axios from 'axios';
-import { BASE_URL } from '../constants.js';
-import PatientLogo from "../static/patientLogo.png";
-import getAuthHeader from "../GetHeader";
+import { BASE_URL } from '../../constants.js';
+import PatientLogo from "../../static/patientLogo.png";
+import getAuthHeader from "../../GetHeader";
 import { Redirect } from "react-router-dom";
 
 class PatientsPage extends Component {
@@ -37,7 +37,7 @@ class PatientsPage extends Component {
             "&surname=" +
             this.state.surname;
 
-        Axios.get(SEARCH_URL, { validateStatus: () => true, validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+        Axios.get(SEARCH_URL, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
             .then((res) => {
                 
 

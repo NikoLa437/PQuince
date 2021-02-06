@@ -40,7 +40,7 @@ public class ComplaintController {
 
 	@CrossOrigin
 	@GetMapping
-	@PreAuthorize("hasRole('PATIENT')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<IdentifiableDTO<ComplaintStaffDTO>>> findAll() {
 		return new ResponseEntity<>(complaintService.findAll(),HttpStatus.OK);
 	}
@@ -57,7 +57,7 @@ public class ComplaintController {
 
 	@CrossOrigin
 	@PostMapping("/reply")
-	@PreAuthorize("hasRole('PATIENT')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> replyComplaintStuff(@RequestBody ComplaintReplyDTO complaintReplyDTO) {
 		
 		complaintService.replyComplaint(complaintReplyDTO.getId(), complaintReplyDTO.getReply(), complaintReplyDTO.getEmail());

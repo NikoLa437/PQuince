@@ -90,6 +90,10 @@ insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_r
 insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_reciept, quantity, recommended_amount, side_effects, manufacturer_id, id, drug_kind) values('CAPSULE', 'Ibumax',1, false, 400, '2x1 na dan', 'Nema nezeljenih dejstava', '61297672-5838-11eb-ae93-0242ac130002','dac2b818-5838-11eb-ae93-0242ac130002', 'HUMAN');
 insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_reciept, quantity, recommended_amount, side_effects, manufacturer_id, id, drug_kind) values('CAPSULE', 'Blokmax',1, false, 500, '2x1 na dan', 'Nema nezeljenih dejstava', '61297672-5838-11eb-ae93-0242ac130002','1fe1cd8e-5839-11eb-ae93-0242ac130002', 'BIOLOGICAL');
 
+insert into drug_allergen (drug_id, allergen_id) values ('2c797174-5839-11eb-ae93-0242ac130002','062d319f-f393-464c-98fb-b3db29e77626');
+
+insert into patient_allergen (patient_id, allergen_id) values ('22793162-52d3-11eb-ae93-0242ac130002','062d319f-f393-464c-98fb-b3db29e77626');
+
 insert into drug_replacement(drug_id, replacement_drug_id) values ('dac2b818-5838-11eb-ae93-0242ac130002', '2c797174-5839-11eb-ae93-0242ac130002');
 insert into drug_replacement(drug_id, replacement_drug_id) values ('dac2b818-5838-11eb-ae93-0242ac130002', '2fe1cd8e-5839-11eb-ae93-0242ac130002');
 insert into drug_replacement(drug_id, replacement_drug_id) values ('2c797174-5839-11eb-ae93-0242ac130002', 'dac2b818-5838-11eb-ae93-0242ac130002');
@@ -160,13 +164,13 @@ insert into drug_format_id (id, type) values ('39545278-52d3-13eb-ae93-0242ac130
 insert into drug_format_id (id, type) values ('40645278-52d3-13eb-ae93-0242ac130002','INJECTION');
 
 
-insert into ereceipt (id, creation_date, status, patient_id) values ('e672e844-67ac-11eb-ae93-0242ac130002', '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, creation_date, status, patient_id, pharmacy_id) values ('15df3e98-67ad-11eb-ae93-0242ac130002', '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002');
-insert into ereceipt (id, creation_date, status, patient_id) values ('19e26092-67ad-11eb-ae93-0242ac130002', '2021-01-05', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, creation_date, status, patient_id) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002', '2021-01-13', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, creation_date, status, patient_id) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002', '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, creation_date, status, patient_id) values ('8872e844-67ac-11eb-ae93-0242ac130002', '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, creation_date, status, patient_id) values ('9972e844-67ac-11eb-ae93-0242ac130002', '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, price, creation_date, status, patient_id) values ('e672e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, price, creation_date, status, patient_id, pharmacy_id) values ('15df3e98-67ad-11eb-ae93-0242ac130002', -1, '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002');
+insert into ereceipt (id, price, creation_date, status, patient_id) values ('19e26092-67ad-11eb-ae93-0242ac130002', -1, '2021-01-05', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, price, creation_date, status, patient_id) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-13', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, price, creation_date, status, patient_id) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, price, creation_date, status, patient_id) values ('8872e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, price, creation_date, status, patient_id) values ('9972e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
 
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('8872e844-67ac-11eb-ae93-0242ac130002','dac2b818-5838-11eb-ae93-0242ac130002',2);
 
