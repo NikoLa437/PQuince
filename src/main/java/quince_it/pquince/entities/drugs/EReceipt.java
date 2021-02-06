@@ -31,6 +31,9 @@ public class EReceipt {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private EReceiptStatus status;
+
+	@Column(name = "price")
+	private double price;
 	
 	public EReceipt() {}
 
@@ -41,6 +44,7 @@ public class EReceipt {
 		this.creationDate = creationDate;
 		this.pharmacy = pharmacy;
 		this.status = status;
+		this.price = -1;
 	}
 
 	public Patient getPatient() {
@@ -50,7 +54,15 @@ public class EReceipt {
 	public void setPatient(Patient patient) {
 		this.patient = patient;
 	}
-
+	
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	
+	public double getPrice() {
+		return price;
+	}
+	
 	public Pharmacy getPharmacy() {
 		return pharmacy;
 	}

@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.drugs.EReceipt;
 import quince_it.pquince.entities.drugs.EReceiptStatus;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.drugs.EReceiptItemsRepository;
@@ -122,6 +123,23 @@ public class EReceiptService implements IEReceiptService{
 											.add(EReceiptMapper.MapDrugInstancePersistenceToDrugInstanceWithERecieptsIdentifiableDTO(d, eReceiptItemsRepository.findAllProcessedByPatientAndDrugId(patientId, d.getId()))));
 		
 		return drugs;
+	}
+
+	@Override
+	public void refuseEReceipt(UUID recieptId) {
+		EReceipt receipt = eReceiptRepository.getOne(recieptId);
+		receipt.setStatus(EReceiptStatus.REJECTED);
+		eReceiptRepository.save(receipt);
+	}
+
+	@Override
+	public boolean checkIfRefused(UUID id) {
+		EReceipt receipt = eReceiptRepository.getOne(id);
+		if(receipt.getStatus().equals(EReceiptStatus.REJECTED)) {
+			return true;
+		}
+		
+		return false;
 	}
 
 }
