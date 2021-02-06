@@ -1,5 +1,6 @@
 package quince_it.pquince.services.implementation.users;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.repository.users.AbsenceRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.services.contracts.dto.users.AbsenceDTO;
+import quince_it.pquince.services.contracts.dto.users.RequestAbsenceDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.users.IAbsenceService;
 
@@ -21,14 +23,21 @@ public class AbsenceService implements IAbsenceService{
 	private AbsenceRepository absenceRepository;
 	@Autowired
 	private StaffRepository staffRepository;
+	@Autowired
+	private UserService userService;
 	
 	@Override
-	public UUID createAbsence(AbsenceDTO absenceDTO) {
-		Staff forStaff = staffRepository.getOne(absenceDTO.getForStaff());
-		Absence newAbsence = new Absence(forStaff,absenceDTO.getStartDate(),absenceDTO.getEndDate());
-		absenceRepository.save(newAbsence);
-		return newAbsence.getId();
+	public UUID createAbsence(RequestAbsenceDTO requestAbsenceDTO) {
+		UUID staffId = userService.getLoggedUserId();
+		Staff staff = staffRepository.getOne(staffId);		
+		Absence absence = new Absence(staff,getDateWithoutTime(requestAbsenceDTO.getStartDate()),getDateWithoutTime(requestAbsenceDTO.getEndDate()));
+		absenceRepository.save(absence);
+		return absence.getId();
 
+	}
+	
+	private Date getDateWithoutTime(Date date) {
+		return new Date(date.getYear(), date.getMonth(), date.getDate(),0,0,0);
 	}
 
 	@Override
