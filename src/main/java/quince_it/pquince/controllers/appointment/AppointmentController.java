@@ -271,9 +271,21 @@ public class AppointmentController {
 	@PutMapping("/finish")
 	@PreAuthorize("hasRole('DERMATHOLOGIST')")
 	@CrossOrigin
-	public ResponseEntity<?> Appointment(@RequestBody EntityIdDTO appointmentId) {
+	public ResponseEntity<?> finishAppointment(@RequestBody EntityIdDTO appointmentId) {
 		try {
 			appointmentService.finishAppointment(appointmentId.getId());
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PutMapping("/did-not-show-up")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
+	@CrossOrigin
+	public ResponseEntity<?> didNotShowUpToAppointment(@RequestBody EntityIdDTO appointmentId) {
+		try {
+			appointmentService.didNotShowUpToAppointment(appointmentId.getId());
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -697,5 +697,14 @@ public class AppointmentService implements IAppointmentService{
 		appointment.setAppointmentStatus(AppointmentStatus.FINISHED);
 		appointmentRepository.save(appointment);
 	}
+	
+	@Override
+	public void didNotShowUpToAppointment(UUID id) {
+		Appointment appointment = appointmentRepository.findById(id).get();
+		appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
+		Patient patient = patientRepository.getOne(appointment.getPatient().getId());
+		patient.setPenalty(patient.getPenalty() + 1); 
+		appointmentRepository.save(appointment);
+	}
 
 }

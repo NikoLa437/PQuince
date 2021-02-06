@@ -110,12 +110,6 @@ class TreatmentReportPage extends Component {
 			})
 
 		});
-
-		
-		
-		//TODO: axios post reserve drugs 
-		// drugInstance, patient, amount
-		// drugPeacePrice, endDate, pharamacy
     };
 
     handleDrugDetails = (drug) => {

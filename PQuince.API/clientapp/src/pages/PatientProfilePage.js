@@ -36,6 +36,27 @@ class PatientProfilePage extends Component {
 		return false;
 	};
 
+	fetchAppointments = () => {
+		const id = this.props.match.params.id;
+		Axios.get(BASE_URL + "/api/appointment/patient/" + id, { headers: { Authorization: getAuthHeader() } })
+		.then((res) => {
+
+			if (res.status === 401) {
+				this.setState({
+					redirect: true,
+					redirectUrl: "/unauthorized"
+				});
+			} else {
+				this.setState({ appointments: res.data });
+			}
+
+			console.log(res.data);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	};
+
 	componentDidMount() {
 		const id = this.props.match.params.id;
 		this.setState({
@@ -68,26 +89,9 @@ class PatientProfilePage extends Component {
 				console.log(err);
 			});
 
-		Axios.get(BASE_URL + "/api/appointment/patient/" + id, { headers: { Authorization: getAuthHeader() } })
-			.then((res) => {
-
-				if (res.status === 401) {
-					this.setState({
-						redirect: true,
-						redirectUrl: "/unauthorized"
-					});
-				} else {
-					this.setState({ appointments: res.data });
-				}
-
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+			this.fetchAppointments();
 	}
 
-	//TODO: can examine only appointments scheduled for today?
 	handleExamine = (appointmentId) => {
 		this.setState({
 			redirect: true,
@@ -95,8 +99,18 @@ class PatientProfilePage extends Component {
 		});
 	};
 
-	handleNotShowUp = (appointmentId) => {
+	handleDidNotShowUp = (appointmentId) => {
 		console.log(appointmentId)
+		Axios.put(BASE_URL + "/api/appointment/did-not-show-up",
+		 {id: appointmentId},
+		 {headers: {Authorization: getAuthHeader()}})
+			.then((res) => {
+				this.fetchAppointments();
+				console.log(res.data);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 
 	handleSchedule = () => {
@@ -300,7 +314,7 @@ class PatientProfilePage extends Component {
 														appointment.EntityDTO.appointmentStatus != "SCHEDULED"
 													}
 													onClick={() =>
-														this.handleNotShowUp(appointment.Id)
+														this.handleDidNotShowUp(appointment.Id)
 													}
 													className="btn btn-danger"
 												>
