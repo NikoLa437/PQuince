@@ -31,6 +31,7 @@ import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacy
 import quince_it.pquince.services.contracts.dto.users.AddPharmacistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.PatientAllergicDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
@@ -188,6 +189,18 @@ public class UsersController {
 			return new ResponseEntity<>(allergens,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/is-patient-allergic/{recieptId}") 
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<PatientAllergicDTO> isPatientAllergic(@PathVariable UUID recieptId) {
+		try {
+			PatientAllergicDTO patientAllergicDTO = new PatientAllergicDTO();
+			patientAllergicDTO.setAllergic(userService.isPatientAllergic(recieptId));
+			return new ResponseEntity<>(patientAllergicDTO,HttpStatus.OK); 
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}

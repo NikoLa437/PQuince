@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.dto.drugs.EReceiptIdDTO;
+import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
@@ -37,6 +38,7 @@ import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplai
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
+import quince_it.pquince.services.implementation.users.mail.EmailService;
 
 @RestController
 @RequestMapping(value = "api/pharmacy")
@@ -70,9 +72,16 @@ public class PharmacyController {
 	@GetMapping("/qrpharmacies/{id}")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findWithQR(@PathVariable UUID id) {
-		System.out.println("AAAAA" + id);
-	
+		
 		return new ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>>(pharmacyService.findWithQR(id),HttpStatus.OK);
+		
+	}
+	
+	@PostMapping("/qrpharmacies/buy")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> buyWithQR(@RequestBody PharmacyERecipeDTO pharmacyERecipeDTO) {
+		
+		return new ResponseEntity<>(pharmacyService.buyWithQR(pharmacyERecipeDTO),HttpStatus.CREATED);
 		
 	}
 	

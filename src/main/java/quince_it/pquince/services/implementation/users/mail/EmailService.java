@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.User;
 
 @Service
 public class EmailService {
@@ -42,6 +43,24 @@ public class EmailService {
 		helper.setText(htmlMsg, true);
 		helper.setTo(patient.getEmail());
 		helper.setSubject("Activate account");
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
+		System.out.println("Email poslat!");
+	}
+	
+	@Async
+	public void sendQRBuyDrugsNotificaitionAsync(User user)
+			throws MailException, InterruptedException, MessagingException {
+		System.out.println("Slanje emaila...");
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Hello " + user.getName() + ",</p>" +
+					"<p>You successfully bought drugs with QR code!</p>"
+					+ "<p>Kind Regards, PQuince</p>"; 
+		helper.setText(htmlMsg, true);
+		helper.setTo(user.getEmail());
+		helper.setSubject("QR drugs bought");
 		helper.setFrom(env.getProperty("spring.mail.username"));
 		javaMailSender.send(mimeMessage);
 		System.out.println("Email poslat!");

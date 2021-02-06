@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
@@ -48,4 +49,6 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	void updatePharmacy(EditPharmacyDTO editPharmacyDTO);
 
 	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findWithQR(UUID id);
+
+	Object buyWithQR(PharmacyERecipeDTO pharmacyERecipeDTO);
 }
