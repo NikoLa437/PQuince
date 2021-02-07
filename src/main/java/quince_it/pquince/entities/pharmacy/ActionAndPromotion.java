@@ -100,4 +100,14 @@ public class ActionAndPromotion {
 		this.actionAndPromotionType = actionAndPromotionType;
 	}
 
+	public Pharmacy getPharmacy() {
+		return pharmacy;
+	}
+
+	public void setPharmacy(Pharmacy pharmacy) {
+		this.pharmacy = pharmacy;
+	}
+	
+	
+
 }
