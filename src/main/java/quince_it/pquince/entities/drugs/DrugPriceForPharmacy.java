@@ -1,6 +1,6 @@
 package quince_it.pquince.entities.drugs;
 
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -33,7 +33,6 @@ public class DrugPriceForPharmacy{
 		this.dateTo = dateTo;
 		this.price = price;
 	}
-
 
 	public DrugInstance getDrugInstance() {
 		return this.drugPriceForPharmacyId.getDrugInstance();

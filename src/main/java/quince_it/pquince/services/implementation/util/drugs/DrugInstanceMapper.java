@@ -33,6 +33,7 @@ public class DrugInstanceMapper {
 	public static IdentifiableDTO<ReplaceDrugDTO> MapDrugInstancePersistenceToReplaceDugIdentifiableDTO(DrugInstance drug){
 		if(drug == null) throw new IllegalArgumentException();
 		
+		
 		return new IdentifiableDTO<ReplaceDrugDTO>(drug.getId(), new ReplaceDrugDTO(drug.getName(), drug.getCode(), drug.getDrugInstanceName(), new ManufacturerDTO(drug.getManufacturer().getName())));
 	}
 

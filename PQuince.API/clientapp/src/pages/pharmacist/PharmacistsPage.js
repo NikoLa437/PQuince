@@ -128,18 +128,18 @@ class PharmacistPage extends Component {
     removePharmacistClick = (id) =>{
 
         confirmAlert({
-            message: 'Are you sure to remove pharmacist.',
+            message: 'Are you sure to remove drug from pharmacy.',
             buttons: [
               {
                 label: 'Yes',
                 onClick: () => {
-                    let removePharmacistDTO = {
+                    let removeDrugDTO = {
                         pharmacyId : this.state.pharmacyId,
-                        pharmacistId: id,
+                        drugId: id,
                     };
             
                     Axios
-                    .put(BASE_URL + "/api/users/remove-pharmacyist-from-pharmacy", removePharmacistDTO, {
+                    .put(BASE_URL + "/api/drug/remove-drug-from-pharmacy", removeDrugDTO, {
                         headers: { Authorization: getAuthHeader() },
                     }).then((res) =>{
                         console.log(res.data);
