@@ -1,10 +1,16 @@
 package quince_it.pquince.services.implementation.util.users;
 
+import java.util.List;
+
+import quince_it.pquince.entities.users.Address;
+import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.PharmacyAdmin;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientLoyalityProgramDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacyAdminDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -39,5 +45,13 @@ public class UserMapper {
 		return new IdentifiableDTO<StaffDTO>(staff.getId(), new StaffDTO(staff.getEmail(), staff.getName(), staff.getSurname(), staff.getAddress(),
 				staff.getPhoneNumber(), staff.isActive(), staff.getUserAuthorities()));
 
+	}
+
+	public static IdentifiableDTO<PharmacyAdminDTO> MapPharmacyAdminPersistenceToPharmacyAdminIdentifiableDTO(
+			PharmacyAdmin pharmacyAdmin) {
+		if(pharmacyAdmin == null) throw new IllegalArgumentException();
+
+		return new IdentifiableDTO<PharmacyAdminDTO>(pharmacyAdmin.getId(), new PharmacyAdminDTO(pharmacyAdmin.getEmail(), pharmacyAdmin.getName(), pharmacyAdmin.getSurname(), pharmacyAdmin.getAddress(),
+				pharmacyAdmin.getPhoneNumber(), pharmacyAdmin.isActive(), pharmacyAdmin.getUserAuthorities()));
 	}
 }

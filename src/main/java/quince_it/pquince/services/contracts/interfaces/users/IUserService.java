@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Authority;
+import quince_it.pquince.entities.users.PharmacyAdmin;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
@@ -20,6 +21,7 @@ import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacyAdminDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
@@ -123,4 +125,8 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	IdentifiableDTO<PharmacyDTO> getPharmacy();
 
 	boolean isPatientAllergic(UUID recieptId);
+
+	IdentifiableDTO<PharmacyAdminDTO> getPharmacyAdminById();
+
+	void updatePharmacyAdmin(UserInfoChangeDTO userInfoChangeDTO);
 }
