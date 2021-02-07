@@ -44,6 +44,8 @@ import QRreader from "./pages/QRcode/QRreader";
 import QRpharmacies from "./pages/QRcode/QRpharmacies";
 import AbsencePage from "./pages/examination/AbsencePage";
 import NewAppointmentPage from "./pages/examination/pharmacist/NewAppointmentPage"
+import ReservedDrugPage from "./pages/examination/pharmacist/ReservedDrugPage"
+
 
 function App() {
 	return (
@@ -106,6 +108,8 @@ function App() {
 				<Route path="/treatment-report/:id" children={<TreatmentReportPage />} />
 				<Link exact to="/absence" path="/absence" component={AbsencePage} />
 				<Route path="/new-appointment/:id" children={<NewAppointmentPage />} />
+				<Link exact to="/reserved-drug" path="/reserved-drug" component={ReservedDrugPage} />
+				
 
 			</Switch>
 		</Router>

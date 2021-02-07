@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFormatIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
@@ -65,7 +66,30 @@ public class DrugController {
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findAll() {
 		return new ResponseEntity<>(drugInstanceService.findAll(),HttpStatus.OK);
 	}
-
+	
+	@GetMapping("/reservation/{reservationId}")
+	@PreAuthorize("hasRole('PHARMACIST')")
+	public ResponseEntity<?> getDrugReservation(@PathVariable UUID reservationId) {
+		try {
+			return new ResponseEntity<>(drugReservationService.getDrugReservation(reservationId),HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PutMapping("/process-reservation")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PHARMACIST')")
+	public ResponseEntity<?> finishAppointment(@RequestBody EntityIdDTO drugReservationId) {
+		try {
+			drugReservationService.processReservation(drugReservationId.getId());
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	@PutMapping() 
 	@CrossOrigin

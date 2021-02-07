@@ -32,6 +32,9 @@ class Header extends Component {
 							<li className="active" hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/">Home</Link>
 							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACIST")}>
+								<Link to="/reserved-drug">Drug reservations</Link>
+							</li>
 							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
 								<Link to="/absence">Absence</Link>
 							</li>
