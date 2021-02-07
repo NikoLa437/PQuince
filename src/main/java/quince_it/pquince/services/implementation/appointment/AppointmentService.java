@@ -22,6 +22,7 @@ import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.DateRange;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.Pharmacist;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.WorkTime;
@@ -40,6 +41,7 @@ import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestD
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.NewConsultationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
@@ -119,7 +121,9 @@ public class AppointmentService implements IAppointmentService{
 			Pharmacy pharmacy = userService.getPharmacyForLoggedDermatologist();
 			if(pharmacy == null)
 				throw new IllegalArgumentException("Dermatologist can't create and schedule appointment outside work hours");
-			Appointment newAppointment = new Appointment(pharmacy,dermatologist,patient, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),appointmentDTO.getPrice(),AppointmentType.EXAMINATION,AppointmentStatus.CREATED);
+			
+			double discountPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(appointmentDTO.getPrice(), AppointmentType.EXAMINATION, patientId);
+			Appointment newAppointment = new Appointment(pharmacy,dermatologist,patient, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),discountPrice,AppointmentType.EXAMINATION,AppointmentStatus.CREATED);
 			CanReserveAppointment(newAppointment, patient);
 			newAppointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 			appointmentRepository.save(newAppointment);
@@ -581,6 +585,29 @@ public class AppointmentService implements IAppointmentService{
 			if(!added) returnPharmacists.add(pharmacist);
 		}
 		return returnPharmacists;
+	}
+	
+	@Override
+	public UUID newConsultation(NewConsultationDTO newConsultationDTO) throws AppointmentNotScheduledException, AppointmentTimeOverlappingWithOtherAppointmentException{
+		long time = newConsultationDTO.getStartDateTime().getTime();
+		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
+		Patient patient = patientRepository.findById(newConsultationDTO.getPatientId()).get();
+		UUID staffId = userService.getLoggedUserId();
+		Pharmacist pharmacist = pharmacistRepository.findById(staffId).get();
+		Pharmacy pharmacy = pharmacist.getPharmacy();
+		double discountPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, newConsultationDTO.getPatientId());
+		Appointment appointment = new Appointment(pharmacy, pharmacist, patient, newConsultationDTO.getStartDateTime(), endDateTime, discountPrice, AppointmentType.CONSULTATION, AppointmentStatus.SCHEDULED);
+		
+		CanCreateConsultation(appointment);
+		
+		appointmentRepository.save(appointment);
+		try {
+			emailService.sendAppointmentReservationNotificationAsync(appointment,"pharmacist");
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+
+		return appointment.getId();
 	}
 
 	@Override

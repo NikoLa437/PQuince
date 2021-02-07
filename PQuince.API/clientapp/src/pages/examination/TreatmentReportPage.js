@@ -10,7 +10,7 @@ import { withRouter } from "react-router";
 import getAuthHeader from "../../GetHeader";
 import ModalDialog from "../../components/ModalDialog";
 
-//TODO: add redirection, check support for pharmacist, work on recommend drugs feature
+//TODO: add redirection unauthorize, check support for pharmacist, work on recommend drugs feature
 class TreatmentReportPage extends Component {
 	state = {
         anamnesis: "",
@@ -38,6 +38,8 @@ class TreatmentReportPage extends Component {
 			id:id
 		});
 
+
+		//TODO: rest point does not exist
 		Axios.get(BASE_URL + "/api/appointment/" + id, 
 			{headers: { Authorization: getAuthHeader() }}
 		)
