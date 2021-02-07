@@ -109,13 +109,13 @@ insert into drug_replacement(drug_id, replacement_drug_id) values ('2c797174-583
 insert into drug_replacement(drug_id, replacement_drug_id) values ('2fe1cd8e-5839-11eb-ae93-0242ac130002', '2c797174-5839-11eb-ae93-0242ac130002');
 insert into drug_replacement(drug_id, replacement_drug_id) values ('2fe1cd8e-5839-11eb-ae93-0242ac130002', 'dac2b818-5838-11eb-ae93-0242ac130002');
 
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 340);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac111002','2020-11-11','2021-02-22', 399.99);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-22', 320);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac131302','2020-11-11','2021-02-22', 420);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('2c797174-5839-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac111002','2020-11-11','2021-02-22', 999);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('aecf0eac-68cb-11eb-9f52-838764dae934','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 230);
-insert into drug_price_for_pharmacy(drug_instance_id, pharmacy_id, date_from, date_to, price) values ('b4abdfc6-68cb-11eb-a102-d7374f9803ba','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 550);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130123','dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 340);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130124','dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac111002','2020-11-11','2021-02-22', 399.99);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130125','dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-22', 320);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130126','dac2b818-5838-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac131302','2020-11-11','2021-02-22', 420);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130127','2c797174-5839-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac111002','2020-11-11','2021-02-22', 999);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130128','aecf0eac-68cb-11eb-9f52-838764dae934','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 230);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130129','b4abdfc6-68cb-11eb-a102-d7374f9803ba','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 550);
 
 
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('dac2b818-5838-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24, 1);
@@ -202,3 +202,5 @@ insert into drug_feedback (date, grade, drug_id, patient_id) values ('2020-05-03
 
 insert into pharmacy_admin (id,pharmacy_id) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788','cafeddee-56cb-11eb-ae93-0242ac130002');
 
+insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2965458c-6976-11eb-9439-0242ac130002', 'DRUGDISCOUNT', '2020-02-15','2020-03-15', '15','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2965458c-6976-11eb-9439-0242ac130555', 'CONSULTATIONDISCOUNT', '2020-02-15','2020-03-15','25', 'cafeddee-56cb-11eb-ae93-0242ac130002');

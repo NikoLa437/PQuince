@@ -1,18 +1,26 @@
 package quince_it.pquince.entities.drugs;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Entity
 public class DrugPriceForPharmacy{
 	
-	@EmbeddedId
-	private DrugPriceForPharmacyId drugPriceForPharmacyId;
+	@Id
+	private UUID id;
+	
+	@ManyToOne(optional = false)
+	private DrugInstance drugInstance;
+	
+	@ManyToOne(optional = false)
+	private Pharmacy pharmacy;
 	
 	@Column(name = "dateFrom", nullable = false)
 	private Date dateFrom;
@@ -28,31 +36,44 @@ public class DrugPriceForPharmacy{
 	public DrugPriceForPharmacy(DrugInstance drugInstance, Pharmacy pharmacy, Date dateFrom, Date dateTo,
 			double price) {
 		super();
-		this.drugPriceForPharmacyId = new DrugPriceForPharmacyId(drugInstance, pharmacy);
+		this.id= UUID.randomUUID();
+		this.drugInstance = drugInstance;
+		this.pharmacy=pharmacy;
+		this.dateFrom = dateFrom;
+		this.dateTo = dateTo;
+		this.price = price;
+	}
+	
+	public DrugPriceForPharmacy(UUID id,DrugInstance drugInstance, Pharmacy pharmacy, Date dateFrom, Date dateTo,
+			double price) {
+		super();
+		this.id=id;
+		this.drugInstance = drugInstance;
+		this.pharmacy=pharmacy;
 		this.dateFrom = dateFrom;
 		this.dateTo = dateTo;
 		this.price = price;
 	}
 
-	public DrugInstance getDrugInstance() {
-		return this.drugPriceForPharmacyId.getDrugInstance();
+	public UUID getId() {
+		return id;
 	}
 
+	public DrugInstance getDrugInstance() {
+		return drugInstance;
+	}
 
 	public void setDrugInstance(DrugInstance drugInstance) {
-		this.drugPriceForPharmacyId.setDrugInstance(drugInstance);
+		this.drugInstance = drugInstance;
 	}
-
 
 	public Pharmacy getPharmacy() {
-		return this.drugPriceForPharmacyId.getPharmacy();
+		return pharmacy;
 	}
-
 
 	public void setPharmacy(Pharmacy pharmacy) {
-		this.drugPriceForPharmacyId.setPharmacy(pharmacy);
+		this.pharmacy = pharmacy;
 	}
-
 
 	public Date getDateFrom() {
 		return dateFrom;

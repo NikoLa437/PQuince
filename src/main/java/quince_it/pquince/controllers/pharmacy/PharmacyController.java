@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.dto.drugs.EReceiptIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.ActionAndPromotionsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
@@ -35,6 +36,7 @@ import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedExcepti
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IEReceiptService;
+import quince_it.pquince.services.contracts.interfaces.pharmacy.IActionAndPromotionsService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
@@ -59,7 +61,10 @@ public class PharmacyController {
 	
 	@Autowired
 	private IPharmacyFeedbackService pharmacyFeedbackService;
-		
+	
+	@Autowired
+	private IActionAndPromotionsService actionAndPromotionService;
+	
 	@GetMapping
 	@CrossOrigin
 	public ResponseEntity<List<IdentifiableDTO<PharmacyGradeDTO>>> findAll() {
@@ -388,4 +393,17 @@ public class PharmacyController {
 		}
 	}
 	
+	
+	@PostMapping("/action-and-promotions")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> createActionAndPromotions(@RequestBody ActionAndPromotionsDTO actionAndPromotions) {
+		try {
+
+			actionAndPromotionService.create(actionAndPromotions);
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
