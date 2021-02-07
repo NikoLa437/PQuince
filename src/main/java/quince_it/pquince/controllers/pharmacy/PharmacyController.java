@@ -400,8 +400,21 @@ public class PharmacyController {
 	public ResponseEntity<?> createActionAndPromotions(@RequestBody ActionAndPromotionsDTO actionAndPromotions) {
 		try {
 
-			actionAndPromotionService.create(actionAndPromotions);
-			return new ResponseEntity<>(HttpStatus.CREATED);
+			if(actionAndPromotionService.create(actionAndPromotions))
+				return new ResponseEntity<>(HttpStatus.CREATED);
+			else
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@CrossOrigin
+	@GetMapping("/find-action-and-promotion-by-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<IdentifiableDTO<ActionAndPromotionsDTO>>> findActionAndPromotionsByPharmacy() {
+		try {
+			return new ResponseEntity<>(actionAndPromotionService.findActionAndPromotionsInPharmacy(),HttpStatus.OK);
 		}catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.drugs.DrugReservation;
+import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
+import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
 
@@ -153,6 +155,47 @@ public class EmailService {
 		javaMailSender.send(mimeMessage);
 
 		System.out.println("Email poslat!");
+	}
+	
+	@Async
+	public void sendActionAndPromotionNotificaitionAsync(Patient patient, ActionAndPromotion actionAndPromotion)
+			throws MailException, InterruptedException, MessagingException {
+		System.out.println("Slanje emaila...");
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Hello " + patient.getName() + ",</p>" +
+					"<p>"+"Pharmacy " + actionAndPromotion.getPharmacy().getName() +"have new action"+"</p>"
+					+ this.GetMessageFromAction(actionAndPromotion) +
+					"</p>"+"Best regards, \n yours " + actionAndPromotion.getPharmacy().getName() + "</p>";
+		helper.setText(htmlMsg, true);
+		helper.setTo(patient.getEmail());
+		helper.setSubject("ACTION AND PROMOTION IN" + actionAndPromotion.getPharmacy().getName());
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
+		System.out.println("Email poslat!");
+	}
+
+	private String GetMessageFromAction(ActionAndPromotion actionAndPromotion) {
+		if(actionAndPromotion.getActionAndPromotionType()==ActionAndPromotionType.DRUGDISCOUNT) {
+			return "<p>"+ "We have special offer for you" +"</p>" +
+						"<p>"+ "Promotion to buying drugs in period " +"</p>" +
+						"<p>"+ "Start date"+ actionAndPromotion.getDateFrom().toString() +"</p>"+
+						"<p>"+ "End date"+ actionAndPromotion.getDateTo().toString() +"</p>"+
+						"<p>"+ "You have discount of " + actionAndPromotion.getPercentOfDiscount() +"</p>";
+		}else if(actionAndPromotion.getActionAndPromotionType()==ActionAndPromotionType.CONSULTATIONDISCOUNT) {
+			return "<p>"+ "We have special offer for you" +"</p>" +
+					"<p>"+ "Promotion for consultation in our pharmacy" +"</p>" +
+					"<p>"+ "Start date"+ actionAndPromotion.getDateFrom().toString() +"</p>"+
+					"<p>"+ "End date"+ actionAndPromotion.getDateTo().toString() +"</p>"+
+					"<p>"+ "You have discount of " + actionAndPromotion.getPercentOfDiscount() +"</p>";
+		}else {
+			return "<p>"+ "We have special offer for you" +"</p>" +
+					"<p>"+ "Promotion for examination in our pharmacy" +"</p>" +
+					"<p>"+ "Start date"+ actionAndPromotion.getDateFrom().toString() +"</p>"+
+					"<p>"+ "End date"+ actionAndPromotion.getDateTo().toString() +"</p>"+
+					"<p>"+ "You have discount of " + actionAndPromotion.getPercentOfDiscount() +"</p>";
+		}
 	}
 
 	
