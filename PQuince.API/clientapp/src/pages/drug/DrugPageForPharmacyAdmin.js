@@ -9,22 +9,26 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
+import AddDrugToPharmacy from "../../components/AddDrugToPharmacy";
+import EditPriceForDrugInPharmacy from "../../components/EditPriceForDrugInPharmacy";
+import EditStorageAmountForDrug from "../../components/EditStorageAmountForDrug";
 
 class DrugPageForPharmacyAdmin extends Component {
 	state = {
         drugs: [],
-        staffIdForWorkTimes:'',
-        showWorkTimesModal: false,
-        showAddPharmacistModal: false,
-        workTimes:[],
+        showAddDrugModal: false,
+        showEditDrugPriceModal:false,
+        showEditStorageAmountModal:false,
+        drugIdForEditAmount:'',
+        drugIdForEditPrice:'',
         forStaff:'',
         formShowed:false,
         searchName:'',
-        searchSurname:'',
+        searchManufacturer:'',
         searchGradeFrom:'',
         searchGradeTo:'',
         showingSearched: false,
-        pharmacistsToEmploye:[],
+        drugsToAdd:[],
         pharmacyId:'',
         hiddenSuccessAlert: true,
 		successHeader: "",
@@ -41,43 +45,118 @@ class DrugPageForPharmacyAdmin extends Component {
 		})
 
         Axios
-        .get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId="+ pharmacyId).then((res) =>{
+        .get(BASE_URL + "/api/drug/find-drugs-by-pharmacy-for-admin?pharmacyId="+ pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) =>{
             this.setState({drugs : res.data});
             console.log(res.data);
         }).catch((err) => {console.log(err);});
     }
 
-    updatePharmacist = () =>{
-        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
+    updateDrugs = () =>{
+        Axios
+        .get(BASE_URL + "/api/drug/find-drugs-by-pharmacy-for-admin?pharmacyId="+ this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
-		})
-			.then((res) => {
-				this.setState({ pharmacists: res.data });
-                console.log(res.data);
-            
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+		}).then((res) =>{
+            this.setState({drugs : res.data});
+            console.log(res.data);
+        }).catch((err) => {console.log(err);});
+    }
+
+    handleAddDrugModalClose = () => {
+        this.updateDrugs();
+
+        this.setState({ showAddDrugModal: false });
+    }
+
+    handleEditDrugPriceModalSuccessClose = () => {
+        this.setState({ showEditDrugPriceModal: false });
+        this.setState({
+            hiddenSuccessAlert: false,
+            hiddenFailAlert:true,
+            successHeader: "Success",
+            successMessage: "You successfully edit drug price.",
+        })
+        this.updateDrugs();
+
+    }
+
+    handleEditStorageAmountModalSuccessClose = () => {
+        this.setState({ showEditDrugStorageModal: false });
+        this.setState({
+            hiddenSuccessAlert: false,
+            hiddenFailAlert:true,
+            successHeader: "Success",
+            successMessage: "You successfully edit drug storage.",
+        })
+        this.updateDrugs();
+
+    }
+
+    handleEditDrugPriceModalUnsuccessClose = () => {
+        this.setState({ showEditDrugPriceModal: false });
+        this.setState({
+            hiddenSuccessAlert: true,
+            hiddenFailAlert:false,
+            failHeader: "Unsuccess", 
+            failMessage: "It is not possible to edit price"});
+    
+        this.updateDrugs();
+    }
+
+    handleEditDrugStorageAmountModalUnsuccessClose = () => {
+        this.setState({ showEditDrugStorageModal: false });
+        this.setState({
+            hiddenSuccessAlert: true,
+            hiddenFailAlert:false,
+            failHeader: "Unsuccess", 
+            failMessage: "It is not possible to edit storage amount"});
+    
+        this.updateDrugs();
+
+    }
+
+    handleEditDrugPriceModalClose =() =>{
+        this.updateDrugs();
+        this.setState({ showEditDrugPriceModal: false });
+    }
+
+    handleEditDrugStorageAmountModalClose =() =>{
+        this.updateDrugs();
+        this.setState({ showEditDrugStorageModal: false });
     }
 
 
-    handleAddPharmacistModalClose = () => {
-        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
-			headers: { Authorization: getAuthHeader() },
-		})
-			.then((res) => {
-				this.setState({ pharmacists: res.data });
-                console.log(res.data);
-            
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-        this.setState({ showAddPharmacistModal: false });
+    handleEditDrugStorageModalClose = () => {
+        
+        this.updateDrugs();
+        this.setState({ showEditDrugStorageModal: false });
+    }
+
+    handleEditDrugStorageModalSuccessClose = () => {
+        
+        this.updateDrugs();
+
+        this.setState({ showEditDrugStorageModal: false });
     }
     
+    handleAddDrugClick = () => {
+        Axios.get(BASE_URL + "/api/drug/drugs-for-add-in-pharmacy?pharmacyId=" + this.state.pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) => {
+                this.setState({ drugsToAdd: res.data });
+				console.log(res.data);
+		})
+			.catch((err) => {
+				console.log(err);
+		});
+
+        this.setState({
+			showAddDrugModal: true,
+		});     
+    }
     
+    //todo
     handleAddPharmacistClick = () => {
         Axios.get(BASE_URL + "/api/users/pharmacists-for-employment", {
 			headers: { Authorization: getAuthHeader() },
@@ -99,38 +178,22 @@ class DrugPageForPharmacyAdmin extends Component {
     }
 
 
-    onWorkTimeClick = (id) =>{
-        
-		Axios.get(BASE_URL + "/api/worktime/worktime-for-staff/" + id, {
-			headers: { Authorization: getAuthHeader() },
-		})
-        .then((res) => {
-            this.setState({ workTimes: res.data , forStaff:id});
-            console.log(res.data);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-        this.setState({
-            showWorkTimesModal: true
-        });
-    }
-
+    //todo
     removePharmacistClick = (id) =>{
 
         confirmAlert({
-            message: 'Are you sure to remove pharmacist.',
+            message: 'Are you sure to remove drug from pharmacy.',
             buttons: [
               {
                 label: 'Yes',
                 onClick: () => {
-                    let removePharmacistDTO = {
+                    let removeDrugDTO = {
                         pharmacyId : this.state.pharmacyId,
-                        pharmacistId: id,
+                        drugId: id,
                     };
             
                     Axios
-                    .put(BASE_URL + "/api/users/remove-pharmacyist-from-pharmacy", removePharmacistDTO, {
+                    .put(BASE_URL + "/api/drug/remove-drug-from-pharmacy", removeDrugDTO, {
                         headers: { Authorization: getAuthHeader() },
                     }).then((res) =>{
                         console.log(res.data);
@@ -138,26 +201,16 @@ class DrugPageForPharmacyAdmin extends Component {
                             hiddenSuccessAlert: false,
                             hiddenFailAlert:true,
                             successHeader: "Success",
-                            successMessage: "You successfully remove pharmacist.",
+                            successMessage: "You successfully remove drug.",
                         })
-                        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
-                            headers: { Authorization: getAuthHeader() },
-                        })
-                            .then((res) => {
-                                this.setState({ pharmacists: res.data });
-                                console.log(res.data);
-                            
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            });
+                        this.updateDrugs();
                         
                     }).catch((err) => {
                         this.setState({ 
                             hiddenSuccessAlert: true,
                             hiddenFailAlert: false, 
                             failHeader: "Unsuccess", 
-                            failMessage: "It is not possible to remove the pharmacist"});
+                            failMessage: "It is not possible to remove the drug"});
                     });
                 }
               },
@@ -180,8 +233,8 @@ class DrugPageForPharmacyAdmin extends Component {
 		this.setState({ searchName: event.target.value });
     };
     
-    handleSurnameChange = (event) => {
-		this.setState({ searchSurname: event.target.value });
+    handleManufacturerChange = (event) => {
+		this.setState({ searchManufacturer: event.target.value });
     };
     
     handleGradeFromChange = (event) => {
@@ -191,6 +244,21 @@ class DrugPageForPharmacyAdmin extends Component {
 	handleGradeToChange = (event) => {
 		this.setState({ searchGradeTo: event.target.value });
     };
+
+    onEditPriceClick = (id) => {
+        this.setState({
+			showEditDrugPriceModal: true,
+            drugIdForEditPrice:id
+		});
+        
+    };
+
+    onEditStorageClick = (id) =>{
+        this.setState({
+			showEditDrugStorageModal: true,
+            drugIdForEditAmount:id
+		});
+    }
 
 
     
@@ -206,19 +274,19 @@ class DrugPageForPharmacyAdmin extends Component {
 				let gradeFrom = this.state.searchGradeFrom;
 				let gradeTo = this.state.searchGradeTo;
 				let name = this.state.searchName;
-				let surname = this.state.searchSurname;
+				let manufacturer = this.state.searchManufacturer;
 
 				if (gradeFrom === "") gradeFrom = -1;
 				if (gradeTo === "") gradeTo = -1;
 				if (name === "") name = '';
-				if (surname === "") surname = '';
+				if (manufacturer === "") manufacturer = '';
 
 				const SEARCH_URL =
 					BASE_URL +
-					"/api/users/search-pharmacists-for-pharmacy?name=" +
+					"/api/drug/search-drugs-for-pharmacy-admin?name=" +
                     name +
-                    "&surname=" +
-					surname +
+                    "&manufacturer=" +
+					manufacturer +
 					"&gradeFrom=" +
 					gradeFrom +
 					"&gradeTo=" +
@@ -231,7 +299,7 @@ class DrugPageForPharmacyAdmin extends Component {
                 })
 					.then((res) => {
 						this.setState({
-							pharmacists: res.data,
+							drugs: res.data,
 							formShowed: false,
 							showingSearched: true,
 						});
@@ -243,26 +311,18 @@ class DrugPageForPharmacyAdmin extends Component {
 			}
      }
 
+
+
      handleResetSearch = () => {
-        Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + this.state.pharmacyId, {
-			headers: { Authorization: getAuthHeader() },
-		})
-			.then((res) => {
-                this.setState({ 
-                    pharmacists: res.data,
-                    formShowed: false,
-					showingSearched: false,
-					searchName: "",
-                    searchSurname: "",
-                    searchGradeFrom: "",
-                    searchGradeTo: "", 
-                });
-                console.log(res.data);
-            
-			})
-			.catch((err) => {
-				console.log(err);
-            });
+        this.updateDrugs();
+        this.setState({
+            formShowed: false,
+            showingSearched: false,
+            searchName: "",
+            searchSurname: "",
+            searchGradeFrom: "",
+            searchGradeTo: "", 
+        })
 	};
 
     handleCloseAlertSuccess = () => {
@@ -277,7 +337,7 @@ class DrugPageForPharmacyAdmin extends Component {
         const myStyle = {
 			color: "white",
             textAlign: "center",
-            marginLeft:'195%'
+            marginLeft:'145%'
 		};
 		return (
         <React.Fragment>
@@ -305,6 +365,20 @@ class DrugPageForPharmacyAdmin extends Component {
                                 handleCloseAlert={this.handleCloseAlertFail}
                         />
 
+                        <nav className="nav-menu d-none d-lg-block">
+                            <ul>
+                                <li>
+                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddDrugClick}>
+                                        Add drug
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddDrugClick}>
+                                        Create order
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
                         <button
                             className="btn btn-outline-primary btn-xl "
                             type="button"
@@ -331,12 +405,12 @@ class DrugPageForPharmacyAdmin extends Component {
                                 />
 
                                 <input
-                                    placeholder="LastName"
+                                    placeholder="Manufacturer"
                                     className="form-control mr-3"
                                     style={{ width: "9em" }}
                                     type="text"
-                                    onChange={this.handleSurnameChange}
-                                    value={this.state.searchSurname}
+                                    onChange={this.handleManufacturerChange}
+                                    value={this.state.searchManufacturer}
                                 />
 
                                 <input
@@ -402,17 +476,19 @@ class DrugPageForPharmacyAdmin extends Component {
                                         <td>
                                             <div><b>Drug:</b> {drug.EntityDTO.name}</div>
                                             <div><b>Name:</b> {drug.EntityDTO.drugInstanceName}</div>
-                                            <div><b>Manufacturer:</b> {drug.EntityDTO.manufacturer.EntityDTO.name}</div>
+                                            <div><b>Manufacturer:</b> {drug.EntityDTO.manufacturerName}</div>
                                             <div><b>Quantity:</b> {drug.EntityDTO.quantity} <b>mg</b></div>
-                                            <div><b>Format:</b> {drug.EntityDTO.drugFormat}</div>
                                         </td>
                                         <td>
-                                            <div><b>Actual price:</b> {drug.EntityDTO.name}</div>
-
+                                            <div><b>Format:</b> {drug.EntityDTO.drugFormat}</div>
+                                            <div><b>Actual price:</b> {drug.EntityDTO.price}</div>
+                                            <div><b>Grade:</b> {drug.EntityDTO.avgGrade}</div>
                                         </td>
                                         <td >
-                                            <div className="mt-3" style={{marginLeft:'25%'}}>
-                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-outline-secondary" onClick={() => this.onWorkTimeClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit</button>
+                                            <div className="mt-1" style={{marginLeft:'25%'}}>
+                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-outline-secondary" onClick={() => this.onEditStorageClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit storage</button>
+                                                <br></br>
+                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary" onClick={() => this.onEditPriceClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit price</button>
                                                 <br></br>
                                                 <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary mt-1" onClick={() => this.removePharmacistClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Remove drug</button>
                                             </div>
@@ -424,6 +500,34 @@ class DrugPageForPharmacyAdmin extends Component {
                         </table>
                     </div>
                     <div>
+                        <AddDrugToPharmacy
+					        show={this.state.showAddDrugModal}
+					        onCloseModal={this.handleAddDrugModalClose}
+                            pharmacyId={this.state.pharmacyId}
+                            drugs={this.state.drugsToAdd}
+                            updateDrugs={this.updateDrugs}
+					        header="Add drugs"
+				        />
+                        <EditPriceForDrugInPharmacy
+                            show={this.state.showEditDrugPriceModal}
+                            onCloseModal={this.handleEditDrugPriceModalClose}
+					        onCloseModalSuccess={this.handleEditDrugStorageModalSuccessClose}
+                            OnCloseModalUnsuccess={this.handleEditDrugPriceModalUnsuccessClose}
+                            pharmacyId={this.state.pharmacyId}
+                            drug={this.state.drugIdForEditPrice}
+                            updateDrugs={this.updateDrugs}
+					        header="Edit drug price"
+                         />
+                          <EditStorageAmountForDrug
+                            show={this.state.showEditDrugStorageModal}
+                            onCloseModal={this.handleEditDrugStorageModalClose}
+					        onCloseModalSuccess={this.handleEditStorageAmountModalSuccessClose}
+                            OnCloseModalUnsuccess={this.handleEditDrugStorageAmountModalUnsuccessClose}
+                            pharmacyId={this.state.pharmacyId}
+                            drug={this.state.drugIdForEditAmount}
+                            updateDrugs={this.updateDrugs}
+					        header="Edit storage amount"
+                         />
                     </div>
                 </React.Fragment>
 		);

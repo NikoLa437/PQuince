@@ -14,5 +14,5 @@ public interface DrugFeedbackRepository extends JpaRepository<DrugFeedback, Drug
 	DrugFeedback findByPatientAndDrug(UUID patientId, UUID drugId);
 	
 	@Query(value = "SELECT AVG(s.grade) FROM DrugFeedback s WHERE s.drugFeedbackId.drug.id = ?1")
-	double findAvgGradeForDrug(UUID drugId);
+	Double findAvgGradeForDrug(UUID drugId);
 }

@@ -53,6 +53,7 @@ import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistF
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacyAdminDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
@@ -880,6 +881,7 @@ public class UserService implements IUserService{
 		return pharmacy;
 	}
 	
+	
 	@Override
 	public List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies() {
 		List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies = new ArrayList<IdentifiableDTO<PharmacyDTO>>();
@@ -917,6 +919,25 @@ public class UserService implements IUserService{
 		
 		return false;
 		
+	}
+
+	@Override
+	public IdentifiableDTO<PharmacyAdminDTO> getPharmacyAdminById() {
+		UUID pharmacyAdminId = getLoggedUserId();
+		return UserMapper.MapPharmacyAdminPersistenceToPharmacyAdminIdentifiableDTO(pharmacyAdminRepository.getOne(pharmacyAdminId));
+	}
+	
+	@Override
+	public void updatePharmacyAdmin(UserInfoChangeDTO userInfoChangeDTO) {
+		UUID pharmacyAdminId = getLoggedUserId();
+		PharmacyAdmin pharmacyAdmin = pharmacyAdminRepository.getOne(pharmacyAdminId);		
+		
+		pharmacyAdmin.setAddress(userInfoChangeDTO.getAddress());
+		pharmacyAdmin.setName(userInfoChangeDTO.getName());
+		pharmacyAdmin.setPhoneNumber(userInfoChangeDTO.getPhoneNumber());
+		pharmacyAdmin.setSurname(userInfoChangeDTO.getSurname());
+		
+		pharmacyAdminRepository.save(pharmacyAdmin);		
 	}
 	
 }

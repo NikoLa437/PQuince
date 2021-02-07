@@ -135,11 +135,11 @@ public class EReceiptService implements IEReceiptService{
 	@Override
 	public boolean checkIfRefused(UUID id) {
 		EReceipt receipt = eReceiptRepository.getOne(id);
-		if(receipt.getStatus().equals(EReceiptStatus.REJECTED)) {
-			return true;
+		if(receipt.getStatus().equals(EReceiptStatus.NEW)) {
+			return false;
 		}
 		
-		return false;
+		return true;
 	}
 
 }

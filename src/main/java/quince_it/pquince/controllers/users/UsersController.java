@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import quince_it.pquince.entities.users.PharmacyAdmin;
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenUserDTO;
@@ -37,6 +38,7 @@ import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacyAdminDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserInfoChangeDTO;
@@ -121,6 +123,22 @@ public class UsersController {
 		}
 	}
 	
+	@PutMapping("/pharmacy-admin") 
+	@CrossOrigin
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> updatePharmacyAdminInformation(@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
+	  
+		try {
+			userService.updatePharmacyAdmin(userInfoChangeDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
 	@PutMapping("/staff") 
 	@CrossOrigin
 	public ResponseEntity<?> updateStaffInformation(@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
@@ -156,6 +174,20 @@ public class UsersController {
 		try {
 			IdentifiableDTO<PatientDTO> patient = userService.getPatientById();
 			return new ResponseEntity<>(patient,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} 
+		catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/pharmacy-admin")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<IdentifiableDTO<PharmacyAdminDTO>> getPharmacyAdminById() {
+		try {
+			IdentifiableDTO<PharmacyAdminDTO> pharmacyAdminDTO = userService.getPharmacyAdminById();
+			return new ResponseEntity<>(pharmacyAdminDTO,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 		} 

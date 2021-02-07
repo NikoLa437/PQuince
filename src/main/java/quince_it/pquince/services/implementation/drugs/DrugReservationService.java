@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
+import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -21,6 +22,7 @@ import quince_it.pquince.entities.drugs.ReservationStatus;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.Pharmacist;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
@@ -232,6 +234,29 @@ public class DrugReservationService implements IDrugReservationService{
 		}
 		
 		return drugReservation.getId();
+	}
+
+	@Override
+	public IdentifiableDTO<DrugReservationDTO> getDrugReservation(UUID reservationId) {
+		UUID pharmacistId = userService.getLoggedUserId();
+		Pharmacist pharmacist = pharmacistRepository.getOne(pharmacistId);
+		UUID pharmacyId = pharmacist.getPharmacy().getId();
+		List<DrugReservation> drugReservations = drugReservationRepository.findByStatusAndIdAndPharmacy(reservationId, pharmacyId);
+		if (drugReservations.isEmpty())
+			throw new EntityNotFoundException();
+		DrugReservation drugReservation = drugReservations.get(0);
+		Date currentDateTime = new Date();
+		if (drugReservation.getEndDate().getTime() - currentDateTime.getTime() < 24 * 60 * 60 * 1000)
+			throw new EntityNotFoundException();
+		return DrugReservationMapper.MapDrugReservationPersistenceToDrugReservationIdentifiableDTO(drugReservation);
+	}
+
+	@Override
+	public void processReservation(UUID drugReservationId) throws MailException, InterruptedException, MessagingException {
+		DrugReservation drugReservation = drugReservationRepository.getOne(drugReservationId);
+		drugReservation.setReservationStatus(ReservationStatus.PROCESSED);
+		drugReservationRepository.save(drugReservation);
+		emailService.sendDrugReservationProcessedNotificaitionAsync(drugReservation);
 	}
 
 }

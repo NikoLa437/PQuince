@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage";
 import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import PharmacyAdminProfilPage from "./pages/PharmacyAdminProfilPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import StaffProfilePage from "./pages/examination/StaffProfilePage";
 import PharmaciesPage from "./pages/PharmaciesPage";
@@ -44,6 +45,10 @@ import QRreader from "./pages/QRcode/QRreader";
 import QRpharmacies from "./pages/QRcode/QRpharmacies";
 import AbsencePage from "./pages/examination/AbsencePage";
 import NewAppointmentPage from "./pages/examination/pharmacist/NewAppointmentPage"
+import ReservedDrugPage from "./pages/examination/pharmacist/ReservedDrugPage"
+import ActionAndPromotionsPage from "./pages/action-and-promotions/ActionAndPromotionsPage";
+
+
 
 function App() {
 	return (
@@ -54,6 +59,7 @@ function App() {
 				<Link exact to="/registration" path="/registration" component={RegisterPage} />
 				<Link exact to="/profile" path="/profile" component={UserProfilePage} />
 				<Link exact to="/staff-profile" path="/staff-profile" component={StaffProfilePage} />
+				<Link exact to="/pharmacy-admin-profile" path="/pharmacy-admin-profile" component={PharmacyAdminProfilPage} />
 				<Link exact to="/pharmacies" path="/pharmacies" component={PharmaciesPage} />
 				<Link exact to="/admin-register-staff" path="/admin-register-staff" component={AdminRegisterStaff} />
 				<Link exact to="/admin-register-drug" path="/admin-register-drug" component={AdminRegisterDrug} />
@@ -106,6 +112,8 @@ function App() {
 				<Route path="/treatment-report/:id" children={<TreatmentReportPage />} />
 				<Link exact to="/absence" path="/absence" component={AbsencePage} />
 				<Route path="/new-appointment/:id" children={<NewAppointmentPage />} />
+				<Link exact to="/reserved-drug" path="/reserved-drug" component={ReservedDrugPage} />
+				<Link exact to="/actions-and-promotions" path="/actions-and-promotions" component={ActionAndPromotionsPage} />
 
 			</Switch>
 		</Router>
