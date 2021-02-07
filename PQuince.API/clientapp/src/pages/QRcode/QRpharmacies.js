@@ -105,6 +105,7 @@ class QRpharmacies extends Component {
 			
 		Axios.get(BASE_URL + "/api/pharmacy/qrpharmacies/" + this.props.match.params.id, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
+				console.log(res.data)
 				this.setState({ pharmacies: res.data });
 			})
 			.catch((err) => {
@@ -600,7 +601,7 @@ class QRpharmacies extends Component {
 											{pharmacy.EntityDTO.pharmacy.EntityDTO.address.country}
 										</div>
 										<div>
-											<b>Grade: </b> {pharmacy.EntityDTO.pharmacy.EntityDTO.grade}
+											<b>Grade: </b> {pharmacy.EntityDTO.grade}
 											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 										<div>

@@ -23,7 +23,7 @@ class DrugsPage extends Component {
 		drugQuantity: "",
 		drugManufacturer: "",
 		drugName: "",
-		onReciept: "",
+		onReciept: false,
 		drugKind: "",
 		drugFormat: "",
 		sideEffects: "",
@@ -161,6 +161,7 @@ class DrugsPage extends Component {
 	};
 
 	handleDrugClick = (drug) => {
+		console.log(drug)
 		this.setState({
 			drugAmount: drug.EntityDTO.recommendedAmount,
 			drugQuantity: drug.EntityDTO.quantity,
@@ -175,7 +176,6 @@ class DrugsPage extends Component {
 			replacingDrugs: drug.EntityDTO.replacingDrugs,
 			specificationModalShow: true,
 		});
-		console.log(drug.EntityDTO.ingredients, "XOXOXO");
 	};
 
 	handleModalClose = () => {
@@ -401,6 +401,7 @@ class DrugsPage extends Component {
 										</div>
 										<div>
 											<b>Grade:</b> {drug.EntityDTO.avgGrade}
+											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 									</td>
 									<td className="align-middle">

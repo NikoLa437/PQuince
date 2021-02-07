@@ -396,20 +396,24 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Override
 	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findWithQR(UUID id) {
-		
+	
 		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(id);
 		List<Pharmacy> allPharmacies = pharmacyRepository.findAll();
 		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyDrugPriceDTO>>();
 		int price;
-		
+
+		double avgGrade;
 		for(Pharmacy p : allPharmacies) {
-			if((price = allDrugsAreInPharmacy(items,p)) != -1)
-				pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyDrugPriceIdentifiableDTO(p, price));
+			if((price = allDrugsAreInPharmacy(items,p)) != -1) {
+				avgGrade = getAvgGradeForPharmacy(p.getId());
+				pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyDrugPriceIdentifiableDTO(p, avgGrade, price));
+			}
 		}
 		
 		return pharmacies;
 	}
-
+	
+	
 	private int allDrugsAreInPharmacy(List<EReceiptItems> items, Pharmacy p) {
 		boolean var = false;
 		int price = 0;
