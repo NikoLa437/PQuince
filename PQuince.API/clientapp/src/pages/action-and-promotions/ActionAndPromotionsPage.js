@@ -130,7 +130,7 @@ class ActionAndPromotionsPage extends Component {
 											<b>Action for examination</b>
 										</div>
                                         <div hidden={action.EntityDTO.actionAndPromotionType!=="CONSULTATIONDISCOUNT"}>
-											<b>Action for colsutation</b>
+											<b>Action for consultation</b>
 										</div>
 										<div>
 											<b>Date from: </b> {new Date(action.EntityDTO.dateFrom).toDateString()}
@@ -154,7 +154,6 @@ class ActionAndPromotionsPage extends Component {
                             onCloseModal={this.handleModalClose} 
                             forPharmacy={this.state.forPharmacy} 
                             header="Add action and promotions" />
-
                     </div>
                 </React.Fragment>
 		);
