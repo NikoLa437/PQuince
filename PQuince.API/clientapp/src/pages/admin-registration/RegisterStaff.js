@@ -233,7 +233,7 @@ class RegisterStaff extends Component {
 
 				<div className="container" style={{ marginTop: "8%" }}>
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
-						Registration
+						Register staff
 					</h5>
 
 					<div className="row section-design">

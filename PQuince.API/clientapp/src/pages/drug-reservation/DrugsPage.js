@@ -144,7 +144,6 @@ class DrugsPage extends Component {
 			let name = this.state.searchName;
 			let drugKind = this.state.drugKind;
 
-			console.log("HIHIH", drugKind);
 
 			if (gradeFrom === "") gradeFrom = -1;
 			if (gradeTo === "") gradeTo = -1;
@@ -165,7 +164,6 @@ class DrugsPage extends Component {
 						formShowed: false,
 						showingSearched: true,
 					});
-					console.log(res.data, "HAHAHAH");
 				})
 				.catch((err) => {
 					console.log(err);
