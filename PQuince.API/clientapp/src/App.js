@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage";
 import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import PharmacyAdminProfilPage from "./pages/PharmacyAdminProfilPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import StaffProfilePage from "./pages/examination/StaffProfilePage";
 import PharmaciesPage from "./pages/PharmaciesPage";
@@ -47,6 +48,7 @@ import NewAppointmentPage from "./pages/examination/pharmacist/NewAppointmentPag
 import ReservedDrugPage from "./pages/examination/pharmacist/ReservedDrugPage"
 
 
+
 function App() {
 	return (
 		<Router basename="/clientapp">
@@ -56,6 +58,7 @@ function App() {
 				<Link exact to="/registration" path="/registration" component={RegisterPage} />
 				<Link exact to="/profile" path="/profile" component={UserProfilePage} />
 				<Link exact to="/staff-profile" path="/staff-profile" component={StaffProfilePage} />
+				<Link exact to="/pharmacy-admin-profile" path="/pharmacy-admin-profile" component={PharmacyAdminProfilPage} />
 				<Link exact to="/pharmacies" path="/pharmacies" component={PharmaciesPage} />
 				<Link exact to="/admin-register-staff" path="/admin-register-staff" component={AdminRegisterStaff} />
 				<Link exact to="/admin-register-drug" path="/admin-register-drug" component={AdminRegisterDrug} />

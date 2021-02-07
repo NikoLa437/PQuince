@@ -20,6 +20,7 @@ private static final long serialVersionUID = 1L;
 	public PharmacyAdmin() {
 		super();
 	}
+	
 
 	public PharmacyAdmin(String email, String password, String name, String surname, Address address,
 			String phoneNumber, Pharmacy pharmacy) {
