@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import quince_it.pquince.services.contracts.dto.drugs.AddDrugToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
+import quince_it.pquince.services.contracts.dto.drugs.EditPriceForDrugDTO;
 import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.IService;
@@ -20,5 +21,5 @@ public interface IDrugStorageService extends IService<DrugStorageDTO, Identifiab
 
 	boolean removeDrugFromStorage(RemoveDrugFromPharmacyDTO removeDrugFromPharmacyDTO);
 
-	void addDrugToPharmacy(AddDrugToPharmacyDTO addDrugToPharmacyDTO);	
+	void addDrugToPharmacy(AddDrugToPharmacyDTO addDrugToPharmacyDTO);
 }

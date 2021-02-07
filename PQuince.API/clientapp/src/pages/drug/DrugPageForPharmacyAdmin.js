@@ -10,11 +10,14 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
 import AddDrugToPharmacy from "../../components/AddDrugToPharmacy";
+import EditPriceForDrugInPharmacy from "../../components/EditPriceForDrugInPharmacy";
 
 class DrugPageForPharmacyAdmin extends Component {
 	state = {
         drugs: [],
         showAddDrugModal: false,
+        showEditDrugPriceModal:false,
+        drugIdForEditPrice:'',
         forStaff:'',
         formShowed:false,
         searchName:'',
@@ -61,6 +64,48 @@ class DrugPageForPharmacyAdmin extends Component {
         this.updateDrugs();
 
         this.setState({ showAddDrugModal: false });
+    }
+
+    handleEditDrugPriceModalSuccessClose = () => {
+        this.setState({ showEditDrugPriceModal: false });
+        this.setState({
+            hiddenSuccessAlert: false,
+            hiddenFailAlert:true,
+            successHeader: "Success",
+            successMessage: "You successfully edit drug price.",
+        })
+        this.updateDrugs();
+
+    }
+
+    handleEditDrugPriceModalUnsuccessClose = () => {
+        this.setState({ showEditDrugPriceModal: false });
+        this.setState({
+            hiddenSuccessAlert: true,
+            hiddenFailAlert:false,
+            failHeader: "Unsuccess", 
+            failMessage: "It is not possible to edit price"});
+    
+        this.updateDrugs();
+
+    }
+
+    handleEditDrugPriceModalClose =() =>{
+        this.updateDrugs();
+        this.setState({ showEditDrugStorageModal: false });
+
+    }
+
+    handleEditDrugStorageModalClose = () => {
+        
+        this.updateDrugs();
+        this.setState({
+            hiddenSuccessAlert: false,
+            hiddenFailAlert:true,
+            successHeader: "Success",
+            successMessage: "You successfully edit drug price.",
+        })
+        this.setState({ showEditDrugStorageModal: false });
     }
     
     handleAddDrugClick = () => {
@@ -166,6 +211,14 @@ class DrugPageForPharmacyAdmin extends Component {
 
 	handleGradeToChange = (event) => {
 		this.setState({ searchGradeTo: event.target.value });
+    };
+
+    onEditPriceClick = (id) => {
+        this.setState({
+			showEditDrugPriceModal: true,
+            drugIdForEditPrice:id
+		});
+        
     };
 
 
@@ -394,9 +447,9 @@ class DrugPageForPharmacyAdmin extends Component {
                                         </td>
                                         <td >
                                             <div className="mt-1" style={{marginLeft:'25%'}}>
-                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-outline-secondary" onClick={() => this.onWorkTimeClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit storage</button>
+                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-outline-secondary" onClick={() => this.onEditStorageClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit storage</button>
                                                 <br></br>
-                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary" onClick={() => this.onWorkTimeClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit price</button>
+                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary" onClick={() => this.onEditPriceClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit price</button>
                                                 <br></br>
                                                 <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary mt-1" onClick={() => this.removePharmacistClick(drug.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Remove drug</button>
                                             </div>
@@ -416,6 +469,16 @@ class DrugPageForPharmacyAdmin extends Component {
                             updateDrugs={this.updateDrugs}
 					        header="Add drugs"
 				        />
+                        <EditPriceForDrugInPharmacy
+                            show={this.state.showEditDrugPriceModal}
+                            onModalClose={this.handleEditDrugPriceModalClose}
+					        onCloseModalSuccess={this.handleEditDrugPriceModalSuccessClose}
+                            OnCloseModalUnsuccess={this.handleEditDrugPriceModalUnsuccessClose}
+                            pharmacyId={this.state.pharmacyId}
+                            drug={this.state.drugIdForEditPrice}
+                            updateDrugs={this.updateDrugs}
+					        header="Edit drug price"
+                         />
                     </div>
                 </React.Fragment>
 		);

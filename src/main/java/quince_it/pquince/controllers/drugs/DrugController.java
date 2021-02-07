@@ -30,6 +30,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugWithPriceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
+import quince_it.pquince.services.contracts.dto.drugs.EditPriceForDrugDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
 import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
@@ -42,6 +43,7 @@ import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFeedbackServic
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFormatService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugKindIdService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IDrugPriceInPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugReservationService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
 
@@ -67,7 +69,10 @@ public class DrugController {
 	
 	@Autowired
 	private IDrugStorageService drugStorageService;
-
+	
+	@Autowired
+	private IDrugPriceInPharmacyService drugPriceInPharmacyService;
+	
 	@CrossOrigin
 	@GetMapping
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findAll() {
@@ -284,6 +289,25 @@ public class DrugController {
 	public ResponseEntity<?> removeDrugFromPharmacy(@RequestBody RemoveDrugFromPharmacyDTO removeDrugFromPharmacyDTO) {
 		try {
 			if(drugStorageService.removeDrugFromStorage(removeDrugFromPharmacyDTO))
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			else {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+		} catch (ObjectOptimisticLockingFailureException e) {
+			return new ResponseEntity<>("Not enough drugs in storage.",HttpStatus.BAD_REQUEST);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@CrossOrigin
+	@PutMapping("/edit-price-for-drug")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> editPriceForDrug(@RequestBody EditPriceForDrugDTO editPriceForDrugDTO) {
+		try {
+			if(drugPriceInPharmacyService.editPriceForDrug(editPriceForDrugDTO))
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			else {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
