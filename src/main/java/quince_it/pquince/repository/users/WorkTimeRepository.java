@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import quince_it.pquince.entities.users.WorkTime;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface WorkTimeRepository extends JpaRepository<WorkTime, UUID>{
 	@Query(value = "SELECT wt FROM WorkTime wt WHERE wt.staff.id = ?1 AND wt.endDate>= ?2 AND wt.startDate<=?2 AND wt.pharmacy.id =?3")
@@ -33,4 +35,7 @@ public interface WorkTimeRepository extends JpaRepository<WorkTime, UUID>{
 	
 	@Query(value = "SELECT wt FROM WorkTime wt WHERE wt.staff.id = ?1 AND wt.pharmacy.id =?2")
 	List<WorkTime> findWorkTimesForPharmacistForPharmacy(UUID pharmacistId, UUID pharmacyId);
+
+	@Query(value = "SELECT wt FROM WorkTime wt WHERE wt.staff.id = ?1")
+	List<WorkTime> findWorkTimesForStaff(UUID dermatologistId);
 }
