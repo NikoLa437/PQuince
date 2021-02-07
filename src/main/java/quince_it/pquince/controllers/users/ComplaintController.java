@@ -21,6 +21,8 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintReplyDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintStaffDTO;
+import quince_it.pquince.services.contracts.exceptions.ComplaintsNotAllowedException;
+import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
@@ -67,11 +69,17 @@ public class ComplaintController {
 	
 	
 	@PostMapping
+	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> createComplaintStuff(@RequestBody ComplaintStaffDTO complaintStaffDTO) {
 		
-		complaintService.create(complaintStaffDTO);
-		
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		try {
+			complaintService.create(complaintStaffDTO);
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		} catch (ComplaintsNotAllowedException e) {
+			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@PutMapping

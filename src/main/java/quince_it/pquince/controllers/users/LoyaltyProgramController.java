@@ -28,9 +28,9 @@ public class LoyaltyProgramController {
 	@Autowired
 	private LoyaltyProgramService loyaltyProgramService;
 	
-	@GetMapping("/{loyaltyProgramId}")
+
 	@CrossOrigin
-	@PreAuthorize("hasRole('PATIENT')")
+	@GetMapping("/{loyaltyProgramId}")
 	public ResponseEntity<IdentifiableDTO<LoyaltyProgramDTO>> getLoyaltyProgramById(@PathVariable UUID loyaltyProgramId) {
 		
 		try {
@@ -45,8 +45,7 @@ public class LoyaltyProgramController {
 	}
 	
 	@PutMapping("/{loyaltyProgramId}") 
-	@CrossOrigin
-	@PreAuthorize("hasRole('PATIENT')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<?> updateLoyaltyProgramInformation(@PathVariable UUID loyaltyProgramId,@RequestBody LoyaltyProgramDTO loyaltyProgramDTO ) {
 	  
 		try {

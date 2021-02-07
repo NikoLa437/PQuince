@@ -93,6 +93,7 @@ public class AuthenticationController {
 	}
 	
 	@PostMapping("/signup-dermathologist")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<UUID> addDermathologist(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
 
 		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
@@ -105,6 +106,7 @@ public class AuthenticationController {
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}
 	@PostMapping("/signup-pharmacyadmin/{pharmacyId}")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<UUID> addPharmacyAdmin(@PathVariable UUID pharmacyId, @RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
 
 		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
@@ -117,6 +119,7 @@ public class AuthenticationController {
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}
 	@PostMapping("/signup-sysadmin")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<UUID> addSysadmin(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
 
 		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());
@@ -129,6 +132,7 @@ public class AuthenticationController {
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}
 	@PostMapping("/signup-supplier")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<UUID> addSupplier(@RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {
 
 		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(userRequest.getEmail());

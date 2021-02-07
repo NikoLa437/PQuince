@@ -36,7 +36,9 @@ state = {
 
 	
 	componentDidMount() {
-	
+		
+		console.log(localStorage.getItem("keyRole"))
+		
 		Axios.get(BASE_URL + "/api/loyaltyProgram/791fee27-bb12-4340-9b0a-a7c9ef575278", { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);

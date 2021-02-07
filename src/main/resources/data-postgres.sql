@@ -17,6 +17,8 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-12eb-ac93-0242ac130002',true, 'exampla21@example.com','Sredoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Mikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-13eb-ae93-0242ac130002',true, 'exampla31@example.com','Radoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Bikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788',true, 'pharmacyadmin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('44444d47-1a8a-4ae1-b109-af7b56e94788',true, 'admin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('55555d47-1a8a-4ae1-b109-af7b56e94788',true, 'supplier@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 
 insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',2,152);
 insert into patient (id, penalty, points) values ('23793162-52d3-11eb-ae93-0242ac130002',0,2);
@@ -27,6 +29,8 @@ insert into user_authority (user_id, authority_id) values ('11355678-52d3-11eb-a
 insert into user_authority (user_id, authority_id) values ('22345678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
 insert into user_authority (user_id, authority_id) values ('25345678-52d3-11eb-ae93-0242ac130002', '09af8857-2f78-4eec-970f-059d3ed4589f');
 insert into user_authority (user_id, authority_id) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788', 'ea16767c-2c1f-49fb-ac98-c7739c0036e8');
+insert into user_authority (user_id, authority_id) values ('44444d47-1a8a-4ae1-b109-af7b56e94788', '563e9925-cff6-42b7-99fa-6b1235f67655');
+insert into user_authority (user_id, authority_id) values ('55555d47-1a8a-4ae1-b109-af7b56e94788', 'ef9a3723-a72e-44ec-83ac-9d748fd0240f');
 
 insert into user_authority (user_id, authority_id) values ('25345278-52d3-11eb-ae93-0242ac130002', 'a1e3bac1-6093-4705-b835-eed75c3e5f21');
 
@@ -54,7 +58,8 @@ insert into staff (id, staff_type) values ('25345278-52d3-11eb-ae93-0242ac130002
 insert into staff (id, staff_type) values ('25345278-52d3-12eb-ac93-0242ac130002','PHARMACIST');
 insert into staff (id, staff_type) values ('25345278-52d3-13eb-ae93-0242ac130002','PHARMACIST');
 insert into staff (id, staff_type) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788','PHARMACYADMIN');
-
+insert into staff (id, staff_type) values ('44444d47-1a8a-4ae1-b109-af7b56e94788','SYSADMIN');
+insert into staff (id, staff_type) values ('55555d47-1a8a-4ae1-b109-af7b56e94788','SUPPLIER');
 
 insert into dermatologist (id) values ('11355678-52d3-11eb-ae93-0242ac130002');
 insert into dermatologist (id) values ('22345678-52d3-11eb-ae93-0242ac130002');
