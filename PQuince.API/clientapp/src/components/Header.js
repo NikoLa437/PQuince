@@ -112,6 +112,9 @@ class Header extends Component {
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/absence-for-administrator">Absence</Link>
 							</li>
+							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
+								<Link to="/actions-and-promotions">Action and promotions</Link>
+							</li>
 
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#" className="appointment-btn scrollto" style={myStyle}>

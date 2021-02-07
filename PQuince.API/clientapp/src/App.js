@@ -46,6 +46,7 @@ import QRpharmacies from "./pages/QRcode/QRpharmacies";
 import AbsencePage from "./pages/examination/AbsencePage";
 import NewAppointmentPage from "./pages/examination/pharmacist/NewAppointmentPage"
 import ReservedDrugPage from "./pages/examination/pharmacist/ReservedDrugPage"
+import ActionAndPromotionsPage from "./pages/action-and-promotions/ActionAndPromotionsPage";
 
 
 
@@ -112,7 +113,7 @@ function App() {
 				<Link exact to="/absence" path="/absence" component={AbsencePage} />
 				<Route path="/new-appointment/:id" children={<NewAppointmentPage />} />
 				<Link exact to="/reserved-drug" path="/reserved-drug" component={ReservedDrugPage} />
-				
+				<Link exact to="/actions-and-promotions" path="/actions-and-promotions" component={ActionAndPromotionsPage} />
 
 			</Switch>
 		</Router>
