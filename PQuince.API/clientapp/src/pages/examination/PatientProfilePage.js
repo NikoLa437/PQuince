@@ -65,7 +65,7 @@ class PatientProfilePage extends Component {
 			id: id
 		});
 
-		Axios.get(BASE_URL + "/api/users/patient/" + id, { headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/users/patient/" + id, {validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 
@@ -117,10 +117,17 @@ class PatientProfilePage extends Component {
 	};
 
 	handleSchedule = () => {
-		this.setState({
-			redirect: true,
-			redirectUrl: "/schedule-appointment/" + this.state.id
-		});
+		if(this.hasRole("ROLE_DERMATHOLOGIST")){
+			this.setState({
+				redirect: true,
+				redirectUrl: "/schedule-appointment/" + this.state.id
+			});
+		} else if (this.hasRole("ROLE_PHARMACIST")) {
+			this.setState({
+				redirect: true,
+				redirectUrl: "/new-appointment/" + this.state.id
+			});
+		}	
 	};
 
 	handleCreateAndSchedule = () => {
