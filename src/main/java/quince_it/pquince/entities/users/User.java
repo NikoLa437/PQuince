@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -54,12 +55,16 @@ public class User implements UserDetails {
     @Embedded
     private Address address;
     
+    
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private List<Authority> authorities;
     	
+    @Version
+	private Long version;
+    
 	public User() {}
 	
 	public User(String email, String password, String name, String surname, Address address,
@@ -185,4 +190,11 @@ public class User implements UserDetails {
 		this.phoneNumber = phoneNumber;
 	}
 		
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
 }

@@ -70,6 +70,19 @@ class UserProfilePage extends Component {
 		this.addressInput = React.createRef();
 	}
 
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
+	};
+
 	onYmapsLoad = (ymaps) => {
 		this.ymaps = ymaps;
 
@@ -94,37 +107,41 @@ class UserProfilePage extends Component {
 	};
 
 	componentDidMount() {
-		this.addressInput = React.createRef();
+		if (!this.hasRole("ROLE_PATIENT")) {
+			this.setState({ redirect: true });
+		} else {
+			this.addressInput = React.createRef();
 
-		Axios.get(BASE_URL + "/api/users/patient", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
-			.then((res) => {
-				console.log(res.data);
-				if (res.status !== 401) {
-					this.setState({
-						id: res.data.Id,
-						email: res.data.EntityDTO.email,
-						name: res.data.EntityDTO.name,
-						surname: res.data.EntityDTO.surname,
-						address: res.data.EntityDTO.address,
-						phoneNumber: res.data.EntityDTO.phoneNumber,
-						userAllergens: res.data.EntityDTO.allergens,
-						patientPoints: res.data.EntityDTO.points,
-						patientPenalties: res.data.EntityDTO.penalty,
-						loyalityCategory: res.data.EntityDTO.loyalityProgramDTO.loyalityCategory,
-						appointmentDiscount: res.data.EntityDTO.loyalityProgramDTO.appointmentDiscount,
-						consultationDiscount: res.data.EntityDTO.loyalityProgramDTO.consultationDiscount,
-						drugDiscount: res.data.EntityDTO.loyalityProgramDTO.drugDiscount,
-					});
+			Axios.get(BASE_URL + "/api/users/patient", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+				.then((res) => {
+					console.log(res.data);
+					if (res.status !== 401) {
+						this.setState({
+							id: res.data.Id,
+							email: res.data.EntityDTO.email,
+							name: res.data.EntityDTO.name,
+							surname: res.data.EntityDTO.surname,
+							address: res.data.EntityDTO.address,
+							phoneNumber: res.data.EntityDTO.phoneNumber,
+							userAllergens: res.data.EntityDTO.allergens,
+							patientPoints: res.data.EntityDTO.points,
+							patientPenalties: res.data.EntityDTO.penalty,
+							loyalityCategory: res.data.EntityDTO.loyalityProgramDTO.loyalityCategory,
+							appointmentDiscount: res.data.EntityDTO.loyalityProgramDTO.appointmentDiscount,
+							consultationDiscount: res.data.EntityDTO.loyalityProgramDTO.consultationDiscount,
+							drugDiscount: res.data.EntityDTO.loyalityProgramDTO.drugDiscount,
+						});
 
-					if (this.state.loyalityCategory === "SILVER") this.setState({ loyalityCategoryColor: "#808080" });
-					else if (this.state.loyalityCategory === "GOLD") this.setState({ loyalityCategoryColor: "#FFCC00" });
-				} else {
-					this.setState({ redirect: true });
-				}
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+						if (this.state.loyalityCategory === "SILVER") this.setState({ loyalityCategoryColor: "#808080" });
+						else if (this.state.loyalityCategory === "GOLD") this.setState({ loyalityCategoryColor: "#FFCC00" });
+					} else {
+						this.setState({ redirect: true });
+					}
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
 	}
 
 	handleEmailChange = (event) => {
@@ -456,7 +473,7 @@ class UserProfilePage extends Component {
 	};
 
 	render() {
-		if (this.state.redirect) return <Redirect push to="/login" />;
+		if (this.state.redirect) return <Redirect push to="/unauthorized" />;
 
 		return (
 			<React.Fragment>
