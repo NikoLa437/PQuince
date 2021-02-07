@@ -553,4 +553,10 @@ public class UsersController {
 		}
 	}
 	
+	@GetMapping("/pharmacist/auth") 
+	@PreAuthorize("hasRole('PHARMACIST')")
+	public ResponseEntity<?>checkAuthority() {	  
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
 }
