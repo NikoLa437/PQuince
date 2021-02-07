@@ -229,12 +229,12 @@ public class DrugInstanceService implements IDrugInstanceService{
 	private IdentifiableDTO<DrugWithPriceDTO> MapDrugInstancePersistenceToDrugWithPriceIdentifiableDTO(
 			DrugInstance drugInstance, UUID pharmacyId) {
 		Double grade = this.drugFeedbackRepository.findAvgGradeForDrug(drugInstance.getId());
-		return new IdentifiableDTO<DrugWithPriceDTO>(drugInstance.getId(), new DrugWithPriceDTO(drugInstance.getName(),drugInstance.getDrugInstanceName(),drugInstance.getManufacturer().getName(),drugInstance.getDrugFormat(),drugInstance.getQuantity(),drugInstance.isOnReciept(),grade==null?0:grade,this.drugPriceForPharmacyRepository.findCurrentDrugPrice(drugInstance.getId(), pharmacyId)));
+		Integer price =this.drugPriceForPharmacyRepository.findCurrentDrugPrice(drugInstance.getId(), pharmacyId);
+		return new IdentifiableDTO<DrugWithPriceDTO>(drugInstance.getId(), new DrugWithPriceDTO(drugInstance.getName(),drugInstance.getDrugInstanceName(),drugInstance.getManufacturer().getName(),drugInstance.getDrugFormat(),drugInstance.getQuantity(),drugInstance.isOnReciept(),grade==null?0:grade,price==null?0:price));
 	}
 
 	@Override
 	public List<IdentifiableDTO<DrugWithPriceDTO>> searchDrugsForPharmacy(DrugFiltrationDTO drugFiltrationDTO) {
-		// TODO Auto-generated method stub
 		List<IdentifiableDTO<DrugWithPriceDTO>> drugs = new ArrayList<IdentifiableDTO<DrugWithPriceDTO>>();
 		
 		for(DrugInstance drugInstance : drugInstanceRepository.findByNameAndManufacturer(drugFiltrationDTO.getName().toLowerCase(),drugFiltrationDTO.getManufacturer().toLowerCase())) {
@@ -253,9 +253,24 @@ public class DrugInstanceService implements IDrugInstanceService{
 		List<IdentifiableDTO<DrugWithPriceDTO>> retVal = new ArrayList<IdentifiableDTO<DrugWithPriceDTO>>();
 		
 		for(IdentifiableDTO<DrugWithPriceDTO> drug : drugs) {
-			if(drug.EntityDTO.getAvgGrade()>= drugFiltrationDTO.getGradeFrom() && (drug.EntityDTO.getAvgGrade()< drugFiltrationDTO.getGradeTo() || drugFiltrationDTO.getGradeTo()==-1))
+			if(drug.EntityDTO.getAvgGrade()>= drugFiltrationDTO.getGradeFrom() && (drug.EntityDTO.getAvgGrade()<= drugFiltrationDTO.getGradeTo() || drugFiltrationDTO.getGradeTo()==-1))
 				retVal.add(drug);
 		}
+		
+		return retVal;
+	}
+
+	@Override
+	public List<IdentifiableDTO<DrugInstanceDTO>> findDrugsForAddInPharmacy(UUID pharmacyId) {
+		
+		List<IdentifiableDTO<DrugInstanceDTO>> retVal = new ArrayList<IdentifiableDTO<DrugInstanceDTO>>();
+		
+		for(DrugInstance drugInstance : drugInstanceRepository.findAll()) {
+			if(!drugStorageService.hasDrugInPharmacy(drugInstance.getId(), pharmacyId)) {
+				retVal.add(DrugInstanceMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(drugInstance));
+			}
+		}
+		
 		
 		return retVal;
 	}

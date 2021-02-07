@@ -18,6 +18,10 @@ public interface DrugPriceForPharmacyRepository extends JpaRepository<DrugPriceF
 	List<IdentifiablePharmacyDrugPriceAmountDTO> findByDrugId(UUID id);
 	
 	@Query(value = "SELECT d.price FROM DrugPriceForPharmacy d WHERE d.drugPriceForPharmacyId.drugInstance.id = ?1 AND d.drugPriceForPharmacyId.pharmacy.id = ?2 "
-				 + "AND d.dateFrom <= CURRENT_DATE AND d.dateTo >= CURRENT_DATE")
+				 + "AND DATE(d.dateFrom) <= CURRENT_DATE AND DATE(d.dateTo) >= CURRENT_DATE")
 	Integer findCurrentDrugPrice(UUID drugInstanceId, UUID pharmacyId);
+	
+	@Query(value = "SELECT d FROM DrugPriceForPharmacy d WHERE d.drugPriceForPharmacyId.drugInstance.id = ?1 AND d.drugPriceForPharmacyId.pharmacy.id = ?2 "
+			 + "AND DATE(d.dateFrom) <= CURRENT_DATE AND DATE(d.dateTo) >= CURRENT_DATE")
+	DrugPriceForPharmacy findDrugPriceForPharmacy(UUID drugInstanceId, UUID pharmacyId);
 }

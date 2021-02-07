@@ -1,22 +1,49 @@
 package quince_it.pquince.services.implementation.drugs;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.drugs.DrugInstance;
+import quince_it.pquince.entities.drugs.DrugPriceForPharmacy;
+import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.drugs.DrugStorage;
+import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.repository.drugs.DrugInstanceRepository;
+import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
+import quince_it.pquince.repository.drugs.DrugReservationRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
+import quince_it.pquince.repository.pharmacy.PharmacyRepository;
+import quince_it.pquince.services.contracts.dto.drugs.AddDrugToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
+import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 
 @Service
 public class DrugStorageService implements IDrugStorageService {
 
 	@Autowired
 	private DrugStorageRepository drugStorageRepository;
+	
+	@Autowired
+	private DrugPriceForPharmacyRepository drugPriceForPharmacyRepository;
+	
+	@Autowired
+	private DrugReservationRepository drugReservationRepository;
+	
+	@Autowired
+	private IUserService userService;
+	
+	@Autowired
+	private DrugInstanceRepository drugInstanceRepository;
+	
+	@Autowired
+	private PharmacyRepository pharmacyRepository;
 	
 	@Override
 	public List<IdentifiableDTO<DrugStorageDTO>> findAll() {
@@ -77,7 +104,6 @@ public class DrugStorageService implements IDrugStorageService {
 
 	@Override
 	public void reduceAmountOfReservedDrug(UUID drugId, UUID pharmacyId, int amount) {
-		
 		DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacyId);
 		drugStorage.reduceAmount(amount);
 
@@ -90,7 +116,49 @@ public class DrugStorageService implements IDrugStorageService {
 		DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacyId);
 		drugStorage.addAmount(amount);
 
+		
 		drugStorageRepository.save(drugStorage);
+	}
+
+	@Override
+	public boolean removeDrugFromStorage(RemoveDrugFromPharmacyDTO removeDrugFromPharmacyDTO) {
+		if(isDrugReserved(removeDrugFromPharmacyDTO))
+			return false;
+		
+		DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(removeDrugFromPharmacyDTO.getDrugId(),removeDrugFromPharmacyDTO.getPharmacyId());
+		DrugPriceForPharmacy drugPriceForPharmacy = drugPriceForPharmacyRepository.findDrugPriceForPharmacy(removeDrugFromPharmacyDTO.getDrugId(), removeDrugFromPharmacyDTO.getPharmacyId());
+
+		drugStorageRepository.delete(drugStorage);
+		drugPriceForPharmacyRepository.delete(drugPriceForPharmacy);
+		
+		return true;
+	}
+
+	private boolean isDrugReserved(RemoveDrugFromPharmacyDTO removeDrugFromPharmacyDTO) {
+		// TODO Auto-generated method stub
+		List<DrugReservation>  drugs = drugReservationRepository.findAllFutureReservationsByDrugAndPharmacyId(removeDrugFromPharmacyDTO.getDrugId(),removeDrugFromPharmacyDTO.getPharmacyId());
+		
+		if(drugs.size()>0)
+			return true;
+		
+		return false;
+	}
+
+	@Override
+	public void addDrugToPharmacy(AddDrugToPharmacyDTO addDrugToPharmacyDTO) {
+		// TODO Auto-generated method stub
+		UUID pharmacyId= this.userService.getPharmacyIdForPharmacyAdmin();
+		
+		if(!hasDrugInPharmacy(addDrugToPharmacyDTO.getDrugId(),pharmacyId)) {
+			DrugInstance drugInstance = drugInstanceRepository.getOne(addDrugToPharmacyDTO.getDrugId());
+			Pharmacy pharmacy = pharmacyRepository.getOne(pharmacyId);
+			DrugStorage newDrugStorage= new DrugStorage(drugInstance, pharmacy , addDrugToPharmacyDTO.getAmount());
+			DrugPriceForPharmacy newDrugPriceInPharmacy = new DrugPriceForPharmacy(drugInstance,pharmacy,new Date(), addDrugToPharmacyDTO.getDateTo(),addDrugToPharmacyDTO.getPrice());
+			
+			drugStorageRepository.save(newDrugStorage);
+			drugPriceForPharmacyRepository.save(newDrugPriceInPharmacy);
+		}
+
 	}
 
 }

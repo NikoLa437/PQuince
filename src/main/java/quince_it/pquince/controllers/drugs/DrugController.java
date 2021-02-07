@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
+import quince_it.pquince.services.contracts.dto.drugs.AddDrugToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFormatIdDTO;
@@ -31,6 +32,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugWithPriceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
+import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ReplaceDrugIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.StaffDrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.users.DrugManufacturerDTO;
@@ -41,6 +43,7 @@ import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFormatService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugKindIdService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugReservationService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
 
 
 @RestController
@@ -61,6 +64,9 @@ public class DrugController {
 	
 	@Autowired
 	private IDrugFormatService drugFormatService;
+	
+	@Autowired
+	private IDrugStorageService drugStorageService;
 
 	@CrossOrigin
 	@GetMapping
@@ -115,6 +121,7 @@ public class DrugController {
 	@CrossOrigin
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<UUID> addDrugReplacement(@RequestBody ReplaceDrugIdDTO replaceDrugIdDTO) {
+		
 		
 		UUID drugInstanceId = drugInstanceService.addDrugReplacement(replaceDrugIdDTO.getId(), replaceDrugIdDTO.getReplacement_id());
 		
@@ -266,6 +273,50 @@ public class DrugController {
 			return new ResponseEntity<>("Not enough drugs in storage.",HttpStatus.BAD_REQUEST);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PutMapping("/remove-drug-from-pharmacy")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> removeDrugFromPharmacy(@RequestBody RemoveDrugFromPharmacyDTO removeDrugFromPharmacyDTO) {
+		try {
+			if(drugStorageService.removeDrugFromStorage(removeDrugFromPharmacyDTO))
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			else {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+		} catch (ObjectOptimisticLockingFailureException e) {
+			return new ResponseEntity<>("Not enough drugs in storage.",HttpStatus.BAD_REQUEST);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@GetMapping("/drugs-for-add-in-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findDrugsForAddInPharmacy(@RequestParam UUID pharmacyId) {
+		try {
+			return new ResponseEntity<>(drugInstanceService.findDrugsForAddInPharmacy(pharmacyId) ,HttpStatus.OK);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PostMapping("/add-drug-to-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	@CrossOrigin
+	public ResponseEntity<?> addDrugToPharmacy(@RequestBody AddDrugToPharmacyDTO addDrugToPharmacyDTO) {
+		try {
+			drugStorageService.addDrugToPharmacy(addDrugToPharmacyDTO);
+			return new ResponseEntity<>(HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
