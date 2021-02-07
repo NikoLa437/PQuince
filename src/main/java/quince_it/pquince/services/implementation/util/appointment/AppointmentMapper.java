@@ -16,7 +16,7 @@ import quince_it.pquince.services.implementation.util.users.UserMapper;
 public class AppointmentMapper {
 
 	
-	public static IdentifiableDTO<DermatologistAppointmentDTO> MapAppointmentPersistenceToAppointmentIdentifiableDTO(Appointment appointment, IdentifiableDTO<StaffGradeDTO> staff, int discountPercentage){
+	public static IdentifiableDTO<DermatologistAppointmentDTO> MapAppointmentPersistenceToAppointmentIdentifiableDTO(Appointment appointment, IdentifiableDTO<StaffGradeDTO> staff, double discountPercentage){
 		if(appointment == null) throw new IllegalArgumentException();
 		
 		double discountPrice = discountPercentage == 0 ? appointment.getPriceToPay() : ((100 - discountPercentage) / 100.0) * appointment.getPrice();
@@ -24,7 +24,7 @@ public class AppointmentMapper {
 		return new IdentifiableDTO<DermatologistAppointmentDTO>(appointment.getId(), new DermatologistAppointmentDTO(staff, appointment.getStartDateTime(), appointment.getEndDateTime(), appointment.getPrice(),discountPrice));
 	}
 	
-	public static List<IdentifiableDTO<DermatologistAppointmentDTO>> MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(List<Appointment> appointments, List<IdentifiableDTO<StaffGradeDTO>> staffs, int discountPercentage){
+	public static List<IdentifiableDTO<DermatologistAppointmentDTO>> MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(List<Appointment> appointments, List<IdentifiableDTO<StaffGradeDTO>> staffs, double discountPercentage){
 		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> appointmentListDTO = new ArrayList<IdentifiableDTO<DermatologistAppointmentDTO>>();
 		appointments.forEach((a) -> appointmentListDTO.add(MapAppointmentPersistenceToAppointmentIdentifiableDTO(a, findAppropriateStaff(a.getStaff().getId(), staffs), discountPercentage)));

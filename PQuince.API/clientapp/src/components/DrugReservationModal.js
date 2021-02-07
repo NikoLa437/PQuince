@@ -57,7 +57,7 @@ class DrugReservationModal extends Component {
 											<b>Quantity:</b> {this.props.drugQuantity} <b>mg</b>
 										</div>
 										<div>
-											<b>Price by peace:</b> {(Math.round(this.props.drugPrice * 100) / 100).toFixed(2)} <b>mg</b>
+											<b>Price by peace:</b> {(Math.round(this.props.drugPrice * 100) / 100).toFixed(2)} <b>din</b>
 										</div>
 									</div>
 								</div>
