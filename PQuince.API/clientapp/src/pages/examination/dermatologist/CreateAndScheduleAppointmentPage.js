@@ -1,14 +1,14 @@
 import React, { Component } from "react";
-import Header from "../../components/Header";
-import TopBar from "../../components/TopBar";
-import { BASE_URL } from "../../constants.js";
+import Header from "../../../components/Header";
+import TopBar from "../../../components/TopBar";
+import { BASE_URL } from "../../../constants.js";
 import Axios from "axios";
-import ModalDialog from "../../components/ModalDialog";
-import getAuthHeader from "../../GetHeader";
+import ModalDialog from "../../../components/ModalDialog";
+import getAuthHeader from "../../../GetHeader";
 import { withRouter } from "react-router";
-import { Button, Modal } from 'react-bootstrap';
 import DatePicker from "react-datepicker";
-import PeriodIcon from "../../static/period-icon.png";
+import PeriodIcon from "../../../static/period-icon.png";
+import { Redirect } from "react-router-dom";
 
 class CreateAndScheduleAppointmentPage extends Component {
 	state = {
@@ -16,7 +16,9 @@ class CreateAndScheduleAppointmentPage extends Component {
 		duration: 10,
 		periods: [],
 		price: 300,
-		openModalSuccess: false
+		openModalSuccess: false,
+		redirect: false,
+        redirectUrl: ''
 	}
 
 	handleDateChange = (date) => {
@@ -75,25 +77,28 @@ class CreateAndScheduleAppointmentPage extends Component {
 				date: this.convertDate(this.state.selectedDate),
 				duration: this.state.duration
 			},
-			headers: { Authorization: getAuthHeader() }
+			validateStatus: () => true, headers: { Authorization: getAuthHeader() }
 		}).then((res) => {
-			this.setState({ periods: res.data });
-			console.log(res.data);
+			if (res.status === 401) {
+				this.setState({
+					redirect: true,
+					redirectUrl: "/unauthorized"
+				});
+			} else {
+				this.setState({ periods: res.data });
+				console.log(res.data);
+			}
 		})
 			.catch((err) => {
 				console.log(err);
 			});
 	}
 
-	fetchData = id => {
+	componentDidMount() {
+		const id = this.props.match.params.id;
 		this.setState({
 			id: id
 		});
-	};
-
-	componentDidMount() {
-		const id = this.props.match.params.id;
-		this.fetchData(id);
 		this.fetchPeriods();
 	}
 
@@ -111,18 +116,26 @@ class CreateAndScheduleAppointmentPage extends Component {
 				headers: { Authorization: getAuthHeader() },
 			}).then((res) => {
 				console.log(res.data);
-				this.setState({ openModalSuccess: true });
-				window.location.href = "/patient-profile/" + this.state.id;
+				this.setState({
+					openModalSuccess: true,
+				});
 			}).catch((err) => {
 				alert("Appointment can't be created in selected period");
 			});
 	}
 
 	handleModalSuccessClose = () => {
-		this.setState({ openModalSuccess: false });
+		this.setState({
+			openModalSuccess: false,
+			redirect: true,
+			redirectUrl: "/patient-profile/" + this.state.id
+		});
 	};
 
 	render() {
+
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
@@ -163,7 +176,7 @@ class CreateAndScheduleAppointmentPage extends Component {
 									</tr>
 									<tr>
 										<td>
-											<h5 className="text-left mr-3 mt-2">Select period:</h5>
+											<h5 className="text-left mr-3 mt-2">Pick desired period to create and schedule appointment:</h5>
 										</td>
 
 									</tr>
@@ -216,7 +229,6 @@ class CreateAndScheduleAppointmentPage extends Component {
 				</div>
 				<ModalDialog
 					show={this.state.openModalSuccess}
-					href={"/patient-profile/" + this.state.id}
 					onCloseModal={this.handleModalSuccessClose}
 					header="Successfully created and scheduled appointment for patient"
 					text="Start examination for scheduled appointment."

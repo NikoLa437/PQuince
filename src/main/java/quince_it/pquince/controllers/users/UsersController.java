@@ -31,6 +31,7 @@ import quince_it.pquince.services.contracts.dto.users.AddDermatologistToPharmacy
 import quince_it.pquince.services.contracts.dto.users.AddPharmacistToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.PatientAllergicDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
@@ -93,7 +94,7 @@ public class UsersController {
 	}
 	@GetMapping("/search") 
 	@CrossOrigin
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<List<IdentifiableDTO<UserDTO>>> findByNameAndSurname(@RequestParam String name,@RequestParam String surname) {
 		try {
 			List<IdentifiableDTO<UserDTO>> users = userService.findByNameAndSurname(name, surname);
@@ -136,7 +137,7 @@ public class UsersController {
 	
 	@GetMapping("/patient/{patientId}")
 	@CrossOrigin
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<IdentifiableDTO<UserDTO>> getPatientById(@PathVariable UUID patientId) {
 		try {
 			IdentifiableDTO<UserDTO> patient = userService.getPatientById(patientId);
@@ -188,6 +189,18 @@ public class UsersController {
 			return new ResponseEntity<>(allergens,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/is-patient-allergic/{recieptId}") 
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<PatientAllergicDTO> isPatientAllergic(@PathVariable UUID recieptId) {
+		try {
+			PatientAllergicDTO patientAllergicDTO = new PatientAllergicDTO();
+			patientAllergicDTO.setAllergic(userService.isPatientAllergic(recieptId));
+			return new ResponseEntity<>(patientAllergicDTO,HttpStatus.OK); 
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
@@ -360,10 +373,25 @@ public class UsersController {
 	@GetMapping("/dermatologist/pharmacies") 
 	@PreAuthorize("hasRole('DERMATHOLOGIST')")
 	@CrossOrigin
-	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> getPharmcies() {
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDTO>>> getPharmacies() {
 	  
 		try {
 			List<IdentifiableDTO<PharmacyDTO>> pharmacies = userService.getPharmacies();
+			return new ResponseEntity<>(pharmacies,HttpStatus.OK); 
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
+		}
+	}
+	
+	@GetMapping("/pharmacist/pharmacy") 
+	@PreAuthorize("hasRole('PHARMACIST')")
+	@CrossOrigin
+	public ResponseEntity<IdentifiableDTO<PharmacyDTO>> getPharmacy() {
+	  
+		try {
+			IdentifiableDTO<PharmacyDTO> pharmacies = userService.getPharmacy();
 			return new ResponseEntity<>(pharmacies,HttpStatus.OK); 
 		} catch (EntityNotFoundException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
@@ -536,6 +564,12 @@ public class UsersController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
+	}
+	
+	@GetMapping("/pharmacist/auth") 
+	@PreAuthorize("hasRole('PHARMACIST')")
+	public ResponseEntity<?>checkAuthority() {	  
+		return new ResponseEntity<>(HttpStatus.OK); 
 	}
 	
 }

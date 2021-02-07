@@ -34,7 +34,27 @@ class ConsultationTimeSelectPage extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+		unauthorizedRedirect: false,
 	};
+
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
+	};
+
+	componentDidMount() {
+		if (!this.hasRole("ROLE_PATIENT")) {
+			this.setState({ unauthorizedRedirect: true });
+		}
+	}
 
 	handleSortByGradeAscending = () => {
 		Axios.get(
@@ -49,11 +69,15 @@ class ConsultationTimeSelectPage extends Component {
 					0,
 					0
 				).getTime(),
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				console.log(res.data);
-				this.setState({ pharmacies: res.data, showingSorted: true });
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else if (res.status === 200) {
+					console.log(res.data);
+					this.setState({ pharmacies: res.data, showingSorted: true });
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -73,11 +97,15 @@ class ConsultationTimeSelectPage extends Component {
 					0,
 					0
 				).getTime(),
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				console.log(res.data);
-				this.setState({ pharmacies: res.data, showingSorted: true });
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else if (res.status === 200) {
+					console.log(res.data);
+					this.setState({ pharmacies: res.data, showingSorted: true });
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -97,11 +125,15 @@ class ConsultationTimeSelectPage extends Component {
 					0,
 					0
 				).getTime(),
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				this.setState({ pharmacies: res.data, showingSorted: true });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else if (res.status === 200) {
+					this.setState({ pharmacies: res.data, showingSorted: true });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -121,11 +153,15 @@ class ConsultationTimeSelectPage extends Component {
 					0,
 					0
 				).getTime(),
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				this.setState({ pharmacies: res.data, showingSorted: true });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else if (res.status === 200) {
+					this.setState({ pharmacies: res.data, showingSorted: true });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -137,11 +173,15 @@ class ConsultationTimeSelectPage extends Component {
 	};
 
 	handleMinutesChange = (event) => {
-		this.setState({ minutes: event.target.value });
+		if (event.target.value > 59) this.setState({ minutes: 59 });
+		else if (event.target.value < 0) this.setState({ minutes: 0 });
+		else this.setState({ minutes: event.target.value });
 	};
 
 	handleHoursChange = (event) => {
-		this.setState({ hours: event.target.value });
+		if (event.target.value > 23) this.setState({ hours: 23 });
+		else if (event.target.value < 0) this.setState({ hours: 0 });
+		else this.setState({ hours: event.target.value });
 	};
 
 	handleCheckAvailability = () => {
@@ -159,36 +199,19 @@ class ConsultationTimeSelectPage extends Component {
 			).getTime(),
 		});
 
-		if (
-			new Date(this.state.selectedDate.getFullYear(), this.state.selectedDate.getMonth(), this.state.selectedDate.getDate()).getTime() ===
-			new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime()
-		) {
-			if (parseInt(this.state.hours) < today.getHours()) this.setState({ showDateError: "inline" });
-			else if (parseInt(this.state.hours) === today.getHours() && parseInt(this.state.minutes) < today.getMinutes())
-				this.setState({ showDateError: "inline" });
-			else {
-				Axios.get(
-					BASE_URL +
-						"/api/pharmacy/get-pharmacy-by-appointment-time/" +
-						new Date(
-							this.state.selectedDate.getFullYear(),
-							this.state.selectedDate.getMonth(),
-							this.state.selectedDate.getDate(),
-							this.state.hours,
-							this.state.minutes,
-							0,
-							0
-						).getTime(),
-					{ headers: { Authorization: getAuthHeader() } }
-				)
-					.then((res) => {
-						this.setState({ pharmacies: res.data, hiddenPharmacies: false });
-						console.log(res.data);
-					})
-					.catch((err) => {
-						console.log(err);
-					});
-			}
+		let dateMin = new Date().getTime() + 3600000;
+		let selectedDate = new Date(
+			this.state.selectedDate.getFullYear(),
+			this.state.selectedDate.getMonth(),
+			this.state.selectedDate.getDate(),
+			this.state.hours,
+			this.state.minutes,
+			0,
+			0
+		).getTime();
+		console.log(dateMin, selectedDate, selectedDate <= dateMin);
+		if (selectedDate <= dateMin) {
+			this.setState({ showDateError: "inline" });
 		} else {
 			Axios.get(
 				BASE_URL +
@@ -202,11 +225,15 @@ class ConsultationTimeSelectPage extends Component {
 						0,
 						0
 					).getTime(),
-				{ headers: { Authorization: getAuthHeader() } }
+				{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 			)
 				.then((res) => {
-					this.setState({ pharmacies: res.data, hiddenPharmacies: false });
-					console.log(res.data);
+					if (res.status === 401) {
+						this.setState({ unauthorizedRedirect: true });
+					} else if (res.status === 200) {
+						this.setState({ pharmacies: res.data, hiddenPharmacies: false });
+						console.log(res.data);
+					}
 				})
 				.catch((err) => {
 					console.log(err);
@@ -231,11 +258,15 @@ class ConsultationTimeSelectPage extends Component {
 					0,
 					0
 				).getTime(),
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				this.setState({ pharmacies: res.data, showingSorted: false });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else if (res.status === 200) {
+					this.setState({ pharmacies: res.data, showingSorted: false });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -273,11 +304,15 @@ class ConsultationTimeSelectPage extends Component {
 					0,
 					0
 				).getTime(),
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				this.setState({ pharmacists: res.data, hiddenPharmacists: false, hiddenPharmacies: true });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else if (res.status === 200) {
+					this.setState({ pharmacists: res.data, hiddenPharmacists: false, hiddenPharmacies: true });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -285,7 +320,7 @@ class ConsultationTimeSelectPage extends Component {
 	};
 
 	handlePharmacistBackIcon = () => {
-		this.setState({ hiddenPharmacists: true, hiddenPharmacies: false });
+		this.setState({ hiddenPharmacists: true, hiddenPharmacies: false, hiddenFailAlert: true });
 	};
 
 	handleSortPharmacstByGradeAscending = () => {
@@ -303,11 +338,15 @@ class ConsultationTimeSelectPage extends Component {
 					0,
 					0
 				).getTime(),
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				this.setState({ pharmacists: res.data, showingPharmacistSorted: true });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else if (res.status === 200) {
+					this.setState({ pharmacists: res.data, showingPharmacistSorted: true });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -329,11 +368,15 @@ class ConsultationTimeSelectPage extends Component {
 					0,
 					0
 				).getTime(),
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				this.setState({ pharmacists: res.data, showingPharmacistSorted: true });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else if (res.status === 200) {
+					this.setState({ pharmacists: res.data, showingPharmacistSorted: true });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -355,11 +398,15 @@ class ConsultationTimeSelectPage extends Component {
 					0,
 					0
 				).getTime(),
-			{ headers: { Authorization: getAuthHeader() } }
+			{ validateStatus: () => true, headers: { Authorization: getAuthHeader() } }
 		)
 			.then((res) => {
-				this.setState({ pharmacists: res.data, showingPharmacistSorted: false });
-				console.log(res.data);
+				if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				} else if (res.status === 200) {
+					this.setState({ pharmacists: res.data, showingPharmacistSorted: false });
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -411,6 +458,7 @@ class ConsultationTimeSelectPage extends Component {
 
 	render() {
 		if (this.state.redirect) return <Redirect push to="/" />;
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
 
 		return (
 			<React.Fragment>
@@ -473,7 +521,7 @@ class ConsultationTimeSelectPage extends Component {
 						</div>
 						<div className="form-row justify-content-center mt-4">
 							<div className="mt-1 text-danger" style={{ fontSize: "1.5em", display: this.state.showDateError }}>
-								Invalid date or time!
+								Invalid date or time! Desired time needs to be at least 1 hour from current time.
 							</div>
 						</div>
 						<div className="form-row justify-content-center mt-4">

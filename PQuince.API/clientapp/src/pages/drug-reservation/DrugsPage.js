@@ -6,6 +6,10 @@ import { BASE_URL } from "../../constants.js";
 import DrugSpecificationModal from "../../components/DrugSpecification";
 import Axios from "axios";
 import getAuthHeader from "../../GetHeader";
+import FeedbackCreateModal from "../../components/FeedbackCreateModal";
+import HeadingAlert from "../../components/HeadingAlert";
+import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
+import { Redirect } from "react-router-dom";
 
 class DrugsPage extends Component {
 	state = {
@@ -19,7 +23,7 @@ class DrugsPage extends Component {
 		drugQuantity: "",
 		drugManufacturer: "",
 		drugName: "",
-		onReciept: "",
+		onReciept: false,
 		drugKind: "",
 		drugFormat: "",
 		sideEffects: "",
@@ -29,9 +33,36 @@ class DrugsPage extends Component {
 		searchGradeFrom: "",
 		searchGradeTo: "",
 		drugKinds: [],
+		showFeedbackModal: false,
+		showModifyFeedbackModal: false,
+		selectedDrugId: "",
+		drugNameModal: "",
+		grade: 0,
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
+		hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
+		loggedPatient: false,
+		unauthorizedRedirect: false,
+	};
+
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
 	};
 
 	componentDidMount() {
+		if (localStorage.getItem("keyToken") !== null && this.hasRole("ROLE_PATIENT")) this.setState({ loggedPatient: true });
 
 		Axios.get(BASE_URL + "/api/drug/grade")
 
@@ -130,6 +161,7 @@ class DrugsPage extends Component {
 	};
 
 	handleDrugClick = (drug) => {
+		console.log(drug)
 		this.setState({
 			drugAmount: drug.EntityDTO.recommendedAmount,
 			drugQuantity: drug.EntityDTO.quantity,
@@ -144,23 +176,148 @@ class DrugsPage extends Component {
 			replacingDrugs: drug.EntityDTO.replacingDrugs,
 			specificationModalShow: true,
 		});
-		console.log(drug.EntityDTO.ingredients, "XOXOXO");
 	};
 
 	handleModalClose = () => {
 		this.setState({ specificationModalShow: false });
 	};
-	render() {
-		const myStyle = {
-			color: "white",
-			textAlign: "center",
+
+	handleFeedbackClick = (drug) => {
+		console.log(drug);
+		Axios.get(BASE_URL + "/api/drug/feedback/" + drug.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data);
+				if (res.status === 404) {
+					this.setState({
+						selectedDrugId: drug.Id,
+						showFeedbackModal: true,
+						drugNameModal: drug.EntityDTO.drugInstanceName,
+						grade: 0,
+					});
+				} else if (res.status === 200) {
+					this.setState({
+						selectedDrugId: drug.Id,
+						showModifyFeedbackModal: true,
+						drugNameModal: drug.EntityDTO.drugInstanceName,
+						grade: res.data.grade,
+					});
+				} else if (res.status === 401) {
+					this.setState({ unauthorizedRedirect: true });
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleFeedbackModalClose = () => {
+		this.setState({ showFeedbackModal: false });
+	};
+
+	handleModifyFeedbackModalClose = () => {
+		this.setState({ showModifyFeedbackModal: false });
+	};
+
+	handleFeedback = () => {
+		this.setState({ hiddenFailAlert: true, failHeader: "", failMessage: "", hiddenSuccessAlert: true, successHeader: "", successMessage: "" });
+
+		let entityDTO = {
+			drugId: this.state.selectedDrugId,
+			date: new Date(),
+			grade: this.state.grade,
 		};
+		Axios.post(BASE_URL + "/api/drug/feedback", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+			.then((resp) => {
+				if (resp.status === 405) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Drug feedback not allowed." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 201) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully saved." });
+
+					Axios.get(BASE_URL + "/api/drug/grade")
+
+						.then((res) => {
+							this.setState({ drugs: res.data });
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				this.setState({ showFeedbackModal: false });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleModifyFeedback = () => {
+		this.setState({ hiddenFailAlert: true, failHeader: "", failMessage: "", hiddenSuccessAlert: true, successHeader: "", successMessage: "" });
+
+		let entityDTO = {
+			drugId: this.state.selectedDrugId,
+			date: new Date(),
+			grade: this.state.grade,
+		};
+		Axios.put(BASE_URL + "/api/drug/feedback", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+			.then((resp) => {
+				if (resp.status === 400) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Bad request", failMessage: "Bad request when modifying feedback." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 204) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Feedback successfully modified." });
+
+					Axios.get(BASE_URL + "/api/drug/grade")
+
+						.then((res) => {
+							this.setState({ drugs: res.data });
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				this.setState({ showModifyFeedbackModal: false });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
+	handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+	};
+
+	handleClickIcon = (grade) => {
+		this.setState({ grade });
+	};
+
+	render() {
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
+
 		return (
 			<div hidden={this.props.hidden}>
 				<TopBar />
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenFailAlert}
+						header={this.state.failHeader}
+						message={this.state.failMessage}
+						handleCloseAlert={this.handleCloseAlertFail}
+					/>
+
+					<HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Drugs</h5>
 					<button className="btn btn-outline-primary btn-xl" type="button" onClick={this.hangleFormToogle}>
 						<i className="icofont-rounded-down mr-1"></i>
@@ -226,6 +383,7 @@ class DrugsPage extends Component {
 							<i className="icofont-close-line mr-1"></i>Reset criteria
 						</button>
 					</div>
+					<p className="mb-4 mt-4 text-uppercase">Click on drug to see availability in pharmacies</p>
 
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
@@ -243,12 +401,24 @@ class DrugsPage extends Component {
 										</div>
 										<div>
 											<b>Grade:</b> {drug.EntityDTO.avgGrade}
+											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 									</td>
-									<td>
-										<button type="button" onClick={() => this.handleDrugClick(drug)} className="btn btn-outline-secondary">
-											Specification
-										</button>
+									<td className="align-middle">
+										<div>
+											<button type="button" onClick={() => this.handleDrugClick(drug)} className="btn btn-outline-secondary">
+												Specification
+											</button>
+										</div>
+										<div className="mt-2" hidden={!this.state.loggedPatient}>
+											<button
+												type="button"
+												onClick={() => this.handleFeedbackClick(drug)}
+												className="btn btn-outline-secondary"
+											>
+												Give feedback
+											</button>
+										</div>
 									</td>
 								</tr>
 							))}
@@ -273,6 +443,28 @@ class DrugsPage extends Component {
 						replacingDrugs={this.state.replacingDrugs}
 					/>
 				</React.Fragment>
+				<FeedbackCreateModal
+					buttonName="Give feedback"
+					grade={this.state.grade}
+					header="Give feedback"
+					show={this.state.showFeedbackModal}
+					onCloseModal={this.handleFeedbackModalClose}
+					giveFeedback={this.handleFeedback}
+					name={this.state.drugNameModal}
+					forWho="drug"
+					handleClickIcon={this.handleClickIcon}
+				/>
+				<FeedbackCreateModal
+					buttonName="Modify feedback"
+					grade={this.state.grade}
+					header="Modify feedback"
+					show={this.state.showModifyFeedbackModal}
+					onCloseModal={this.handleModifyFeedbackModalClose}
+					giveFeedback={this.handleModifyFeedback}
+					name={this.state.drugNameModal}
+					forWho="drug"
+					handleClickIcon={this.handleClickIcon}
+				/>
 			</div>
 		);
 	}

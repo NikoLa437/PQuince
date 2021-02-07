@@ -119,4 +119,8 @@ public interface IUserService extends IService<UserDTO, IdentifiableDTO<UserDTO>
 	Pharmacy getPharmacyForLoggedDermatologist();
 
 	List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies();
+	
+	IdentifiableDTO<PharmacyDTO> getPharmacy();
+
+	boolean isPatientAllergic(UUID recieptId);
 }

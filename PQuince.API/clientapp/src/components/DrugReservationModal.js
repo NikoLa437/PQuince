@@ -15,8 +15,9 @@ class DrugReservationModal extends Component {
 		this.setState({ selectedDate: date });
 	};
 
-	handleGradeFromChange = (event) => {
-		this.setState({ drugAmount: event.target.value });
+	handleDrugAmountChange = (event) => {
+		if (event.target.value < 1) this.setState({ drugAmount: 1 });
+		else this.setState({ drugAmount: event.target.value });
 	};
 
 	render() {
@@ -86,7 +87,7 @@ class DrugReservationModal extends Component {
 										type="number"
 										min="1"
 										max={this.props.maxDrugAmount}
-										onChange={this.handleGradeFromChange}
+										onChange={this.handleDrugAmountChange}
 										value={this.state.drugAmount}
 									/>
 								</div>

@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.Allergen;
+import quince_it.pquince.entities.drugs.EReceiptItems;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Dermatologist;
@@ -30,6 +31,7 @@ import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.entities.users.WorkTime;
+import quince_it.pquince.repository.drugs.EReceiptItemsRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
@@ -50,10 +52,9 @@ import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
-import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
-import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
@@ -75,6 +76,9 @@ public class UserService implements IUserService{
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired 
+	private EReceiptItemsRepository eReceiptItemsRepository;
 	
 	@Autowired
 	private IStaffFeedbackService staffFeedbackService;
@@ -90,6 +94,9 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private DermatologistRepository dermatologistRepository;
+	
+	@Autowired
+	private PharmacistRepository pharmacistRepository;
 	
 	@Autowired
 	private WorkTimeService workTimeService;
@@ -123,9 +130,6 @@ public class UserService implements IUserService{
 	
 	@Autowired
 	private PharmacyAdminRepository pharmacyAdminRepository;
-	
-	@Autowired
-	private PharmacistRepository pharmacistRepository;
 	
 	@Override
 	public List<IdentifiableDTO<UserDTO>> findAll() {
@@ -413,15 +417,15 @@ public class UserService implements IUserService{
 
 	@Override
 	public void deleteAllPatientsPenalties() {
-		try {
-			List<Patient> patients = patientRepository.findAll();
-			for(Patient patient : patients) {
-				if(patient.getPenalty() > 0) {
+		List<Patient> patients = patientRepository.findAllWithMoreThanZeroPenalties();
+		for(Patient patient : patients) {
+			if(patient.getPenalty() > 0) {
+				try {
 					patient.setPenalty(0);
 					patientRepository.save(patient);
+				} catch (Exception e) {
 				}
 			}
-		} catch (Exception e) {
 		}
 	}
 	
@@ -892,6 +896,28 @@ public class UserService implements IUserService{
 		} 
 		catch (EntityNotFoundException e) { return null; } 
 		catch (IllegalArgumentException e) { return null; }	
+	}
+
+	@Override
+	public IdentifiableDTO<PharmacyDTO> getPharmacy() {
+			UUID pharmacistId = getLoggedUserId();
+			Pharmacist pharmacist = pharmacistRepository.getOne(pharmacistId);
+			return PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(pharmacist.getPharmacy());
+	}
+
+	@Override
+	public boolean isPatientAllergic(UUID recieptId) {
+		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(recieptId);
+		Patient patient = patientRepository.getOne(getLoggedUserId());
+		
+		for(EReceiptItems item: items) {
+			for(Allergen a: item.getDrugInstance().getAllergens())
+				if(patient.getAllergens().contains(a))
+					return true;
+		}
+		
+		return false;
+		
 	}
 	
 }

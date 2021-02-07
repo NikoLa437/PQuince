@@ -6,16 +6,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.mail.MessagingException;
+
 import org.springframework.aop.AopInvocationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.mail.MailException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.drugs.DrugStorage;
+import quince_it.pquince.entities.drugs.EReceipt;
 import quince_it.pquince.entities.drugs.EReceiptItems;
+import quince_it.pquince.entities.drugs.EReceiptStatus;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
@@ -26,6 +31,7 @@ import quince_it.pquince.repository.drugs.EReceiptRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.UserRepository;
+import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
@@ -38,6 +44,8 @@ import quince_it.pquince.services.contracts.interfaces.drugs.IEReceiptService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
+import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.LocationUtil;
 import quince_it.pquince.services.implementation.util.pharmacy.PharmacyMapper;
 
@@ -47,6 +55,9 @@ public class PharmacyService implements IPharmacyService {
 
 	@Autowired 
 	private EReceiptItemsRepository eReceiptItemsRepository;
+	
+	@Autowired 
+	private EReceiptRepository eReceiptRepository;
 	
 	@Autowired
 	private PharmacyRepository pharmacyRepository;
@@ -61,6 +72,9 @@ public class PharmacyService implements IPharmacyService {
 	private Environment env;
 	
 	@Autowired
+	private IUserService userService;
+	
+	@Autowired
 	private ILoyaltyProgramService loyalityProgramService;
 	
 	@Autowired
@@ -68,6 +82,9 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Autowired
 	private PatientRepository patientRepository;
+
+	@Autowired
+	private  EmailService emailService;
 	
 	@Autowired
 	private DrugStorageRepository drugStorageRepository;
@@ -379,20 +396,24 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Override
 	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findWithQR(UUID id) {
-		
+	
 		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(id);
 		List<Pharmacy> allPharmacies = pharmacyRepository.findAll();
 		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyDrugPriceDTO>>();
 		int price;
-		
+
+		double avgGrade;
 		for(Pharmacy p : allPharmacies) {
-			if((price = allDrugsAreInPharmacy(items,p)) != -1)
-				pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyDrugPriceIdentifiableDTO(p, price));
+			if((price = allDrugsAreInPharmacy(items,p)) != -1) {
+				avgGrade = getAvgGradeForPharmacy(p.getId());
+				pharmacies.add(PharmacyMapper.MapPharmacyPersistenceToPharmacyDrugPriceIdentifiableDTO(p, avgGrade, price));
+			}
 		}
 		
 		return pharmacies;
 	}
-
+	
+	
 	private int allDrugsAreInPharmacy(List<EReceiptItems> items, Pharmacy p) {
 		boolean var = false;
 		int price = 0;
@@ -416,6 +437,36 @@ public class PharmacyService implements IPharmacyService {
 		}
 		
 		return price;
+	}
+
+	@Override
+	public UUID buyWithQR(PharmacyERecipeDTO pharmacyERecipeDTO) {
+		
+		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(pharmacyERecipeDTO.geteRecipeId());
+		
+		for(EReceiptItems item: items) {
+			DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(item.getDrugInstance().getId(), pharmacyERecipeDTO.getPharmacyId());
+			drugStorage.reduceAmount(item.getAmount());
+			drugStorageRepository.save(drugStorage);
+		}
+		
+		EReceipt eReceipt = eReceiptRepository.getOne(pharmacyERecipeDTO.geteRecipeId());
+		eReceipt.setStatus(EReceiptStatus.PROCESSED);
+		eReceipt.setPharmacy(pharmacyRepository.getOne(pharmacyERecipeDTO.getPharmacyId()));
+		eReceipt.setPrice(pharmacyERecipeDTO.getPrice());
+		eReceiptRepository.save(eReceipt);
+
+		User patient = userRepository.getOne(userService.getLoggedUserId());
+		
+		try {
+			emailService.sendQRBuyDrugsNotificaitionAsync(patient);
+		} catch (MailException | InterruptedException e) {
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 	

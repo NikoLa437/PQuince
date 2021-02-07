@@ -15,6 +15,7 @@ import quince_it.pquince.entities.pharmacy.PharmacyFeedbackId;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.drugs.DrugReservationRepository;
+import quince_it.pquince.repository.drugs.EReceiptRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyFeedbackRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
@@ -52,6 +53,9 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 	
 	@Autowired
 	private IUserService userService;
+	
+	@Autowired
+	private EReceiptRepository eReceiptRepository;
 
 	@Override
 	public double findAvgGradeForPharmacy(UUID pharmacyId) {
@@ -104,10 +108,10 @@ public class PharmacyFeedbackService implements IPharmacyFeedbackService {
 	}
 
 	private void CanPatientGiveFeedback(UUID patientId, UUID pharmacyId) throws FeedbackNotAllowedException {
-		// TODO : eReciept check, consultation check!
 		if(!(appointmentRepository.findAllPreviousAppointmentsForPatientForPharmacy(patientId, pharmacyId, AppointmentType.CONSULTATION).size() > 0 ||
 			   appointmentRepository.findAllPreviousAppointmentsForPatientForPharmacy(patientId, pharmacyId, AppointmentType.EXAMINATION).size() > 0  ||
-			   drugReservationRepository.findProcessedDrugReservationsForPatientForPharmacy(patientId, pharmacyId).size() > 0))
+			   drugReservationRepository.findProcessedDrugReservationsForPatientForPharmacy(patientId, pharmacyId).size() > 0 || 
+			   eReceiptRepository.findAllByPatienIdAndPharmacy(patientId, pharmacyId).size() > 0))
 			throw new FeedbackNotAllowedException();
 	}
 

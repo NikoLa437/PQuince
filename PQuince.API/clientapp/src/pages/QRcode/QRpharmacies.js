@@ -3,6 +3,7 @@ import { BASE_URL } from "../../constants.js";
 import TopBar from "../../components/TopBar";
 import Header from "../../components/Header";
 import Axios from "axios";
+import ModalDialog from "../../components/ModalDialog";
 import getAuthHeader from "../../GetHeader";
 import PharmacyLogo from "../../static/pharmacyLogo.png";
 import '../../App.js'
@@ -18,6 +19,9 @@ class QRpharmacies extends Component {
 		city: "",
 		gradeFrom: "",
 		gradeTo: "",
+		openModal: false,
+		openModalAllergen: false,
+		openModalRefused: false,
 		distanceFrom: "",
 		distanceTo: "",
 		showingSearched: false,
@@ -30,7 +34,6 @@ class QRpharmacies extends Component {
 	};
 
 	fetchData = (id) => {
-	console.log("ID", id);
 		this.setState({
 			eReciptId: this.props.match.params.id,
 		});
@@ -52,7 +55,31 @@ class QRpharmacies extends Component {
 	};
 
 	componentDidMount() {
+		
 		const id = this.props.match.params.id;
+		
+		Axios.get(BASE_URL + "/api/users/is-patient-allergic/" + this.props.match.params.id, { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				if(res.data.allergic == true){
+					let RefuseReceiptDTO = {
+						id: this.props.match.params.id
+					}
+					Axios.post(BASE_URL + "/api/ereceipt/refuse", RefuseReceiptDTO, { headers: { Authorization: getAuthHeader() } })
+						.then((res) => {
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+					this.setState({
+						openModalAllergen: true ,
+						redirectUrl : "/",
+        			})
+				}
+				
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 		
 		this.fetchData(id);
 		this.getCurrentCoords();
@@ -60,11 +87,25 @@ class QRpharmacies extends Component {
 		let eReceiptIdDTO = {
 			id: this.props.match.params.id,
 		}
-		
-		console.log("IDDDD", eReceiptIdDTO);
+		let RefuseReceiptDTO = {
+			id: this.props.match.params.id
+		}
+		Axios.post(BASE_URL + "/api/ereceipt/check-if-refused", RefuseReceiptDTO, { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				if(res.data.allergic == true){
+					this.setState({
+						openModalRefused: true ,
+						redirectUrl : "/",
+        			})
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+			
 		Axios.get(BASE_URL + "/api/pharmacy/qrpharmacies/" + this.props.match.params.id, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				console.log(res.data, "FARMACIJE");
+				console.log(res.data)
 				this.setState({ pharmacies: res.data });
 			})
 			.catch((err) => {
@@ -294,6 +335,43 @@ class QRpharmacies extends Component {
 			});
 	};
 
+	handleDrugClick = (id, price) => {
+		let PharmacyERecipeDTO = {
+			pharmacyId: id,
+			eRecipeId: this.props.match.params.id,
+			price: price,
+		}
+		
+		Axios.post(BASE_URL + "/api/pharmacy/qrpharmacies/buy", PharmacyERecipeDTO , { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data);
+				this.setState({ openModal: true });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+		
+		console.log(PharmacyERecipeDTO);
+	};
+	
+	handleModalClose = () => {
+		this.setState({ openModal: false });
+	};
+	
+	handleModalCloseAllergen= () => {
+		this.setState({ 
+			openModalAllergen: false,
+            redirect:true,
+		});
+	};
+	
+	handleModalCloseRefused= () => {
+		this.setState({ 
+			openModalRefused: false,
+            redirect:true,
+		});
+	};
+	
 	handleSortByCityDescending = () => {
 		let URL = BASE_URL + "/api/pharmacy";
 
@@ -510,7 +588,7 @@ class QRpharmacies extends Component {
 					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.pharmacies.map((pharmacy) => (
-								<tr id={pharmacy.Id} key={pharmacy.Id} onClick={() => this.handleClickOnPharmacy(pharmacy.Id)}>
+								<tr id={pharmacy.Id} key={pharmacy.Id} >
 									<td width="130em">
 										<img className="img-fluid" src={PharmacyLogo} width="70em" />
 									</td>
@@ -523,18 +601,47 @@ class QRpharmacies extends Component {
 											{pharmacy.EntityDTO.pharmacy.EntityDTO.address.country}
 										</div>
 										<div>
-											<b>Grade: </b> {pharmacy.EntityDTO.pharmacy.EntityDTO.grade}
+											<b>Grade: </b> {pharmacy.EntityDTO.grade}
 											<i className="icofont-star" style={{ color: "#1977cc" }}></i>
 										</div>
 										<div>
 											<b>Price for all drugs: </b> {pharmacy.EntityDTO.price}
 										</div>
 									</td>
+									<td className="align-middle">
+										<div>
+											<button type="button" onClick={() => this.handleDrugClick(pharmacy.Id, pharmacy.EntityDTO.price)} className="btn btn-outline-secondary">
+												Buy drugs
+											</button>
+										</div>
+										
+									</td>
 								</tr>
 							))}
 						</tbody>
 					</table>
 				</div>
+				<ModalDialog
+					show={this.state.openModal}
+					href="/"
+					onCloseModal={this.handleModalClose}
+					header="Success"
+					text="You have successfully buy drugs."
+				/>
+				<ModalDialog
+					show={this.state.openModalAllergen}
+					href="/"
+					onCloseModal={this.handleModalCloseAllergen}
+					header="Warning"
+					text="You can't use this eReceipt because you are allergic to some drugs."
+				/>
+				<ModalDialog
+					show={this.state.openModalRefused}
+					href="/"
+					onCloseModal={this.handleModalCloseRefused}
+					header="Error"
+					text="This EReceipt is REFUSED, you CAN'T use it."
+				/>
 			</React.Fragment>
     );
   }

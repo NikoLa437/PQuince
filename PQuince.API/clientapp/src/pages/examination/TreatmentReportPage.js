@@ -1,15 +1,16 @@
 import React, { Component } from "react";
-import Header from "../components/Header";
-import TopBar from "../components/TopBar";
-import CapsuleLogo from "../static/capsuleLogo.png";
-import { BASE_URL } from "../constants.js";
+import Header from "../../components/Header";
+import TopBar from "../../components/TopBar";
+import CapsuleLogo from "../../static/capsuleLogo.png";
+import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
-import DrugsModal from "../components/DrugsModal";
-import TherapyDrugModal from "../components/TherapyDrugModal";
+import DrugsModal from "../../components/DrugsModal";
+import TherapyDrugModal from "../../components/TherapyDrugModal";
 import { withRouter } from "react-router";
-import getAuthHeader from "../GetHeader";
-import ModalDialog from "../components/ModalDialog";
+import getAuthHeader from "../../GetHeader";
+import ModalDialog from "../../components/ModalDialog";
 
+//TODO: add redirection unauthorize, check support for pharmacist, work on recommend drugs feature
 class TreatmentReportPage extends Component {
 	state = {
         anamnesis: "",
@@ -37,6 +38,8 @@ class TreatmentReportPage extends Component {
 			id:id
 		});
 
+
+		//TODO: rest point does not exist
 		Axios.get(BASE_URL + "/api/appointment/" + id, 
 			{headers: { Authorization: getAuthHeader() }}
 		)
@@ -110,12 +113,6 @@ class TreatmentReportPage extends Component {
 			})
 
 		});
-
-		
-		
-		//TODO: axios post reserve drugs 
-		// drugInstance, patient, amount
-		// drugPeacePrice, endDate, pharamacy
     };
 
     handleDrugDetails = (drug) => {

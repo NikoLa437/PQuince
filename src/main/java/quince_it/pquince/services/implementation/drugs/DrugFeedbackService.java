@@ -15,18 +15,16 @@ import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.repository.drugs.DrugFeedbackRepository;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.DrugReservationRepository;
+import quince_it.pquince.repository.drugs.EReceiptItemsRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
-import quince_it.pquince.services.contracts.dto.drugs.DrugKindIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
-import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 import quince_it.pquince.services.implementation.util.drugs.DrugFeedbackMapper;
 import quince_it.pquince.services.implementation.util.drugs.DrugsWithGradesMapper;
-import quince_it.pquince.services.implementation.util.users.UserMapper;
 
 @Service
 public class DrugFeedbackService implements IDrugFeedbackService{
@@ -46,14 +44,16 @@ public class DrugFeedbackService implements IDrugFeedbackService{
 	@Autowired
 	private IUserService userService;
 	
+	@Autowired
+	private EReceiptItemsRepository eReceiptItemsRepository;
+	
 	@Override
 	public void create(DrugFeedbackDTO entityDTO) throws FeedbackNotAllowedException {
-		// TODO eReciept check
 		
 		UUID patientId = userService.getLoggedUserId();
 		Patient patient = patientRepository.findById(patientId).get();
 		
-		CanPatientGiveFeedback(patient.getId());
+		CanPatientGiveFeedback(patient.getId(), entityDTO.getDrugId());
 		
 		
 		DrugInstance drugInstance = drugInstanceRepository.findById(entityDTO.getDrugId()).get();
@@ -63,10 +63,8 @@ public class DrugFeedbackService implements IDrugFeedbackService{
 			
 	}
 
-	private void CanPatientGiveFeedback(UUID patientId) throws FeedbackNotAllowedException {
-		// TODO eReciept check
-		
-		if(!(drugReservationRepository.findProcessedDrugReservationsForPatient(patientId).size() > 0))
+	private void CanPatientGiveFeedback(UUID patientId, UUID drugId) throws FeedbackNotAllowedException {		
+		if(!(drugReservationRepository.findProcessedDrugReservationsForPatientForDrug(patientId, drugId).size() > 0 || eReceiptItemsRepository.findAllByPatientAndDrugId(patientId, drugId).size() > 0))
 			throw new FeedbackNotAllowedException();
 	}
 

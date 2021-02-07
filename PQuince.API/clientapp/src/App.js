@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import UserProfilePage from "./pages/UserProfilePage";
-import StaffProfilePage from "./pages/StaffProfilePage";
+import StaffProfilePage from "./pages/examination/StaffProfilePage";
 import PharmaciesPage from "./pages/PharmaciesPage";
 import DrugReservation from "./pages/drug-reservation/DrugReservation";
 import PatientsDrugReservations from "./pages/drug-reservation/PatientsDrugReservations";
@@ -17,10 +17,10 @@ import PatientsAppointments from "./pages/dermatologist-appointment/PatientsAppo
 import HistoryDermatologistAppointments from "./pages/appointment-history/HistoryDermatologistAppointments";
 import PatientsDrugReservationHistory from "./pages/drug-reservation/PatientsDrugReservationHistory";
 import DermatologistsPage from "./pages/dermatologist/DermatologistsPage";
-import PatientsPage from "./pages/PatientsPage";
-import PatientProfilePage from "./pages/PatientProfilePage";
-import ScheduleAppointmentPage from "./pages/dermatologist-appointment/ScheduleAppointmentPage";
-import TreatmentReportPage from "./pages/TreatmentReportPage";
+import PatientsPage from "./pages/examination/PatientsPage";
+import PatientProfilePage from "./pages/examination/PatientProfilePage";
+import ScheduleAppointmentPage from "./pages/examination/dermatologist/ScheduleAppointmentPage";
+import TreatmentReportPage from "./pages/examination/TreatmentReportPage";
 import ConsultationTimeSelectPage from "./pages/pharmacist-appointment/ConsultationTimeSelectPage";
 import AdminComplaints from "./pages/complaints/AdminComplaints";
 import LoyaltyProgram from "./pages/loyalty-program/LoyaltyProgram";
@@ -30,9 +30,9 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import AppointmentFromHomePage from "./pages/dermatologist-appointment/AppointmentFromHomePage";
 import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPageForPatient";
 import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
-import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
+import CreateAndScheduleAppointmentPage from "./pages/examination/dermatologist/CreateAndScheduleAppointmentPage";
 import PatientsRedirectComplaints from "./pages/complaints/PatientsRedirectComplaints";
-import DermatologistCalendarPage from "./pages/DermatologistCalendarPage";
+import CalendarPage from "./pages/examination/CalendarPage";
 import PharmacistPage from "./pages/pharmacist/PharmacistsPage";
 import PharmacistPageForPatient from "./pages/pharmacist/PharmacistPageForPatient";
 import DrugPageForPharmacyAdmin from "./pages/drug/DrugPageForPharmacyAdmin";
@@ -42,6 +42,8 @@ import DrugsFromEReceiptForPatient from "./pages/eReceipt-patient/DrugsFromERece
 import Subscription from "./pages/subscription/Subscription";
 import QRreader from "./pages/QRcode/QRreader";
 import QRpharmacies from "./pages/QRcode/QRpharmacies";
+import AbsencePage from "./pages/examination/AbsencePage";
+import NewAppointmentPage from "./pages/examination/pharmacist/NewAppointmentPage"
 
 function App() {
 	return (
@@ -95,14 +97,15 @@ function App() {
 
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
-				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />
 
-				<Link exact to="/dermatologist-calendar" path="/dermatologist-calendar" component={DermatologistCalendarPage} />
+				<Link exact to="/calendar" path="/calendar" component={CalendarPage} />
 
 				<Link exact to="/pharmacist" path="/pharmacist" component={PharmacistPage} />
 				<Link exact to="/pharmacist-for-patient" path="/pharmacist-for-patient" component={PharmacistPageForPatient} />
 				<Link exact to="/drugs-in-pharmacy" path="/drugs-in-pharmacy" component={DrugPageForPharmacyAdmin} />
 				<Route path="/treatment-report/:id" children={<TreatmentReportPage />} />
+				<Link exact to="/absence" path="/absence" component={AbsencePage} />
+				<Route path="/new-appointment/:id" children={<NewAppointmentPage />} />
 
 			</Switch>
 		</Router>

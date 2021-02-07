@@ -30,16 +30,19 @@ class Header extends Component {
 					<nav className="nav-menu d-none d-lg-block">
 						<ul>
 							<li className="active" hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
-								<a to="/">Home</a>
+								<Link to="/">Home</Link>
 							</li>
-							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
+							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
+								<Link to="/absence">Absence</Link>
+							</li>
+							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
 								<Link to="/patients">Patients</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PATIENT")}>
 								<Link to="/patient-complaint">Make complaint</Link>
 							</li>
-							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
-								<Link to="/dermatologist-calendar">Calendar</Link>
+							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
+								<Link to="/calendar">Calendar</Link>
 							</li>
 
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
