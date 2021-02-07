@@ -23,10 +23,24 @@ class AppointmentFromHomePage extends Component {
 		sortIndicator: 0,
 		pharmacyId: "",
 		redirectToAppointment: false,
+		unauthorizedRedirect: false,
 	};
 
 	handleNameChange = (event) => {
 		this.setState({ name: event.target.value });
+	};
+
+	hasRole = (reqRole) => {
+		let roles = JSON.parse(localStorage.getItem("keyRole"));
+
+		if (roles === null) return false;
+
+		if (reqRole === "*") return true;
+
+		for (let role of roles) {
+			if (role === reqRole) return true;
+		}
+		return false;
 	};
 
 	getCurrentCoords = () => {
@@ -41,16 +55,20 @@ class AppointmentFromHomePage extends Component {
 	};
 
 	componentDidMount() {
-		this.getCurrentCoords();
+		if (!this.hasRole("ROLE_PATIENT")) {
+			this.setState({ unauthorizedRedirect: true });
+		} else {
+			this.getCurrentCoords();
 
-		Axios.get(BASE_URL + "/api/pharmacy")
-			.then((res) => {
-				this.setState({ pharmacies: res.data });
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+			Axios.get(BASE_URL + "/api/pharmacy")
+				.then((res) => {
+					this.setState({ pharmacies: res.data });
+					console.log(res.data);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
 	}
 
 	hangleFormToogle = () => {
@@ -335,6 +353,7 @@ class AppointmentFromHomePage extends Component {
 
 	render() {
 		if (this.state.redirectToAppointment) return <Redirect push to={"/reserve-appointment/" + this.state.pharmacyId} />;
+		if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
 
 		return (
 			<React.Fragment>

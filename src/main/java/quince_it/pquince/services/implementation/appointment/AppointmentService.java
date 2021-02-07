@@ -466,8 +466,18 @@ public class AppointmentService implements IAppointmentService{
 	@SuppressWarnings("deprecation")
 	public List<Pharmacy> findAllDistinctPharmaciesForAppointmentTime(Date startDateTime, Date endDateTime) {
 
-		List<WorkTime> workTimeInRange = workTimeRepository.findWorkTimesByDesiredConsultationTime(new Date(endDateTime.getYear(), endDateTime.getMonth(), endDateTime.getDate(),0,0,0),
-				endDateTime.getMinutes() == 0 ? endDateTime.getHours() : endDateTime.getHours() + 1);
+		int hours = endDateTime.getMinutes() == 0 ? endDateTime.getHours() : endDateTime.getHours() + 1;
+		long endDate = new Date(endDateTime.getYear(), endDateTime.getMonth(), endDateTime.getDate(),0,0,0).getTime();
+		
+		if(hours > 23) {
+			endDate += 24*60*60000;
+			hours = 0;
+		}
+		
+		System.out.println("***DATE " + new Date(endDate));
+		System.out.println("***TIME " + hours + "\n\n");
+
+		List<WorkTime> workTimeInRange = workTimeRepository.findWorkTimesByDesiredConsultationTime(new Date(endDate), hours, startDateTime.getHours());
 		
 		List<Appointment> overlappingAppointmentsWithRange = appointmentRepository.findAllConsultationsByAppointmentTime(startDateTime, endDateTime);
 		List<Pharmacy> distinctPharmacies = findDistinctPharmaciesInRange(workTimeInRange, overlappingAppointmentsWithRange);
@@ -516,8 +526,19 @@ public class AppointmentService implements IAppointmentService{
 	@SuppressWarnings("deprecation")
 	public List<Staff> findAllDistinctPharmacistsForAppointmentTimeForPharmacy(Date startDateTime, Date endDateTime, UUID pharmacyId) {
 		
-		List<WorkTime> workTimeInRange = workTimeRepository.findWorkTimesByDesiredConsultationTimeAndPharmacyId(new Date(endDateTime.getYear(), endDateTime.getMonth(), endDateTime.getDate(),0,0,0),
-				endDateTime.getMinutes() == 0 ? endDateTime.getHours() : endDateTime.getHours() + 1, pharmacyId);
+		int hours = endDateTime.getMinutes() == 0 ? endDateTime.getHours() : endDateTime.getHours() + 1;
+		long endDate = new Date(endDateTime.getYear(), endDateTime.getMonth(), endDateTime.getDate(),0,0,0).getTime();
+		
+		if(hours > 23) {
+			endDate += 24*60*60000;
+			hours = 0;
+		}
+		
+		System.out.println("***DATE PHARMACIST " + new Date(endDate));
+		System.out.println("***TIME PHARMACIST " + hours + "\n\n");
+
+		
+		List<WorkTime> workTimeInRange = workTimeRepository.findWorkTimesByDesiredConsultationTimeAndPharmacyId(new Date(endDate), hours ,pharmacyId, startDateTime.getHours());
 		
 		List<Appointment> overlappingAppointmentsWithRange = appointmentRepository.findAllConsultationsByAppointmentTimeAndPharmacy(startDateTime, endDateTime, pharmacyId);
 		List<Staff> distinctStaff = findDistinctPharmacistInRange(workTimeInRange, overlappingAppointmentsWithRange);

@@ -52,10 +52,9 @@ import quince_it.pquince.services.contracts.dto.users.DermatologistFiltrationDTO
 import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
-import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
-import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
