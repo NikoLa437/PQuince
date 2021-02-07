@@ -147,7 +147,7 @@ class QRreader extends Component {
 				show={this.state.openModalRefused}
 				onCloseModal={this.handleModalCloseRefused}
 				header="Error"
-				text="This EReceipt is REFUSED, you CAN'T use it."
+				text="This EReceipt can't be used. It has already been used, or it was refused."
 			/>
 		</React.Fragment>
     )
