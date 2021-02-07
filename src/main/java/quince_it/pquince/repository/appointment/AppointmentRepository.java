@@ -9,6 +9,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface AppointmentRepository extends PagingAndSortingRepository<Appointment, UUID>{
 
@@ -114,5 +116,9 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 	@Query(value = "SELECT a FROM Appointment a WHERE a.staff.id = ?1 AND a.startDateTime > CURRENT_TIMESTAMP"
 			+ " AND a.appointmentStatus = 'SCHEDULED' AND a.appointmentType = 'CONSULTATION'  AND a.pharmacy.id=?2")
 	List<Appointment> findAllAppointmentForPharmacistInFutureInPharmacy(UUID pharmacistId, UUID pharmacyId);
+
+	@Query(value = "SELECT a FROM Appointment a WHERE NOT (a.startDateTime >= ?2 OR a.endDateTime <= ?1)"
+			+ " AND a.appointmentStatus = 'SCHEDULED' AND a.staff.id = ?3")
+	List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllAppointmentsByAppointmentTimeAndStaff(Date startDateTime, Date endDateTime, UUID id);
 	
 }
