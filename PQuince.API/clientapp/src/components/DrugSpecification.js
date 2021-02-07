@@ -81,7 +81,7 @@ class DrugSpecification extends Component {
 										))}
 									</div>
 									<div>
-										<b>On reciept: </b> {this.props.onReciept}
+										<b>On reciept: </b> {this.props.onReciept ? 'Yes' : 'No'}
 									</div>
 									<div>
 										<b>Loyalty points: </b> {this.props.points}

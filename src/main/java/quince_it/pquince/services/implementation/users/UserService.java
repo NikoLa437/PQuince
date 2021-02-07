@@ -880,6 +880,7 @@ public class UserService implements IUserService{
 		return pharmacy;
 	}
 	
+	
 	@Override
 	public List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies() {
 		List<IdentifiableDTO<PharmacyDTO>> subscribedPharmacies = new ArrayList<IdentifiableDTO<PharmacyDTO>>();

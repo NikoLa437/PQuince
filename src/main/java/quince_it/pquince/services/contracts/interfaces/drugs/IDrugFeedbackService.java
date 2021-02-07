@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
