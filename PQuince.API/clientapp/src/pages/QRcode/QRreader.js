@@ -3,7 +3,9 @@ import TopBar from "../../components/TopBar";
 import Header from "../../components/Header";
 import QrReader from 'react-qr-reader'
 import Axios from "axios";
+import getAuthHeader from "../../GetHeader";
 import { withRouter } from "react-router";
+import ModalDialog from "../../components/ModalDialog";
 import { BASE_URL } from "../../constants.js";
 import PharmacyLogo from "../../static/pharmacyLogo.png";
 import '../../App.js'
@@ -15,6 +17,8 @@ class QRreader extends Component {
 		formShowed: false,
 		name: "",
 		city: "",
+		openModal: false,
+		openModalRefused: false,
 		gradeFrom: "",
 		gradeTo: "",
 		distanceFrom: "",
@@ -28,22 +32,71 @@ class QRreader extends Component {
 		redirectUrl:''
 	};
 	
+
+	componentDidMount() {
+	
+		Axios.get(BASE_URL + "/api/users/patient", { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				if(res.data.EntityDTO.penalty > 2){
+					this.setState({
+						openModal: true ,
+						redirectUrl : "/",
+        			})
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	
+	}
+	
+	handleModalClose = () => {
+		this.setState({ 
+			openModal: false,
+			redirect:true, 
+		});
+	};
+	
    constructor(props){
         super(props)
         this.state = {
             delay: 100,
             result: 'No result',
         }
-
         this.handleScan = this.handleScan.bind(this)
     }
+    
+    handleModalCloseRefused= () => {
+		this.setState({ 
+			openModalRefused: false,
+		});
+	};
+    
     handleScan(data){
-        this.setState({
-            result: data,
-            redirect:true,
-			redirectUrl : "/qrpharmacies/"+data
-        })
-     
+	    let RefuseReceiptDTO = {
+	    	id: data
+	    }
+	    
+    	Axios.post(BASE_URL + "/api/ereceipt/check-if-refused", RefuseReceiptDTO, { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data)
+				if(res.data.allergic == true){
+					console.log("REJECT")
+					this.setState({
+						openModalRefused: true ,
+        			})
+				}else{
+				  this.setState({
+		            result: data,
+		            redirect:true,
+					redirectUrl : "/qrpharmacies/"+data
+		       	 })
+		        }
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	
     }
     handleError(err){
         console.error(err)
@@ -83,6 +136,19 @@ class QRreader extends Component {
                 
             </div>
             </div>
+            <ModalDialog
+				show={this.state.openModal}
+				href="/"
+				onCloseModal={this.handleModalClose}
+				header="Error"
+				text="You can't use this option because your penalty points are 3 and more."
+			/>
+			<ModalDialog
+				show={this.state.openModalRefused}
+				onCloseModal={this.handleModalCloseRefused}
+				header="Error"
+				text="This EReceipt is REFUSED, you CAN'T use it."
+			/>
 		</React.Fragment>
     )
   }

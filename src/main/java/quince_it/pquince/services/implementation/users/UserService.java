@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.Allergen;
+import quince_it.pquince.entities.drugs.EReceiptItems;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Dermatologist;
@@ -30,6 +31,7 @@ import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.entities.users.WorkTime;
+import quince_it.pquince.repository.drugs.EReceiptItemsRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
@@ -75,6 +77,9 @@ public class UserService implements IUserService{
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired 
+	private EReceiptItemsRepository eReceiptItemsRepository;
 	
 	@Autowired
 	private IStaffFeedbackService staffFeedbackService;
@@ -898,6 +903,21 @@ public class UserService implements IUserService{
 			UUID pharmacistId = getLoggedUserId();
 			Pharmacist pharmacist = pharmacistRepository.getOne(pharmacistId);
 			return PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(pharmacist.getPharmacy());
+	}
+
+	@Override
+	public boolean isPatientAllergic(UUID recieptId) {
+		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(recieptId);
+		Patient patient = patientRepository.getOne(getLoggedUserId());
+		
+		for(EReceiptItems item: items) {
+			for(Allergen a: item.getDrugInstance().getAllergens())
+				if(patient.getAllergens().contains(a))
+					return true;
+		}
+		
+		return false;
+		
 	}
 	
 }

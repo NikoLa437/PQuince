@@ -1,6 +1,7 @@
 package quince_it.pquince.services.contracts.interfaces.drugs;
 
 import java.util.List;
+import java.util.UUID;
 
 import quince_it.pquince.entities.drugs.EReceiptStatus;
 import quince_it.pquince.services.contracts.dto.drugs.DrugWithEReceiptsDTO;
@@ -21,6 +22,9 @@ public interface IEReceiptService {
 	
 	List<IdentifiableDTO<EReceiptWithDrugsDTO>> findAllByPatientSearchByStatusSortByDateDescending(EReceiptStatus status);
 	
-	List<IdentifiableDTO<DrugWithEReceiptsDTO>> findAllProcessedDistinctDrugsByPatientId();	
+	List<IdentifiableDTO<DrugWithEReceiptsDTO>> findAllProcessedDistinctDrugsByPatientId();
 
+	void refuseEReceipt(UUID recieptId);
+
+	boolean checkIfRefused(UUID id);
 }
