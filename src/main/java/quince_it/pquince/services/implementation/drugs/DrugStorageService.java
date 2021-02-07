@@ -19,6 +19,7 @@ import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AddDrugToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
+import quince_it.pquince.services.contracts.dto.drugs.EditStorageAmountForDrugDTO;
 import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
@@ -159,6 +160,19 @@ public class DrugStorageService implements IDrugStorageService {
 			drugPriceForPharmacyRepository.save(newDrugPriceInPharmacy);
 		}
 
+	}
+
+	@Override
+	public boolean editPriceForDrug(EditStorageAmountForDrugDTO editStorageAmountForDrugDTO) {
+		// TODO Auto-generated method stub
+		UUID pharmacyId= this.userService.getPharmacyIdForPharmacyAdmin();
+		
+		DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(editStorageAmountForDrugDTO.getDrugInstanceId(), pharmacyId);
+		
+		drugStorage.setCount(editStorageAmountForDrugDTO.getAmount());
+				
+		drugStorageRepository.save(drugStorage);
+		return true;
 	}
 
 }

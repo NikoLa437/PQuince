@@ -11,12 +11,15 @@ import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
 import AddDrugToPharmacy from "../../components/AddDrugToPharmacy";
 import EditPriceForDrugInPharmacy from "../../components/EditPriceForDrugInPharmacy";
+import EditStorageAmountForDrug from "../../components/EditStorageAmountForDrug";
 
 class DrugPageForPharmacyAdmin extends Component {
 	state = {
         drugs: [],
         showAddDrugModal: false,
         showEditDrugPriceModal:false,
+        showEditStorageAmountModal:false,
+        drugIdForEditAmount:'',
         drugIdForEditPrice:'',
         forStaff:'',
         formShowed:false,
@@ -78,6 +81,18 @@ class DrugPageForPharmacyAdmin extends Component {
 
     }
 
+    handleEditStorageAmountModalSuccessClose = () => {
+        this.setState({ showEditDrugStorageModal: false });
+        this.setState({
+            hiddenSuccessAlert: false,
+            hiddenFailAlert:true,
+            successHeader: "Success",
+            successMessage: "You successfully edit drug storage.",
+        })
+        this.updateDrugs();
+
+    }
+
     handleEditDrugPriceModalUnsuccessClose = () => {
         this.setState({ showEditDrugPriceModal: false });
         this.setState({
@@ -87,24 +102,41 @@ class DrugPageForPharmacyAdmin extends Component {
             failMessage: "It is not possible to edit price"});
     
         this.updateDrugs();
+    }
+
+    handleEditDrugStorageAmountModalUnsuccessClose = () => {
+        this.setState({ showEditDrugStorageModal: false });
+        this.setState({
+            hiddenSuccessAlert: true,
+            hiddenFailAlert:false,
+            failHeader: "Unsuccess", 
+            failMessage: "It is not possible to edit storage amount"});
+    
+        this.updateDrugs();
 
     }
 
     handleEditDrugPriceModalClose =() =>{
         this.updateDrugs();
-        this.setState({ showEditDrugStorageModal: false });
-
+        this.setState({ showEditDrugPriceModal: false });
     }
+
+    handleEditDrugStorageAmountModalClose =() =>{
+        this.updateDrugs();
+        this.setState({ showEditDrugStorageModal: false });
+    }
+
 
     handleEditDrugStorageModalClose = () => {
         
         this.updateDrugs();
-        this.setState({
-            hiddenSuccessAlert: false,
-            hiddenFailAlert:true,
-            successHeader: "Success",
-            successMessage: "You successfully edit drug price.",
-        })
+        this.setState({ showEditDrugStorageModal: false });
+    }
+
+    handleEditDrugStorageModalSuccessClose = () => {
+        
+        this.updateDrugs();
+
         this.setState({ showEditDrugStorageModal: false });
     }
     
@@ -220,6 +252,13 @@ class DrugPageForPharmacyAdmin extends Component {
 		});
         
     };
+
+    onEditStorageClick = (id) =>{
+        this.setState({
+			showEditDrugStorageModal: true,
+            drugIdForEditAmount:id
+		});
+    }
 
 
     
@@ -471,13 +510,23 @@ class DrugPageForPharmacyAdmin extends Component {
 				        />
                         <EditPriceForDrugInPharmacy
                             show={this.state.showEditDrugPriceModal}
-                            onModalClose={this.handleEditDrugPriceModalClose}
-					        onCloseModalSuccess={this.handleEditDrugPriceModalSuccessClose}
+                            onCloseModal={this.handleEditDrugPriceModalClose}
+					        onCloseModalSuccess={this.handleEditDrugStorageModalSuccessClose}
                             OnCloseModalUnsuccess={this.handleEditDrugPriceModalUnsuccessClose}
                             pharmacyId={this.state.pharmacyId}
                             drug={this.state.drugIdForEditPrice}
                             updateDrugs={this.updateDrugs}
 					        header="Edit drug price"
+                         />
+                          <EditStorageAmountForDrug
+                            show={this.state.showEditDrugStorageModal}
+                            onCloseModal={this.handleEditDrugStorageModalClose}
+					        onCloseModalSuccess={this.handleEditStorageAmountModalSuccessClose}
+                            OnCloseModalUnsuccess={this.handleEditDrugStorageAmountModalUnsuccessClose}
+                            pharmacyId={this.state.pharmacyId}
+                            drug={this.state.drugIdForEditAmount}
+                            updateDrugs={this.updateDrugs}
+					        header="Edit storage amount"
                          />
                     </div>
                 </React.Fragment>

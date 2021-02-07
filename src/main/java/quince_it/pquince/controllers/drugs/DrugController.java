@@ -31,6 +31,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugWithPriceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugsWithGradesDTO;
 import quince_it.pquince.services.contracts.dto.drugs.EditPriceForDrugDTO;
+import quince_it.pquince.services.contracts.dto.drugs.EditStorageAmountForDrugDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
 import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
@@ -314,6 +315,23 @@ public class DrugController {
 			}
 		} catch (ObjectOptimisticLockingFailureException e) {
 			return new ResponseEntity<>("Not enough drugs in storage.",HttpStatus.BAD_REQUEST);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@CrossOrigin
+	@PutMapping("/edit-storage-amount-for-drug")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> editStorageAmountForDrug(@RequestBody EditStorageAmountForDrugDTO editStorageAmountForDrugDTO) {
+		try {
+			if(drugStorageService.editPriceForDrug(editStorageAmountForDrugDTO))
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			else {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
