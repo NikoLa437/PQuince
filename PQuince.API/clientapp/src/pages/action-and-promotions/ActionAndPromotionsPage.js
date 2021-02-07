@@ -2,16 +2,11 @@ import React, { Component } from "react";
 import TopBar from "../../components/TopBar";
 import Header from "../../components/Header"
 import Axios from "axios";
-import { BASE_URL } from "../../constants.js";
 import CapsuleLogo from "../../static/capsuleLogo.png";
-import getAuthHeader from "../../GetHeader";
-import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
-import AddDrugToPharmacy from "../../components/AddDrugToPharmacy";
-import EditPriceForDrugInPharmacy from "../../components/EditPriceForDrugInPharmacy";
-import EditStorageAmountForDrug from "../../components/EditStorageAmountForDrug";
+import AddActionAndPromotionsModal from "../../components/AddActionAndPromotionsModal";
 
 class ActionAndPromotionsPage extends Component {
 	state = {
@@ -70,16 +65,16 @@ class ActionAndPromotionsPage extends Component {
 			.catch((err) => {
 				console.log(err);
 		});
-
+        */
         this.setState({
-			showAddDrugModal: true,
-		});     */
+			showAddActionModal: true,
+		});     
     }
     
 
 
     handleModalClose = () => {
-        this.setState({showWorkTimesModal: false});
+        this.setState({handleModalClose: false});
     }
 
 
@@ -149,6 +144,12 @@ class ActionAndPromotionsPage extends Component {
                         </table>
                     </div>
                     <div>
+                        <AddActionAndPromotionsModal 
+                            show={this.state.showAddActionModal}
+                            onCloseModal={this.handleModalClose} 
+                            forPharmacy={this.state.forPharmacy} 
+                            header="Add action and promotions" />
+
                     </div>
                 </React.Fragment>
 		);

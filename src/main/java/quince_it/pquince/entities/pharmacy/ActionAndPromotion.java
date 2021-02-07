@@ -5,7 +5,11 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 public class ActionAndPromotion {
@@ -18,27 +22,39 @@ public class ActionAndPromotion {
 	
     @Column(name = "dateTo")
 	private Date dateTo;
-    
-	@Column(name="text")
-	private String text;
 	
 	@Column(name="percentOfDiscount")
 	private double percentOfDiscount;
 	
-	@Column(name="type")
+    @Enumerated(EnumType.STRING)
+	@Column(name = "Type", nullable = false)
 	private ActionAndPromotionType actionAndPromotionType;
+	
+	@ManyToOne
+	private Pharmacy pharmacy;
 
 	public ActionAndPromotion() {
 		super();
 	}
 
-	public ActionAndPromotion(UUID id, Date dateFrom, Date dateTo, String text, double percentOfDiscount,
+	public ActionAndPromotion(UUID id, Date dateFrom, Date dateTo, Pharmacy pharmacy,   double percentOfDiscount,
 			ActionAndPromotionType actionAndPromotionType) {
 		super();
 		this.id = id;
 		this.dateFrom = dateFrom;
+		this.pharmacy=pharmacy;
 		this.dateTo = dateTo;
-		this.text = text;
+		this.percentOfDiscount = percentOfDiscount;
+		this.actionAndPromotionType = actionAndPromotionType;
+	}
+	
+	public ActionAndPromotion(Date dateFrom, Date dateTo, Pharmacy pharmacy,  double percentOfDiscount,
+			ActionAndPromotionType actionAndPromotionType) {
+		super();
+		this.id = UUID.randomUUID();
+		this.dateFrom = dateFrom;
+		this.dateTo = dateTo;
+		this.pharmacy=pharmacy;
 		this.percentOfDiscount = percentOfDiscount;
 		this.actionAndPromotionType = actionAndPromotionType;
 	}
@@ -67,13 +83,6 @@ public class ActionAndPromotion {
 		this.dateTo = dateTo;
 	}
 
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
 
 	public double getPercentOfDiscount() {
 		return percentOfDiscount;

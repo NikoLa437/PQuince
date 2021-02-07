@@ -197,3 +197,5 @@ insert into drug_feedback (date, grade, drug_id, patient_id) values ('2020-05-03
 
 insert into pharmacy_admin (id,pharmacy_id) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788','cafeddee-56cb-11eb-ae93-0242ac130002');
 
+insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2965458c-6976-11eb-9439-0242ac130002', 'DRUGDISCOUNT', '2020-02-15','2020-03-15', '15','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2965458c-6976-11eb-9439-0242ac130555', 'CONSULTATIONDISCOUNT', '2020-02-15','2020-03-15','25', 'cafeddee-56cb-11eb-ae93-0242ac130002');
