@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.users.Offer;
 import quince_it.pquince.repository.users.OfferRepository;
@@ -16,6 +17,7 @@ import quince_it.pquince.services.contracts.interfaces.users.IOfferService;
 import quince_it.pquince.services.implementation.util.users.OfferMapper;
 import quince_it.pquince.services.implementation.util.users.UserMapper;
 
+@Service
 public class OfferService implements IOfferService {
 
 	

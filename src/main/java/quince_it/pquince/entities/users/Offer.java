@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
+@Entity
 public class Offer {
 
 	@Id

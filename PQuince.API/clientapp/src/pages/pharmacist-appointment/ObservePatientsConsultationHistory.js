@@ -250,22 +250,32 @@ class ObservePatientsCosultationHistory extends Component {
 			staffSurname: this.state.StaffSurame,
 			profession: "pharmacist",
 		};
-		Axios.post(BASE_URL + "/api/staff/complaint", entityDTO)
+		
+		Axios.post(BASE_URL + "/api/staff/complaint", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/appointment/pharmacist-history", {
-					headers: { Authorization: getAuthHeader() },
-				})
-					.then((res) => {
-						this.setState({ appointments: res.data, showComplaintModal: false });
-						console.log(res.data);
+				if (resp.status === 405) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Staff complaint not allowed." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 201) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Complaint successfully saved." });
+					Axios.get(BASE_URL + "/api/appointment/pharmacist-history", {
+						headers: { Authorization: getAuthHeader() },
 					})
-					.catch((err) => {
-						console.log(err);
-					});
+						.then((res) => {
+							this.setState({ appointments: res.data, showComplaintModal: false });
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+				this.setState({ showComplaintModal: false });
 			})
 			.catch((err) => {
 				console.log(err);
 			});
+		
 	};
 
 	handleModifyFeedback = () => {

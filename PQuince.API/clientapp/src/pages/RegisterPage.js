@@ -21,12 +21,15 @@ class RegisterPage extends Component {
 		hiddenErrorAlert: true,
 		email: "",
 		password: "",
+		repeatPassword: "",
 		name: "",
 		surname: "",
 		address: "",
 		phoneNumber: "",
 		emailError: "none",
 		passwordError: "none",
+		repeatPasswordError: "none",
+		repeatPasswordSameError: "none",
 		nameError: "none",
 		surnameError: "none",
 		addressError: "none",
@@ -58,6 +61,10 @@ class RegisterPage extends Component {
 	handlePasswordChange = (event) => {
 		this.setState({ password: event.target.value });
 	};
+	
+	handleRepeatPasswordChange = (event) => {
+		this.setState({ repeatPassword: event.target.value });
+	};
 
 	handleNameChange = (event) => {
 		this.setState({ name: event.target.value });
@@ -85,6 +92,8 @@ class RegisterPage extends Component {
 			addressNotFoundError: "none",
 			phoneError: "none",
 			passwordError: "none",
+			repeatPasswordError: "none",
+			repeatPasswordSameError: "none",
 		});
 
 		if (userDTO.email === "") {
@@ -107,6 +116,12 @@ class RegisterPage extends Component {
 			return false;
 		} else if (userDTO.password === "") {
 			this.setState({ passwordError: "initial" });
+			return false;
+		} else if (this.state.repeatPassword === "") {
+			this.setState({ repeatPasswordError: "initial" });
+			return false;
+		}else if (userDTO.password !== this.state.repeatPassword) {
+			this.setState({ repeatPasswordSameError: "initial" });
 			return false;
 		}
 		return true;
@@ -312,6 +327,24 @@ class RegisterPage extends Component {
 									</div>
 									<div className="text-danger" style={{ display: this.state.passwordError }}>
 										Password must be entered.
+									</div>
+								</div>
+								<div className="control-group">
+									<label>Repeat password:</label>
+									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
+										<input
+											placeholder="Repeat password"
+											class="form-control"
+											type="password"
+											onChange={this.handleRepeatPasswordChange}
+											value={this.state.repeatPassword}
+										/>
+									</div>
+									<div className="text-danger" style={{ display: this.state.repeatPasswordError }}>
+										Repeat password must be entered.
+									</div>
+									<div className="text-danger" style={{ display: this.state.repeatPasswordSameError }}>
+										Passwords are not the same.
 									</div>
 								</div>
 
