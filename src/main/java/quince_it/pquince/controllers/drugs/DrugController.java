@@ -313,8 +313,6 @@ public class DrugController {
 			else {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
-		} catch (ObjectOptimisticLockingFailureException e) {
-			return new ResponseEntity<>("Not enough drugs in storage.",HttpStatus.BAD_REQUEST);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {

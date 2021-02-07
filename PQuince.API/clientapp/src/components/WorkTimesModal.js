@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import DermatologistLogo from '../static/dermatologistLogo.png';
 import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
 import getAuthHeader from "../GetHeader";
 import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
 import HeadingAlert from "../components/HeadingAlert";
+import { Redirect } from "react-router-dom";
 
 class WorkTimesModal extends Component {
     state = {
@@ -149,6 +149,8 @@ class WorkTimesModal extends Component {
 	};
 
     render() { 
+        if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
+
         return ( 
             <Modal
                 show = {this.props.show}
