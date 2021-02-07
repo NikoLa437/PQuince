@@ -1,14 +1,13 @@
 import React, { Component } from "react";
-import Header from "../../components/Header";
-import TopBar from "../../components/TopBar";
-import { BASE_URL } from "../../constants.js";
+import Header from "../../../components/Header";
+import TopBar from "../../../components/TopBar";
+import { BASE_URL } from "../../../constants.js";
 import Axios from "axios";
-import ModalDialog from "../../components/ModalDialog";
-import getAuthHeader from "../../GetHeader";
+import ModalDialog from "../../../components/ModalDialog";
+import getAuthHeader from "../../../GetHeader";
 import { withRouter } from "react-router";
-import { Button, Modal } from 'react-bootstrap';
 import DatePicker from "react-datepicker";
-import PeriodIcon from "../../static/period-icon.png";
+import PeriodIcon from "../../../static/period-icon.png";
 import { Redirect } from "react-router-dom";
 
 class CreateAndScheduleAppointmentPage extends Component {
@@ -78,7 +77,7 @@ class CreateAndScheduleAppointmentPage extends Component {
 				date: this.convertDate(this.state.selectedDate),
 				duration: this.state.duration
 			},
-			headers: { Authorization: getAuthHeader() }
+			validateStatus: () => true, headers: { Authorization: getAuthHeader() }
 		}).then((res) => {
 			if (res.status === 401) {
 				this.setState({
@@ -95,15 +94,11 @@ class CreateAndScheduleAppointmentPage extends Component {
 			});
 	}
 
-	fetchData = id => {
+	componentDidMount() {
+		const id = this.props.match.params.id;
 		this.setState({
 			id: id
 		});
-	};
-
-	componentDidMount() {
-		const id = this.props.match.params.id;
-		this.fetchData(id);
 		this.fetchPeriods();
 	}
 

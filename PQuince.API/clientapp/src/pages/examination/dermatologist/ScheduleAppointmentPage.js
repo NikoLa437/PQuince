@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import AppointmentIcon from "../../static/appointment-icon.jpg";
-import Header from "../../components/Header";
-import TopBar from "../../components/TopBar";
-import { BASE_URL } from "../../constants.js";
+import AppointmentIcon from "../../../static/appointment-icon.jpg";
+import Header from "../../../components/Header";
+import TopBar from "../../../components/TopBar";
+import { BASE_URL } from "../../../constants.js";
 import Axios from "axios";
-import ModalDialog from "../../components/ModalDialog";
-import getAuthHeader from "../../GetHeader";
+import ModalDialog from "../../../components/ModalDialog";
+import getAuthHeader from "../../../GetHeader";
 import { withRouter } from "react-router";
 import { Redirect } from "react-router-dom";
 

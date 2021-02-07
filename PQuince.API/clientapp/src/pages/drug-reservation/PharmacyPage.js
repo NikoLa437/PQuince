@@ -69,7 +69,11 @@ class PharmacyPage extends Component {
 							</div>
 						</div>
 					</form>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase" hidden={this.props.pharmacies.length !== 0}>
+					<p hidden={this.props.pharmacies.length === 0} className="mb-4 mt-4 text-uppercase">
+						Click on pharmacy if you want to proceed with reservation
+					</p>
+
+					<h5 className=" text-center mb-0 mt-5 text-uppercase text-danger" hidden={this.props.pharmacies.length !== 0}>
 						Currently unavailable
 					</h5>
 
