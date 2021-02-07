@@ -22,6 +22,7 @@ import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPha
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.exceptions.AlreadyBeenScheduledConsultationException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
+import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOutofWorkTimeRange;
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.IService;
@@ -92,5 +93,5 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 
 	void didNotShowUpToAppointment(UUID id);
 
-	UUID newConsultation(NewConsultationDTO newConsultationDTO) throws AppointmentNotScheduledException, AppointmentTimeOverlappingWithOtherAppointmentException;
+	UUID newConsultation(NewConsultationDTO newConsultationDTO) throws AppointmentNotScheduledException, AppointmentTimeOverlappingWithOtherAppointmentException, AppointmentTimeOutofWorkTimeRange;
 }
