@@ -29,7 +29,9 @@ import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestD
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
+import quince_it.pquince.services.contracts.dto.appointment.NewConsultationDTO;
 import quince_it.pquince.services.contracts.dto.appointment.ScheduleAppointmentDTO;
+import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledException;
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
@@ -224,12 +226,32 @@ public class AppointmentController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch(AppointmentNotScheduledException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		} 
 		
 	}
 	
+	@PostMapping("/pharmacist/new")
+	@PreAuthorize("hasRole('PHARMACIST')")
+	@CrossOrigin
+	public ResponseEntity<?> newConsultationAppointment(@RequestBody NewConsultationDTO newConsultationDTO) {
+		try {
+			UUID appointmentId = appointmentService.newConsultation(newConsultationDTO);
+			return new ResponseEntity<>(appointmentId, HttpStatus.CREATED);
+		} catch (AppointmentTimeOverlappingWithOtherAppointmentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (AuthorizationServiceException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} 
+		
+	}
 	
 	@PutMapping("/cancel-appointment")
 	@PreAuthorize("hasRole('PATIENT')")

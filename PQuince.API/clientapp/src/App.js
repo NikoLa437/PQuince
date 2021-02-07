@@ -19,7 +19,7 @@ import PatientsDrugReservationHistory from "./pages/drug-reservation/PatientsDru
 import DermatologistsPage from "./pages/dermatologist/DermatologistsPage";
 import PatientsPage from "./pages/examination/PatientsPage";
 import PatientProfilePage from "./pages/examination/PatientProfilePage";
-import ScheduleAppointmentPage from "./pages/dermatologist-appointment/ScheduleAppointmentPage";
+import ScheduleAppointmentPage from "./pages/examination/dermatologist/ScheduleAppointmentPage";
 import TreatmentReportPage from "./pages/examination/TreatmentReportPage";
 import ConsultationTimeSelectPage from "./pages/pharmacist-appointment/ConsultationTimeSelectPage";
 import AdminComplaints from "./pages/complaints/AdminComplaints";
@@ -30,7 +30,7 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import AppointmentFromHomePage from "./pages/dermatologist-appointment/AppointmentFromHomePage";
 import DermatologistsPageForPatient from "./pages/dermatologist/DermatologistPageForPatient";
 import PharmacyForAdmin from "./pages/Pharmacy/PharmacyForAdmin";
-import CreateAndScheduleAppointmentPage from "./pages/dermatologist-appointment/CreateAndScheduleAppointmentPage";
+import CreateAndScheduleAppointmentPage from "./pages/examination/dermatologist/CreateAndScheduleAppointmentPage";
 import PatientsRedirectComplaints from "./pages/complaints/PatientsRedirectComplaints";
 import CalendarPage from "./pages/examination/CalendarPage";
 import PharmacistPage from "./pages/pharmacist/PharmacistsPage";
@@ -43,6 +43,7 @@ import Subscription from "./pages/subscription/Subscription";
 import QRreader from "./pages/QRcode/QRreader";
 import QRpharmacies from "./pages/QRcode/QRpharmacies";
 import AbsencePage from "./pages/examination/AbsencePage";
+import NewAppointmentPage from "./pages/examination/pharmacist/NewAppointmentPage"
 
 function App() {
 	return (
@@ -96,8 +97,6 @@ function App() {
 
 				<Route path="/pharmacy/:id" children={<PharmacyProfilePage />} />
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
-				<Route path="/schedule-appointment/:id" children={<ScheduleAppointmentPage />} />
-
 
 				<Link exact to="/calendar" path="/calendar" component={CalendarPage} />
 
@@ -106,6 +105,7 @@ function App() {
 				<Link exact to="/drugs-in-pharmacy" path="/drugs-in-pharmacy" component={DrugPageForPharmacyAdmin} />
 				<Route path="/treatment-report/:id" children={<TreatmentReportPage />} />
 				<Link exact to="/absence" path="/absence" component={AbsencePage} />
+				<Route path="/new-appointment/:id" children={<NewAppointmentPage />} />
 
 			</Switch>
 		</Router>

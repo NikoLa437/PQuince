@@ -171,8 +171,6 @@ class Appointments extends Component {
 					/>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Create Appointment</h5>
 
-					<p className="mb-0 mt-2 text-uppercase">Click on appointment to make reservation</p>
-
 					<div className="form-group">
 						<div className="form-group controls mb-0 pb-2">
 							<div className="form-row mt-3">
@@ -214,6 +212,14 @@ class Appointments extends Component {
 							</div>
 						</div>
 					</div>
+
+					<p hidden={this.state.appointments.length === 0} className="mb-4 mt-4 text-uppercase">
+						Click on appointment to make reservation
+					</p>
+
+					<h5 hidden={this.state.appointments.length !== 0} className=" text-center mb-0 mt-5 text-uppercase text-danger">
+						Sorry, we couldn't free appointment in desired pharmacy.
+					</h5>
 
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
