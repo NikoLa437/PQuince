@@ -62,7 +62,7 @@ class RegisterDrug extends Component {
 			.then((res) => {
 				this.setState({ 
 					drugKinds: res.data ,
-					drugKind: res.data[0]
+					drugKind: res.data[0].EntityDTO.type
 				});
                 console.log(res.data);
             
@@ -75,7 +75,7 @@ class RegisterDrug extends Component {
 			.then((res) => {
 				this.setState({ 
 					drugFormats: res.data,
-					drugFormat: res.data[0]
+					drugFormat: res.data[0].EntityDTO.type
 				});
             
 			})
@@ -303,7 +303,7 @@ class RegisterDrug extends Component {
 					drug_id: res.data,
 					manufacturer_id: this.state.manufacturer.Id,
 				}
-				
+				console.log(drugManufacturerDTO)
 				Axios.put(BASE_URL + "/api/drug/manufacturer", drugManufacturerDTO,  { headers: { Authorization: getAuthHeader()}})
 						.then((res) => {
 							console.log("Success");					
@@ -579,7 +579,7 @@ class RegisterDrug extends Component {
 										/>
 									</div>
 									<div className="text-danger" style={{ display: this.state.nameError }}>
-										Quantity must be entered.
+										Loyalty points must be entered.
 									</div>
 								</div>
 								<div className="form-group">

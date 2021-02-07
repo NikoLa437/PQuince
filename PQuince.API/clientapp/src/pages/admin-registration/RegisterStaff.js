@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
+import getAuthHeader from "../../GetHeader";
 import Axios from "axios";
 import { withRouter } from "react-router";
 import ModalDialog from "../../components/ModalDialog";
@@ -173,7 +174,7 @@ class RegisterStaff extends Component {
 			
 					if(this.state.selectValue == "dermathologist"){
 							
-						Axios.post(BASE_URL + "/auth/signup-dermathologist", userDTO)
+						Axios.post(BASE_URL + "/auth/signup-dermathologist", userDTO, { headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
 								console.log("Success");
 								this.setState({ openModal: true });
@@ -185,7 +186,7 @@ class RegisterStaff extends Component {
 					if(this.state.selectValue == "pharmacyadmin"){
 						console.log("USOOO");
 						console.log(this.state.selectedPharmacy.Id);
-						Axios.post(BASE_URL + "/auth/signup-pharmacyadmin/" + this.state.selectedPharmacy.Id, userDTO)
+						Axios.post(BASE_URL + "/auth/signup-pharmacyadmin/" + this.state.selectedPharmacy.Id, userDTO, { headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
 								console.log("Success");
 								this.setState({ openModal: true });
@@ -197,7 +198,7 @@ class RegisterStaff extends Component {
 					}
 					if(this.state.selectValue == "sysadmin"){
 							
-						Axios.post(BASE_URL + "/auth/signup-sysadmin", userDTO)
+						Axios.post(BASE_URL + "/auth/signup-sysadmin", userDTO, { headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
 								console.log("Success");
 								this.setState({ openModal: true });
@@ -208,7 +209,7 @@ class RegisterStaff extends Component {
 					}
 					if(this.state.selectValue == "supplier"){
 							
-						Axios.post(BASE_URL + "/auth/signup-supplier", userDTO)
+						Axios.post(BASE_URL + "/auth/signup-supplier", userDTO, { headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
 								console.log("Success");
 								this.setState({ openModal: true });

@@ -64,6 +64,7 @@ class PharmacyProfilePage extends Component {
 	handleCloseAlertFail = () => {
 		this.setState({ hiddenFailAlert: true });
 	};
+	
 
 	componentDidMount() {
 		const id = this.props.match.params.id;
@@ -368,19 +369,28 @@ class PharmacyProfilePage extends Component {
 			pharmacyId: this.state.pharmacyId,
 			date: new Date(),
 			text: this.state.complaint,
-		};
-		Axios.post(BASE_URL + "/api/pharmacy/complaint-pharmacy", entityDTO, { headers: { Authorization: getAuthHeader() } })
+		};	
+					
+		Axios.post(BASE_URL + "/api/pharmacy/complaint-pharmacy", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
-				Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=" + this.state.pharmacyId)
-					.then((response) => {
-						this.setState({
-							grade: response.data.EntityDTO.grade,
-							showComplaintModal: false,
+				if (resp.status === 405) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Pharmacy complaint not allowed." });
+				} else if (resp.status === 500) {
+					this.setState({ hiddenFailAlert: false, failHeader: "Internal server error", failMessage: "Server error." });
+				} else if (resp.status === 201) {
+					this.setState({ hiddenSuccessAlert: false, successHeader: "Success", successMessage: "Complaint successfully saved." });
+					Axios.get(BASE_URL + "/api/pharmacy/get-pharmacy-profile?pharmacyId=" + this.state.pharmacyId)
+						.then((response) => {
+							this.setState({
+								grade: response.data.EntityDTO.grade,
+								showComplaintModal: false,
+							});
+						})
+						.catch((err) => {
+							console.log(err);
 						});
-					})
-					.catch((err) => {
-						console.log(err);
-					});
+				}
+				this.setState({ showComplaintModal: false });
 			})
 			.catch((err) => {
 				console.log(err);
