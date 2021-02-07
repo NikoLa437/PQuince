@@ -19,6 +19,7 @@ import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Absence;
 import quince_it.pquince.entities.users.DateRange;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
@@ -28,6 +29,7 @@ import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
+import quince_it.pquince.repository.users.AbsenceRepository;
 import quince_it.pquince.repository.users.DermatologistRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.PharmacistRepository;
@@ -89,6 +91,9 @@ public class AppointmentService implements IAppointmentService{
 	
 	@Autowired
 	private ILoyaltyProgramService loyalityProgramService;
+	
+	@Autowired
+	private AbsenceRepository absenceRepository;
 	
 	@Override
 	public UUID create(DermatologistAppointmentDTO entityDTO) {
@@ -484,12 +489,12 @@ public class AppointmentService implements IAppointmentService{
 		List<WorkTime> workTimeInRange = workTimeRepository.findWorkTimesByDesiredConsultationTime(new Date(endDate), hours, startDateTime.getHours());
 		
 		List<Appointment> overlappingAppointmentsWithRange = appointmentRepository.findAllConsultationsByAppointmentTime(startDateTime, endDateTime);
-		List<Pharmacy> distinctPharmacies = findDistinctPharmaciesInRange(workTimeInRange, overlappingAppointmentsWithRange);
+		List<Pharmacy> distinctPharmacies = findDistinctPharmaciesInRange(workTimeInRange, overlappingAppointmentsWithRange, startDateTime);
 
 		return distinctPharmacies;
 	}
 
-	private List<Pharmacy> findDistinctPharmaciesInRange(List<WorkTime> workTimeInRange,List<Appointment> overlappingAppointmentsWithRange) {
+	private List<Pharmacy> findDistinctPharmaciesInRange(List<WorkTime> workTimeInRange,List<Appointment> overlappingAppointmentsWithRange, Date startDateTime) {
 		List<Pharmacy> pharmacies = new ArrayList<Pharmacy>();
 		
 		for(WorkTime workTime : workTimeInRange) {
@@ -501,7 +506,7 @@ public class AppointmentService implements IAppointmentService{
 				}
 			}
 			
-			if(!busy) pharmacies.add(workTime.getPharmacy());
+			if(!busy &&  absenceRepository.findAbsenceByStaffIdAndDate(workTime.getStaff().getId(), startDateTime).size() == 0) pharmacies.add(workTime.getPharmacy());
 		}
 		
 		List<Pharmacy> returnPharmacies = getDistinctPharmacies(pharmacies);
@@ -545,12 +550,12 @@ public class AppointmentService implements IAppointmentService{
 		List<WorkTime> workTimeInRange = workTimeRepository.findWorkTimesByDesiredConsultationTimeAndPharmacyId(new Date(endDate), hours ,pharmacyId, startDateTime.getHours());
 		
 		List<Appointment> overlappingAppointmentsWithRange = appointmentRepository.findAllConsultationsByAppointmentTimeAndPharmacy(startDateTime, endDateTime, pharmacyId);
-		List<Staff> distinctStaff = findDistinctPharmacistInRange(workTimeInRange, overlappingAppointmentsWithRange);
+		List<Staff> distinctStaff = findDistinctPharmacistInRange(workTimeInRange, overlappingAppointmentsWithRange, startDateTime);
 		
 		return distinctStaff;
 	}
 
-	private List<Staff> findDistinctPharmacistInRange(List<WorkTime> workTimeInRange, List<Appointment> overlappingAppointmentsWithRange) {
+	private List<Staff> findDistinctPharmacistInRange(List<WorkTime> workTimeInRange, List<Appointment> overlappingAppointmentsWithRange, Date startDateTime) {
 		List<Staff> pharmacists = new ArrayList<Staff>();
 		
 		for(WorkTime workTime : workTimeInRange) {
@@ -562,7 +567,7 @@ public class AppointmentService implements IAppointmentService{
 				}
 			}
 			
-			if(!busy) pharmacists.add(workTime.getStaff());
+			if(!busy && absenceRepository.findAbsenceByStaffIdAndDate(workTime.getStaff().getId(), startDateTime).size() == 0) pharmacists.add(workTime.getStaff());
 		}
 		
 		List<Staff> returnPharmacists = getDistinctPharmacists(pharmacists);
@@ -667,11 +672,19 @@ public class AppointmentService implements IAppointmentService{
 		
 		if(overlappingAppointment.size() > 0) throw new AppointmentNotScheduledException("Invalid appointment time");
 		
-		WorkTime pharmacistWorkTime = workTimeRepository.findWorkTimeByDesiredConsultationTimeAndPharmacistId(
-						new Date(endDateTime.getYear(), endDateTime.getMonth(), endDateTime.getDate(),0,0,0),
-						endDateTime.getMinutes() == 0 ? endDateTime.getHours() : endDateTime.getHours() + 1, requestDTO.getPharmacistId());
+		
+		int hours = endDateTime.getMinutes() == 0 ? endDateTime.getHours() : endDateTime.getHours() + 1;
+		long endDate = new Date(endDateTime.getYear(), endDateTime.getMonth(), endDateTime.getDate(),0,0,0).getTime();
+		
+		if(hours > 23) {
+			endDate += 24*60*60000;
+			hours = 0;
+		}
+		WorkTime pharmacistWorkTime = workTimeRepository.findWorkTimeByDesiredConsultationTimeAndPharmacistId(new Date(endDate), hours, requestDTO.getPharmacistId());
 		
 		if(pharmacistWorkTime == null) throw new AppointmentNotScheduledException("Invalid appointment time");
+		
+		if(absenceRepository.findAbsenceByStaffIdAndDate(requestDTO.getPharmacistId(), endDateTime).size() > 0) throw new AppointmentNotScheduledException("Pharmacist not available");
 	}
 
 	@Override

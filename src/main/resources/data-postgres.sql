@@ -190,3 +190,6 @@ insert into drug_feedback (date, grade, drug_id, patient_id) values ('2020-03-03
 
 insert into pharmacy_admin (id,pharmacy_id) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788','cafeddee-56cb-11eb-ae93-0242ac130002');
 
+insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason) values ('eaa44ad0-6940-11eb-9439-0242ac130002', '25345278-52d3-11eb-ae93-0242ac130002', 'ACCEPTED','2021-02-17','2021-02-23', '');
+insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason) values ('eba44ad0-6940-11eb-9439-0242ac130002', '25345278-52d3-13eb-ae93-0242ac130002', 'ACCEPTED','2021-02-18','2021-02-23', '');
+
