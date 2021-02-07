@@ -171,6 +171,7 @@ public class DrugInstanceService implements IDrugInstanceService{
 			int countDrug = drugStorageService.getDrugCountForDrugAndPharmacy(drugId, pharmacy.Id);
 			if(countDrug > 0) {
 				pharmacy.setPriceWithDiscount(loyalityProgramService.getDiscountDrugPriceForPatient(pharmacy.getPrice(), user.getId()));
+				//TODO : change price based on actions and benefits
 				pharmacy.setCount(countDrug);
 				retVal.add(pharmacy);
 			}

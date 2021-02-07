@@ -221,6 +221,8 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
 		int discountPercentage = loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION, userService.getLoggedUserId());
+		//TODO : discount based on actions and benefits
+		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, discountPercentage);
 		
 		return returnAppointments;
@@ -238,6 +240,9 @@ public class AppointmentService implements IAppointmentService{
 		
 		appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 		appointment.setPatient(patient);
+		
+		//TODO: change price depending on actions and benefits
+		
 		appointment.setPriceToPay(loyalityProgramService.getDiscountAppointmentPriceForPatient(appointment.getPrice(), AppointmentType.EXAMINATION, userService.getLoggedUserId()));
 		
 		appointmentRepository.save(appointment);
@@ -268,6 +273,9 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
 		int discountPercentage = loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION, userService.getLoggedUserId());
+		//TODO : discount based on actions and benefits
+
+		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, discountPercentage);
 		
 		return returnAppointments;
@@ -281,6 +289,9 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
 		int discountPercentage = loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION, userService.getLoggedUserId());
+		//TODO : discount based on actions and benefits
+
+		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, discountPercentage);
 		
 		return returnAppointments;
@@ -660,7 +671,7 @@ public class AppointmentService implements IAppointmentService{
 		Pharmacy pharmacy = pharmacistRepository.findPharmacyByPharmacistId(requestDTO.getPharmacistId());
 		Patient patient = patientRepository.findById(patientId).get();
 		double discountPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, userService.getLoggedUserId());
-		
+		// TODO : change price depending on actions and benefits
 		return new Appointment(pharmacy, staff, patient, requestDTO.getStartDateTime(), endDateTime, discountPrice, AppointmentType.CONSULTATION, AppointmentStatus.SCHEDULED);
 	}
 

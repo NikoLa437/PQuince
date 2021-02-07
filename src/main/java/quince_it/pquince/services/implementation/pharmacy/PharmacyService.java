@@ -169,6 +169,7 @@ public class PharmacyService implements IPharmacyService {
 		
 		double avgGrade = getAvgGradeForPharmacy(pharmacy.getId());
 		double getDiscountConsultationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, patientId);
+		// TODO : add discount price based on actions and benefits
 		
 		return new IdentifiableDTO<PharmacyGradePriceDTO>(pharmacy.getId(), new PharmacyGradePriceDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade, pharmacy.getConsultationPrice(), getDiscountConsultationPrice));
 	}
