@@ -106,16 +106,29 @@ class DrugsPage extends Component {
 	};
 
 	handleResetSearch = () => {
-		Axios.get(BASE_URL + "/api/drug/boze")
+	
+		Axios.get(BASE_URL + "/api/drug/grade")
+
 			.then((res) => {
 				this.setState({
-					drugs: res.data,
+					 drugs: res.data ,
 					formShowed: false,
 					showingSearched: false,
 					searchName: "",
 					searchGradeFrom: "",
 					searchGradeTo: "",
 					drugKind: "",
+				 
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+
+		Axios.get(BASE_URL + "/api/drug/drugkind")
+			.then((res) => {
+				this.setState({
+					drugKinds: res.data,
 				});
 				console.log(res.data);
 			})
