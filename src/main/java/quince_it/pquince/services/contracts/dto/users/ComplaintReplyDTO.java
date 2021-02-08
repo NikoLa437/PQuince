@@ -10,6 +10,13 @@ public class ComplaintReplyDTO {
 	
 	String email;
 
+	public ComplaintReplyDTO() {}
+	
+	public ComplaintReplyDTO(UUID id, String reply) {
+		this.id = id;
+		this.reply = reply;
+	}
+	
 	public UUID getId() {
 		return id;
 	}
