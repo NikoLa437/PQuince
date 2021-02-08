@@ -48,7 +48,7 @@ public class Patient extends User {
 	}
 
 	public Patient(UUID id, String email, String password, String name, String surname, Address address,
-			String phoneNumber, boolean active, int penalty, List<Allergen> allergens,int points,LoyalityCategory loyalityCategory) {
+			String phoneNumber, boolean active, int penalty, List<Allergen> allergens,int points) {
 		super(id, email, password, name, surname, address, phoneNumber, active);
 
 		this.penalty = penalty;
