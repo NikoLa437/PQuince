@@ -121,4 +121,6 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 			+ " AND a.appointmentStatus = 'SCHEDULED' AND a.staff.id = ?3")
 	List<IdentifiableDTO<DermatologistAppointmentDTO>> findAllAppointmentsByAppointmentTimeAndStaff(Date startDateTime, Date endDateTime, UUID id);
 	
+	@Query(value = "SELECT a FROM Appointment a WHERE a.endDateTime < CURRENT_TIMESTAMP AND a.appointmentStatus = 'SCHEDULED'")
+	List<Appointment> findExpiredAppointments();
 }

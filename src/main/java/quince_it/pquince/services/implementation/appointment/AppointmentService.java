@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.drugs.DrugReservation;
+import quince_it.pquince.entities.drugs.ReservationStatus;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.DateRange;
 import quince_it.pquince.entities.users.Dermatologist;
@@ -811,6 +813,23 @@ public class AppointmentService implements IAppointmentService{
 		patient.setPenalty(patient.getPenalty() + 1); 
 		patientRepository.save(patient);
 		appointmentRepository.save(appointment);
+	}
+
+	@Override
+	public void givePenaltyForExpiredAppointment() {
+		List<Appointment> expiredAppointments = appointmentRepository.findExpiredAppointments();
+		for (Appointment appointment : expiredAppointments) {
+			try {
+				Patient patient = patientRepository.findById(appointment.getPatient().getId()).get();
+				patient.addPenalty(1);
+				patientRepository.save(patient);
+				appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
+				appointmentRepository.save(appointment);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 }

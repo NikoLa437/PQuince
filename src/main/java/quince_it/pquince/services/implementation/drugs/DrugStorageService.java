@@ -22,6 +22,7 @@ import quince_it.pquince.repository.drugs.DrugReservationRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PharmacistRepository;
+import quince_it.pquince.repository.users.PharmacyAdminRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.services.contracts.dto.drugs.AddDrugToPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
@@ -58,6 +59,9 @@ public class DrugStorageService implements IDrugStorageService {
 	
 	@Autowired
 	private PharmacyRepository pharmacyRepository;
+	
+	@Autowired
+	private PharmacyAdminRepository pharmacyAdminRepository;
 	
 	@Override
 	public List<IdentifiableDTO<DrugStorageDTO>> findAll() {
@@ -199,9 +203,7 @@ public class DrugStorageService implements IDrugStorageService {
 		DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacy.getId());
 		if(drugStorage == null)
 			throw new EntityNotFoundException();
-			
 		if(drugStorage.getCount() < amount)
-			
 			throw new DrugStorageCountException("Amount exceeds drug storage count");
 	}
 
