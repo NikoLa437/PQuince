@@ -13,15 +13,18 @@ public class EReceiptForDrugDTO {
 	private String pharmacyName;
 	
 	private int drugAmount;
+	
+	private double price;
 
 	public EReceiptForDrugDTO() {}
 
-	public EReceiptForDrugDTO(EReceiptStatus status, Date creationDate, String pharmacyName, int drugAmount) {
+	public EReceiptForDrugDTO(EReceiptStatus status, Date creationDate, String pharmacyName, int drugAmount, double price) {
 		super();
 		this.status = status;
 		this.creationDate = creationDate;
 		this.pharmacyName = pharmacyName;
 		this.drugAmount = drugAmount;
+		this.price = price;
 	}
 
 	public EReceiptStatus getStatus() {
@@ -54,6 +57,14 @@ public class EReceiptForDrugDTO {
 
 	public void setDrugAmount(int drugAmount) {
 		this.drugAmount = drugAmount;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
 	}
 	
 	

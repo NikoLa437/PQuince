@@ -21,7 +21,7 @@ class EReceiptsForDrugModal extends Component {
 							{this.props.ereceipts.map((ereceipt) => (
 								<tr id={ereceipt.Id} key={ereceipt.Id}>
 									<td width="130em">
-										<img className="img-fluid" src={receiptLogo} width="90em" />
+										<img className="img-fluid" src={receiptLogo} width="100em" />
 									</td>
 									<td>
 										<div>
@@ -40,6 +40,9 @@ class EReceiptsForDrugModal extends Component {
 										</div>
 										<div>
 											<b>Amount:</b> {ereceipt.EntityDTO.drugAmount}
+										</div>
+										<div>
+											<b>Price: </b> {(Math.round(ereceipt.EntityDTO.price * 100) / 100).toFixed(2)} <b>din</b>
 										</div>
 									</td>
 								</tr>

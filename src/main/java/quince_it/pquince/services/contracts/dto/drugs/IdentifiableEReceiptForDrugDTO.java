@@ -12,8 +12,8 @@ public class IdentifiableEReceiptForDrugDTO extends IdentifiableDTO<EReceiptForD
 		super();
 	}
 
-	public IdentifiableEReceiptForDrugDTO(UUID id, EReceiptStatus status, Date creationDate, String pharmacyName, int drugAmount) {
-		super(id, new EReceiptForDrugDTO(status, creationDate, pharmacyName, drugAmount));
+	public IdentifiableEReceiptForDrugDTO(UUID id, EReceiptStatus status, Date creationDate, String pharmacyName, int drugAmount, double price) {
+		super(id, new EReceiptForDrugDTO(status, creationDate, pharmacyName, drugAmount, price));
 	}
 
 }

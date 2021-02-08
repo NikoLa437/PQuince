@@ -19,7 +19,7 @@ public class EReceiptMapper {
 		
 		return new IdentifiableDTO<EReceiptWithDrugsDTO>(eReceipt.getId(), new EReceiptWithDrugsDTO(eReceipt.getStatus(),
 																									eReceipt.getCreationDate(),
-																									MapEReceiptItemsToDrugEReceiptDTOList(eReceiptItems)));
+																									MapEReceiptItemsToDrugEReceiptDTOList(eReceiptItems), eReceipt.getPrice()));
 	}
 	
 	public static List<IdentifiableDTO<DrugEReceiptDTO>> MapEReceiptItemsToDrugEReceiptDTOList(List<EReceiptItems> eReceiptItems){
