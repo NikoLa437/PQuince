@@ -17,6 +17,8 @@ import quince_it.pquince.entities.drugs.FormatDrug;
 import quince_it.pquince.entities.drugs.Ingredient;
 import quince_it.pquince.entities.drugs.Manufacturer;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
+import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.drugs.DrugFeedbackRepository;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
@@ -25,6 +27,7 @@ import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.drugs.IngredientRepository;
 import quince_it.pquince.repository.drugs.ManufacturerRepository;
 import quince_it.pquince.repository.users.PatientRepository;
+import quince_it.pquince.repository.pharmacy.ActionAndPromotionsRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
@@ -73,6 +76,9 @@ public class DrugInstanceService implements IDrugInstanceService{
 	
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private ActionAndPromotionsRepository actionAndPromotionsRepository;
 	
 	@Override
 	public List<IdentifiableDTO<DrugInstanceDTO>> findAll() {
@@ -187,7 +193,16 @@ public class DrugInstanceService implements IDrugInstanceService{
 		for (IdentifiablePharmacyDrugPriceAmountDTO pharmacy : drugPriceForPharmacyRepository.findByDrugId(drugId)) {
 			int countDrug = drugStorageService.getDrugCountForDrugAndPharmacy(drugId, pharmacy.Id);
 			if(countDrug > 0) {
-				pharmacy.setPriceWithDiscount(loyalityProgramService.getDiscountDrugPriceForPatient(pharmacy.getPrice(), user.getId()));
+				double drugPrice = loyalityProgramService.getDiscountDrugPriceForPatient(pharmacy.getPrice(), user.getId());
+				System.out.println("ID " + pharmacy.Id + "\n\n\n");
+				ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacy.Id, ActionAndPromotionType.DRUGDISCOUNT);
+
+				if(action != null) {
+					System.out.println("USAO U SERVIS ");
+					drugPrice -= (action.getPercentOfDiscount()/ 100.0) * pharmacy.getPrice();
+				}
+				pharmacy.setPriceWithDiscount(drugPrice);
+				//TODO : DONE change price based on actions and benefits
 				pharmacy.setCount(countDrug);
 				retVal.add(pharmacy);
 			}

@@ -21,6 +21,8 @@ import quince_it.pquince.entities.drugs.DrugStorage;
 import quince_it.pquince.entities.drugs.EReceipt;
 import quince_it.pquince.entities.drugs.EReceiptItems;
 import quince_it.pquince.entities.drugs.EReceiptStatus;
+import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
+import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
@@ -28,10 +30,12 @@ import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.drugs.EReceiptItemsRepository;
 import quince_it.pquince.repository.drugs.EReceiptRepository;
+import quince_it.pquince.repository.pharmacy.ActionAndPromotionsRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.ActionAndPromotionsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
@@ -40,7 +44,6 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
-import quince_it.pquince.services.contracts.interfaces.drugs.IEReceiptService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
@@ -91,6 +94,9 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Autowired
 	private DrugPriceForPharmacyRepository drugPriceForPharmacyRepository;
+	
+	@Autowired
+	private ActionAndPromotionsRepository actionAndPromotionsRepository;
 	
 	@Override
 	public List<IdentifiableDTO<PharmacyDTO>> findAll() {
@@ -169,6 +175,14 @@ public class PharmacyService implements IPharmacyService {
 		
 		double avgGrade = getAvgGradeForPharmacy(pharmacy.getId());
 		double getDiscountConsultationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, patientId);
+		
+		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacy.getId(), ActionAndPromotionType.CONSULTATIONDISCOUNT);
+		
+		if(action != null) {
+			getDiscountConsultationPrice -= (action.getPercentOfDiscount()/ 100.0) * pharmacy.getConsultationPrice();
+		}
+	
+		// TODO : DONE add discount price based on actions and benefits
 		
 		return new IdentifiableDTO<PharmacyGradePriceDTO>(pharmacy.getId(), new PharmacyGradePriceDTO(pharmacy.getName(), pharmacy.getAddress(), pharmacy.getDescription(),avgGrade, pharmacy.getConsultationPrice(), getDiscountConsultationPrice));
 	}
@@ -468,6 +482,4 @@ public class PharmacyService implements IPharmacyService {
 		
 		return null;
 	}
-
-	
 }

@@ -135,9 +135,9 @@ public class DrugController {
 		}
 	}
 
-	@PutMapping() 
+	@PutMapping
 	@CrossOrigin
-	@PreAuthorize("hasRole('PATIENT')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<UUID> addDrugInstance(@RequestBody DrugInstanceDTO drugInstanceDTO) {
 		
 		UUID drugInstanceId = drugInstanceService.create(drugInstanceDTO);
@@ -169,7 +169,7 @@ public class DrugController {
 	
 	@PutMapping("/manufacturer") 
 	@CrossOrigin
-	@PreAuthorize("hasRole('PATIENT')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<UUID> addDrugManufacturer(@RequestBody DrugManufacturerDTO drugManufacturerDTO) {
 		
 		UUID drugInstanceId = drugInstanceService.addDrugManufacturer(drugManufacturerDTO.getDrug_id(), drugManufacturerDTO.getManufacturer_id());

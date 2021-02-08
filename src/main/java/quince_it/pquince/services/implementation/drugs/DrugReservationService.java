@@ -171,11 +171,15 @@ public class DrugReservationService implements IDrugReservationService{
 			
 			try {
 				Patient patient = patientRepository.findById(drugReservation.getPatient().getId()).get();
+				
+				drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
+				
 				patient.addPenalty(1);
 				patientRepository.save(patient);
 				
 				drugReservation.setReservationStatus(ReservationStatus.EXPIRED);
 				drugReservationRepository.save(drugReservation);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -106,16 +106,29 @@ class DrugsPage extends Component {
 	};
 
 	handleResetSearch = () => {
-		Axios.get(BASE_URL + "/api/drug/boze")
+	
+		Axios.get(BASE_URL + "/api/drug/grade")
+
 			.then((res) => {
 				this.setState({
-					drugs: res.data,
+					 drugs: res.data ,
 					formShowed: false,
 					showingSearched: false,
 					searchName: "",
 					searchGradeFrom: "",
 					searchGradeTo: "",
 					drugKind: "",
+				 
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+
+		Axios.get(BASE_URL + "/api/drug/drugkind")
+			.then((res) => {
+				this.setState({
+					drugKinds: res.data,
 				});
 				console.log(res.data);
 			})
@@ -131,7 +144,6 @@ class DrugsPage extends Component {
 			let name = this.state.searchName;
 			let drugKind = this.state.drugKind;
 
-			console.log("HIHIH", drugKind);
 
 			if (gradeFrom === "") gradeFrom = -1;
 			if (gradeTo === "") gradeTo = -1;
@@ -152,7 +164,6 @@ class DrugsPage extends Component {
 						formShowed: false,
 						showingSearched: true,
 					});
-					console.log(res.data, "HAHAHAH");
 				})
 				.catch((err) => {
 					console.log(err);

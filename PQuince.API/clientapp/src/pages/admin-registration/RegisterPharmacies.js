@@ -4,6 +4,7 @@ import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import { withRouter } from "react-router";
+import getAuthHeader from "../../GetHeader";
 import ModalDialog from "../../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
 
@@ -111,7 +112,7 @@ class RegisterPharmacies extends Component {
 				console.log(pharmacyDTO);
 				if (this.validateForm(pharmacyDTO)) {
 				
-					Axios.post(BASE_URL + "/api/pharmacy", pharmacyDTO)
+					Axios.post(BASE_URL + "/api/pharmacy", pharmacyDTO, { headers: { Authorization: getAuthHeader()}})
 						.then((res) => {
 							console.log("Success");
 							this.setState({ openModal: true });

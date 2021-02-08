@@ -31,6 +31,7 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
+import quince_it.pquince.services.contracts.exceptions.ComplaintsNotAllowedException;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
@@ -100,9 +101,8 @@ public class PharmacyController {
 		}
 	}
 
-	@CrossOrigin
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')") 
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<UUID> addPharmacy(@RequestBody PharmacyDTO pharmacyDTO) {
 		
 		return new ResponseEntity<>(pharmacyService.create(pharmacyDTO) ,HttpStatus.CREATED);
@@ -242,11 +242,18 @@ public class PharmacyController {
 	}
 	
 	@PostMapping("/complaint-pharmacy")
-	public ResponseEntity<?> createFeedback(@RequestBody ComplaintPharmacyDTO complaintPharmacyDTO) {
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> createComplaint(@RequestBody ComplaintPharmacyDTO complaintPharmacyDTO) {
 		
-		pharmacyComplaintService.create(complaintPharmacyDTO);
+		try {
+			pharmacyComplaintService.create(complaintPharmacyDTO);
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		} catch (ComplaintsNotAllowedException e) {
+			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
-		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/feedback")
@@ -393,8 +400,21 @@ public class PharmacyController {
 	public ResponseEntity<?> createActionAndPromotions(@RequestBody ActionAndPromotionsDTO actionAndPromotions) {
 		try {
 
-			actionAndPromotionService.create(actionAndPromotions);
-			return new ResponseEntity<>(HttpStatus.CREATED);
+			if(actionAndPromotionService.create(actionAndPromotions))
+				return new ResponseEntity<>(HttpStatus.CREATED);
+			else
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@CrossOrigin
+	@GetMapping("/find-action-and-promotion-by-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<IdentifiableDTO<ActionAndPromotionsDTO>>> findActionAndPromotionsByPharmacy() {
+		try {
+			return new ResponseEntity<>(actionAndPromotionService.findActionAndPromotionsInPharmacy(),HttpStatus.OK);
 		}catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

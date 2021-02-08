@@ -14,12 +14,15 @@ import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.drugs.DrugReservationRepository;
+import quince_it.pquince.repository.drugs.EReceiptRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyComplaintRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
 import quince_it.pquince.services.contracts.exceptions.ComplaintsNotAllowedException;
+import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
+import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 
 @Service
 public class PharmacyComplaintService implements IPharmacyComplaintService {
@@ -39,31 +42,32 @@ public class PharmacyComplaintService implements IPharmacyComplaintService {
 	@Autowired
 	private DrugReservationRepository drugReservationRepository;
 
+	@Autowired
+	private EReceiptRepository eReceiptRepository;
 
-
+	@Autowired
+	private IUserService userService;
+	
 	@Override
-	public void create(ComplaintPharmacyDTO entityDTO) {
-		//TODO : get logged patient
+	public void create(ComplaintPharmacyDTO entityDTO) throws  ComplaintsNotAllowedException{
 		
-		try {
-			Patient patient = patientRepository.findById(UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002")).get();
-			
-			if(!CanPatientGiveComplaint(patient.getId(), entityDTO.getPharmacyId())) throw new ComplaintsNotAllowedException();
-			
-			Pharmacy pharmacy = pharmacyRepository.findById(entityDTO.getPharmacyId()).get();
-			ComplaintPharmacy pharmacyComplaint = new ComplaintPharmacy(pharmacy, patient,  entityDTO.getText());
-			pharmacyComplaintRepository.save(pharmacyComplaint);
-			
-		} catch (Exception e) {
-		}
+		UUID patientId = userService.getLoggedUserId();
+		Patient patient = patientRepository.findById(patientId).get();		
+		
+		CanPatientGiveComplaint(patient.getId(), entityDTO.getPharmacyId());
+		
+		Pharmacy pharmacy = pharmacyRepository.findById(entityDTO.getPharmacyId()).get();
+		ComplaintPharmacy pharmacyComplaint = new ComplaintPharmacy(pharmacy, patient,  entityDTO.getText());
+		pharmacyComplaintRepository.save(pharmacyComplaint);
+		
 	}
 
-	private boolean CanPatientGiveComplaint(UUID patientId, UUID pharmacyId) {
-		// TODO : eReciept check, consultation check!
-		return appointmentRepository.findAllPreviousAppointmentsForPatientForPharmacy(patientId, pharmacyId, AppointmentType.CONSULTATION).size() > 0 ||
-			   appointmentRepository.findAllPreviousAppointmentsForPatientForPharmacy(patientId, pharmacyId, AppointmentType.EXAMINATION).size() > 0  ||
-			   drugReservationRepository.findProcessedDrugReservationsForPatient(patientId).size() > 0;
+	private void CanPatientGiveComplaint(UUID patientId, UUID pharmacyId) throws ComplaintsNotAllowedException {
+		if(!(appointmentRepository.findAllPreviousAppointmentsForPatientForPharmacy(patientId, pharmacyId, AppointmentType.CONSULTATION).size() > 0 ||
+				   appointmentRepository.findAllPreviousAppointmentsForPatientForPharmacy(patientId, pharmacyId, AppointmentType.EXAMINATION).size() > 0  ||
+				   drugReservationRepository.findProcessedDrugReservationsForPatientForPharmacy(patientId, pharmacyId).size() > 0 || 
+				   eReceiptRepository.findAllByPatienIdAndPharmacy(patientId, pharmacyId).size() > 0))
+				throw new ComplaintsNotAllowedException();
 	}
-
 
 }

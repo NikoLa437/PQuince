@@ -46,6 +46,7 @@ import QRpharmacies from "./pages/QRcode/QRpharmacies";
 import AbsencePage from "./pages/examination/AbsencePage";
 import NewAppointmentPage from "./pages/examination/pharmacist/NewAppointmentPage"
 import ReservedDrugPage from "./pages/examination/pharmacist/ReservedDrugPage"
+import Offers from "./pages/offers/Offers"
 import ActionAndPromotionsPage from "./pages/action-and-promotions/ActionAndPromotionsPage";
 
 
@@ -75,6 +76,7 @@ function App() {
 				<Link exact to="/dermatologists" path="/dermatologists" component={DermatologistsPage} />
 				<Link exact to="/dermatologists-for-patient" path="/dermatologists-for-patient" component={DermatologistsPageForPatient} />
 				<Link exact to="/patients" path="/patients" component={PatientsPage} />
+				<Link exact to="/offers" path="/offers" component={Offers} />
 
 				<Link exact to="/schedule-consultation" path="/schedule-consultation" component={ConsultationTimeSelectPage} />
 				<Link exact to="/loyalty-program" path="/loyalty-program" component={LoyaltyProgram} />
