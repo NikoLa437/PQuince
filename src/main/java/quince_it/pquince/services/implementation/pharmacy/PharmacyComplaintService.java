@@ -57,7 +57,7 @@ public class PharmacyComplaintService implements IPharmacyComplaintService {
 		CanPatientGiveComplaint(patient.getId(), entityDTO.getPharmacyId());
 		
 		Pharmacy pharmacy = pharmacyRepository.findById(entityDTO.getPharmacyId()).get();
-		ComplaintPharmacy pharmacyComplaint = new ComplaintPharmacy(pharmacy, patient,  entityDTO.getText());
+		ComplaintPharmacy pharmacyComplaint = new ComplaintPharmacy(pharmacy, patient,  entityDTO.getText(), pharmacy.getName());
 		pharmacyComplaintRepository.save(pharmacyComplaint);
 		
 	}

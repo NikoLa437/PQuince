@@ -82,7 +82,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/{userId}")
-	@PreAuthorize("hasRole('PATIENT')") //Nadovezuje se sa 'or hasRole('...') or hasRole....'
+	@PreAuthorize("hasRole('PATIENT') or hasRole('SYSADMIN')") //Nadovezuje se sa 'or hasRole('...') or hasRole....'
 	public ResponseEntity<IdentifiableDTO<UserDTO>> getUserById(@PathVariable UUID userId) {
 		
 		try {

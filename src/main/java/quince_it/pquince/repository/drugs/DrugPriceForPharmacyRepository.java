@@ -14,7 +14,7 @@ public interface DrugPriceForPharmacyRepository extends JpaRepository<DrugPriceF
 
 	@Query(value = "SELECT new quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO"
 				 + "(d.pharmacy.id, d.pharmacy.name, d.pharmacy.address, d.pharmacy.description, d.price, 0, 0.0) "
-			 	 + "FROM DrugPriceForPharmacy d WHERE d.drugInstance.id = ?1 and d.dateFrom <= CURRENT_DATE and d.dateTo >= CURRENT_DATE")
+			 	 + "FROM DrugPriceForPharmacy d WHERE d.drugInstance.id = ?1 and DATE(d.dateFrom) <= CURRENT_DATE and DATE(d.dateTo) >= CURRENT_DATE")
 	List<IdentifiablePharmacyDrugPriceAmountDTO> findByDrugId(UUID id);
 	
 	@Query(value = "SELECT d.price FROM DrugPriceForPharmacy d WHERE d.drugInstance.id = ?1 AND d.pharmacy.id = ?2 "
@@ -28,5 +28,9 @@ public interface DrugPriceForPharmacyRepository extends JpaRepository<DrugPriceF
 	@Query(value = "SELECT d FROM DrugPriceForPharmacy d WHERE d.drugInstance.id = ?1 AND d.pharmacy.id = ?2 "
 			 + "AND DATE(d.dateFrom) < DATE(?4) AND DATE(?3) < DATE(d.dateTo)")
 	DrugPriceForPharmacy findDrugPriceForPharmacyByDateRange(UUID drugInstanceId, UUID pharmacyId, Date dateFrom, Date dateTo);
+	
+	@Query(value = "SELECT d FROM DrugPriceForPharmacy d WHERE d.drugInstance.id = ?1 AND d.pharmacy.id = ?2")
+	List<DrugPriceForPharmacy> findDrugPriceForPharmacyByPharmacyAndDugId(UUID drugInstanceId, UUID pharmacyId);
+
 	
 }

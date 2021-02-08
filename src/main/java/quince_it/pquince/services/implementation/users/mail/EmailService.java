@@ -20,6 +20,7 @@ import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.users.Patient;
+import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.User;
 
 @Service
@@ -196,6 +197,23 @@ public class EmailService {
 					"<p>"+ "End date"+ actionAndPromotion.getDateTo().toString() +"</p>"+
 					"<p>"+ "You have discount of " + actionAndPromotion.getPercentOfDiscount() +"</p>";
 		}
+	}
+
+	public void sendComplaintReplyPharmacyAsync(User patient, String reply) throws MessagingException {
+		System.out.println("Slanje emaila...");
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Dir " + patient.getName() + ",</p>" +
+					"<p>This is reply for your complaint: </p>" + 
+					reply +"<p>Feel free to write us anytime! </p>"
+					+ "<p>Kind Regards, PQuince</p>"; 
+		helper.setText(htmlMsg, true);
+		helper.setTo(patient.getEmail());
+		helper.setSubject("Complaint reply");
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
+		System.out.println("Email poslat!");
 	}
 
 	

@@ -12,6 +12,8 @@ import HeadingAlert from "../../components/HeadingAlert";
 import AddDrugToPharmacy from "../../components/AddDrugToPharmacy";
 import EditPriceForDrugInPharmacy from "../../components/EditPriceForDrugInPharmacy";
 import EditStorageAmountForDrug from "../../components/EditStorageAmountForDrug";
+import CreateOrdersModal from "../../components/CreateOrdersModal";
+
 
 class DrugPageForPharmacyAdmin extends Component {
 	state = {
@@ -19,6 +21,7 @@ class DrugPageForPharmacyAdmin extends Component {
         showAddDrugModal: false,
         showEditDrugPriceModal:false,
         showEditStorageAmountModal:false,
+        showCreateOrderModal:false,
         drugIdForEditAmount:'',
         drugIdForEditPrice:'',
         forStaff:'',
@@ -173,6 +176,18 @@ class DrugPageForPharmacyAdmin extends Component {
 		});
     }
 
+    handleCreateOrderClick=() => {
+        this.setState({
+            showCreateOrderModal:true
+        })
+    }
+
+    showCreateOrderModal = () =>{
+        this.setState({
+            showCreateOrderModal:true
+        })
+    }
+
     handleModalClose = () => {
         this.setState({showWorkTimesModal: false});
     }
@@ -252,6 +267,12 @@ class DrugPageForPharmacyAdmin extends Component {
 		});
         
     };
+
+    handleCreateOrderModalClose = () =>{
+        this.setState({
+			showCreateOrderModal: false,
+		});
+    }
 
     onEditStorageClick = (id) =>{
         this.setState({
@@ -373,7 +394,7 @@ class DrugPageForPharmacyAdmin extends Component {
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddDrugClick}>
+                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleCreateOrderClick}>
                                         Create order
                                     </a>
                                 </li>
@@ -507,6 +528,13 @@ class DrugPageForPharmacyAdmin extends Component {
                             drugs={this.state.drugsToAdd}
                             updateDrugs={this.updateDrugs}
 					        header="Add drugs"
+				        />
+                        <CreateOrdersModal
+					        show={this.state.showCreateOrderModal}
+					        onCloseModal={this.handleCreateOrderModalClose}
+                            pharmacyId={this.state.pharmacyId}
+                            drugs={this.state.drugs}
+					        header="Create order"
 				        />
                         <EditPriceForDrugInPharmacy
                             show={this.state.showEditDrugPriceModal}

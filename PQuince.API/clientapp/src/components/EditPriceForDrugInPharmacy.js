@@ -13,8 +13,6 @@ class EditPriceForDrugInPharmacy extends Component {
     state = {
         newPrice:1, 
         selectedStartDate:new Date(),
-        selectedEndDate:new Date(),
-        hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
 		hiddenFailAlert: true,
@@ -28,18 +26,10 @@ class EditPriceForDrugInPharmacy extends Component {
         this.setState({
             selectedStartDate:date,
         });
-
-        if(date>this.state.selectedEndDate){
-            this.setState({
-                selectedEndDate:date,
-            }); 
-        }
     }
 
 
-    handleEndDateChange = (date) => {
-        this.setState({selectedEndDate:date});
-    }
+
 
     handleNewPriceChange= (event) => {
         this.setState({newPrice:event.target.value});
@@ -50,7 +40,6 @@ class EditPriceForDrugInPharmacy extends Component {
             drugInstanceId: this.props.drug, 
             price:this.state.newPrice,
             startDate:this.state.selectedStartDate,
-            endDate:this.state.selectedEndDate,
         };
 
         if(this.validateDto(editPriceDTO)){
@@ -67,7 +56,6 @@ class EditPriceForDrugInPharmacy extends Component {
                         successMessage: "You successfully add new price for drug.",
                         newPrice:1, 
                         selectedStartDate:new Date(),
-                        selectedEndDate:new Date(),
                     })
                     this.props.updateDrugs();
                     this.props.onCloseModalSuccess();
@@ -161,14 +149,7 @@ class EditPriceForDrugInPharmacy extends Component {
                                                     <DatePicker className="form-control"  style={{width: "15em"}} minDate={new Date()} onChange={date => this.handleStartDateChange(date)} selected={this.state.selectedStartDate}/>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>
-                                                    <label>Date to:</label>
-                                                </td>
-                                                <td>
-                                                    <DatePicker  className="form-control" style={{width: "15em"}}  minDate={this.state.selectedStartDate} onChange={date => this.handleEndDateChange(date)} selected={this.state.selectedEndDate}/>
-                                                </td>
-                                            </tr>
+
                                             <tr>
                                                 <td>
                                                     <label>New price:</label>
