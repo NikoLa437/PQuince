@@ -140,6 +140,7 @@ public class UsersController {
 	}
 	
 	@PutMapping("/staff") 
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	@CrossOrigin
 	public ResponseEntity<?> updateStaffInformation(@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
 	  
