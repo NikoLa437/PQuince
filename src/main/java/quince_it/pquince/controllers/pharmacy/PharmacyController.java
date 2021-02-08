@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
-import quince_it.pquince.services.contracts.dto.drugs.EReceiptIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.ActionAndPromotionsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
@@ -35,13 +33,11 @@ import quince_it.pquince.services.contracts.exceptions.ComplaintsNotAllowedExcep
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
-import quince_it.pquince.services.contracts.interfaces.drugs.IEReceiptService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IActionAndPromotionsService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
-import quince_it.pquince.services.implementation.users.mail.EmailService;
 
 @RestController
 @RequestMapping(value = "api/pharmacy")
@@ -141,6 +137,18 @@ public class PharmacyController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@GetMapping("/get-pharmacy-with-price/{pharmacyId}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<IdentifiableDTO<PharmacyGradePriceDTO>> findPharmacyByPharmacyId(@PathVariable UUID pharmacyId){
+	
+		try {
+			return new ResponseEntity<>(pharmacyService.findPharmacyByPharmacyId(pharmacyId),HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	
 	@GetMapping("/get-pharmacy-by-appointment-time/{startDateTime}")
 	@PreAuthorize("hasRole('PATIENT')")

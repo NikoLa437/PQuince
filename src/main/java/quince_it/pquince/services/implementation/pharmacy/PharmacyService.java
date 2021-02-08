@@ -482,5 +482,10 @@ public class PharmacyService implements IPharmacyService {
 		return null;
 	}
 
+	@Override
+	public IdentifiableDTO<PharmacyGradePriceDTO> findPharmacyByPharmacyId(UUID pharmacyId) {
+		return MapPharmacyPersistenceToPharmacyGradePriceIdentifiableDTO(pharmacyRepository.findById(pharmacyId).get());
+	}
+
 	
 }

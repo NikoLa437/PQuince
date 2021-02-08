@@ -38,6 +38,8 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	
 	List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPrice(Date startDateTime);
 	
+	IdentifiableDTO<PharmacyGradePriceDTO> findPharmacyByPharmacyId(UUID pharmacyId);
+
 	List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeAscending(Date startDateTime);
 	
 	List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeDescending(Date startDateTime);
