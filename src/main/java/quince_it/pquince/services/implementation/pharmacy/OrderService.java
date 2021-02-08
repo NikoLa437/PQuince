@@ -1,6 +1,5 @@
 package quince_it.pquince.services.implementation.pharmacy;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +17,7 @@ import quince_it.pquince.repository.drugs.DrugOrderRepository;
 import quince_it.pquince.repository.drugs.OrderRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PharmacyAdminRepository;
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugOrderDTO;
@@ -86,7 +86,7 @@ public class OrderService implements IOrderService {
 
 	private IdentifiableDTO<OrderDTO> MapOrderPersistanceToIndetifiableOrderDTO(Order o) {
 		// TODO Auto-generated method stub
-		return new IdentifiableDTO<OrderDTO>(o.getId(),new OrderDTO(this.mapListOfDrugOrderToListOfDrugOrderDTO(o.getOrder()),o.getDate(),o.getOffers().size(),o.getPharmacyAdmin().getName()+" " + o.getPharmacyAdmin().getSurname()));
+		return new IdentifiableDTO<OrderDTO>(o.getId(),new OrderDTO(this.mapListOfDrugOrderToListOfDrugOrderDTO(o.getOrder()),o.getDate(),o.getOffers().size(),o.getPharmacyAdmin().getName()+ " " + o.getPharmacyAdmin().getSurname()));
 	}
 
 
@@ -102,6 +102,21 @@ public class OrderService implements IOrderService {
 	private DrugForOrderDTO MapDrugOrderPersistanceToDrugOrderDTO(DrugOrder dfo) {
 		// TODO Auto-generated method stub
 		return new DrugForOrderDTO(dfo.getDrugInstance().getId(),(int)dfo.getAmount(),dfo.getDrugInstance().getName(),dfo.getDrugInstance().getDrugInstanceName(),dfo.getDrugInstance().getManufacturer().getName());
+	}
+
+
+	@Override
+	public boolean removeOrder(EntityIdDTO removeOrderId) {
+		// TODO Auto-generated method stub
+		
+		Order order = orderRepository.getOne(removeOrderId.getId());
+		
+		if(order.getOffers().size()==0) {
+			orderRepository.delete(order);
+			return true;
+		}
+		
+		return false;
 	}
 
 

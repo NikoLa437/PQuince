@@ -10,11 +10,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
@@ -49,6 +51,21 @@ public class OrderController {
 			return new ResponseEntity<>(orderService.findOrdersForPharmacy(pharmacyId),HttpStatus.OK);
 		}catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PutMapping("/remove-order-from-pharmacy")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> removeOrder(@RequestBody EntityIdDTO removeOrderId) {
+		try {
+			if(orderService.removeOrder(removeOrderId))
+				return new ResponseEntity<>(HttpStatus.OK);
+			else
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

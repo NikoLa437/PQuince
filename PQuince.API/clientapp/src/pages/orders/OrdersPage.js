@@ -8,6 +8,7 @@ import getAuthHeader from "../../GetHeader";
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
+import { confirmAlert } from 'react-confirm-alert'; // Import
 
 class OrdersPage extends Component {
 	state = {
@@ -36,9 +37,66 @@ class OrdersPage extends Component {
         }).catch((err) => {console.log(err);});
     }
 
+    removeOrderClick = id => {
+        confirmAlert({
+            message: 'Are you sure to remove order?',
+            buttons: [
+              {
+                label: 'Yes',
+                onClick: () => {
+                    let EntityIdDTO = {
+                        id: id 
+                    };
+
+                    Axios
+                    .put(BASE_URL + "/api/order/remove-order-from-pharmacy", EntityIdDTO, {
+                        validateStatus: () => true,
+                        headers: { Authorization: getAuthHeader() },
+                    }).then((res) =>{
+                        if (res.status === 200) {
+                            this.setState({
+                                hiddenSuccessAlert: false,
+                                hiddenFailAlert:true,
+                                successHeader: "Success",
+                                successMessage: "You successfully delete order.",
+                            })
+                            this.updateOrders();
+                        }else if(res.status === 400)
+                        {
+                            this.setState({
+                                hiddenSuccessAlert: true,
+                                hiddenFailAlert:false,
+                                failHeader: "Unsuccess", 
+                                failMessage: "Not possible to remove order because have offers"
+                            })
+                        }else if(res.status === 500)
+                        {
+                            this.setState({
+                                hiddenSuccessAlert: true,
+                                hiddenFailAlert:false,
+                                failHeader: "Unsuccess", 
+                                failMessage: "We have some problem. Try later."
+                            })
+                        }
+                        
+                    }).catch(() => {
+
+                    });
+                }
+              },
+              {
+                label: 'No',
+                onClick: () => {
+                    
+                }
+              }
+            ]
+        });
+    }
+
     updateOrders = () =>{
         Axios
-        .get(BASE_URL + "/api/orders/find-orders-for-pharmacy?pharmacyId="+ this.state.pharmacyId, {
+        .get(BASE_URL + "/api/order/find-orders-for-pharmacy?pharmacyId="+ this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		}).then((res) =>{
             this.setState({orders : res.data});
@@ -98,7 +156,7 @@ class OrdersPage extends Component {
                                                 <br></br>
                                                 <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary" onClick={() => this.onEditPriceClick(order.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit order</button>
                                                 <br></br>
-                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary mt-1" onClick={() => this.removePharmacistClick(order.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Delete order</button>
+                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary mt-1" onClick={() => this.removeOrderClick(order.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Delete order</button>
                                             </div>
                                         </td>
                                     </tr>
