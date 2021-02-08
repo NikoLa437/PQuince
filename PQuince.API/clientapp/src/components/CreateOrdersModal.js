@@ -54,11 +54,11 @@ class CreateOrdersModal extends Component {
         }
         else{
             let drugDTO = {
-                drugId: this.state.drugForAdd.Id,
+                drugInstanceId: this.state.drugForAdd.Id,
                 drugName: this.state.drugForAdd.EntityDTO.name,
                 drugInstanceName: this.state.drugForAdd.EntityDTO.drugInstanceName,
                 drugManufacturer: this.state.drugForAdd.EntityDTO.manufacturerName,
-                drugCount:this.state.selectedCount
+                amount:this.state.selectedCount
             }
     
             this.removePeople(this.state.drugForAdd);
@@ -100,10 +100,11 @@ class CreateOrdersModal extends Component {
     handleCreateOrder = () =>{
         let drugDTO = {
             drugs: this.state.drugsToAdd,
+            endDate:this.state.selectedDate
         }
 
         Axios
-        .post(BASE_URL + "/api/drug/testy", drugDTO, {
+        .post(BASE_URL + "/api/order", drugDTO, {
         headers: { Authorization: getAuthHeader() },}).then((res) =>{
         }).catch((err) => {
             alert('Nije moguce dodati dermatologa');
@@ -217,7 +218,7 @@ class CreateOrdersModal extends Component {
                                     <td>{drug.drugName}</td>
                                     <td>{drug.drugInstanceName}</td>
                                     <td>{drug.drugManufacturer}</td>
-                                    <td>{drug.drugCount}</td>
+                                    <td>{drug.amount}</td>
                                 </tr>
                             ))}
                 </table>    

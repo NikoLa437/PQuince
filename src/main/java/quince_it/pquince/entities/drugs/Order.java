@@ -51,6 +51,13 @@ public class Order {
 	@Column(name = "Type", nullable = false)
 	private OrderStatus orderStatus;
 
+    
+    
+	public Order() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public Order(UUID id, Pharmacy pharmacy, PharmacyAdmin pharmacyAdmin, List<DrugOrder> order, Date date,
 			List<Offers> offers, OrderStatus orderStatus) {
 		super();

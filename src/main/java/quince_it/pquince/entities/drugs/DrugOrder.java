@@ -18,6 +18,12 @@ public class DrugOrder {
 	@Column(name = "amount", nullable = false)
 	double amount;
 
+	
+	public DrugOrder() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public DrugOrder(UUID id, DrugInstance drugInstance, double amount) {
 		super();
 		this.id = id;
