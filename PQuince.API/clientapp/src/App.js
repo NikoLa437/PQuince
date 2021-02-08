@@ -50,6 +50,7 @@ import Offers from "./pages/offers/Offers";
 import ActionAndPromotionsPage from "./pages/action-and-promotions/ActionAndPromotionsPage";
 import ComplaintsPharmacy from "./pages/complaints/ComplaintsPharmacy";
 import TimeSelectingPage from "./pages/pharmacist-from-pharmacy/TimeSelectingPage";
+import Orders from "./pages/offers/Orders";
 
 function App() {
 	return (
@@ -77,6 +78,7 @@ function App() {
 				<Link exact to="/dermatologists-for-patient" path="/dermatologists-for-patient" component={DermatologistsPageForPatient} />
 				<Link exact to="/patients" path="/patients" component={PatientsPage} />
 				<Link exact to="/offers" path="/offers" component={Offers} />
+				<Link exact to="/orders" path="/orders" component={Orders} />
 				<Link exact to="/admin-complaints-pharmacy" path="/admin-complaints-pharmacy" component={ComplaintsPharmacy} />
 				
 				<Link exact to="/schedule-consultation" path="/schedule-consultation" component={ConsultationTimeSelectPage} />
