@@ -198,7 +198,7 @@ public class UsersController {
 	
 	@GetMapping("/staff") 
 	@CrossOrigin
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<IdentifiableDTO<StaffDTO>> getStaffById() {
 	  
 		try {

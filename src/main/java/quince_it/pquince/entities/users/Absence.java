@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import quince_it.pquince.entities.pharmacy.Pharmacy;
+
 @Entity
 public class Absence {
 	
@@ -21,8 +23,11 @@ public class Absence {
 	
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Staff forStaff;
-	
-    @Column(name = "startDate")
+    
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Pharmacy pharmacy;
+
+	@Column(name = "startDate")
 	private Date startDate;
 	
     @Column(name = "endDate")
@@ -37,14 +42,15 @@ public class Absence {
     
     public Absence() {}
 	
-	public Absence(Staff forStaff, Date startDate, Date endDate) {
-		this(UUID.randomUUID(), forStaff,startDate,endDate,AbsenceStatus.WAIT, "");
+	public Absence(Staff forStaff, Pharmacy pharmacy, Date startDate, Date endDate) {
+		this(UUID.randomUUID(), forStaff, pharmacy, startDate,endDate,AbsenceStatus.WAIT, "");
 	}
 	
-	public Absence(UUID id, Staff forStaff, Date startDate, Date endDate, AbsenceStatus absenceStatus, String rejectReason) {
+	public Absence(UUID id, Staff forStaff, Pharmacy pharmacy, Date startDate, Date endDate, AbsenceStatus absenceStatus, String rejectReason) {
 		super();
 		this.id = id;
 		this.forStaff= forStaff;
+		this.pharmacy = pharmacy;
 		this.startDate= startDate;
 		this.endDate= endDate;
 		this.absenceStatus=absenceStatus;
@@ -96,5 +102,13 @@ public class Absence {
 
 	public void setRejectReason(String rejectReason) {
 		this.rejectReason = rejectReason;
+	}
+	
+    public Pharmacy getPharmacy() {
+		return pharmacy;
+	}
+
+	public void setPharmacy(Pharmacy pharmacy) {
+		this.pharmacy = pharmacy;
 	}
 }
