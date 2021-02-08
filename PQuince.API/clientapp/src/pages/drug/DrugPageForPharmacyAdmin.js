@@ -539,8 +539,6 @@ class DrugPageForPharmacyAdmin extends Component {
                         <EditPriceForDrugInPharmacy
                             show={this.state.showEditDrugPriceModal}
                             onCloseModal={this.handleEditDrugPriceModalClose}
-					        onCloseModalSuccess={this.handleEditDrugStorageModalSuccessClose}
-                            OnCloseModalUnsuccess={this.handleEditDrugPriceModalUnsuccessClose}
                             pharmacyId={this.state.pharmacyId}
                             drug={this.state.drugIdForEditPrice}
                             updateDrugs={this.updateDrugs}
@@ -549,8 +547,6 @@ class DrugPageForPharmacyAdmin extends Component {
                           <EditStorageAmountForDrug
                             show={this.state.showEditDrugStorageModal}
                             onCloseModal={this.handleEditDrugStorageModalClose}
-					        onCloseModalSuccess={this.handleEditStorageAmountModalSuccessClose}
-                            OnCloseModalUnsuccess={this.handleEditDrugStorageAmountModalUnsuccessClose}
                             pharmacyId={this.state.pharmacyId}
                             drug={this.state.drugIdForEditAmount}
                             updateDrugs={this.updateDrugs}

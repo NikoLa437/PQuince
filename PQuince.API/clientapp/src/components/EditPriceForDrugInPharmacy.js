@@ -13,6 +13,7 @@ class EditPriceForDrugInPharmacy extends Component {
     state = {
         newPrice:1, 
         selectedStartDate:new Date(),
+        hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
 		hiddenFailAlert: true,
@@ -80,7 +81,7 @@ class EditPriceForDrugInPharmacy extends Component {
                 hiddenSuccessAlert: true,
                 hiddenFailAlert: false, 
                 failHeader: "Unsuccess", 
-                failMessage: "End date of drug price must be after start date"});
+                failMessage: "Start date of drug price must be after start date and price must be positive number"});
         }
     }
 
