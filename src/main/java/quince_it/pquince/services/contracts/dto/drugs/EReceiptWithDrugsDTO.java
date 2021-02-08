@@ -11,16 +11,19 @@ public class EReceiptWithDrugsDTO {
 	private EReceiptStatus status;
 	
 	private Date creationDate;
+	
+	private double price;
 
 	private List<IdentifiableDTO<DrugEReceiptDTO>> drugs;
 
 	public EReceiptWithDrugsDTO() {}
 	
-	public EReceiptWithDrugsDTO(EReceiptStatus status, Date creationDate, List<IdentifiableDTO<DrugEReceiptDTO>> drugs) {
+	public EReceiptWithDrugsDTO(EReceiptStatus status, Date creationDate, List<IdentifiableDTO<DrugEReceiptDTO>> drugs, double price) {
 		super();
 		this.status = status;
 		this.creationDate = creationDate;
 		this.drugs = drugs;
+		this.price = price;
 	}
 
 	public EReceiptStatus getStatus() {
@@ -45,5 +48,13 @@ public class EReceiptWithDrugsDTO {
 
 	public void setDrugs(List<IdentifiableDTO<DrugEReceiptDTO>> drugs) {
 		this.drugs = drugs;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
 	}	
 }

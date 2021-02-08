@@ -20,7 +20,7 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('44444d47-1a8a-4ae1-b109-af7b56e94788',true, 'admin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('55555d47-1a8a-4ae1-b109-af7b56e94788',true, 'supplier@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 
-insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',2,152);
+insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',2,5);
 insert into patient (id, penalty, points) values ('23793162-52d3-11eb-ae93-0242ac130002',0,2);
 
 insert into user_authority (user_id, authority_id) values ('22793162-52d3-11eb-ae93-0242ac130002', '7852aa5e-7040-4d99-8255-537a0b226c75');
@@ -176,7 +176,7 @@ insert into drug_format_id (id, type) values ('40645278-52d3-13eb-ae93-0242ac130
 
 
 insert into ereceipt (id, price, creation_date, status, patient_id) values ('e672e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, price, creation_date, status, patient_id, pharmacy_id) values ('15df3e98-67ad-11eb-ae93-0242ac130002', -1, '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002');
+insert into ereceipt (id, price, creation_date, status, patient_id, pharmacy_id) values ('15df3e98-67ad-11eb-ae93-0242ac130002', 2200, '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002');
 insert into ereceipt (id, price, creation_date, status, patient_id) values ('19e26092-67ad-11eb-ae93-0242ac130002', -1, '2021-01-05', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
 insert into ereceipt (id, price, creation_date, status, patient_id) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-13', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
 insert into ereceipt (id, price, creation_date, status, patient_id) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
@@ -195,7 +195,7 @@ insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('1d4a
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',1);
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('9972e844-67ac-11eb-ae93-0242ac130002','2c797174-5839-11eb-ae93-0242ac130002',1);
 
-insert into loyaltyprogram (id, points_for_appointment, points_for_consulting, points_to_enter_regular_cathegory, points_to_enter_silver_cathegory, points_to_enter_gold_cathegory, appointment_discount_regular, drug_discount_regular, consultation_discount_regular, appointment_discount_silver,drug_discount_silver, consultation_discount_silver, appointment_discount_gold,  drug_discount_gold, consultation_discount_gold) values ('791fee27-bb12-4340-9b0a-a7c9ef575278', 5, 4, 10, 50, 100, 2, 2, 2, 5, 6, 7, 15, 20, 25);
+insert into loyaltyprogram (id, points_for_appointment, points_for_consulting, points_to_enter_regular_cathegory, points_to_enter_silver_cathegory, points_to_enter_gold_cathegory, appointment_discount_regular, drug_discount_regular, consultation_discount_regular, appointment_discount_silver,drug_discount_silver, consultation_discount_silver, appointment_discount_gold,  drug_discount_gold, consultation_discount_gold) values ('791fee27-bb12-4340-9b0a-a7c9ef575278', 5, 4, 0, 50, 100, 0, 0, 0, 5, 6, 7, 15, 20, 25);
 
 insert into drug_feedback (date, grade, drug_id, patient_id) values ('2020-03-03',4,'2c797174-5839-11eb-ae93-0242ac130002', '22793162-52d3-11eb-ae93-0242ac130002');
 insert into drug_feedback (date, grade, drug_id, patient_id) values ('2020-05-03',5,'b4abdfc6-68cb-11eb-a102-d7374f9803ba', '22793162-52d3-11eb-ae93-0242ac130002');

@@ -21,7 +21,7 @@ public interface EReceiptItemsRepository extends JpaRepository<EReceiptItems, ER
 	List<DrugInstance> findAllProcessedDistinctDrugsByPatientId(UUID patientId);	
 	
 	@Query(value = "SELECT new quince_it.pquince.services.contracts.dto.drugs.IdentifiableEReceiptForDrugDTO(e.eReceiptItemsId.eReceipt.id, e.eReceiptItemsId.eReceipt.status,"
-				+ " e.eReceiptItemsId.eReceipt.creationDate, e.eReceiptItemsId.eReceipt.pharmacy.name, e.amount)"
+				+ " e.eReceiptItemsId.eReceipt.creationDate, e.eReceiptItemsId.eReceipt.pharmacy.name, e.amount, e.eReceiptItemsId.eReceipt.price)"
 				+ " FROM EReceiptItems e where e.eReceiptItemsId.eReceipt.patient.id = ?1 AND"
 				+ " e.eReceiptItemsId.eReceipt.status = 'PROCESSED' AND e.eReceiptItemsId.drugInstance.id = ?2")
 	List<IdentifiableEReceiptForDrugDTO> findAllProcessedByPatientAndDrugId(UUID patientId, UUID drugId);
