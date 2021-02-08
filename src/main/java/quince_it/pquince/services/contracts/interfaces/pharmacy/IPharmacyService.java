@@ -53,4 +53,22 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findWithQR(UUID id);
 
 	Object buyWithQR(PharmacyERecipeDTO pharmacyERecipeDTO);
+
+	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(
+			UUID id);
+
+	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByNameGradeAndDistanceSortByNameDescending(
+			UUID id);
+
+	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByCityAscending(UUID id);
+
+	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByCityDescending(UUID id);
+
+	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByGradeDescending(UUID id);
+
+	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByGradeAscending(UUID id);
+
+	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByPriceDescending(UUID id);
+
+	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByPriceAscending(UUID id);
 }

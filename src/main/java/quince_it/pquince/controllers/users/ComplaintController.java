@@ -40,13 +40,18 @@ public class ComplaintController {
 	@Autowired
 	private IPharmacyComplaintService pharmacyComplaintService;
 
-	@CrossOrigin
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<List<IdentifiableDTO<ComplaintStaffDTO>>> findAll() {
 		return new ResponseEntity<>(complaintService.findAll(),HttpStatus.OK);
 	}
 
+	@GetMapping("/pharmacy")
+	@PreAuthorize("hasRole('SYSADMIN')")
+	public ResponseEntity<List<IdentifiableDTO<ComplaintPharmacyDTO>>> findAllPharmacy() {
+		return new ResponseEntity<>(complaintService.findAllPharmacy(),HttpStatus.OK);
+	}
+	
 	@CrossOrigin
 	@GetMapping("/{staffId}")
 	public ResponseEntity<ComplaintStaffDTO> findByStaffIdAndPatientId(@PathVariable UUID staffId) {
@@ -57,12 +62,20 @@ public class ComplaintController {
 		}
 	}
 
-	@CrossOrigin
 	@PostMapping("/reply")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<?> replyComplaintStuff(@RequestBody ComplaintReplyDTO complaintReplyDTO) {
 		
 		complaintService.replyComplaint(complaintReplyDTO.getId(), complaintReplyDTO.getReply(), complaintReplyDTO.getEmail());
+		
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/reply-pharmacy")
+	@PreAuthorize("hasRole('SYSADMIN')")
+	public ResponseEntity<?> replyComplaintPharamcy(@RequestBody ComplaintReplyDTO complaintReplyDTO) {
+		
+		complaintService.replyComplaintPharmacy(complaintReplyDTO.getId(), complaintReplyDTO.getReply());
 		
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
