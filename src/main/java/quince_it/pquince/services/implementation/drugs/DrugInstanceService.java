@@ -9,12 +9,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.drugs.Allergen;
 import quince_it.pquince.entities.drugs.DrugInstance;
 import quince_it.pquince.entities.drugs.DrugPriceForPharmacy;
 import quince_it.pquince.entities.drugs.DrugStorage;
 import quince_it.pquince.entities.drugs.FormatDrug;
 import quince_it.pquince.entities.drugs.Ingredient;
 import quince_it.pquince.entities.drugs.Manufacturer;
+import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.drugs.DrugFeedbackRepository;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
@@ -22,6 +24,7 @@ import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.drugs.IngredientRepository;
 import quince_it.pquince.repository.drugs.ManufacturerRepository;
+import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
@@ -29,6 +32,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugWithPriceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.IngredientDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ManufacturerDTO;
+import quince_it.pquince.services.contracts.dto.drugs.ReplaceDrugDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -66,6 +70,9 @@ public class DrugInstanceService implements IDrugInstanceService{
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private PatientRepository patientRepository;
 	
 	@Override
 	public List<IdentifiableDTO<DrugInstanceDTO>> findAll() {
@@ -273,6 +280,31 @@ public class DrugInstanceService implements IDrugInstanceService{
 		
 		
 		return retVal;
+	}
+
+	@Override
+	public List<IdentifiableDTO<DrugInstanceDTO>> findDrugsPatientIsNotAllergicTo(UUID patientId) {
+		Patient patient = patientRepository.getOne(patientId);
+		List<DrugInstance> drugInstances = drugInstanceRepository.findAll();
+		List<DrugInstance> acceptableDrugInstances = new ArrayList<DrugInstance>();
+		for(DrugInstance drugInstance : drugInstances) {
+			if(!isAllergic(patient, drugInstance))
+				acceptableDrugInstances.add(drugInstance); 
+		}
+		
+		List<IdentifiableDTO<DrugInstanceDTO>> retDrugs = new ArrayList<IdentifiableDTO<DrugInstanceDTO>>();
+		acceptableDrugInstances.forEach((drug) -> retDrugs.add(DrugInstanceMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(drug)));
+		return retDrugs;
+	}
+	
+	private boolean isAllergic(Patient patient, DrugInstance drugInstance) {
+		for(Allergen diA : drugInstance.getAllergens()) {
+			for(Allergen pA : patient.getAllergens()) {
+				if(diA.getId() == pA.getId())
+					return true;
+			}
+		}
+		return false;
 	}
 
 

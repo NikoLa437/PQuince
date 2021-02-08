@@ -272,23 +272,24 @@ public class AppointmentController {
 	}
 	
 	@GetMapping("/patient/{patientId}")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatientAsStaff(@PathVariable UUID patientId) {
 		return new ResponseEntity<>(appointmentService.getAppointmentsByPatientAsStaff(patientId),HttpStatus.OK);
 	}
 	
 	@GetMapping("/{appointmentId}")
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
-	@CrossOrigin
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<?> getAppointment(@PathVariable UUID appointmentId) {
 		try {
 			return new ResponseEntity<>(appointmentService.getAppointment(appointmentId),HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
 	@PutMapping("/finish")
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	@CrossOrigin
 	public ResponseEntity<?> finishAppointment(@RequestBody EntityIdDTO appointmentId) {
 		try {

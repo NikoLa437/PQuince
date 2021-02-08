@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
+import { TIME_INTERAVAL_TO_START_APPOINTMENT } from "../../constants.js";
 import Axios from "axios";
 import PatientLogo from "../../static/patientLogo.png";
 import AppointmentIcon from "../../static/appointment-icon.jpg";
@@ -144,6 +145,17 @@ class PatientProfilePage extends Component {
 		currentDate.setHours(0, 0, 0, 0);
 		return appointmentDate.getTime() === currentDate.getTime();
 	};
+
+	canInteractWithAppointment = (startDateTime) => {
+		let currentDateTime = new Date();
+		startDateTime = new Date(startDateTime);
+		if (currentDateTime.getTime() + TIME_INTERAVAL_TO_START_APPOINTMENT < startDateTime.getTime())
+			return false;
+		else if(currentDateTime.getTime() > startDateTime.getTime())
+			return false;
+		else 
+			return true;	
+	}
 
 	handleModalSuccessClose = () => {
 		this.setState({
@@ -307,7 +319,7 @@ class PatientProfilePage extends Component {
 											</div>
 										</td>
 										<td className="align-right" style={{ width: "35%" }}>
-											<div hidden={!this.isCurrentDate(appointment.EntityDTO.startDateTime)}>
+											<div hidden={!this.canInteractWithAppointment(appointment.EntityDTO.startDateTime)}>
 												<button
 													type="button"
 													style={{ width: "60%", float: "right" }}

@@ -3,6 +3,8 @@ package quince_it.pquince.controllers.drugs;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,7 @@ import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.drugs.ReplaceDrugIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.StaffDrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.users.DrugManufacturerDTO;
+import quince_it.pquince.services.contracts.exceptions.DrugStorageCountException;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFeedbackService;
@@ -78,6 +81,34 @@ public class DrugController {
 	@GetMapping
 	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findAll() {
 		return new ResponseEntity<>(drugInstanceService.findAll(),HttpStatus.OK);
+	}
+	
+	@GetMapping("/not-allergic/{patientId}")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
+	public ResponseEntity<List<IdentifiableDTO<DrugInstanceDTO>>> findDrugsPatientIsNotAllergicTo(@PathVariable UUID patientId) {
+		try {
+			return new ResponseEntity<>(drugInstanceService.findDrugsPatientIsNotAllergicTo(patientId) ,HttpStatus.OK);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/available/{drugId}/{amount}")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
+	public ResponseEntity<?> isDrugAmountAvailableInPharamcy(@PathVariable UUID drugId, @PathVariable int amount) {
+		try {
+			drugStorageService.isDrugAmountAvailableInPharamcy(drugId, amount);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (DrugStorageCountException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (EntityNotFoundException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	@GetMapping("/reservation/{reservationId}")
@@ -182,7 +213,7 @@ public class DrugController {
 	}
 	
 	@PostMapping("/staff/reserve")
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	@CrossOrigin
 	public ResponseEntity<?> reserveDrugAsStaff(@RequestBody StaffDrugReservationDTO staffDrugReservationDTO) {
 		try {
