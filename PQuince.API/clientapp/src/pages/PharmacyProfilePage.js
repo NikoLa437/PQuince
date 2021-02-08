@@ -483,14 +483,14 @@ class PharmacyProfilePage extends Component {
 						</li>
 						<li className="drop-down">
 							<a href="#" className="appointment-btn scrollto" style={myStyle}>
-								Make an Appointment ***
+								Make an Appointment
 							</a>
 							<ul>
 								<li>
 									<a onClick={this.handleAddExaminationClick}>Examination</a>
 								</li>
 								<li>
-									<a onClick={this.handleConsultationClick}>Consultation ***</a>
+									<a onClick={this.handleConsultationClick}>Consultation</a>
 								</li>
 							</ul>
 						</li>
