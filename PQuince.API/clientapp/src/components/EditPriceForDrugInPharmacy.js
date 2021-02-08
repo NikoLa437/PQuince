@@ -81,7 +81,8 @@ class EditPriceForDrugInPharmacy extends Component {
                 hiddenSuccessAlert: true,
                 hiddenFailAlert: false, 
                 failHeader: "Unsuccess", 
-                failMessage: "Start date of drug price must be after start date and price must be positive number"});
+                failMessage: "Start date of drug price must be after start date and price must be positive number"
+            });
         }
     }
 

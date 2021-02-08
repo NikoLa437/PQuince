@@ -23,7 +23,11 @@ public class OrderController {
 	@PostMapping
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	public ResponseEntity<?> create(@RequestBody CreateOrderDTO createOrderDTO) {
-		
-		return new ResponseEntity<>(orderService.create(createOrderDTO),HttpStatus.CREATED);
+		try {
+			return new ResponseEntity<>(orderService.create(createOrderDTO),HttpStatus.CREATED);
+
+		}catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 }
