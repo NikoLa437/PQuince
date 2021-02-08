@@ -12,5 +12,5 @@ import quince_it.pquince.entities.users.Absence;
 public interface AbsenceRepository extends JpaRepository<Absence, UUID>{
 
 	@Query(value = "SELECT a from Absence a WHERE a.forStaff.id = ?1 AND a.startDate <= ?2 AND a.endDate >= ?2 AND a.absenceStatus = 'ACCEPTED'")
-	List<Absence> findAbsenceByStaffIdAndDate(UUID staffId, Date date);
+	List<Absence> findPharmacistAbsenceByStaffIdAndDate(UUID staffId, Date date);
 }

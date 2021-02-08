@@ -586,7 +586,7 @@ public class AppointmentService implements IAppointmentService{
 				}
 			}
 			
-			if(!busy &&  absenceRepository.findAbsenceByStaffIdAndDate(workTime.getStaff().getId(), startDateTime).size() == 0) pharmacies.add(workTime.getPharmacy());
+			if(!busy &&  absenceRepository.findPharmacistAbsenceByStaffIdAndDate(workTime.getStaff().getId(), startDateTime).size() == 0) pharmacies.add(workTime.getPharmacy());
 		}
 		
 		List<Pharmacy> returnPharmacies = getDistinctPharmacies(pharmacies);
@@ -647,7 +647,7 @@ public class AppointmentService implements IAppointmentService{
 				}
 			}
 			
-			if(!busy && absenceRepository.findAbsenceByStaffIdAndDate(workTime.getStaff().getId(), startDateTime).size() == 0) pharmacists.add(workTime.getStaff());
+			if(!busy && absenceRepository.findPharmacistAbsenceByStaffIdAndDate(workTime.getStaff().getId(), startDateTime).size() == 0) pharmacists.add(workTime.getStaff());
 		}
 		
 		List<Staff> returnPharmacists = getDistinctPharmacists(pharmacists);
@@ -786,7 +786,7 @@ public class AppointmentService implements IAppointmentService{
 		
 		if(pharmacistWorkTime == null) throw new AppointmentNotScheduledException("Invalid appointment time");
 		
-		if(absenceRepository.findAbsenceByStaffIdAndDate(requestDTO.getPharmacistId(), endDateTime).size() > 0) throw new AppointmentNotScheduledException("Pharmacist not available");
+		if(absenceRepository.findPharmacistAbsenceByStaffIdAndDate(requestDTO.getPharmacistId(), endDateTime).size() > 0) throw new AppointmentNotScheduledException("Pharmacist not available");
 	}
 
 	@Override
