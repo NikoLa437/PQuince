@@ -39,18 +39,18 @@ class PatientsPage extends Component {
 
         Axios.get(SEARCH_URL, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
             .then((res) => {
-                
+
 
                 if (res.status === 401) {
                     this.setState({
                         redirect: true,
                         redirectUrl: "/unauthorized"
                     });
-				} else {
-					this.setState({
+                } else {
+                    this.setState({
                         patients: res.data
                     });
-				}
+                }
 
                 console.log(res.data);
             })
@@ -59,11 +59,54 @@ class PatientsPage extends Component {
             });
     };
 
+
     handlePatientClick = (patientId) => {
         this.setState({
             redirect: true,
             redirectUrl: "/patient-profile/" + patientId
         });
+    };
+
+    compareNames = (a, b) => {
+        if (a.EntityDTO.name < b.EntityDTO.name) {
+            return -1;
+        }
+        if (a.EntityDTO.name > b.EntityDTO.name) {
+            return 1;
+        }
+        return 0;
+    }
+
+    compareSurnames = (a, b) => {
+        if (a.EntityDTO.surname < b.EntityDTO.surname) {
+            return -1;
+        }
+        if (a.EntityDTO.surname > b.EntityDTO.surname) {
+            return 1;
+        }
+        return 0;
+    }
+
+    handleSortByNameAscending = () => {
+        this.state.patients.sort(this.compareNames);
+        this.setState(this.state);
+    };
+
+    handleSortByNameDescending = () => {
+        this.state.patients.sort(this.compareNames);
+        this.state.patients.reverse();
+        this.setState(this.state);
+    };
+
+    handleSortBySurnameAscending = () => {
+        this.state.patients.sort(this.compareSurnames);
+        this.setState(this.state);
+    };
+
+    handleSortBySurnameDescending = () => {
+        this.state.patients.sort(this.compareSurnames);
+        this.state.patients.reverse();
+        this.setState(this.state);
     };
 
     render() {
@@ -84,6 +127,31 @@ class PatientsPage extends Component {
 
                             <form className="form-inline mt-3" width="100%">
                                 <div className="form-group mb-2" width="100%">
+                                    <div className="dropdown mr-3">
+										<button
+											className="btn btn-primary dropdown-toggle"
+											type="button"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="false"
+										>
+											Sort by
+										</button>
+                                    <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                        <button className="dropdown-item" type="button" onClick={this.handleSortByNameAscending}>
+                                            Name ascending
+											</button>
+                                        <button className="dropdown-item" type="button" onClick={this.handleSortByNameDescending}>
+                                            Name descending
+											</button>
+                                        <button className="dropdown-item" type="button" onClick={this.handleSortBySurnameAscending}>
+                                            Surname ascending
+											</button>
+                                        <button className="dropdown-item" type="button" onClick={this.handleSortBySurnameDescending}>
+                                            Surname descending
+											</button>
+                                    </div>
+                                    </div>
                                     <input
                                         placeholder="Name"
                                         className="form-control mr-3"

@@ -869,8 +869,6 @@ public class UserService implements IUserService{
 	
 
 	public Pharmacy getPharmacyForLoggedDermatologist() {
-		//TODO: Exceptions
-		//TODO: appointments date?
 		UUID dermatologistId = getLoggedUserId();
 		Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
 		Pharmacy pharmacy = null;
@@ -878,6 +876,8 @@ public class UserService implements IUserService{
 		for(WorkTime wt : workTimes){
 			pharmacy = wt.getPharmacy();
 		}
+		if(pharmacy == null)
+			throw new IllegalArgumentException("Dermatologist doesn't work in any pharamcy today");
 		return pharmacy;
 	}
 	

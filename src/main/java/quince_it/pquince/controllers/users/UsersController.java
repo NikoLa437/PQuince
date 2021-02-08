@@ -140,6 +140,7 @@ public class UsersController {
 	}
 	
 	@PutMapping("/staff") 
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	@CrossOrigin
 	public ResponseEntity<?> updateStaffInformation(@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
 	  
@@ -198,7 +199,7 @@ public class UsersController {
 	
 	@GetMapping("/staff") 
 	@CrossOrigin
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<IdentifiableDTO<StaffDTO>> getStaffById() {
 	  
 		try {
