@@ -25,8 +25,8 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationRepos
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
+import quince_it.pquince.services.implementation.IPharmacyFeedbackService;
 import quince_it.pquince.services.implementation.util.pharmacy.PharmacyFeedbackMapper;
 
 @Service

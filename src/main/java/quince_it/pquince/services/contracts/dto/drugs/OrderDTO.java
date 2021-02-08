@@ -3,98 +3,60 @@ package quince_it.pquince.services.contracts.dto.drugs;
 import java.sql.Date;
 import java.util.List;
 
-import quince_it.pquince.entities.drugs.OrderStatus;
-import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
-import quince_it.pquince.services.contracts.dto.users.PharmacyAdminDTO;
-import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-
 public class OrderDTO {
 	
-	private IdentifiableDTO<PharmacyDTO> pharmacy;
+	private List<DrugForOrderDTO> drugs;
 	
-	private IdentifiableDTO<PharmacyAdminDTO> pharmacyAdmin;
+	private Date endDate;
 	
-    private List<IdentifiableDTO<DrugOrderDTO>> order;
+	private int numberOfOffers;
 	
-	private Date date;
-	
-	private List<IdentifiableDTO<OfferDTO>> offers;
-	
-	private OrderStatus orderStatus;
+	private String creator;
 
-    
-    
+
 	public OrderDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public OrderDTO(IdentifiableDTO<PharmacyDTO> pharmacy, IdentifiableDTO<PharmacyAdminDTO> pharmacyAdmin, List<IdentifiableDTO<DrugOrderDTO>> order, Date date,
-			OrderStatus orderStatus) {
+	public OrderDTO(List<DrugForOrderDTO> drugs, Date endDate,int numberOfOffers,String creator) {
 		super();
-		this.pharmacy = pharmacy;
-		this.pharmacyAdmin = pharmacyAdmin;
-		this.order = order;
-		this.date = date;
-		this.orderStatus = orderStatus;
+		this.drugs = drugs;
+		this.endDate = endDate;
+		this.numberOfOffers=numberOfOffers;
+		this.creator=creator;
+	}
+
+	public List<DrugForOrderDTO> getDrugs() {
+		return drugs;
+	}
+
+	public void setDrugs(List<DrugForOrderDTO> drugs) {
+		this.drugs = drugs;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public int getNumberOfOffers() {
+		return numberOfOffers;
+	}
+
+	public void setNumberOfOffers(int numberOfOffers) {
+		this.numberOfOffers = numberOfOffers;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
 	}
 	
-	public OrderDTO(IdentifiableDTO<PharmacyDTO> pharmacy, IdentifiableDTO<PharmacyAdminDTO> pharmacyAdmin, List<IdentifiableDTO<DrugOrderDTO>> order, Date date,
-			OrderStatus orderStatus, List<IdentifiableDTO<OfferDTO>> offers) {
-		super();
-		this.pharmacy = pharmacy;
-		this.pharmacyAdmin = pharmacyAdmin;
-		this.order = order;
-		this.date = date;
-		this.orderStatus = orderStatus;
-		this.offers = offers;
-	}
-
-	public IdentifiableDTO<PharmacyDTO> getPharmacy() {
-		return pharmacy;
-	}
-
-	public void setPharmacy(IdentifiableDTO<PharmacyDTO> pharmacy) {
-		this.pharmacy = pharmacy;
-	}
-
-	public IdentifiableDTO<PharmacyAdminDTO> getPharmacyAdmin() {
-		return pharmacyAdmin;
-	}
-
-	public void setPharmacyAdmin(IdentifiableDTO<PharmacyAdminDTO> pharmacyAdmin) {
-		this.pharmacyAdmin = pharmacyAdmin;
-	}
-
-	public List<IdentifiableDTO<DrugOrderDTO>> getOrder() {
-		return order;
-	}
-
-	public void setOrder(List<IdentifiableDTO<DrugOrderDTO>> order) {
-		this.order = order;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public List<IdentifiableDTO<OfferDTO>> getOffers() {
-		return offers;
-	}
-
-	public void setOffers(List<IdentifiableDTO<OfferDTO>> offers) {
-		this.offers = offers;
-	}
-
-	public OrderStatus getOrderStatus() {
-		return orderStatus;
-	}
-
-	public void setOrderStatus(OrderStatus orderStatus) {
-		this.orderStatus = orderStatus;
-	}
 }

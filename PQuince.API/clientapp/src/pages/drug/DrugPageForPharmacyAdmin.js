@@ -72,6 +72,16 @@ class DrugPageForPharmacyAdmin extends Component {
         this.setState({ showAddDrugModal: false });
     }
 
+    handleAddOrderSuccessClose = () => {
+        this.setState({ showCreateOrderModal: false });
+        this.setState({
+            hiddenSuccessAlert: false,
+            hiddenFailAlert:true,
+            successHeader: "Success",
+            successMessage: "You successfully edit drug price.",
+        })
+    }
+
     handleEditDrugPriceModalSuccessClose = () => {
         this.setState({ showEditDrugPriceModal: false });
         this.setState({
@@ -84,13 +94,13 @@ class DrugPageForPharmacyAdmin extends Component {
 
     }
 
-    handleEditStorageAmountModalSuccessClose = () => {
-        this.setState({ showEditDrugStorageModal: false });
+    handleSuccesfullCloseCreateOrder = () => {
         this.setState({
+            showCreateOrderModal:false,
             hiddenSuccessAlert: false,
             hiddenFailAlert:true,
             successHeader: "Success",
-            successMessage: "You successfully edit drug storage.",
+            successMessage: "You successfully create order for drugs.",
         })
         this.updateDrugs();
 
@@ -269,6 +279,12 @@ class DrugPageForPharmacyAdmin extends Component {
     };
 
     handleCreateOrderModalClose = () =>{
+        this.setState({
+			showCreateOrderModal: false,
+		});
+    }
+
+    handleCreateOrderModalCloseSuccess = () =>{
         this.setState({
 			showCreateOrderModal: false,
 		});
@@ -531,6 +547,7 @@ class DrugPageForPharmacyAdmin extends Component {
 				        />
                         <CreateOrdersModal
 					        show={this.state.showCreateOrderModal}
+                            onCloseSuccess={this.handleCreateOrderModalCloseSuccess}
 					        onCloseModal={this.handleCreateOrderModalClose}
                             pharmacyId={this.state.pharmacyId}
                             drugs={this.state.drugs}
@@ -539,8 +556,6 @@ class DrugPageForPharmacyAdmin extends Component {
                         <EditPriceForDrugInPharmacy
                             show={this.state.showEditDrugPriceModal}
                             onCloseModal={this.handleEditDrugPriceModalClose}
-					        onCloseModalSuccess={this.handleEditDrugStorageModalSuccessClose}
-                            OnCloseModalUnsuccess={this.handleEditDrugPriceModalUnsuccessClose}
                             pharmacyId={this.state.pharmacyId}
                             drug={this.state.drugIdForEditPrice}
                             updateDrugs={this.updateDrugs}
@@ -549,8 +564,6 @@ class DrugPageForPharmacyAdmin extends Component {
                           <EditStorageAmountForDrug
                             show={this.state.showEditDrugStorageModal}
                             onCloseModal={this.handleEditDrugStorageModalClose}
-					        onCloseModalSuccess={this.handleEditStorageAmountModalSuccessClose}
-                            OnCloseModalUnsuccess={this.handleEditDrugStorageAmountModalUnsuccessClose}
                             pharmacyId={this.state.pharmacyId}
                             drug={this.state.drugIdForEditAmount}
                             updateDrugs={this.updateDrugs}
