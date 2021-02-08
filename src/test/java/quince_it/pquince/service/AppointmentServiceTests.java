@@ -114,7 +114,7 @@ public class AppointmentServiceTests {
 		wt.add(new WorkTime(pharmacyMock,  TestUtil.getPharmacistAsStaff(STAFF_ID, addressMock), WORKTIME_START_DATE, WORKTIME_END_DATE, 8, 17));
 		
 		
-		when(absenceRepository.findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME)).thenReturn(new ArrayList<Absence>());
+		when(absenceRepository.findPharmacistAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME)).thenReturn(new ArrayList<Absence>());
 		when(workTimeRepository.findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), APPOINTMENT_START_DATE_TIME.getHours())).thenReturn(wt);
 		when(appointmentRepository.findAllConsultationsByAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME)).thenReturn(new ArrayList<Appointment>());
 
@@ -128,7 +128,7 @@ public class AppointmentServiceTests {
         verify(workTimeRepository, times(1)).findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), APPOINTMENT_START_DATE_TIME.getHours());
         verifyNoMoreInteractions(workTimeRepository);
         
-        verify(absenceRepository, times(1)).findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME);
+        verify(absenceRepository, times(1)).findPharmacistAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME);
         verifyNoMoreInteractions(absenceRepository);
 	}
 	
@@ -143,9 +143,9 @@ public class AppointmentServiceTests {
 		wt.add(new WorkTime(pharmacyMock, TestUtil.getPharmacistAsStaff(STAFF_ID, addressMock) , WORKTIME_START_DATE, WORKTIME_END_DATE, 8, 17));
 		
 		List<Absence> ab = new ArrayList<Absence>();
-		ab.add(new Absence( TestUtil.getPharmacistAsStaff(STAFF_ID, addressMock), ABSENCE_START_DATE, ABSENCE_END_DATE));
+		ab.add(new Absence(TestUtil.getPharmacistAsStaff(STAFF_ID, addressMock), TestUtil.getPharmacy(PHARMACY_ID, addressMock), ABSENCE_START_DATE, ABSENCE_END_DATE));
 		
-		when(absenceRepository.findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME)).thenReturn(ab);
+		when(absenceRepository.findPharmacistAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME)).thenReturn(ab);
 		when(workTimeRepository.findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), APPOINTMENT_START_DATE_TIME.getHours())).thenReturn(wt);
 		when(appointmentRepository.findAllConsultationsByAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME)).thenReturn(new ArrayList<Appointment>());
 
@@ -159,7 +159,7 @@ public class AppointmentServiceTests {
         verify(workTimeRepository, times(1)).findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), APPOINTMENT_START_DATE_TIME.getHours());
         verifyNoMoreInteractions(workTimeRepository);
         
-        verify(absenceRepository, times(1)).findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME);
+        verify(absenceRepository, times(1)).findPharmacistAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME);
         verifyNoMoreInteractions(absenceRepository);
 
 	}
@@ -176,7 +176,7 @@ public class AppointmentServiceTests {
 		when(env.getProperty("consultation_time")).thenReturn("15");
 		when(appointmentRepository.findAllConsultationsByAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME)).thenReturn(new ArrayList<Appointment>());
 		when(workTimeRepository.findWorkTimeByDesiredConsultationTimeAndPharmacistId(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), STAFF_ID)).thenReturn(new WorkTime());
-		when(absenceRepository.findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME)).thenReturn(new ArrayList<Absence>());
+		when(absenceRepository.findPharmacistAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME)).thenReturn(new ArrayList<Absence>());
 		when(staffRepository.findById(STAFF_ID)).thenReturn(Optional.of(TestUtil.getPharmacistAsStaff(STAFF_ID, addressMock)));
 		when(pharmacistRepository.findPharmacyByPharmacistId(STAFF_ID)).thenReturn(TestUtil.getPharmacy(PHARMACY_ID, addressMock));
 		when(patientRepository.findById(PATIENT_ID)).thenReturn(Optional.of(TestUtil.getPatient(PATIENT_ID, addressMock)));
