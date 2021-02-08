@@ -8,7 +8,7 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacyAdminDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
-public class OrderDTO {
+public class OrderForProviderDTO {
 	
 	private IdentifiableDTO<PharmacyDTO> pharmacy;
 	
@@ -24,12 +24,12 @@ public class OrderDTO {
 
     
     
-	public OrderDTO() {
+	public OrderForProviderDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public OrderDTO(IdentifiableDTO<PharmacyDTO> pharmacy, IdentifiableDTO<PharmacyAdminDTO> pharmacyAdmin, List<IdentifiableDTO<DrugOrderDTO>> order, Date date,
+	public OrderForProviderDTO(IdentifiableDTO<PharmacyDTO> pharmacy, IdentifiableDTO<PharmacyAdminDTO> pharmacyAdmin, List<IdentifiableDTO<DrugOrderDTO>> order, Date date,
 			OrderStatus orderStatus) {
 		super();
 		this.pharmacy = pharmacy;
@@ -39,7 +39,7 @@ public class OrderDTO {
 		this.orderStatus = orderStatus;
 	}
 	
-	public OrderDTO(IdentifiableDTO<PharmacyDTO> pharmacy, IdentifiableDTO<PharmacyAdminDTO> pharmacyAdmin, List<IdentifiableDTO<DrugOrderDTO>> order, Date date,
+	public OrderForProviderDTO(IdentifiableDTO<PharmacyDTO> pharmacy, IdentifiableDTO<PharmacyAdminDTO> pharmacyAdmin, List<IdentifiableDTO<DrugOrderDTO>> order, Date date,
 			OrderStatus orderStatus, List<IdentifiableDTO<OfferDTO>> offers) {
 		super();
 		this.pharmacy = pharmacy;

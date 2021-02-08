@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
-import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.OrderForProviderDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IOrderService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
@@ -34,9 +34,9 @@ public class OrderController {
 		return new ResponseEntity<>(orderService.create(createOrderDTO),HttpStatus.CREATED);
 	}
 	
-	@GetMapping
+	@GetMapping("/provider")
 	@PreAuthorize("hasRole('SUPPLIER')") 
-	public ResponseEntity<List<IdentifiableDTO<OrderDTO>>> findAll() {
+	public ResponseEntity<List<IdentifiableDTO<OrderForProviderDTO>>> findAllForProvider() {
 		return new ResponseEntity<>(orderService.findAll(),HttpStatus.OK);
 	}
 }

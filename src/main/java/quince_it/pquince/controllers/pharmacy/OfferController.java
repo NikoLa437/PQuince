@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
-import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IOfferService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IOrderService;
