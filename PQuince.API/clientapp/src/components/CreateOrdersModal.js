@@ -5,6 +5,9 @@ import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
 import getAuthHeader from "../GetHeader";
+import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
+import HeadingAlert from "../components/HeadingAlert";
+import { Redirect } from "react-router-dom";
 
 class CreateOrdersModal extends Component {
     state = {
@@ -17,6 +20,13 @@ class CreateOrdersModal extends Component {
         drugForAdd:'',
         selectedCount:'',
         showDate:false,
+        hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",   
+        unauthorizedRedirect: false,
     }
 
     addItem = item => {
@@ -55,8 +65,12 @@ class CreateOrdersModal extends Component {
     handleAdd = () => {
 
         if(this.state.selectedCount<1){
-            alert('mora biti vece od 0')
-        }
+            this.setState({ 
+                hiddenSuccessAlert: true,
+                hiddenFailAlert: false, 
+                failHeader: "Unsuccess", 
+                failMessage: "The amount of drug must be more than 0"
+            });         }
         else{
             let drugDTO = {
                 drugInstanceId: this.state.drugForAdd.Id,
@@ -74,32 +88,8 @@ class CreateOrdersModal extends Component {
                 showModalPage:'FIRST',
                 selectedCount:'',
                 drugForAdd:''
-            })
-            
+            })   
         }
-        /*let addDrugToPharmacyDTO = {
-            drugId: this.state.drugIdToAdd, 
-            dateTo: this.state.selectedDate, 
-            amount:this.state.amount,
-            price: this.state.price, 
-        };
-
-        if(this.isValidData(addDrugToPharmacyDTO)){
-            Axios
-            .post(BASE_URL + "/api/drug/add-drug-to-pharmacy", addDrugToPharmacyDTO, {
-            headers: { Authorization: getAuthHeader() },}).then((res) =>{
-                this.props.updateDrugs();
-                this.setState({showAddStorageAndPrice: false, modalSize:'lg'});
-                alert("Uspesno dodat dermatolog u apoteku")
-                this.handleClickOnClose();
-            }).catch((err) => {
-                alert('Nije moguce dodati dermatologa');
-            });
-        }else{
-            // aktivirati error
-            alert("ERROR");
-        }*/
-    
     }
 
     handleCreateOrder = () =>{
@@ -110,9 +100,33 @@ class CreateOrdersModal extends Component {
 
         Axios
         .post(BASE_URL + "/api/order", drugDTO, {
-        headers: { Authorization: getAuthHeader() },}).then((res) =>{
+            validateStatus: () => true,
+            headers: { Authorization: getAuthHeader() },})
+        .then((res) =>{
+            if (res.status === 201) {
+                this.setState({
+                    hiddenSuccessAlert: false,
+                    hiddenFailAlert:true,
+                    successHeader: "Success",
+                    successMessage: "You successfully add new order for drugs.",
+                    newPrice:1, 
+                    selectedStartDate:new Date(),
+                })
+                this.props.updateDrugs();
+                this.props.onCloseSuccess();
+            }else if(res.status===400){
+                this.setState({ 
+                    hiddenSuccessAlert: true,
+                    hiddenFailAlert: false, 
+                    failHeader: "Unsuccess", 
+                    failMessage: "Currently not possible to add new order for drugs"
+                });
+            }else if(res.status===401){
+                this.setState({ 
+                    unauthorizedRedirect:true
+                });
+            }
         }).catch((err) => {
-            alert('Nije moguce dodati dermatologa');
         });
     }
 
@@ -153,7 +167,12 @@ class CreateOrdersModal extends Component {
 
     handleClickOnCreateOrder = () =>{
         if(this.state.drugsToAdd.length<1){
-            alert("Nije moguce kreirati kada nema")
+            this.setState({ 
+                hiddenSuccessAlert: true,
+                hiddenFailAlert: false, 
+                failHeader: "Unsuccess", 
+                failMessage: "Is it not possible when list of drug for add is empty"
+            });        
         }else{
             this.setState({
                 showModalPage:'THIRD',
@@ -186,14 +205,34 @@ class CreateOrdersModal extends Component {
 
     onAddClick = (id) =>{
         this.setState({showModalPage: 'SECOND',drugForAdd:id});
+        this.setState({ 
+            hiddenSuccessAlert: true,
+            hiddenFailAlert: true, 
+        }); 
 
     }
 
      handleBack = (event) =>{
-        this.setState({showModalPage: 'FIRST'});
+        this.setState({showModalPage: 'FIRST',selectedCount:''});
+        this.setState({ 
+            hiddenSuccessAlert: true,
+            hiddenFailAlert: true, 
+        }); 
+
     }
 
+    handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+    };
+    
+    handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
+
     render() { 
+        if (this.state.unauthorizedRedirect) return <Redirect push to="/unauthorized" />;
+
         return ( 
             <Modal
                 show = {this.props.show}
@@ -208,6 +247,18 @@ class CreateOrdersModal extends Component {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                <HeadingSuccessAlert
+						hidden={this.state.hiddenSuccessAlert}
+						header={this.state.successHeader}
+						message={this.state.successMessage}
+						handleCloseAlert={this.handleCloseAlertSuccess}
+					/>
+                    <HeadingAlert
+                            hidden={this.state.hiddenFailAlert}
+                            header={this.state.failHeader}
+                            message={this.state.failMessage}
+                            handleCloseAlert={this.handleCloseAlertFail}
+                    />
                 <div className="container">  
 
                     <table hidden={this.state.showModalPage!=='FIRST'} border='1' style={{width:'100%'}}>
@@ -231,6 +282,9 @@ class CreateOrdersModal extends Component {
                         <tbody>
                             {this.state.drugs.map((drug) => (
                                 <tr id={drug.Id} key={drug.Id}>
+                                    <td width="130em">
+                                        <img className="img-fluid" src={CapsuleLogo} width="70em"/>
+                                    </td>
                                     <td>
                                             <div><b>Drug:</b> {drug.EntityDTO.name}</div>
                                             <div><b>Name:</b> {drug.EntityDTO.drugInstanceName}</div>
@@ -298,7 +352,7 @@ class CreateOrdersModal extends Component {
                 </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button onClick={() => this.handleClickOnCreateOrder()}>Create order</Button>
+                    <Button  hidden={this.state.showModalPage==='THIRD'} onClick={() => this.handleClickOnCreateOrder()}>Create order</Button>
                     <Button onClick={() => this.handleClickOnClose()}>Close</Button>
                 </Modal.Footer>
             </Modal>

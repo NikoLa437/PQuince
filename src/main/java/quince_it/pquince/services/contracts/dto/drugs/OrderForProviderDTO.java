@@ -26,7 +26,6 @@ public class OrderForProviderDTO {
     
 	public OrderForProviderDTO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public OrderForProviderDTO(IdentifiableDTO<PharmacyDTO> pharmacy, IdentifiableDTO<PharmacyAdminDTO> pharmacyAdmin, List<IdentifiableDTO<DrugOrderDTO>> order, Date date,

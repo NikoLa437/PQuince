@@ -149,7 +149,7 @@ class Header extends Component {
 								<Link to="/drugs-in-pharmacy">Drugs</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
-								<Link to="/narudzbine">Narudzbine</Link>
+								<Link to="/orders">Orders</Link>
 							</li>
 							<li hidden={!this.hasRole("ROLE_PHARMACYADMIN")}>
 								<Link to="/absence-for-administrator">Absence</Link>

@@ -50,7 +50,9 @@ import Offers from "./pages/offers/Offers";
 import ActionAndPromotionsPage from "./pages/action-and-promotions/ActionAndPromotionsPage";
 import ComplaintsPharmacy from "./pages/complaints/ComplaintsPharmacy";
 import TimeSelectingPage from "./pages/pharmacist-from-pharmacy/TimeSelectingPage";
+import OrdersPage from "./pages/orders/OrdersPage";
 import Orders from "./pages/offers/Orders";
+
 
 function App() {
 	return (
@@ -120,6 +122,9 @@ function App() {
 				<Route path="/new-appointment/:id" children={<NewAppointmentPage />} />
 				<Link exact to="/reserved-drug" path="/reserved-drug" component={ReservedDrugPage} />
 				<Link exact to="/actions-and-promotions" path="/actions-and-promotions" component={ActionAndPromotionsPage} />
+
+				<Link exact to="/orders" path="/orders" component={OrdersPage} />
+
 			</Switch>
 		</Router>
 	);

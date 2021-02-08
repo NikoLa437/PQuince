@@ -1,5 +1,6 @@
 package quince_it.pquince.services.implementation.drugs;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -170,7 +171,7 @@ public class DrugStorageService implements IDrugStorageService {
 			DrugInstance drugInstance = drugInstanceRepository.getOne(addDrugToPharmacyDTO.getDrugId());
 			Pharmacy pharmacy = pharmacyRepository.getOne(pharmacyId);
 			DrugStorage newDrugStorage= new DrugStorage(drugInstance, pharmacy , addDrugToPharmacyDTO.getAmount());
-			DrugPriceForPharmacy newDrugPriceInPharmacy = new DrugPriceForPharmacy(drugInstance,pharmacy,new Date(), addDrugToPharmacyDTO.getDateTo(),addDrugToPharmacyDTO.getPrice());
+			DrugPriceForPharmacy newDrugPriceInPharmacy = new DrugPriceForPharmacy(drugInstance,pharmacy,new Date(), addDays(new Date(),3650),addDrugToPharmacyDTO.getPrice());
 			
 			drugStorageRepository.save(newDrugStorage);
 			drugPriceForPharmacyRepository.save(newDrugPriceInPharmacy);
@@ -206,5 +207,13 @@ public class DrugStorageService implements IDrugStorageService {
 		if(drugStorage.getCount() < amount)
 			throw new DrugStorageCountException("Amount exceeds drug storage count");
 	}
+	
+	
+    private Date addDays(Date date, int days) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, days);
+        return new Date(c.getTimeInMillis());
+    }
 
 }

@@ -16,10 +16,9 @@ public class AddDrugToPharmacyDTO {
 		
 	}
 
-	public AddDrugToPharmacyDTO(UUID drugId, Date dateTo, int amount, double price) {
+	public AddDrugToPharmacyDTO(UUID drugId, int amount, double price) {
 		super();
 		this.drugId = drugId;
-		this.dateTo = dateTo;
 		this.amount = amount;
 		this.price = price;
 	}

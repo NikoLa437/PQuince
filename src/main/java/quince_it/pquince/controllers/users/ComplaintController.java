@@ -25,8 +25,8 @@ import quince_it.pquince.services.contracts.exceptions.ComplaintsNotAllowedExcep
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
-import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.users.IComplaintService;
+import quince_it.pquince.services.implementation.IPharmacyFeedbackService;
 
 
 @RestController

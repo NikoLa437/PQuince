@@ -11,7 +11,6 @@ class AddDrugToPharmacy extends Component {
         showAddStorageAndPrice:false,
         drugIdToAdd:'',
         modalSize:'lg',    
-        selectedDate:new Date(),
         amount:1,
         price:1,    
         pharmacyId:''
@@ -31,7 +30,6 @@ class AddDrugToPharmacy extends Component {
     handleAdd = () => {
         let addDrugToPharmacyDTO = {
             drugId: this.state.drugIdToAdd, 
-            dateTo: this.state.selectedDate, 
             amount:this.state.amount,
             price: this.state.price, 
         };
@@ -156,14 +154,6 @@ class AddDrugToPharmacy extends Component {
                                             </button>                   
                                         </div>
                                         <table style={{width:'100%'},{marginLeft:'17%'}}>
-                                            <tr>
-                                                <td>
-                                                    <label>Date to:</label>
-                                                </td>
-                                                <td>
-                                                    <DatePicker  className="form-control" style={{width: "15em"}}  minDate={new Date()} onChange={date => this.handleDateChange(date)} selected={this.state.selectedDate}/>
-                                                </td>
-                                            </tr>
                                             <tr>
                                                 <td>
                                                     <label>Amount:</label>
