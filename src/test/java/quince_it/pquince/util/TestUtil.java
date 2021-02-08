@@ -1,9 +1,13 @@
 package quince_it.pquince.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
@@ -68,4 +72,18 @@ public class TestUtil {
 	public static Patient getPatient(UUID patientId, Address address) {
 		return new Patient(patientId, "", "", "","",address,"",true, 0, new ArrayList<Allergen>(),0);
 	}
+	
+	public static String json(Object object) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        
+        return mapper.writeValueAsString(object);
+    }
+
+	public static Appointment CreateAppointment(Appointment app) {
+		Date start = new Date(new Date().getTime() + 604800000);
+		Date end = new Date(start.getTime() + 900000);
+		return new Appointment(app.getPharmacy(), app.getStaff(), app.getPatient(), start , end, app.getPrice(), app.getAppointmentType(), AppointmentStatus.SCHEDULED);
+	}
+	
 }

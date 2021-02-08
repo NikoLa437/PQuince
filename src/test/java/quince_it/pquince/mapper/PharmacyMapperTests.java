@@ -1,8 +1,7 @@
 package quince_it.pquince.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.UUID;
+import static quince_it.pquince.constants.Constants.PHARMACY_ID;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,8 +29,7 @@ public class PharmacyMapperTests {
 	
 	@Test
 	public void testMapPharmacyPersistenceToPharmacyDTO() {
-		UUID pharmacyId = UUID.fromString("cafeddee-56cb-11eb-ae93-0242ac130002");
-		Pharmacy pharmacy = new Pharmacy(pharmacyId, "Benu", "Apoteka", addressMock, 100);
+		Pharmacy pharmacy = new Pharmacy(PHARMACY_ID, "Benu", "Apoteka", addressMock, 100);
 		
 		IdentifiableDTO<PharmacyDTO> identifiablePharmacyDTO = PharmacyMapper.MapPharmacyPersistenceToPharmacyIdentifiableDTO(pharmacy);
 		

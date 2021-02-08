@@ -5,12 +5,20 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static quince_it.pquince.constants.Constants.ABSENCE_END_DATE;
+import static quince_it.pquince.constants.Constants.ABSENCE_START_DATE;
+import static quince_it.pquince.constants.Constants.ACTION_ID;
+import static quince_it.pquince.constants.Constants.APPOINTMENT_END_DATE_TIME;
+import static quince_it.pquince.constants.Constants.APPOINTMENT_START_DATE_TIME;
+import static quince_it.pquince.constants.Constants.PATIENT_ID;
+import static quince_it.pquince.constants.Constants.PHARMACY_ID;
+import static quince_it.pquince.constants.Constants.STAFF_ID;
+import static quince_it.pquince.constants.Constants.WORKTIME_END_DATE;
+import static quince_it.pquince.constants.Constants.WORKTIME_START_DATE;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -102,29 +110,25 @@ public class AppointmentServiceTests {
 	@Test
 	public void testFindAllDistinctPharmaciesForAppointmentTime() {
 		
-		Date startDateTime = new Date(2021, 2, 15, 14, 2);
-		Date endDateTime = new Date(2021, 2, 15, 14, 17);
-		UUID staffId = UUID.fromString("25345278-52d3-11eb-ae93-0242ac130002");
-
 		List<WorkTime> wt = new ArrayList<WorkTime>();
-		wt.add(new WorkTime(pharmacyMock,  TestUtil.getPharmacistAsStaff(staffId, addressMock), new Date(2021, 2, 3, 14, 2), new Date(2021, 4, 15, 14, 2), 8, 17));
+		wt.add(new WorkTime(pharmacyMock,  TestUtil.getPharmacistAsStaff(STAFF_ID, addressMock), WORKTIME_START_DATE, WORKTIME_END_DATE, 8, 17));
 		
 		
-		when(absenceRepository.findAbsenceByStaffIdAndDate(staffId,startDateTime)).thenReturn(new ArrayList<Absence>());
-		when(workTimeRepository.findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(endDateTime), TestUtil.getHours(endDateTime), startDateTime.getHours())).thenReturn(wt);
-		when(appointmentRepository.findAllConsultationsByAppointmentTime(startDateTime, endDateTime)).thenReturn(new ArrayList<Appointment>());
+		when(absenceRepository.findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME)).thenReturn(new ArrayList<Absence>());
+		when(workTimeRepository.findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), APPOINTMENT_START_DATE_TIME.getHours())).thenReturn(wt);
+		when(appointmentRepository.findAllConsultationsByAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME)).thenReturn(new ArrayList<Appointment>());
 
-		List<Pharmacy> pharmacies = appointmentService.findAllDistinctPharmaciesForAppointmentTime(startDateTime, endDateTime);
+		List<Pharmacy> pharmacies = appointmentService.findAllDistinctPharmaciesForAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME);
 		
 		assertThat(pharmacies).hasSize(1);
 		
-		verify(appointmentRepository, times(1)).findAllConsultationsByAppointmentTime(startDateTime, endDateTime);
+		verify(appointmentRepository, times(1)).findAllConsultationsByAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME);
         verifyNoMoreInteractions(appointmentRepository);
         
-        verify(workTimeRepository, times(1)).findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(endDateTime), TestUtil.getHours(endDateTime), startDateTime.getHours());
+        verify(workTimeRepository, times(1)).findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), APPOINTMENT_START_DATE_TIME.getHours());
         verifyNoMoreInteractions(workTimeRepository);
         
-        verify(absenceRepository, times(1)).findAbsenceByStaffIdAndDate(staffId,startDateTime);
+        verify(absenceRepository, times(1)).findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME);
         verifyNoMoreInteractions(absenceRepository);
 	}
 	
@@ -135,67 +139,55 @@ public class AppointmentServiceTests {
 	@Test
 	public void testFindAllDistinctPharmaciesForAppointmentTimeWhenPhramacistOnAbsence() {
 		
-		Date startDateTime = new Date(2021, 2, 15, 14, 2);
-		Date endDateTime = new Date(2021, 2, 15, 14, 17);
-		UUID staffId = UUID.fromString("25345278-52d3-11eb-ae93-0242ac130002");
-
 		List<WorkTime> wt = new ArrayList<WorkTime>();
-		wt.add(new WorkTime(pharmacyMock, TestUtil.getPharmacistAsStaff(staffId, addressMock) , new Date(2021, 2, 3, 14, 2), new Date(2021, 4, 15, 14, 2), 8, 17));
+		wt.add(new WorkTime(pharmacyMock, TestUtil.getPharmacistAsStaff(STAFF_ID, addressMock) , WORKTIME_START_DATE, WORKTIME_END_DATE, 8, 17));
 		
 		List<Absence> ab = new ArrayList<Absence>();
-		ab.add(new Absence( TestUtil.getPharmacistAsStaff(staffId, addressMock), new Date(2021, 2, 13, 0, 0), new Date(2021, 2, 18, 0, 0)));
+		ab.add(new Absence( TestUtil.getPharmacistAsStaff(STAFF_ID, addressMock), ABSENCE_START_DATE, ABSENCE_END_DATE));
 		
-		when(absenceRepository.findAbsenceByStaffIdAndDate(staffId,startDateTime)).thenReturn(ab);
-		when(workTimeRepository.findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(endDateTime), TestUtil.getHours(endDateTime), startDateTime.getHours())).thenReturn(wt);
-		when(appointmentRepository.findAllConsultationsByAppointmentTime(startDateTime, endDateTime)).thenReturn(new ArrayList<Appointment>());
+		when(absenceRepository.findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME)).thenReturn(ab);
+		when(workTimeRepository.findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), APPOINTMENT_START_DATE_TIME.getHours())).thenReturn(wt);
+		when(appointmentRepository.findAllConsultationsByAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME)).thenReturn(new ArrayList<Appointment>());
 
-		List<Pharmacy> pharmacies = appointmentService.findAllDistinctPharmaciesForAppointmentTime(startDateTime, endDateTime);
+		List<Pharmacy> pharmacies = appointmentService.findAllDistinctPharmaciesForAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME);
 		
 		assertThat(pharmacies).hasSize(0);
 		
-		verify(appointmentRepository, times(1)).findAllConsultationsByAppointmentTime(startDateTime, endDateTime);
+		verify(appointmentRepository, times(1)).findAllConsultationsByAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME);
         verifyNoMoreInteractions(appointmentRepository);
         
-        verify(workTimeRepository, times(1)).findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(endDateTime), TestUtil.getHours(endDateTime), startDateTime.getHours());
+        verify(workTimeRepository, times(1)).findWorkTimesByDesiredConsultationTime(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), APPOINTMENT_START_DATE_TIME.getHours());
         verifyNoMoreInteractions(workTimeRepository);
         
-        verify(absenceRepository, times(1)).findAbsenceByStaffIdAndDate(staffId,startDateTime);
+        verify(absenceRepository, times(1)).findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME);
         verifyNoMoreInteractions(absenceRepository);
 
 	}
 
 	
-	@SuppressWarnings("deprecation")
 	@Test
 	@Transactional
 	public void testCreateConsultation() throws AppointmentNotScheduledException, AppointmentTimeOverlappingWithOtherAppointmentException {
 		
-		Date startDateTime = new Date(2021, 2, 15, 14, 2);
-		Date endDateTime = new Date(2021, 2, 15, 14, 17);
-		UUID patientId = UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002");
-		UUID staffId = UUID.fromString("25345278-52d3-11eb-ae93-0242ac130002");
-		UUID pharmacyId = UUID.fromString("cafeddee-56cb-11eb-ae93-0242ac130002");
-		UUID actionId = UUID.fromString("cafeddee-56cb-11eb-ae93-0242ac130002");
-
 		int dbSizeBeforeAdd = ((List<Appointment>) appointmentRepository.findAll()).size();
 		
-		when(appointmentRepository.findAllAppointmentsByAppointmentTimeAndPatient(startDateTime,endDateTime, patientId)).thenReturn(new ArrayList<Appointment>());
+		when(appointmentRepository.findAllAppointmentsByAppointmentTimeAndPatient(APPOINTMENT_START_DATE_TIME,APPOINTMENT_END_DATE_TIME, PATIENT_ID)).thenReturn(new ArrayList<Appointment>());
 		when(env.getProperty("max_penalty_count")).thenReturn("3");
 		when(env.getProperty("consultation_time")).thenReturn("15");
-		when(appointmentRepository.findAllConsultationsByAppointmentTime(startDateTime, endDateTime)).thenReturn(new ArrayList<Appointment>());
-		when(workTimeRepository.findWorkTimeByDesiredConsultationTimeAndPharmacistId(TestUtil.getEndDate(endDateTime), TestUtil.getHours(endDateTime), staffId)).thenReturn(new WorkTime());
-		when(absenceRepository.findAbsenceByStaffIdAndDate(staffId,startDateTime)).thenReturn(new ArrayList<Absence>());
-		when(staffRepository.findById(staffId)).thenReturn(Optional.of(TestUtil.getPharmacistAsStaff(staffId, addressMock)));
-		when(pharmacistRepository.findPharmacyByPharmacistId(staffId)).thenReturn(TestUtil.getPharmacy(pharmacyId, addressMock));
-		when(patientRepository.findById(patientId)).thenReturn(Optional.of(TestUtil.getPatient(patientId, addressMock)));
-		when(userService.getLoggedUserId()).thenReturn(patientId);
-		when(loyalityProgramService.getDiscountAppointmentPriceForPatient(420, AppointmentType.CONSULTATION, patientId)).thenReturn(420.0);
-		when(actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacyId, ActionAndPromotionType.CONSULTATIONDISCOUNT))
-									.thenReturn(TestUtil.getActionAndPromotions(actionId));
+		when(appointmentRepository.findAllConsultationsByAppointmentTime(APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME)).thenReturn(new ArrayList<Appointment>());
+		when(workTimeRepository.findWorkTimeByDesiredConsultationTimeAndPharmacistId(TestUtil.getEndDate(APPOINTMENT_END_DATE_TIME), TestUtil.getHours(APPOINTMENT_END_DATE_TIME), STAFF_ID)).thenReturn(new WorkTime());
+		when(absenceRepository.findAbsenceByStaffIdAndDate(STAFF_ID,APPOINTMENT_START_DATE_TIME)).thenReturn(new ArrayList<Absence>());
+		when(staffRepository.findById(STAFF_ID)).thenReturn(Optional.of(TestUtil.getPharmacistAsStaff(STAFF_ID, addressMock)));
+		when(pharmacistRepository.findPharmacyByPharmacistId(STAFF_ID)).thenReturn(TestUtil.getPharmacy(PHARMACY_ID, addressMock));
+		when(patientRepository.findById(PATIENT_ID)).thenReturn(Optional.of(TestUtil.getPatient(PATIENT_ID, addressMock)));
+		when(userService.getLoggedUserId()).thenReturn(PATIENT_ID);
+		when(loyalityProgramService.getDiscountAppointmentPriceForPatient(420, AppointmentType.CONSULTATION, PATIENT_ID)).thenReturn(420.0);
+		when(actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(PHARMACY_ID, ActionAndPromotionType.CONSULTATIONDISCOUNT))
+									.thenReturn(TestUtil.getActionAndPromotions(ACTION_ID));
 		when(appointmentRepository.findAll()).thenReturn(
-									TestUtil.getAppointment(pharmacyMock, staffMock, patientMock, startDateTime, endDateTime, AppointmentStatus.SCHEDULED, AppointmentType.CONSULTATION, 378.0));
+									TestUtil.getAppointment(pharmacyMock, staffMock, patientMock, APPOINTMENT_START_DATE_TIME, APPOINTMENT_END_DATE_TIME, AppointmentStatus.SCHEDULED, AppointmentType.CONSULTATION, 378.0));
 
-		appointmentService.createConsultation(TestUtil.getConsultationRequestDTO(staffId, startDateTime));
+		appointmentService.createConsultation(TestUtil.getConsultationRequestDTO(STAFF_ID, APPOINTMENT_START_DATE_TIME));
 		
 		List<Appointment> appointments = (List<Appointment>) appointmentRepository.findAll();
         assertThat(appointments).hasSize(dbSizeBeforeAdd + 1); 
@@ -204,8 +196,8 @@ public class AppointmentServiceTests {
         
         assertThat(appointment.getAppointmentStatus()).isEqualTo(AppointmentStatus.SCHEDULED);
         assertThat(appointment.getAppointmentType()).isEqualTo(AppointmentType.CONSULTATION);
-        assertThat(appointment.getStartDateTime()).isEqualTo(startDateTime);
-        assertThat(appointment.getEndDateTime()).isEqualTo(endDateTime);
+        assertThat(appointment.getStartDateTime()).isEqualTo(APPOINTMENT_START_DATE_TIME);
+        assertThat(appointment.getEndDateTime()).isEqualTo(APPOINTMENT_END_DATE_TIME);
         assertThat(appointment.getPrice()).isEqualTo(378.0);
         assertThat(appointment.getPriceToPay()).isEqualTo(378.0);
 
