@@ -124,13 +124,13 @@ class ActionAndPromotionsPage extends Component {
                                         </td>
                                         <td>
 										<div hidden={action.EntityDTO.actionAndPromotionType!=="DRUGDISCOUNT"}>
-											<b>Action for drug buying</b>
+											<b style={{color:'blue'}}>Action for drug buying</b>
 										</div>
                                         <div hidden={action.EntityDTO.actionAndPromotionType!=="EXAMINATIONDISCOUNT"}>
-											<b>Action for examination</b>
+											<b style={{color:'green'}}>Action for examination</b>
 										</div>
                                         <div hidden={action.EntityDTO.actionAndPromotionType!=="CONSULTATIONDISCOUNT"}>
-											<b>Action for consultation</b>
+											<b style={{color:'red'}}>Action for consultation</b>
 										</div>
 										<div>
 											<b>Date from: </b> {new Date(action.EntityDTO.dateFrom).toDateString()}

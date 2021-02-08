@@ -19,7 +19,10 @@ import quince_it.pquince.repository.drugs.OrderRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PharmacyAdminRepository;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugOrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
+import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IOrderService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
 
@@ -67,5 +70,40 @@ public class OrderService implements IOrderService {
 		
 		return retVal;
 	}
+
+
+	@Override
+	public List<IdentifiableDTO<OrderDTO>> findOrdersForPharmacy(UUID pharmacyId) {
+		List<Order> drugOrdersForPharmacy = orderRepository.findDrugOrderForPharmacy(pharmacyId);
+		
+		List<IdentifiableDTO<OrderDTO>> retVal = new ArrayList<IdentifiableDTO<OrderDTO>>();
+		
+		drugOrdersForPharmacy.forEach(o -> retVal.add(MapOrderPersistanceToIndetifiableOrderDTO(o)));
+
+		return retVal;
+	}
+
+
+	private IdentifiableDTO<OrderDTO> MapOrderPersistanceToIndetifiableOrderDTO(Order o) {
+		// TODO Auto-generated method stub
+		return new IdentifiableDTO<OrderDTO>(o.getId(),new OrderDTO(this.mapListOfDrugOrderToListOfDrugOrderDTO(o.getOrder()),o.getDate(),o.getOffers().size(),o.getPharmacyAdmin().getName()+" " + o.getPharmacyAdmin().getSurname()));
+	}
+
+
+	private List<DrugForOrderDTO> mapListOfDrugOrderToListOfDrugOrderDTO(List<DrugOrder> order) {
+		// TODO Auto-generated method stub
+		 List<DrugForOrderDTO> retVal = new ArrayList<DrugForOrderDTO>();
+		 
+		 order.forEach(dfo -> retVal.add(MapDrugOrderPersistanceToDrugOrderDTO(dfo)));
+		 
+		 return retVal;
+	}
+
+	private DrugForOrderDTO MapDrugOrderPersistanceToDrugOrderDTO(DrugOrder dfo) {
+		// TODO Auto-generated method stub
+		return new DrugForOrderDTO(dfo.getDrugInstance().getId(),(int)dfo.getAmount(),dfo.getDrugInstance().getName(),dfo.getDrugInstance().getDrugInstanceName(),dfo.getDrugInstance().getManufacturer().getName());
+	}
+
+
 
 }
