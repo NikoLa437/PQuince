@@ -146,7 +146,7 @@ public class AuthenticationController {
 	}
 	
 	@PostMapping("/change-password")
-	@PreAuthorize("hasRole('PATIENT') or hasRole('PHARMACYADMIN')") // or hasRole....
+	@PreAuthorize("hasRole('PATIENT') or hasRole('PHARMACYADMIN') or hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')") // or hasRole....
 	public ResponseEntity<?> changePassword(@RequestBody PasswordChanger passwordChanger) {
 		
 		try {
