@@ -43,13 +43,14 @@ public class LoyaltyProgramController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); 
 		}
 	}
-	
-	@PutMapping("/{loyaltyProgramId}") 
+
+	@CrossOrigin
+	@PutMapping("/update")
 	@PreAuthorize("hasRole('SYSADMIN')")
-	public ResponseEntity<?> updateLoyaltyProgramInformation(@PathVariable UUID loyaltyProgramId,@RequestBody LoyaltyProgramDTO loyaltyProgramDTO ) {
+	public ResponseEntity<?> updateLoyaltyProgramInformation(@RequestBody LoyaltyProgramDTO loyaltyProgramDTO ) {
 	  
 		try {
-			loyaltyProgramService.update(loyaltyProgramDTO, loyaltyProgramId);
+			loyaltyProgramService.update(loyaltyProgramDTO);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

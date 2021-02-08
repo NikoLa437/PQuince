@@ -47,11 +47,11 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 	}
 
 	@Override
-	public void update(LoyaltyProgramDTO entityDTO, UUID id) {
+	public void update(LoyaltyProgramDTO entityDTO) {
 
 		try {
 			//LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.findById(id).get();
-			LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.getOne(id);
+			LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.getOne(LOYALITY_PROGRAM_ID);
 			loyaltyProgram.setPointsForAppointment(entityDTO.getPointsForAppointment());
 			loyaltyProgram.setPointsForConsulting(entityDTO.getPointsForConsulting());
 			loyaltyProgram.setPointsToEnterRegularCathegory(entityDTO.getPointsToEnterRegularCathegory());
@@ -130,6 +130,11 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 			return patientLoyalityProgramDTO.getAppointmentDiscount();
 		else
 			return patientLoyalityProgramDTO.getConsultationDiscount();
+	}
+
+	@Override
+	public void update(LoyaltyProgramDTO entityDTO, UUID id) {
+		
 	}
 
 		

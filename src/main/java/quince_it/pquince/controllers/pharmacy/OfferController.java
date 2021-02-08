@@ -12,31 +12,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
+import quince_it.pquince.services.contracts.interfaces.drugs.IOfferService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IOrderService;
-import quince_it.pquince.services.implementation.drugs.AllergenService;
 
 @RestController
-@RequestMapping(value = "api/order")
-public class OrderController {
-
-	
+@RequestMapping(value = "api/offer")
+public class OfferController {
 	@Autowired
-	private IOrderService orderService;
+	private IOfferService offerService;
 	
 	@PostMapping
-	@PreAuthorize("hasRole('PHARMACYADMIN')")
-	public ResponseEntity<?> create(@RequestBody CreateOrderDTO createOrderDTO) {
+	@PreAuthorize("hasRole('SUPPLIER')")
+	public ResponseEntity<?> create(@RequestBody OfferDTO offerDTO) {
 		
-		return new ResponseEntity<>(orderService.create(createOrderDTO),HttpStatus.CREATED);
+		return new ResponseEntity<>(offerService.create(offerDTO),HttpStatus.CREATED);
 	}
 	
 	@GetMapping
 	@PreAuthorize("hasRole('SUPPLIER')") 
-	public ResponseEntity<List<IdentifiableDTO<OrderDTO>>> findAll() {
-		return new ResponseEntity<>(orderService.findAll(),HttpStatus.OK);
+	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAll() {
+		return new ResponseEntity<>(offerService.findAll(),HttpStatus.OK);
 	}
 }

@@ -8,14 +8,14 @@ import { withRouter } from "react-router";
 import OfferModal from "../../components/OfferModal";
 import getAuthHeader from "../../GetHeader";
 
-class Offers extends Component {
+class Orders extends Component {
 	state = {
 		price: "",
 		showOfferModal: false,
 	};
-	
+
 	componentDidMount() {
-			Axios.get(BASE_URL + "/api/offer", { headers: { Authorization: getAuthHeader() } })
+			Axios.get(BASE_URL + "/api/order", { headers: { Authorization: getAuthHeader() } })
 					.then((res) => {
 						console.log(res.data);
 					})
@@ -24,6 +24,7 @@ class Offers extends Component {
 						console.log(err);
 					});
 	}
+
 	handleOffer = () => {
 	
 	};
@@ -47,7 +48,7 @@ class Offers extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Offers </h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Orders </h5>
 
 					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
@@ -58,7 +59,7 @@ class Offers extends Component {
 									<td>
 										
 										<div>
-											<b>Offer : </b>{" "}
+											<b>Order : </b>{" "}
 										</div>
 									</td>
 									<td className="align-middle">
@@ -88,4 +89,4 @@ class Offers extends Component {
 	}
 }
 
-export default withRouter(Offers);
+export default withRouter(Orders);
