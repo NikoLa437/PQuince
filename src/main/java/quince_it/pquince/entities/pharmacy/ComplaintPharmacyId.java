@@ -1,8 +1,10 @@
 package quince_it.pquince.entities.pharmacy;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import quince_it.pquince.entities.users.Patient;
@@ -42,7 +44,6 @@ public class ComplaintPharmacyId implements Serializable{
 	public void setPatient(Patient patient) {
 		this.patient = patient;
 	}
-	
-	
+
 	
 }
