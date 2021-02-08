@@ -6,13 +6,13 @@ public class PharmacyDrugPriceDTO {
 	
 	private IdentifiableDTO<PharmacyDTO> pharmacy;
 	
-	private int price;
+	private double price;
 	
 	private double grade;
 
 	public PharmacyDrugPriceDTO() {}
 	
-	public PharmacyDrugPriceDTO(IdentifiableDTO<PharmacyDTO> pharmacy, double grade, int price) {
+	public PharmacyDrugPriceDTO(IdentifiableDTO<PharmacyDTO> pharmacy, double grade, double price) {
 		super();
 		this.pharmacy = pharmacy;
 		this.price = price;
@@ -27,11 +27,11 @@ public class PharmacyDrugPriceDTO {
 		this.pharmacy = pharmacy;
 	}
 
-	public int getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(int price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 	

@@ -17,4 +17,6 @@ public interface ILoyaltyProgramService extends IService<LoyaltyProgramDTO, Iden
 	int getDiscountPercentageForAppointmentForPatient(AppointmentType appointmentType, UUID patientId);
 	
 	PatientLoyalityProgramDTO getLoggedPatientLoyalityProgram(UUID patientId);
+
+	void update(LoyaltyProgramDTO entityDTO);
 }
