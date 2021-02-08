@@ -35,9 +35,9 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IActionAndPromotionsService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
-import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
+import quince_it.pquince.services.implementation.IPharmacyFeedbackService;
 
 @RestController
 @RequestMapping(value = "api/pharmacy")
@@ -285,6 +285,78 @@ public class PharmacyController {
 		
 		PharmacyFiltrationDTO pharmacyFiltrationDTO = new PharmacyFiltrationDTO(name, city, gradeFrom, gradeTo, distanceFrom, distanceTo, latitude, longitude);
 		List<IdentifiableDTO<PharmacyGradeDTO>> pharmacies = pharmacyService.findAllPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(pharmacyFiltrationDTO);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by-qr/name-ascending/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findQrPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(@PathVariable UUID id){
+	
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = pharmacyService.findQrPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(id);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by-qr/name-descending/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findQrPharmaciesWithGradesByNameGradeAndDistanceSortByNameDescending(@PathVariable UUID id){
+	
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = pharmacyService.findQrPharmaciesWithGradesByNameGradeAndDistanceSortByNameDescending(id);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by-qr/city-name-ascending/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findQrPharmaciesWithGradesByCityAscending(@PathVariable UUID id){
+	
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = pharmacyService.findQrPharmaciesWithGradesByCityAscending(id);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by-qr/city-name-descending/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findQrPharmaciesWithGradesByCityDescending(@PathVariable UUID id){
+	
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = pharmacyService.findQrPharmaciesWithGradesByCityDescending(id);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by-qr/grade-ascending/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findQrPharmaciesWithGradesByGradeAscending(@PathVariable UUID id){
+	
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = pharmacyService.findQrPharmaciesWithGradesByGradeAscending(id);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by-qr/grade-descending/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findQrPharmaciesWithGradesByGradeDescending(@PathVariable UUID id){
+	
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = pharmacyService.findQrPharmaciesWithGradesByGradeDescending(id);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by-qr/price-ascending/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findQrPharmaciesWithGradesByPriceAscending(@PathVariable UUID id){
+	
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = pharmacyService.findQrPharmaciesWithGradesByPriceAscending(id);
+		
+		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
+	}
+	
+	@GetMapping("/sort-by-qr/price-descending/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>> findQrPharmaciesWithGradesByPriceDescending(@PathVariable UUID id){
+	
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = pharmacyService.findQrPharmaciesWithGradesByPriceDescending(id);
 		
 		return new ResponseEntity<>(pharmacies, HttpStatus.OK);
 	}

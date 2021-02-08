@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class DrugOrderDTO {
 	private UUID drugInstanceId;
-	private int amount;
+	private double amount;
 	
 
 	public DrugOrderDTO() {
@@ -13,7 +13,7 @@ public class DrugOrderDTO {
 	}
 	
 	
-	public DrugOrderDTO(UUID drugInstanceId, int amount) {
+	public DrugOrderDTO(UUID drugInstanceId, double amount) {
 		super();
 		this.drugInstanceId = drugInstanceId;
 		this.amount = amount;
@@ -26,10 +26,10 @@ public class DrugOrderDTO {
 	public void setDrugInstanceId(UUID drugInstanceId) {
 		this.drugInstanceId = drugInstanceId;
 	}
-	public int getAmount() {
+	public double getAmount() {
 		return amount;
 	}
-	public void setAmount(int amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 	

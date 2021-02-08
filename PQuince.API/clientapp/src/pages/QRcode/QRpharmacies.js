@@ -137,159 +137,12 @@ class QRpharmacies extends Component {
 		this.setState({ city: event.target.value });
 	};
 
-	handleSearch = () => {
-		console.log(this.state);
-
-		if (this.state.showingSorted === true) {
-			this.setState({ showingSearched: true }, () => {
-				if (this.state.sortIndicator === 1) this.handleSortByNameAscending();
-				else if (this.state.sortIndicator === 2) this.handleSortByNameDescending();
-				else if (this.state.sortIndicator === 3) this.handleSortByCityAscending();
-				else if (this.state.sortIndicator === 4) this.handleSortByCityDescending();
-				else if (this.state.sortIndicator === 5) this.handleSortByGradeAscending();
-				else if (this.state.sortIndicator === 6) this.handleSortByGradeDescending();
-			});
-		} else {
-			if (
-				!(
-					this.state.gradeFrom === "" &&
-					this.state.gradeTo === "" &&
-					this.state.distanceFrom === "" &&
-					this.state.distanceTo === "" &&
-					this.state.name === "" &&
-					this.state.city === ""
-				)
-			) {
-				let gradeFrom = this.state.gradeFrom;
-				let gradeTo = this.state.gradeTo;
-				let distanceFrom = this.state.distanceFrom;
-				let distanceTo = this.state.distanceTo;
-				let latitude = this.state.currentLatitude;
-				let longitude = this.state.currentLongitude;
-
-				if (gradeFrom === "") gradeFrom = 0;
-				if (gradeTo === "") gradeTo = 0;
-				if (distanceFrom === "") distanceFrom = 0;
-				if (distanceTo === "") distanceTo = 0;
-				if (latitude === null) latitude = -1000;
-				if (longitude === null) longitude = -1000;
-
-				const SEARCH_URL =
-					BASE_URL +
-					"/api/pharmacy/search?name=" +
-					this.state.name +
-					"&city=" +
-					this.state.city +
-					"&gradeFrom=" +
-					gradeFrom +
-					"&gradeTo=" +
-					gradeTo +
-					"&distanceFrom=" +
-					distanceFrom +
-					"&distanceTo=" +
-					distanceTo +
-					"&latitude=" +
-					latitude +
-					"&longitude=" +
-					longitude;
-
-				Axios.get(SEARCH_URL)
-					.then((res) => {
-						this.setState({
-							pharmacies: res.data,
-							formShowed: false,
-							showingSearched: true,
-						});
-						console.log(res.data);
-					})
-					.catch((err) => {
-						console.log(err);
-					});
-			}
-		}
-	};
-
-	getSearchParams = () => {
-		let gradeFrom = this.state.gradeFrom;
-		let gradeTo = this.state.gradeTo;
-		let distanceFrom = this.state.distanceFrom;
-		let distanceTo = this.state.distanceTo;
-		let latitude = this.state.currentLatitude;
-		let longitude = this.state.currentLongitude;
-
-		if (gradeFrom === "") gradeFrom = 0;
-		if (gradeTo === "") gradeTo = 0;
-		if (distanceFrom === "") distanceFrom = 0;
-		if (distanceTo === "") distanceTo = 0;
-		if (latitude === null) latitude = -1000;
-		if (longitude === null) longitude = -1000;
-
-		return (
-			"?name=" +
-			this.state.name +
-			"&city=" +
-			this.state.city +
-			"&gradeFrom=" +
-			gradeFrom +
-			"&gradeTo=" +
-			gradeTo +
-			"&distanceFrom=" +
-			distanceFrom +
-			"&distanceTo=" +
-			distanceTo +
-			"&latitude=" +
-			latitude +
-			"&longitude=" +
-			longitude
-		);
-	};
-
-	handleResetSearch = () => {
-		Axios.get(BASE_URL + "/api/pharmacy/qrpharmacies" + this.state.eReciptId)
-			.then((res) => {
-				this.setState({
-					pharmacies: res.data,
-					formShowed: false,
-					showingSearched: false,
-					name: "",
-					city: "",
-					gradeFrom: "",
-					gradeTo: "",
-					distanceFrom: "",
-					distanceTo: "",
-				});
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	};
-
-	handleResetSort = () => {
-		this.setState({ showingSorted: false, sortIndicator: 0 });
-		if (this.state.showingSearched === true) {
-			this.handleSearch();
-		} else {
-			Axios.get(BASE_URL + "/api/pharmacy/qrpharmacies" + this.state.eReciptId)
-				.then((res) => {
-					this.setState({ pharmacies: res.data });
-					console.log(res.data);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		}
-	};
-
 	handleSortByNameAscending = () => {
 		let URL = BASE_URL + "/api/pharmacy";
-
-		if (this.state.showingSearched === true) {
-			URL += "/search/sort-by/name-ascending" + this.getSearchParams();
-		} else {
-			URL += "/sort-by/name-ascending";
-		}
-		Axios.get(URL)
+		
+		URL += "/sort-by-qr/name-ascending/" + this.props.match.params.id;
+		
+		Axios.get(URL, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 1 });
@@ -302,12 +155,39 @@ class QRpharmacies extends Component {
 	handleSortByNameDescending = () => {
 		let URL = BASE_URL + "/api/pharmacy";
 
-		if (this.state.showingSearched === true) {
-			URL += "/search/sort-by/name-descending" + this.getSearchParams();
-		} else {
-			URL += "/sort-by/name-descending";
-		}
-		Axios.get(URL)
+		URL += "/sort-by-qr/name-descending/" + this.props.match.params.id;
+		
+		Axios.get(URL, { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data);
+				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 2 });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+	
+	handleSortByPriceAscending = () => {
+		let URL = BASE_URL + "/api/pharmacy";
+		
+		URL += "/sort-by-qr/price-ascending/" + this.props.match.params.id;
+		
+		Axios.get(URL, { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data);
+				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 1 });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
+	handleSortByPriceDescending = () => {
+		let URL = BASE_URL + "/api/pharmacy";
+
+		URL += "/sort-by-qr/price-descending/" + this.props.match.params.id;
+		
+		Axios.get(URL, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 2 });
@@ -320,15 +200,57 @@ class QRpharmacies extends Component {
 	handleSortByCityAscending = () => {
 		let URL = BASE_URL + "/api/pharmacy";
 
-		if (this.state.showingSearched === true) {
-			URL += "/search/sort-by/city-name-ascending" + this.getSearchParams();
-		} else {
-			URL += "/sort-by/city-name-ascending";
-		}
-		Axios.get(URL)
+		URL += "/sort-by-qr/city-name-ascending/" + this.props.match.params.id;
+		
+		Axios.get(URL, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 3 });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+	
+	
+	handleSortByCityDescending = () => {
+		let URL = BASE_URL + "/api/pharmacy";
+
+		URL += "/sort-by-qr/city-name-descending/" + this.props.match.params.id;
+		
+		Axios.get(URL, { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data);
+				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 4 });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+	handleSortByGradeAscending = () => {
+		let URL = BASE_URL + "/api/pharmacy";
+
+		URL += "/sort-by-qr/grade-ascending/" + this.props.match.params.id;
+		
+		Axios.get(URL, { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data);
+				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 5 });
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+	
+	handleSortByGradeDescending = () => {
+		let URL = BASE_URL + "/api/pharmacy";
+
+		URL += "/sort-by-qr/grade-descending/" + this.props.match.params.id;
+		
+		Axios.get(URL, { headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				console.log(res.data);
+				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 6 });
 			})
 			.catch((err) => {
 				console.log(err);
@@ -371,42 +293,6 @@ class QRpharmacies extends Component {
             redirect:true,
 		});
 	};
-	
-	handleSortByCityDescending = () => {
-		let URL = BASE_URL + "/api/pharmacy";
-
-		if (this.state.showingSearched === true) {
-			URL += "/search/sort-by/city-name-descending" + this.getSearchParams();
-		} else {
-			URL += "/sort-by/city-name-descending";
-		}
-		Axios.get(URL)
-			.then((res) => {
-				console.log(res.data);
-				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 4 });
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	};
-
-	handleSortByGradeAscending = () => {
-		let URL = BASE_URL + "/api/pharmacy";
-
-		if (this.state.showingSearched === true) {
-			URL += "/search/sort-by/grade-ascending" + this.getSearchParams();
-		} else {
-			URL += "/sort-by/grade-ascending";
-		}
-		Axios.get(URL)
-			.then((res) => {
-				console.log(res.data);
-				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 5 });
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	};
 
 	handleClickOnPharmacy = (id) =>{
 		this.setState({
@@ -415,24 +301,6 @@ class QRpharmacies extends Component {
 		})
 		//window.location.href = "pharmacy/" + id
 	}
-
-	handleSortByGradeDescending = () => {
-		let URL = BASE_URL + "/api/pharmacy";
-
-		if (this.state.showingSearched === true) {
-			URL += "/search/sort-by/grade-descending" + this.getSearchParams();
-		} else {
-			URL += "/sort-by/grade-descending";
-		}
-		Axios.get(URL)
-			.then((res) => {
-				console.log(res.data);
-				this.setState({ pharmacies: res.data, showingSorted: true, sortIndicator: 6 });
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	};
 
 	
   render() {
@@ -445,97 +313,6 @@ class QRpharmacies extends Component {
 
 				<div className="container" style={{ marginTop: "10%" }}>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Pharmacies to buy eRecipe</h5>
-
-					<div className="form-group">
-						<div className="form-group controls">
-							<div className="form-row">
-								<button className="btn btn-outline-primary btn-xl" type="button" onClick={this.hangleFormToogle}>
-									<i className="icofont-rounded-down mr-1"></i>
-									Search pharmacies
-								</button>
-								<div className={this.state.showingSearched ? "ml-2" : "ml-2 collapse"}>
-									<button type="button" className="btn btn-outline-secondary" onClick={this.handleResetSearch}>
-										<i className="icofont-close-line mr-1"></i>Reset search criteria
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<form className={this.state.formShowed ? "form-inline mt-3" : "form-inline mt-3 collapse"} width="100%" id="formCollapse">
-						<div className="form-group mb-2" width="100%">
-							<input
-								placeholder="Name"
-								className="form-control mr-3"
-								style={{ width: "9em" }}
-								type="text"
-								onChange={this.handleNameChange}
-								value={this.state.name}
-							/>
-
-							<input
-								placeholder="City"
-								className="form-control mr-3"
-								style={{ width: "9em" }}
-								type="text"
-								onChange={this.handleCityChange}
-								value={this.state.city}
-							/>
-
-							<input
-								placeholder="Grade from"
-								className="form-control mr-3"
-								style={{ width: "9em" }}
-								type="number"
-								min="1"
-								max="5"
-								onChange={this.handleGradeFromChange}
-								value={this.state.gradeFrom}
-							/>
-							<input
-								placeholder="Grade to"
-								className="form-control"
-								style={{ width: "9em" }}
-								type="number"
-								min="1"
-								max="5"
-								onChange={this.handleGradeToChange}
-								value={this.state.gradeTo}
-							/>
-
-							<div className="ml-5 mr-3">
-								<input
-									placeholder="Distance from"
-									className="form-control"
-									style={{ width: "10em" }}
-									type="number"
-									min="0"
-									max="50"
-									onChange={this.handleDistanceFromChange}
-									value={this.state.distanceFrom}
-								/>
-								<span className="ml-1">km</span>
-							</div>
-							<div>
-								<input
-									placeholder="Distance to"
-									className="form-control"
-									style={{ width: "10em" }}
-									type="number"
-									min="0"
-									max="50"
-									onChange={this.handleDistanceToChange}
-									value={this.state.distanceTo}
-								/>
-								<span className="ml-1">km</span>
-							</div>
-						</div>
-						<div>
-							<button style={{ background: "#1977cc" }} onClick={this.handleSearch} className="btn btn-primary btn-xl" type="button">
-								<i className="icofont-search mr-1"></i>
-								Search
-							</button>
-						</div>
-					</form>
 
 					<div className="form-group">
 						<div className="form-group controls mb-0 pb-2">
@@ -571,16 +348,16 @@ class QRpharmacies extends Component {
 											<button className="dropdown-item" type="button" onClick={this.handleSortByGradeDescending}>
 												Grade descending
 											</button>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByPriceAscending}>
+												Price ascending
+											</button>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByPriceDescending}>
+												Price descending
+											</button>
 										</div>
 									</div>
 								</div>
-								<div className="form-col ml-3">
-									<div className={this.state.showingSorted ? "form-group" : "form-group collapse"}>
-										<button type="button" className="btn btn-outline-secondary" onClick={this.handleResetSort}>
-											<i className="icofont-close-line mr-1"></i>Reset sort criteria
-										</button>
-									</div>
-								</div>
+								
 							</div>
 						</div>
 					</div>

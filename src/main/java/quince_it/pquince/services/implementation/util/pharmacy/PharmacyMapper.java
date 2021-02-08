@@ -14,7 +14,7 @@ public class PharmacyMapper {
 
 	}
 	
-	public static IdentifiableDTO<PharmacyDrugPriceDTO> MapPharmacyPersistenceToPharmacyDrugPriceIdentifiableDTO(Pharmacy pharmacy, double grade, int price){
+	public static IdentifiableDTO<PharmacyDrugPriceDTO> MapPharmacyPersistenceToPharmacyDrugPriceIdentifiableDTO(Pharmacy pharmacy, double grade, double price){
 		if(pharmacy == null) throw new IllegalArgumentException();
 
 		return new IdentifiableDTO<PharmacyDrugPriceDTO>(pharmacy.getId(), new PharmacyDrugPriceDTO(MapPharmacyPersistenceToPharmacyIdentifiableDTO(pharmacy),grade, price));

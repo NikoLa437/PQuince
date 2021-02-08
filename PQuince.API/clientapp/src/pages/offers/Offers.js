@@ -13,11 +13,17 @@ class Offers extends Component {
 		price: "",
 		showOfferModal: false,
 	};
-
+	
 	componentDidMount() {
-		
+			Axios.get(BASE_URL + "/api/offer", { headers: { Authorization: getAuthHeader() } })
+					.then((res) => {
+						console.log(res.data);
+					})
+					.catch((err) => {
+						console.log("GRESKA");
+						console.log(err);
+					});
 	}
-
 	handleOffer = () => {
 	
 	};
@@ -41,7 +47,7 @@ class Offers extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "10%" }}>
-					<h5 className=" text-center mb-0 mt-2 text-uppercase">Patient complaints </h5>
+					<h5 className=" text-center mb-0 mt-2 text-uppercase">Offers </h5>
 
 					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>

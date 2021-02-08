@@ -163,7 +163,7 @@ state = {
 					consultationDiscountGold: this.state.consultationDiscountGold*1,
 				};
 				
-				Axios.put(BASE_URL + "/api/loyaltyProgram/" + this.state.id, loyaltyProgramDTO, { headers: { Authorization: getAuthHeader()}})
+				Axios.put(BASE_URL + "/api/loyaltyProgram/update", loyaltyProgramDTO, { headers: { Authorization: getAuthHeader() } })
 					.then((res) => {
 						console.log("Success");
 						this.setState({ openSuccessModal: true });
@@ -182,370 +182,418 @@ state = {
 				<Header />
 
 				<div className="container" style={{ marginTop: "8%" }}>
-					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
+					<h3 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
 						LOYALTY PROGRAM
-					</h5>
+					</h3>
 
 					<div className="row section-design">
 						<div className="col-lg-8 mx-auto">
 							<br />
 							<form id="contactForm" name="sentMessage">
-								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
+								<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
+									<tbody>
+										<tr style={{ width: "100%", marginTop: "3rem" }}>
+											<td>
 											<div className="form-col" style={{ fontSize: "1.5em" }}>
 												Number of points  to enter cathegory:{" "}
 											</div>
-											<div
-												className="form-col ml-2 rounded pr-2 pl-2"
-												style={{
-													color: "white",
-													background: this.state.loyalityCategoryColor,
-													fontSize: "1.5em",
-												}}
-											>
-											</div>
-										</div>
-									</div>
-								</div>
-								<br />
-								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											
-											<div
-												className="form-col ml-2 rounded pr-2 pl-2"
-												style={{
-													color: "white",
-													background: this.state.loyalityRegularColor,
-													fontSize: "1.5em",
-												}}
-											>
-												REGULAR
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1, width: 60 }}
-											>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<div
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 150,
+														background: this.state.loyalityRegularColor,
+														fontSize: "1.5em",
+													}}
+												>
+													REGULAR
+												</div>
+											</td>
+											<td>	
+												<div
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
 												<input
 													className="form-control"
 													type="text"
 													onChange={this.handlePointsToEnterRegularCathegoryChange}
 													value={this.state.pointsToEnterRegularCathegory}
 												/>
-											</div>
-											<div
-												className="form-col ml-2 rounded pr-2 pl-2"
-												style={{
-													color: "white",
-													background: this.state.loyalitySilverColor,
-													fontSize: "1.5em",
-												}}
-											>
-												SILVER
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 , width: 60 }}
-											>
+												</div>
+											</td>
+											
+										</tr>
+										<tr>
+											<td>
+												<div
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 150,
+														background: this.state.loyalitySilverColor,
+														fontSize: "1.5em",
+													}}
+												>
+													SILVER
+												</div>
+											</td>
+											<td>
+												<div
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
 												<input
 													className="form-control"
 													type="text"
 													onChange={this.handlePointsToEnterSilverCathegoryChange}
 													value={this.state.pointsToEnterSilverCathegory}
 												/>
-											</div>
-											<div
-												className="form-col ml-2 rounded pr-2 pl-2"
-												style={{
-													color: "white",
-													background: this.state.loyalityGoldColor,
-													fontSize: "1.5em",
-												}}
-											>
-												GOLD
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1, width: 60}}
-											>
+												</div>
+											</td>
+											
+										</tr>
+										<tr>
+											<td>
+												<div
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 150,
+														background: this.state.loyalityGoldColor,
+														fontSize: "1.5em",
+													}}
+												>
+													GOLD
+												</div>
+											</td>
+											<td>
+												<div
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
 												<input
 													className="form-control"
-													type="text"
+													type="number"
+													min="0"
+													max="100"
 													onChange={this.handlePointsToEnterGoldCathegoryChange}
 													value={this.state.pointsToEnterGoldCathegory}
 												/>
-											</div>
-										</div>
-									</div>
-								</div>
-								
-								<br />
-								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Number of points for consulting:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handlePointsForConsultingChange}
-													value={this.state.pointsForConsulting}
-												/>
-											</div>
-										</div>
-									</div>
-								</div>
-								<br />
-								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Number of points for appointment:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handlePointsForAppointmentChange}
-													value={this.state.pointsForAppointment}
-												/>
-											</div>
-										</div>
-									</div>
-								</div>
-								
-								<br />
-								<h2>REGULAR discounts</h2>
-								<div className="control-group">
-									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Discount for appointment:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handleAppointmentDiscountRegularChange}
-													value={this.state.appointmentDiscountRegular}
-												/>
-											</div>
+												</div>
+											</td>
 											
-										</div>
+										</tr>
+						</tbody>
+					</table>
+					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
+						<tbody>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Number of points for consulting:{" "}
 									</div>
+									</td>
+									<td>
 									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Discount for drug:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handleDrugDiscountRegularChange}
-													value={this.state.drugDiscountRegular}
-												/>
-											</div>
-											
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
+										<input
+											className="form-control"
+											type="number"
+											min="0"
+											max="50"
+											onChange={this.handlePointsForConsultingChange}
+											value={this.state.pointsForConsulting}
+										/>
 										</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Number of points for appointment:{" "}
 									</div>
+								</td>
+								<td>
 									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Discount for consultation:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handleConsultationDiscountRegularChange}
-													value={this.state.consultationDiscountRegular}
-												/>
-											</div>
-											
-										</div>
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="50"
+										onChange={this.handlePointsForAppointmentChange}
+										value={this.state.pointsForAppointment}
+									/>
 									</div>
-								</div>
-								<br />
-								<h2>SILVER discounts</h2>
-								<div className="control-group">
+								</td>
+							</tr>
+							<tr>	
+								<br/>
+								<h3>REGULAR discount percentages</h3>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Discount for appointment:{" "}
+									</div>
+								</td>
+								<td>
 									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Discount for appointment:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handleAppointmentDiscountSilverChange}
-													value={this.state.appointmentDiscountSilver}
-												/>
-											</div>
-											
-										</div>
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="100"
+										onChange={this.handleAppointmentDiscountRegularChange}
+										value={this.state.appointmentDiscountRegular}
+									/>
 									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Discount for drug:{" "}
+									</div>
+								</td>
+								<td>
 									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Discount for drug:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handleDrugDiscountSilverChange}
-													value={this.state.drugDiscountSilver}
-												/>
-											</div>
-											
-										</div>
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="100"
+										onChange={this.handleDrugDiscountRegularChange}
+										value={this.state.drugDiscountRegular}
+									/></div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Discount for consultation:{" "}
 									</div>
+								</td>
+								<td>
 									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Discount for consultation:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handleConsultationDiscountSilverChange}
-													value={this.state.consultationDiscountSilver}
-												/>
-											</div>
-											
-										</div>
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="100"
+										onChange={this.handleConsultationDiscountRegularChange}
+										value={this.state.consultationDiscountRegular}
+									/></div>
+								</td>
+							</tr>
+							<tr>	
+								<br/>
+								<h3>SILVER discount percentages</h3>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Discount for appointment:{" "}
 									</div>
-								</div>
-								<br />
-								<h2>GOLD discounts</h2>
-								<div className="control-group">
+								</td>
+								<td>
 									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Discount for appointment:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handleAppointmentDiscountGoldChange}
-													value={this.state.appointmentDiscountGold}
-												/>
-											</div>
-											
-										</div>
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="100"
+										onChange={this.handleAppointmentDiscountSilverChange}
+										value={this.state.appointmentDiscountSilver}
+									/></div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Discount for drug:{" "}
 									</div>
+								</td>			
+								<td>
 									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
-									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Discount for drug:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handleDrugDiscountGoldChange}
-													value={this.state.drugDiscountGold}
-												/>
-											</div>
-											
-										</div>
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>								
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="100"
+										onChange={this.handleDrugDiscountSilverChange}
+										value={this.state.drugDiscountSilver}
+									/></div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Discount for consultation:{" "}
 									</div>
+								</td>
+								<td>
 									<div
-										className="form-group controls mb-0 pb-2"
-										style={{ color: "#6c757d", opacity: 1 }}
+										className="form-col ml-2 rounded pr-2 pl-2"
+										style={{
+											color: "white",
+											width: 100,
+											fontSize: "1.5em",
+										}}
 									>
-										<div className="form-row">
-											<div className="form-col" style={{ fontSize: "1.5em" }}>
-												Discount for consultation:{" "}
-											</div>
-											<div
-												className="form-group controls mb-0 pb-2"
-												style={{ color: "#6c757d", opacity: 1 }}
-											>
-												<input
-													className="form-control"
-													type="text"
-													onChange={this.handleConsultationDiscountGoldChange}
-													value={this.state.consultationDiscountGold}
-												/>
-											</div>
-											
-										</div>
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="100"
+										onChange={this.handleConsultationDiscountSilverChange}
+										value={this.state.consultationDiscountSilver}
+									/></div>
+								</td>
+							</tr>
+							<tr>	
+								<br/>
+								<h3>GOLD discount percentages</h3>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Discount for appointment:{" "}
 									</div>
-								</div>
-								
+								</td>
+								<td>
+									<div
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="100"
+										onChange={this.handleAppointmentDiscountGoldChange}
+										value={this.state.appointmentDiscountGold}
+									/></div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Discount for drug:{" "}
+									</div>
+								</td>			
+								<td>	
+									<div
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="100"
+										onChange={this.handleDrugDiscountGoldChange}
+										value={this.state.drugDiscountGold}
+									/></div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div className="form-col" style={{ fontSize: "1.5em" }}>
+										Discount for consultation:{" "}
+									</div>
+								</td>
+								<td>
+									<div
+													className="form-col ml-2 rounded pr-2 pl-2"
+													style={{
+														color: "white",
+														width: 100,
+														fontSize: "1.5em",
+													}}
+												>
+									<input
+										className="form-control"
+										type="number"
+										min="0"
+										max="100"
+										onChange={this.handleConsultationDiscountGoldChange}
+										value={this.state.consultationDiscountGold}
+									/></div>
+								</td>
+							</tr>
 								<div className="form-group text-center">
 									<button
 										style={{ background: "#1977cc", marginTop: "15px" }}
@@ -560,6 +608,8 @@ state = {
 								<br />
 
 								
+						</tbody>
+					</table>
 							</form>
 						</div>
 					</div>

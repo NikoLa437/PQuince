@@ -13,6 +13,7 @@ public class OrderDTO {
 	
 	private String creator;
 
+
 	public OrderDTO() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -57,6 +58,5 @@ public class OrderDTO {
 	public void setCreator(String creator) {
 		this.creator = creator;
 	}
-	
 	
 }

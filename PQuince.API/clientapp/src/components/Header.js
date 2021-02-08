@@ -114,8 +114,20 @@ class Header extends Component {
 								<Link to="/offers">Offers</Link>
 							</li>
 							
-							<li hidden={!this.hasRole("ROLE_SYSADMIN")}>
-								<Link to="/admin-complaints">Complaints</Link>
+							<li hidden={!this.hasRole("ROLE_SUPPLIER")}>
+								<Link to="/orders">Orders</Link>
+							</li>
+							
+							<li className="drop-down" hidden={!this.hasRole("ROLE_SYSADMIN")}>
+								<a href="#">Complaints</a>
+								<ul>
+									<li hidden={!this.hasRole("ROLE_SYSADMIN")}>
+										<Link to="/admin-complaints">Staff</Link>
+									</li>
+									<li hidden={!this.hasRole("ROLE_SYSADMIN")}>
+										<Link to="/admin-complaints-pharmacy">Pharmacy</Link>
+									</li>
+								</ul>
 							</li>
 							
 							<li hidden={!this.hasRole("ROLE_SYSADMIN")}>

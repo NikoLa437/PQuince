@@ -21,10 +21,13 @@ import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugOrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IOrderService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
+import quince_it.pquince.services.implementation.util.drugs.OfferMapper;
+import quince_it.pquince.services.implementation.util.drugs.OrderMapper;
 
 @Service
 public class OrderService implements IOrderService {
@@ -70,6 +73,16 @@ public class OrderService implements IOrderService {
 		
 		return retVal;
 	}
+	
+	@Override
+	public  List<IdentifiableDTO<OrderDTO>> findAll() {
+		
+		List<IdentifiableDTO<OrderDTO>> orders = new ArrayList<IdentifiableDTO<OrderDTO>>();
+		orderRepository.findAll().forEach((d) -> orders.add(OrderMapper.MapOrderInstancePersistenceToOrderInstanceIdentifiableDTO(d)));
+		
+		return orders;
+	}
+
 
 
 	@Override

@@ -43,10 +43,10 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
-import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
+import quince_it.pquince.services.implementation.IPharmacyFeedbackService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.LocationUtil;
 import quince_it.pquince.services.implementation.util.pharmacy.PharmacyMapper;
@@ -413,7 +413,7 @@ public class PharmacyService implements IPharmacyService {
 		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(id);
 		List<Pharmacy> allPharmacies = pharmacyRepository.findAll();
 		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = new ArrayList<IdentifiableDTO<PharmacyDrugPriceDTO>>();
-		int price;
+		double price;
 
 		double avgGrade;
 		for(Pharmacy p : allPharmacies) {
@@ -427,10 +427,10 @@ public class PharmacyService implements IPharmacyService {
 	}
 	
 	
-	private int allDrugsAreInPharmacy(List<EReceiptItems> items, Pharmacy p) {
+	private double allDrugsAreInPharmacy(List<EReceiptItems> items, Pharmacy p) {
 		boolean var = false;
-		int price = 0;
-		Integer priceForDrug;
+		double price = 0;
+		double priceForDrug;
 		List<DrugStorage> drugs = drugStorageRepository.findAllBPharmacyId(p.getId());
 		
 		for(EReceiptItems item: items) {
@@ -439,8 +439,13 @@ public class PharmacyService implements IPharmacyService {
 				if(drug.getDrugInstance().getId().equals(item.getDrugInstance().getId())) {
 					if(drug.getCount() >= item.getAmount()) {
 						var = true;
-						priceForDrug = drugPriceForPharmacyRepository.findCurrentDrugPrice(drug.getDrugInstance().getId(), p.getId());
-						price = price + priceForDrug;
+						priceForDrug =  loyalityProgramService.getDiscountDrugPriceForPatient(drugPriceForPharmacyRepository.findCurrentDrugPrice(drug.getDrugInstance().getId(), p.getId()), userService.getLoggedUserId());
+						
+						ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(p.getId(), ActionAndPromotionType.DRUGDISCOUNT);
+						if(action != null) {
+							priceForDrug -= (action.getPercentOfDiscount()/ 100.0) *  drugPriceForPharmacyRepository.findCurrentDrugPrice(drug.getDrugInstance().getId(), p.getId());
+						}
+						price += priceForDrug;
 						continue;
 					}
 				}
@@ -452,6 +457,27 @@ public class PharmacyService implements IPharmacyService {
 		return price;
 	}
 
+	@Override
+	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByNameGradeAndDistanceSortByNameAscending(UUID id) {
+
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = findWithQR(id);
+		
+		Collections.sort(pharmacies, (p1, p2) -> (p1.EntityDTO.getPharmacy().EntityDTO.getName().compareTo(p2.EntityDTO.getPharmacy().EntityDTO.getName())));
+		
+		return pharmacies;
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByNameGradeAndDistanceSortByNameDescending(UUID id) {
+
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = findWithQR(id);
+
+		Collections.sort(pharmacies, (p1, p2) -> (p1.EntityDTO.getPharmacy().EntityDTO.getName().compareTo(p2.EntityDTO.getPharmacy().EntityDTO.getName())));
+		Collections.reverse(pharmacies);
+
+		return pharmacies;
+	}
+	
 	@Override
 	public UUID buyWithQR(PharmacyERecipeDTO pharmacyERecipeDTO) {
 		
@@ -480,6 +506,63 @@ public class PharmacyService implements IPharmacyService {
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByCityAscending(UUID id) {
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = findWithQR(id);
+
+		Collections.sort(pharmacies, (p1, p2) -> (p1.EntityDTO.getPharmacy().EntityDTO.getAddress().getCity().compareTo(p2.EntityDTO.getPharmacy().EntityDTO.getAddress().getCity())));
+
+		return pharmacies;
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByCityDescending(UUID id) {
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = findWithQR(id);
+
+		Collections.sort(pharmacies, (p1, p2) -> (p1.EntityDTO.getPharmacy().EntityDTO.getAddress().getCity().compareTo(p2.EntityDTO.getPharmacy().EntityDTO.getAddress().getCity())));
+		Collections.reverse(pharmacies);
+
+		return pharmacies;
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByGradeDescending(UUID id) {
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = findWithQR(id);
+
+		Collections.sort(pharmacies, (p1, p2) -> Double.compare(p1.EntityDTO.getGrade(), p2.EntityDTO.getGrade()));
+		Collections.reverse(pharmacies);
+
+		return pharmacies;
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByGradeAscending(UUID id) {
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = findWithQR(id);
+
+		Collections.sort(pharmacies, (p1, p2) -> Double.compare(p1.EntityDTO.getGrade(), p2.EntityDTO.getGrade()));
+		
+		return pharmacies;
+	}
+	
+	@Override
+	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByPriceDescending(UUID id) {
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = findWithQR(id);
+
+		Collections.sort(pharmacies, (p1, p2) -> Double.compare(p1.EntityDTO.getPrice(), p2.EntityDTO.getPrice()));
+		Collections.reverse(pharmacies);
+
+		return pharmacies;
+	}
+
+	@Override
+	public List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByPriceAscending(UUID id) {
+		List<IdentifiableDTO<PharmacyDrugPriceDTO>> pharmacies = findWithQR(id);
+
+		Collections.sort(pharmacies, (p1, p2) -> Double.compare(p1.EntityDTO.getPrice(), p2.EntityDTO.getPrice()));
+		
+		return pharmacies;
 	}
 
 	@Override

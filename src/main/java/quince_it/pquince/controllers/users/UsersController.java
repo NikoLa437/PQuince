@@ -82,7 +82,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/{userId}")
-	@PreAuthorize("hasRole('PATIENT')") //Nadovezuje se sa 'or hasRole('...') or hasRole....'
+	@PreAuthorize("hasRole('PATIENT') or hasRole('SYSADMIN')") //Nadovezuje se sa 'or hasRole('...') or hasRole....'
 	public ResponseEntity<IdentifiableDTO<UserDTO>> getUserById(@PathVariable UUID userId) {
 		
 		try {
@@ -140,6 +140,7 @@ public class UsersController {
 	}
 	
 	@PutMapping("/staff") 
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	@CrossOrigin
 	public ResponseEntity<?> updateStaffInformation(@RequestBody UserInfoChangeDTO userInfoChangeDTO ) {
 	  
@@ -198,7 +199,7 @@ public class UsersController {
 	
 	@GetMapping("/staff") 
 	@CrossOrigin
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<IdentifiableDTO<StaffDTO>> getStaffById() {
 	  
 		try {

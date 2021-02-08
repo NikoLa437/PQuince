@@ -27,22 +27,24 @@ public class Offers {
 	
     @Enumerated(EnumType.STRING)
 	@Column(name = "Status", nullable = false)
-	private OrderStatus orderStatus;
+	private OfferStatus offerStatus;
 
-	public Offers( Date dateToDelivery, double price, OrderStatus orderStatus) {
+    public Offers(){}
+    
+	public Offers( Date dateToDelivery, double price, OfferStatus offerStatus) {
 		super();
 		this.id = UUID.randomUUID();
 		this.dateToDelivery = dateToDelivery;
 		this.price = price;
-		this.orderStatus = orderStatus;
+		this.offerStatus = offerStatus;
 	}
     
-	public Offers(UUID id, Date dateToDelivery, double price, OrderStatus orderStatus) {
+	public Offers(UUID id, Date dateToDelivery, double price, OfferStatus offerStatus) {
 		super();
 		this.id = id;
 		this.dateToDelivery = dateToDelivery;
 		this.price = price;
-		this.orderStatus = orderStatus;
+		this.offerStatus = offerStatus;
 	}
 
 	public UUID getId() {
@@ -69,12 +71,12 @@ public class Offers {
 		this.price = price;
 	}
 
-	public OrderStatus getOrderStatus() {
-		return orderStatus;
+	public OfferStatus getOrderStatus() {
+		return offerStatus;
 	}
 
-	public void setOrderStatus(OrderStatus orderStatus) {
-		this.orderStatus = orderStatus;
+	public void setOrderStatus(OfferStatus offerStatus) {
+		this.offerStatus = offerStatus;
 	}
     
     

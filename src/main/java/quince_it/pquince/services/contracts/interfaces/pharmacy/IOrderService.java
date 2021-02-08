@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
-import quince_it.pquince.services.contracts.dto.drugs.DrugForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
@@ -17,4 +16,5 @@ public interface IOrderService {
 
 	boolean removeOrder(EntityIdDTO removeOrderId);
 
+	List<IdentifiableDTO<OrderDTO>> findAll();
 }
