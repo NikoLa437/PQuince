@@ -53,19 +53,6 @@ class StaffProfilPage extends Component {
 		this.addressInput = React.createRef();
 	}
 
-	hasRole = (reqRole) => {
-		let roles = JSON.parse(localStorage.getItem("keyRole"));
-
-		if (roles === null) return false;
-
-		if (reqRole === "*") return true;
-
-		for (let role of roles) {
-			if (role === reqRole) return true;
-		}
-		return false;
-	};
-
 	onYmapsLoad = (ymaps) => {
 		this.ymaps = ymaps;
 
