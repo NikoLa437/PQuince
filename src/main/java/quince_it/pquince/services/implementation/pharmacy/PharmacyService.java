@@ -35,7 +35,6 @@ import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
-import quince_it.pquince.services.contracts.dto.pharmacy.ActionAndPromotionsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
@@ -565,4 +564,10 @@ public class PharmacyService implements IPharmacyService {
 		
 		return pharmacies;
 	}
+
+	@Override
+	public IdentifiableDTO<PharmacyGradePriceDTO> findPharmacyByPharmacyId(UUID pharmacyId) {
+		return MapPharmacyPersistenceToPharmacyGradePriceIdentifiableDTO(pharmacyRepository.findById(pharmacyId).get());
+	}
+
 }

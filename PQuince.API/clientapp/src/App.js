@@ -44,12 +44,12 @@ import Subscription from "./pages/subscription/Subscription";
 import QRreader from "./pages/QRcode/QRreader";
 import QRpharmacies from "./pages/QRcode/QRpharmacies";
 import AbsencePage from "./pages/examination/AbsencePage";
-import NewAppointmentPage from "./pages/examination/pharmacist/NewAppointmentPage"
-import ReservedDrugPage from "./pages/examination/pharmacist/ReservedDrugPage"
-import Offers from "./pages/offers/Offers"
+import NewAppointmentPage from "./pages/examination/pharmacist/NewAppointmentPage";
+import ReservedDrugPage from "./pages/examination/pharmacist/ReservedDrugPage";
+import Offers from "./pages/offers/Offers";
 import ActionAndPromotionsPage from "./pages/action-and-promotions/ActionAndPromotionsPage";
 import ComplaintsPharmacy from "./pages/complaints/ComplaintsPharmacy";
-
+import TimeSelectingPage from "./pages/pharmacist-from-pharmacy/TimeSelectingPage";
 
 function App() {
 	return (
@@ -108,6 +108,7 @@ function App() {
 				<Route path="/patient-profile/:id" children={<PatientProfilePage />} />
 
 				<Link exact to="/calendar" path="/calendar" component={CalendarPage} />
+				<Route path="/pharmacy-consultation/:id" children={<TimeSelectingPage />} />
 
 				<Link exact to="/pharmacist" path="/pharmacist" component={PharmacistPage} />
 				<Link exact to="/pharmacist-for-patient" path="/pharmacist-for-patient" component={PharmacistPageForPatient} />
@@ -117,7 +118,6 @@ function App() {
 				<Route path="/new-appointment/:id" children={<NewAppointmentPage />} />
 				<Link exact to="/reserved-drug" path="/reserved-drug" component={ReservedDrugPage} />
 				<Link exact to="/actions-and-promotions" path="/actions-and-promotions" component={ActionAndPromotionsPage} />
-
 			</Switch>
 		</Router>
 	);

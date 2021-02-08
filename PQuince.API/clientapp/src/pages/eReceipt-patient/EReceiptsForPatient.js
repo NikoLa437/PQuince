@@ -298,6 +298,9 @@ class EReceiptsForPatient extends Component {
 												Status: <span style={{ color: "#1977cc" }}>{eReceipt.EntityDTO.status}</span>
 											</b>
 										</div>
+										<div hidden={eReceipt.EntityDTO.status !== "PROCESSED"}>
+											<b>Price: </b> {(Math.round(eReceipt.EntityDTO.price * 100) / 100).toFixed(2)} <b>din</b>
+										</div>
 									</td>
 								</tr>
 							))}

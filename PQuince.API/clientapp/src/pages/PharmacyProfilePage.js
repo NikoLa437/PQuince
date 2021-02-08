@@ -47,8 +47,8 @@ class PharmacyProfilePage extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
-		pharmacists:[],
-		showPharmacistsModal:false,
+		pharmacists: [],
+		showPharmacistsModal: false,
 	};
 
 	fetchData = (id) => {
@@ -64,7 +64,6 @@ class PharmacyProfilePage extends Component {
 	handleCloseAlertFail = () => {
 		this.setState({ hiddenFailAlert: true });
 	};
-	
 
 	componentDidMount() {
 		const id = this.props.match.params.id;
@@ -82,7 +81,7 @@ class PharmacyProfilePage extends Component {
 				headers: { Authorization: getAuthHeader() },
 			})
 				.then((response) => {
-					console.log(response.data,"SUB");
+					console.log(response.data, "SUB");
 					this.setState({
 						isPatientSubscribed: response.data,
 					});
@@ -194,6 +193,13 @@ class PharmacyProfilePage extends Component {
 		});
 	};
 
+	handleConsultationClick = () => {
+		this.setState({
+			redirect: true,
+			redirectUrl: "/pharmacy-consultation/" + this.state.pharmacyId,
+		});
+	};
+
 	handleOurDrugs = () => {
 		Axios.get(BASE_URL + "/api/drug/find-drug-by-pharmacy?pharmacyId=" + this.state.pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
@@ -217,8 +223,7 @@ class PharmacyProfilePage extends Component {
 
 	onClosePharmacistsModal = () => {
 		this.setState({ showPharmacistsModal: false });
-
-	}
+	};
 	handleCreateAppoitmentClose = () => {
 		this.setState({ showCreateAppointment: false });
 	};
@@ -350,8 +355,9 @@ class PharmacyProfilePage extends Component {
 		});
 	};
 
-	handleOurPharmaciesModalOpen =() =>{
-		Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/" + this.state.pharmacyId).then((res) => {
+	handleOurPharmaciesModalOpen = () => {
+		Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/" + this.state.pharmacyId)
+			.then((res) => {
 				this.setState({ pharmacists: res.data });
 				console.log(res.data);
 			})
@@ -360,18 +366,21 @@ class PharmacyProfilePage extends Component {
 			});
 
 		this.setState({
-			showPharmacistsModal:true
-		})
-	}
+			showPharmacistsModal: true,
+		});
+	};
 
 	handleComaplaint = () => {
 		let entityDTO = {
 			pharmacyId: this.state.pharmacyId,
 			date: new Date(),
 			text: this.state.complaint,
-		};	
-					
-		Axios.post(BASE_URL + "/api/pharmacy/complaint-pharmacy", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+		};
+
+		Axios.post(BASE_URL + "/api/pharmacy/complaint-pharmacy", entityDTO, {
+			validateStatus: () => true,
+			headers: { Authorization: getAuthHeader() },
+		})
 			.then((resp) => {
 				if (resp.status === 405) {
 					this.setState({ hiddenFailAlert: false, failHeader: "Not allowed", failMessage: "Pharmacy complaint not allowed." });
@@ -474,14 +483,14 @@ class PharmacyProfilePage extends Component {
 						</li>
 						<li className="drop-down">
 							<a href="#" className="appointment-btn scrollto" style={myStyle}>
-								Make an Appointment ***
+								Make an Appointment
 							</a>
 							<ul>
 								<li>
 									<a onClick={this.handleAddExaminationClick}>Examination</a>
 								</li>
 								<li>
-									<a href="/">Consultation ***</a>
+									<a onClick={this.handleConsultationClick}>Consultation</a>
 								</li>
 							</ul>
 						</li>
@@ -559,7 +568,7 @@ class PharmacyProfilePage extends Component {
 								className="btn btn-primary btn-xl"
 								type="button"
 							>
-								<i className="icofont-subscribe mr-1"></i>List of pharmacists 
+								<i className="icofont-subscribe mr-1"></i>List of pharmacists
 							</button>
 							<br></br>
 							<button

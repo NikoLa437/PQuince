@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
-import quince_it.pquince.services.contracts.dto.pharmacy.ActionAndPromotionsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
@@ -39,6 +38,8 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	
 	List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPrice(Date startDateTime);
 	
+	IdentifiableDTO<PharmacyGradePriceDTO> findPharmacyByPharmacyId(UUID pharmacyId);
+
 	List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeAscending(Date startDateTime);
 	
 	List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByGradeDescending(Date startDateTime);
