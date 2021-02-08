@@ -215,11 +215,10 @@ public class DrugReservationService implements IDrugReservationService{
 		int amount = staffDrugReservationDTO.getAmount();
 		Integer price = drugPriceForPharmacyRepository.findCurrentDrugPrice(drugInstance.getId(), pharmacy.getId());
 		long drugReservationDuration = Integer.parseInt(env.getProperty("drug_reservation_duration"));
-		System.out.println("Drug reservation duration in days " + drugReservationDuration);
 		long currentTime = new Date().getTime();
 		Date endDate = new Date(currentTime + (1000 * 60 * 60 * 24 * drugReservationDuration));
 		DrugReservation drugReservation = new DrugReservation(pharmacy, drugInstance, patient, amount, endDate, price);
-		//CanReserveDrug(drugReservation, patient);
+		CanReserveDrug(drugReservation, patient);
 		drugStorageService.reduceAmountOfReservedDrug(drugInstance.getId(), pharmacy.getId(), amount);
 		drugReservationRepository.save(drugReservation);
 		

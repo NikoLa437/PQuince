@@ -81,6 +81,29 @@ class NewAppointmentPage extends Component {
                         console.log(err);
                     });
 			}
+		} else {
+			let EntityDTO = {
+				patientId: this.state.id,
+				startDateTime: consultationDate
+			};
+			Axios.post(BASE_URL + "/api/appointment/pharmacist/new/", EntityDTO, {
+				validateStatus: () => true,
+				headers: { Authorization: getAuthHeader() },
+			})
+				.then((res) => {
+					if (res.status === 400) {
+						this.setState({ showDateError: "inline" });
+					} else if (res.status === 500) {
+						this.setState({ showDateError: "inline" });
+					} else if (res.status === 201) {
+						this.setState({ openModalSuccess: true });
+						console.log(res);
+					}
+				})
+				.catch((err) => {
+					this.setState({ showDateError: "inline" });
+					console.log(err);
+				});
 		}
 	};
 

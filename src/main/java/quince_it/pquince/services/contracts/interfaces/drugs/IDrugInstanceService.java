@@ -24,4 +24,5 @@ public interface IDrugInstanceService extends IService<DrugInstanceDTO, Identifi
 	List<IdentifiableDTO<DrugWithPriceDTO>> findDrugsByPharmacyWithPrice(UUID pharmacyId);
 	List<IdentifiableDTO<DrugWithPriceDTO>> searchDrugsForPharmacy(DrugFiltrationDTO drugFiltrationDTO);
 	List<IdentifiableDTO<DrugInstanceDTO>> findDrugsForAddInPharmacy(UUID pharmacyId);
+	List<IdentifiableDTO<DrugInstanceDTO>> findDrugsPatientIsNotAllergicTo(UUID patientId);
 }

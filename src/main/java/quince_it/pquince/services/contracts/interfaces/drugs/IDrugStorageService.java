@@ -7,6 +7,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugStorageDTO;
 import quince_it.pquince.services.contracts.dto.drugs.EditPriceForDrugDTO;
 import quince_it.pquince.services.contracts.dto.drugs.EditStorageAmountForDrugDTO;
 import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
+import quince_it.pquince.services.contracts.exceptions.DrugStorageCountException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.IService;
 
@@ -25,4 +26,6 @@ public interface IDrugStorageService extends IService<DrugStorageDTO, Identifiab
 	void addDrugToPharmacy(AddDrugToPharmacyDTO addDrugToPharmacyDTO);
 
 	boolean editPriceForDrug(EditStorageAmountForDrugDTO editStorageAmountForDrugDTO);
+
+	void isDrugAmountAvailableInPharamcy(UUID drugId, int amount) throws DrugStorageCountException;
 }

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Button, Modal } from "react-bootstrap";
 import AppointmentIcon from "../static/appointment-icon.jpg";
+import { TIME_INTERAVAL_TO_START_APPOINTMENT } from "../constants.js";
 
 class EventDetailsModal extends Component {
 	
@@ -11,6 +12,17 @@ class EventDetailsModal extends Component {
 		currentDate.setHours(0, 0, 0, 0);
 		return appointmentDate.getTime() === currentDate.getTime();
 	};
+
+	canInteractWithAppointment = (startDateTime) => {
+		let currentDateTime = new Date();
+		startDateTime = new Date(startDateTime);
+		if (currentDateTime.getTime() + TIME_INTERAVAL_TO_START_APPOINTMENT < startDateTime.getTime())
+			return false;
+		else if(currentDateTime.getTime() > startDateTime.getTime())
+			return false;
+		else 
+			return true;	
+	}
 
 	render() {
 
@@ -67,7 +79,7 @@ class EventDetailsModal extends Component {
 										</div>
 									</div>
 								</div>
-								<div className="row align-items-end m-4" hidden={!this.isCurrentDate(this.props.startDateTime)}>
+								<div className="row align-items-end m-4" hidden={!this.canInteractWithAppointment(this.props.startDateTime)}>
 											<button
 												type="button"
 												onClick={() =>

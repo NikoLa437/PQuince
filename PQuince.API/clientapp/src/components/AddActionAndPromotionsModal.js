@@ -12,17 +12,22 @@ class AddActionAndPromotionsModal extends Component {
     state = {
         selectedStartDate:new Date(),
         selectedEndDate:new Date(),
-        percentOfDiscount:0,
+        percentOfDiscount:'',
         discountFor:'DRUGDISCOUNT',
-        text:'',
         hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",    
+        minDate:new Date()
     }
 
+    componentDidMount() {
+        this.state.selectedStartDate.setDate(this.state.selectedStartDate.getDate()+1)
+        this.state.selectedEndDate.setDate(this.state.selectedStartDate.getDate()+1)
+        this.state.minDate.setDate(this.state.selectedStartDate.getDate()+1)
+    }
 
     handleStartDateChange = (date) => {
         this.setState({
@@ -66,6 +71,8 @@ class AddActionAndPromotionsModal extends Component {
                 successMessage: "You successfully add action and promotion for pharmacy.",
             })
 
+            this.props.updateAction();
+
         }).catch((err) => {
             this.setState({ 
                 hiddenSuccessAlert: true,
@@ -80,7 +87,6 @@ class AddActionAndPromotionsModal extends Component {
             selectedStartDate:new Date(),
             selectedEndDate:new Date(),
             percentOfDiscount:'',
-            discountFor:'',
             hiddenSuccessAlert:true,
             hiddenFailAlert:true,
         });
@@ -140,7 +146,7 @@ class AddActionAndPromotionsModal extends Component {
                                                     <label >Date from:</label>
                                                 </td>
                                                 <td>
-                                                    <DatePicker className="form-control"  style={{width: "15em"}} minDate={new Date()} onChange={date => this.handleStartDateChange(date)} selected={this.state.selectedStartDate}/>
+                                                    <DatePicker className="form-control"  style={{width: "15em"}} minDate={this.state.minDate} onChange={date => this.handleStartDateChange(date)} selected={this.state.selectedStartDate}/>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -156,7 +162,7 @@ class AddActionAndPromotionsModal extends Component {
                                                     <label>Percent of discount:</label>
                                                 </td>
                                                 <td>
-                                                    <input placeholder="Time from" className="form-control" style={{width: "12.8em"}} type="number" min="1" max="99" onChange={this.handlePercentOfDiscountChange} value={this.state.percentOfDiscount} />
+                                                    <input placeholder="Discount (1-99)" className="form-control" style={{width: "12.8em"}} type="number" min="1" max="99" onChange={this.handlePercentOfDiscountChange} value={this.state.percentOfDiscount} />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -168,7 +174,6 @@ class AddActionAndPromotionsModal extends Component {
 								                    <option key="1" value="DRUGDISCOUNT">Drugs</option>
                                                     <option key="2" value="EXAMINATIONDISCOUNT">Examinations</option>
 								                    <option key="3" value="CONSULTATIONDISCOUNT">Consultations</option>
-								                    <option key="4" value="DISCOUNTFORALL">For all</option>
 							                    </select>
                                                 </td>
                                             </tr>
