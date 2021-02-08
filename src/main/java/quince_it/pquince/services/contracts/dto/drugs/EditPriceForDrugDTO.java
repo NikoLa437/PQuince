@@ -1,6 +1,7 @@
 package quince_it.pquince.services.contracts.dto.drugs;
 
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.UUID;
 
 public class EditPriceForDrugDTO {
@@ -18,7 +19,7 @@ public class EditPriceForDrugDTO {
 		this.drugInstanceId = drugInstanceId;
 		this.price = price;
 		this.startDate= startDate;
-		this.endDate=endDate;
+		this.endDate=addDays(startDate,3650);
 	}
 	public UUID getDrugInstanceId() {
 		return drugInstanceId;
@@ -45,6 +46,11 @@ public class EditPriceForDrugDTO {
 		this.endDate = endDate;
 	}
 	
-	
+    private Date addDays(Date date, int days) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, days);
+        return new Date(c.getTimeInMillis());
+    }
 	
 }

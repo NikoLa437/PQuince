@@ -315,8 +315,13 @@ public class AppointmentController {
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
 	public ResponseEntity<List<AppointmentPeriodResponseDTO>> getFreePeriods(@RequestParam UUID dermatologistId,@RequestParam UUID pharmacyId,@RequestParam Date date,@RequestParam int duration) {
-		AppointmentRequestDTO appointmentRequestDTO = new AppointmentRequestDTO(dermatologistId,pharmacyId,date,duration, false);
-		return new ResponseEntity<>(appointmentService.getFreePeriods(appointmentRequestDTO),HttpStatus.OK);
+		try {
+			AppointmentRequestDTO appointmentRequestDTO = new AppointmentRequestDTO(dermatologistId,pharmacyId,date,duration, false);
+			return new ResponseEntity<>(appointmentService.getFreePeriods(appointmentRequestDTO),HttpStatus.OK);
+		}catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@GetMapping("/free-periods-dermatologist")

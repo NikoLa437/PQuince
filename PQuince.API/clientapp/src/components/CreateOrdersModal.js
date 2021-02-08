@@ -29,13 +29,18 @@ class CreateOrdersModal extends Component {
     }
 
     componentDidMount() {
+		let pharmacyId=localStorage.getItem("keyPharmacyId")
+		this.setState({
+			pharmacyId: pharmacyId
+		})
+
         Axios
-        .get(BASE_URL + "/api/drug/find-drugs-by-pharmacy-for-admin?pharmacyId="+ this.props.pharmacyId, {
+        .get(BASE_URL + "/api/drug/find-drugs-by-pharmacy-for-admin?pharmacyId="+ pharmacyId, {
 			headers: { Authorization: getAuthHeader() },
 		}).then((res) =>{
             this.setState({drugs : res.data});
             console.log(res.data);
-        }).catch((err) => {console.log(err);}); 
+        }).catch((err) => {console.log(err);});
     }
 
     removePeople(e) {
