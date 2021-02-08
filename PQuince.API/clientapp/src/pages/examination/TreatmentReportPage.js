@@ -5,12 +5,13 @@ import CapsuleLogo from "../../static/capsuleLogo.png";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import DrugsModal from "../../components/DrugsModal";
+import AlternativeDrugsModal from "../../components/AlternativeDrugsModal";
 import TherapyDrugModal from "../../components/TherapyDrugModal";
 import { withRouter } from "react-router";
 import getAuthHeader from "../../GetHeader";
+import { Redirect } from "react-router-dom";
 import ModalDialog from "../../components/ModalDialog";
 
-//TODO: add redirection unauthorize, check support for pharmacist, work on recommend drugs feature
 class TreatmentReportPage extends Component {
 	state = {
         anamnesis: "",
@@ -18,19 +19,36 @@ class TreatmentReportPage extends Component {
         drugs: [],
         openDrugsModal: false,
         openDrugDetailsModal: false,
-        drug: {},
+		drug: {},
+		drugId: "",
         name: "",
         manufacturer: "",
 		quantity: "",
 		openModalSuccess: false,
 		appointment: {},
 		id: "",
-		patientId: ""
+		patientId: "",
+		redirect: false,
+		redirectUrl: '',
+		drugsPatientIsNotAllergicTo: [],
+		alternativeDrugs: [],
+		openAlternativeDrugsModal: false,
 	};
 
 	handleModalSuccessClose = () => {
-		this.setState({ openModalSuccess: false });
+		this.setState({ openModalSuccess: false, redirectUrl: "/patient-profile/" + this.state.patientId, redirect: true });
 	};
+
+	fetchDrugsPatientIsNotAllergicTo = () => {
+		Axios.get(BASE_URL + "/api/drug/not-allergic/" + this.state.patientId, {validateStatus: () => true, headers: { Authorization: getAuthHeader() }})
+        .then((res) => {
+            this.setState({ drugsPatientIsNotAllergicTo: res.data });
+            console.log(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+	}
 
 	componentDidMount() {
 		const id = this.props.match.params.id;
@@ -38,13 +56,20 @@ class TreatmentReportPage extends Component {
 			id:id
 		});
 
-
-		//TODO: rest point does not exist
 		Axios.get(BASE_URL + "/api/appointment/" + id, 
-			{headers: { Authorization: getAuthHeader() }}
+			{validateStatus: () => true, headers: { Authorization: getAuthHeader() }}
 		)
 			.then((res) => {
-				this.setState({ appointment: res.data, patientId: res.data.EntityDTO.patient.Id});
+				if (res.status === 401) {
+					this.setState({
+						redirect: true,
+						redirectUrl: "/unauthorized"
+					});
+				} else {
+					console.log(res.data)
+					this.setState({ appointment: res.data, patientId: res.data.EntityDTO.patient.Id});
+					this.fetchDrugsPatientIsNotAllergicTo();
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -75,6 +100,15 @@ class TreatmentReportPage extends Component {
     handleDrugDetailsModalOpen = () => {
 		this.setState({ openDrugDetailsModal: true });
 	};
+
+	handleAlternativeDrugsModalClose = () => {
+		this.setState({ openAlternativeDrugsModal: false });
+    };
+
+    handleAlternativeDrugsModalOpen = () => {
+
+		this.setState({ openAlternativeDrugsModal: true });
+    };
     
     handleSubmit = (event) => {
 		let therapy = "drug : number of days" + "\n";
@@ -103,7 +137,6 @@ class TreatmentReportPage extends Component {
 		})
 		
 		this.state.drugs.forEach((value, index) => {
-			
 			Axios.post(BASE_URL + "/api/drug/staff/reserve",
 				{ patientId: this.state.patientId, drugInstanceId: value.drug.Id, amount: value.amount},
 				{headers: { Authorization: getAuthHeader() }}
@@ -118,28 +151,58 @@ class TreatmentReportPage extends Component {
     handleDrugDetails = (drug) => {
         console.log(drug); 
         this.setState({
+			drugId: drug.Id,
             drug: drug,
-            name: drug.EntityDTO.name,
+            name: drug.EntityDTO.drugInstanceName,
             quantity: drug.EntityDTO.quantity,
             manufacturer: drug.EntityDTO.manufacturer.EntityDTO.name
-        });
+		});
+		this.handleAlternativeDrugsModalClose(); 
         this.handleDrugsModalClose(); 
         this.handleDrugDetailsModalOpen();
     };
 
     handleAddDrug = (drugAmount) => {
         console.log(this.state.drug); 
-        this.handleDrugDetailsModalClose();
-        this.state.drugs.push({drug: this.state.drug, amount: drugAmount});   
+		this.handleDrugDetailsModalClose();
+		Axios.get(BASE_URL + "/api/drug/available/" + this.state.drug.Id + "/" + drugAmount, 
+			{validateStatus: () => true, headers: { Authorization: getAuthHeader() }}
+		)
+			.then((res) => {
+				if (res.status === 200) {
+					this.state.drugs.push({drug: this.state.drug, amount: drugAmount});
+					this.state.drugsPatientIsNotAllergicTo = this.state.drugsPatientIsNotAllergicTo.filter(drug => this.state.drug.Id != drug.Id);
+					this.setState(this.state);		
+				} else {
+					console.log(res.data);
+					this.setState({alternativeDrugs: []});
+					this.state.drug.EntityDTO.replacingDrugs.forEach( x => this.addAlternativeDrug(x));
+					this.setState(this.state);
+					console.log(this.state.alternativeDrugs);
+					this.handleAlternativeDrugsModalOpen();
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			})
+	};
+
+	addAlternativeDrug = (x) => {
+		let alternative = this.state.drugsPatientIsNotAllergicTo.filter(drug => x.Id == drug.Id);
+		alternative.forEach(x => this.state.alternativeDrugs.push(x));
 	};
 	
-	handleRemoveTherapyDrug = (e, index) => {
+	handleRemoveTherapyDrug = (e, drug, index) => {
 		console.log(index)
 		this.state.drugs.splice(index, 1);
-		this.setState({drugs: this.state.drugs});
+		this.state.drugsPatientIsNotAllergicTo.push(drug)
+		this.setState(this.state);
 	};
 
 	render() {
+
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
             <React.Fragment>
 			<div hidden={this.props.hidden}>
@@ -200,7 +263,7 @@ class TreatmentReportPage extends Component {
 									</td>
 									<td>
 									<button
-										onClick={(e) => this.handleRemoveTherapyDrug(e, index)}
+										onClick={(e) => this.handleRemoveTherapyDrug(e, drug.drug, index)}
 										className="btn btn-danger btn-1x"
 										type="button"
 										style={{float: "right"}}
@@ -228,24 +291,32 @@ class TreatmentReportPage extends Component {
             <DrugsModal            
             show={this.state.openDrugsModal}
             onCloseModal={this.handleDrugsModalClose}
-            header="Pick therapy drug"
-            subheader=""
-            handleDrugDetails={this.handleDrugDetails}
+            header="Pick drug you want to prescribe as therapy"
+            subheader="You can only choose between drugs patient is not allergic to"
+			handleDrugDetails={this.handleDrugDetails}
+			drugsPatientIsNotAllergicTo={this.state.drugsPatientIsNotAllergicTo}
+            />
+			<AlternativeDrugsModal            
+            show={this.state.openAlternativeDrugsModal}
+            onCloseModal={this.handleAlternativeDrugsModalClose}
+            header="No selected drug in stock, here are some alternatives"
+            subheader="You can choose between alternative drugs"
+			handleDrugDetails={this.handleDrugDetails}
+			alternativeDrugs={this.state.alternativeDrugs}
             />
             <TherapyDrugModal 
             name={this.state.name}
             quantity={this.state.quantity}
             manufacturer={this.state.manufacturer}
-            drug={this.state.drug}           
+            drug={this.state.drug}         
             show={this.state.openDrugDetailsModal}
             onCloseModal={this.handleDrugDetailsModalClose}
-            header="Add therapy drug"
+            header="Add drug to patients therapy"
             subheader=""
             handleAddDrug={this.handleAddDrug}
             />
 			<ModalDialog
 					show={this.state.openModalSuccess}
-					href={this.state.patientId === "" ? "/" : "/patient-profile/" + this.state.patientId}
 					onCloseModal={this.handleModalSuccessClose}
 					header="Successfully submitted treatment report for patient"
 					text="You can schedule another appointment for this patient."

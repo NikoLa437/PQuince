@@ -186,6 +186,7 @@ class CreateAndScheduleAppointmentPage extends Component {
 									<tbody>
 										{this.state.periods.map((period, index) => (
 											<tr
+												hidden={(new Date(period.startDate)).getTime() < (new Date()).getTime()}
 												key={index}
 												value={period}
 												onClick={() => this.handleAppointment(period)}

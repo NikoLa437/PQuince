@@ -21,7 +21,7 @@ public class TreatmentReportController {
 	
 	@PostMapping
 	@CrossOrigin
-	@PreAuthorize("hasRole('DERMATHOLOGIST')")
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<?> createTreatmentReport(@RequestBody TreatmentReportDTO treatmentReportDTO){
 		try {
 			if(treatmentReportService.create(treatmentReportDTO) != null)

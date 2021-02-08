@@ -4,7 +4,7 @@ import Axios from "axios";
 import { BASE_URL } from "../constants.js";
 import CapsuleLogo from "../static/capsuleLogo.png";
 
-class DrugsModal extends Component {
+class AlternativeDrugsModal extends Component {
   render() {
     return (
       <Modal
@@ -25,7 +25,7 @@ class DrugsModal extends Component {
           <h5>{this.props.subheader}</h5>
           <table className="table table-hover" style={{ width: "100%" }}>
             <tbody>
-              {this.props.drugsPatientIsNotAllergicTo.map((drug) => (
+              {this.props.alternativeDrugs.map((drug) => (
                 <tr id={drug.Id} key={drug.Id} style={{ cursor: "pointer"}} onClick={() => this.props.handleDrugDetails(drug)}>
                     <td width="130em">
 						<img className="img-fluid" src={CapsuleLogo} width="70em" />
@@ -55,4 +55,4 @@ class DrugsModal extends Component {
   }
 }
 
-export default DrugsModal;
+export default AlternativeDrugsModal;
