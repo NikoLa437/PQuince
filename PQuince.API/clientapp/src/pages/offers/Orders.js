@@ -12,12 +12,16 @@ class Orders extends Component {
 	state = {
 		price: "",
 		showOfferModal: false,
+		orders:[],
 	};
 
 	componentDidMount() {
-			Axios.get(BASE_URL + "/api/order", { headers: { Authorization: getAuthHeader() } })
+			Axios.get(BASE_URL + "/api/order/provider", { headers: { Authorization: getAuthHeader() } })
 					.then((res) => {
 						console.log(res.data);
+						this.setState({
+							orders: res.data
+						});
 					})
 					.catch((err) => {
 						console.log("GRESKA");
@@ -50,8 +54,9 @@ class Orders extends Component {
 				<div className="container" style={{ marginTop: "10%" }}>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Orders </h5>
 
-					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
+							{this.state.orders.map((order) => (
 								<tr className="rounded">
 									<td width="190em">
 										<img className="img-fluid" src={AppointmentIcon} width="150em" />
@@ -60,6 +65,7 @@ class Orders extends Component {
 										
 										<div>
 											<b>Order : </b>{" "}
+											{order.Id}
 										</div>
 									</td>
 									<td className="align-middle">
@@ -72,8 +78,10 @@ class Orders extends Component {
 										</button>
 									</td>
 								</tr>
+							))}
 						</tbody>
 					</table>
+
 				</div>
 
 				<OfferModal

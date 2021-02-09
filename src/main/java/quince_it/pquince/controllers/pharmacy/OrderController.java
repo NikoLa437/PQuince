@@ -26,7 +26,7 @@ import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDru
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
-import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.OrderForProviderDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IOrderService;
 import quince_it.pquince.services.implementation.drugs.AllergenService;
@@ -76,9 +76,9 @@ public class OrderController {
 		}
 	}
 	
-	@GetMapping
+	@GetMapping("/provider")
 	@PreAuthorize("hasRole('SUPPLIER')") 
-	public ResponseEntity<List<IdentifiableDTO<OrderDTO>>> findAll() {
-		return new ResponseEntity<>(orderService.findAll(),HttpStatus.OK);
+	public ResponseEntity<List<IdentifiableDTO<OrderForProviderDTO>>> findAllForProvider() {
+		return new ResponseEntity<>(orderService.findAllProvider(),HttpStatus.OK);
 	}
 }

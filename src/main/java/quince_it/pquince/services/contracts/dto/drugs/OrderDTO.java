@@ -1,10 +1,10 @@
 package quince_it.pquince.services.contracts.dto.drugs;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 public class OrderDTO {
-	
+
 	private List<DrugForOrderDTO> drugs;
 	
 	private Date endDate;
@@ -58,5 +58,4 @@ public class OrderDTO {
 	public void setCreator(String creator) {
 		this.creator = creator;
 	}
-	
 }
