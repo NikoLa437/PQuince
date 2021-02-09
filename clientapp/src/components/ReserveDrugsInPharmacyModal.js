@@ -15,6 +15,7 @@ class ReserveDrugsInPharmacy extends Component {
         drugName:'',
         pharmacyId:'',
         drugPrice:'',
+        drugFinalPrice:'',
         drugQuantity:'',
         endDate:'',
         drugManufacturer:'',
@@ -34,15 +35,19 @@ class ReserveDrugsInPharmacy extends Component {
                 drugQuantity: drug.EntityDTO.quantity , 
                 showReservation:true,
                 drugPrice:res.data.price,
+                drugDiscountPrice:res.data.priceWithDiscount,
                 drugId:drug.Id
             });
+
+
         }).catch((err) => {console.log(err);});
 
     }
 
     handleReservation = event => {
 
-        let reservationDTO = {drugId : this.state.drugId, pharmacyId: this.props.pharmacyId, drugAmount: this.state.drugAmount, drugPrice: this.state.drugPrice, endDate:this.state.selectedDate};
+
+        let reservationDTO = {drugId : this.state.drugId, pharmacyId: this.props.pharmacyId, drugAmount: this.state.drugAmount, drugPrice: this.state.drugFinalPrice, endDate:this.state.selectedDate};
         
         Axios
         .post(BASE_URL + "/api/drug/reserve", reservationDTO, {
@@ -96,7 +101,7 @@ class ReserveDrugsInPharmacy extends Component {
                             <table hidden={this.state.showReservation} className="table" style={{width:"100%"}}>
                                 <tbody>
                                     {this.props.drugs.map(drug => 
-                                            <tr hidden={false} id={drug.Id} key={drug.Id} onClick={() => this.handleClickOnDrug(drug)}>
+                                            <tr hidden={false} id={drug.Id} key={drug.Id} onClick={() => this.handleClickOnDrug(drug)} style={{ cursor: "pointer" }}>
                                                     <td width="130em">
                                                         <img className="img-fluid" src={CapsuleLogo} width="70em"/>
                                                     </td>
@@ -129,6 +134,10 @@ class ReserveDrugsInPharmacy extends Component {
                                                     <div><b>Manufacturer:</b> {this.state.drugManufacturer}</div>
                                                     <div><b>Quantity:</b> {this.state.drugQuantity}<b>mg</b></div>
                                                     <div><b>Price by peace:</b> {this.state.drugPrice}</div>
+                                                    <div hidden={this.state.drugDiscountPrice === this.state.drugPricems}>
+											            <b>Drug price with discount:</b> {this.state.drugDiscountPrice}
+											        <b> din</b>
+										</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -150,7 +159,7 @@ class ReserveDrugsInPharmacy extends Component {
                                         </div>
                                         <div className="form-row mt-3">
                                             <div className="form-col">
-                                                <h5>Total price: <b color="red">{this.state.drugAmount * this.state.drugPrice} din</b></h5>
+                                                <h5>Total price: <b color="red">{this.state.drugAmount * this.state.drugDiscountPrice} din</b></h5>
                                             </div>
                                         </div>
                                         <div  className="form-group text-center">
