@@ -5,19 +5,24 @@ import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import { withRouter } from "react-router";
-import OfferModal from "../../components/OfferModal";
+import EditOfferModal from "../../components/EditOfferModal";
 import getAuthHeader from "../../GetHeader";
 
 class Offers extends Component {
 	state = {
 		price: "",
 		showOfferModal: false,
+		offers: [],
+		date:"",
 	};
 	
 	componentDidMount() {
 			Axios.get(BASE_URL + "/api/offer", { headers: { Authorization: getAuthHeader() } })
 					.then((res) => {
 						console.log(res.data);
+						this.setState({
+							offers: res.data,
+						});
 					})
 					.catch((err) => {
 						console.log("GRESKA");
@@ -32,8 +37,12 @@ class Offers extends Component {
 		this.setState({ price: event.target.value });
 	};
 	
-	handleOfferClick = () => {
-		this.setState({ showOfferModal: true });
+	handleOfferClick = (offer) => {
+		this.setState({ 
+			price: offer.price,
+			date: offer.dateToDelivery,
+			showOfferModal: true 
+		});
 	};
 	
 	handleOfferModalClose = () => {
@@ -48,38 +57,55 @@ class Offers extends Component {
 
 				<div className="container" style={{ marginTop: "10%" }}>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Offers </h5>
-
-					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
-						<tbody>
-								<tr className="rounded">
-									<td width="190em">
-										<img className="img-fluid" src={AppointmentIcon} width="150em" />
-									</td>
-									<td>
-										
-										<div>
-											<b>Offer : </b>{" "}
-										</div>
-									</td>
-									<td className="align-middle">
-										<button
-											type="button"
-											onClick={() => this.handleOfferClick()}
-											className="btn btn-outline-secondary"
-										>
-											Make an offer
-										</button>
-									</td>
-								</tr>
-						</tbody>
-					</table>
+						<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
+							<tbody>
+								{this.state.offers.map((offer) => (
+									<tr className="rounded">
+										<td width="190em">
+											<img className="img-fluid" src={AppointmentIcon} width="150em" />
+										</td>
+										<td>
+											<div>
+												<b>Due to date : </b>{" "}
+												{new Date(offer.EntityDTO.dateToDelivery).toLocaleTimeString("en-US", {
+													day: "2-digit",
+													month: "2-digit",
+													year: "numeric",
+													hour: "2-digit",
+													minute: "2-digit",
+												})}
+											</div>
+											<div>
+												<b>Status : </b>{" "}
+												{offer.EntityDTO.orderStatus}
+											</div>
+											<div>
+												<b>Price : </b>{" "}
+												{offer.EntityDTO.price}{" "}din
+											</div>
+										</td>
+										<td className="align-middle">
+											<button
+												type="button"
+												onClick={() => this.handleOfferClick(offer.EntityDTO)}
+												className="btn btn-outline-secondary"
+											>
+												Edit an offer
+											</button>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
 				</div>
 
-				<OfferModal
-					buttonName="Send offer"
-					header="Make an offer"
+				<EditOfferModal
+					buttonName="Edit offer"
+					header="Edit an offer"
 					handlePriceChange={this.handlePriceChange}
 					show={this.state.showOfferModal}
+					price={this.state.price}
+					date={this.state.date}
 					onCloseModal={this.handleOfferModalClose}
 					giveOffer={this.handleOffer}
 				/>

@@ -62,20 +62,40 @@ class Orders extends Component {
 										<img className="img-fluid" src={AppointmentIcon} width="150em" />
 									</td>
 									<td>
-										
 										<div>
-											<b>Order : </b>{" "}
-											{order.Id}
+											<b>Date : </b>{" "}
+											{new Date(order.EntityDTO.date).toLocaleTimeString("en-US", {
+													day: "2-digit",
+													month: "2-digit",
+													year: "numeric",
+													hour: "2-digit",
+													minute: "2-digit",
+												})}
+										</div>
+										<div>
+											<b>Pharmacy : </b>{" "}
+											{order.EntityDTO.pharmacy.EntityDTO.name}
+										</div>
+										<div>
+											<b>Address: </b> {order.EntityDTO.pharmacy.EntityDTO.address.street}, {order.EntityDTO.pharmacy.EntityDTO.address.city},{" "}
+											{order.EntityDTO.pharmacy.EntityDTO.address.country}
 										</div>
 									</td>
 									<td className="align-middle">
-										<button
-											type="button"
-											onClick={() => this.handleOfferClick()}
-											className="btn btn-outline-secondary"
-										>
-											Make an offer
-										</button>
+										<div>
+											<button type="button" onClick={() => this.handleOfferClick()} className="btn btn-outline-secondary">
+												See order
+											</button>
+										</div>
+										<div className="mt-2" >
+											<button
+												type="button"
+												onClick={() => this.handleOfferClick()}
+												className="btn btn-outline-secondary"
+											>
+												Make an offer
+											</button>
+										</div>
 									</td>
 								</tr>
 							))}
