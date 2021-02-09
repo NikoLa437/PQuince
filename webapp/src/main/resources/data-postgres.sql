@@ -217,10 +217,15 @@ insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,
 insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2365458c-6976-11eb-9439-0242ac130555', 'EXAMINATIONDISCOUNT', '2021-02-05','2021-03-15',25.0, 'cafeddee-56cb-11eb-ae93-0242ac130002');
 
 insert into orders (id, date, type, pharmacy_id, pharmacy_admin_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '2021-05-05' , 'CREATED' , 'cafeddee-56cb-11eb-ae93-0242ac130002' , '9ba98d47-1a8a-4ae1-b109-af7b56e94788');
+insert into orders (id, date, type, pharmacy_id, pharmacy_admin_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '2021-05-05' , 'CREATED' , 'cafeddee-56cb-11eb-ae93-0242ac130002' , '9ba98d47-1a8a-4ae1-b109-af7b56e94788');
 
 insert into drug_order (id, amount, drug_instance_id) values ('99e26092-67ad-11eb-ae93-0242ac130002', 2, 'dac2b818-5838-11eb-ae93-0242ac130002' );
+insert into drug_order (id, amount, drug_instance_id) values ('44e26092-67ad-11eb-ae93-0242ac130002', 1, 'aecf0eac-68cb-11eb-9f52-838764dae934' );
+insert into drug_order (id, amount, drug_instance_id) values ('55e26092-67ad-11eb-ae93-0242ac130002', 2, 'aecf0eac-68cb-11eb-9f52-838764dae934' );
 
 insert into order_drug_for_order (order_id, drug_order_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '99e26092-67ad-11eb-ae93-0242ac130002');
+insert into order_drug_for_order (order_id, drug_order_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '44e26092-67ad-11eb-ae93-0242ac130002');
+insert into order_drug_for_order (order_id, drug_order_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '55e26092-67ad-11eb-ae93-0242ac130002');
 
 insert into offers (id, date_to_delivery, status, price) values ('33331111-67ac-11eb-ae93-0242ac130002', '2021-04-04', 'WAITING', 9000 );
 
