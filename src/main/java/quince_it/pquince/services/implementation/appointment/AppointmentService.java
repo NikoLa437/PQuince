@@ -208,9 +208,6 @@ public class AppointmentService implements IAppointmentService{
 	@SuppressWarnings("deprecation")
 	private DateRange createDateRangeForWorkTimeForDay(WorkTime workTime, Date date) {
 
-		//@SuppressWarnings("deprecation")
-		//Date startDate = new Date(date.getYear(),date.getMonth(),date.getDay(),workTime.getStartTime(),0,0);
-		//@SuppressWarnings("deprecation")
 		Date startDate = (Date) date.clone();
 		Date endDate = (Date) date.clone();
 		startDate.setHours(workTime.getStartTime());

@@ -137,7 +137,8 @@ class OrdersPage extends Component {
                                 message={this.state.failMessage}
                                 handleCloseAlert={this.handleCloseAlertFail}
                         />
-					
+						<h5 className=" text-center mb-0 mt-2 text-uppercase">Orders </h5>
+
                         <table className="table mt-5" style={{width:"100%"}}>
                             <tbody>
                                 {this.state.orders.map(order => 
