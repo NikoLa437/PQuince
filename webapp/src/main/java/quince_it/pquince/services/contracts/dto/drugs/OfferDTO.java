@@ -1,5 +1,6 @@
 package quince_it.pquince.services.contracts.dto.drugs;
 
+import java.util.UUID;
 import java.sql.Date;
 
 import quince_it.pquince.entities.drugs.OfferStatus;
@@ -7,6 +8,8 @@ import quince_it.pquince.entities.drugs.OfferStatus;
 public class OfferDTO {
 
 		private Date dateToDelivery;
+		
+		private UUID id;
 		
 		private double price;
 		
@@ -19,6 +22,14 @@ public class OfferDTO {
 			this.dateToDelivery = dateToDelivery;
 			this.price = price;
 			this.offerStatus = offerStatus;
+		}
+		
+		public OfferDTO(Date dateToDelivery, double price, OfferStatus offerStatus, UUID id) {
+			super();
+			this.dateToDelivery = dateToDelivery;
+			this.price = price;
+			this.offerStatus = offerStatus;
+			this.id = id;
 		}
 
 		public Date getDateToDelivery() {
@@ -43,6 +54,14 @@ public class OfferDTO {
 
 		public void setOrderStatus(OfferStatus offerStatus) {
 			this.offerStatus = offerStatus;
+		}
+
+		public UUID getId() {
+			return id;
+		}
+
+		public void setId(UUID id) {
+			this.id = id;
 		}
 	    
 	

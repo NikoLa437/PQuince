@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, Modal } from "react-bootstrap";
+import DatePicker from "react-datepicker";
 
 class EditOfferModal extends Component {
 	render() {
@@ -40,20 +41,12 @@ class EditOfferModal extends Component {
 								<label>Due to date:</label>
 							</div>
 							<div>
-								<input
-									placeholder="Price"
-									className="form-control"
-									id="complaints"
-									value={new Date(this.props.date).toLocaleTimeString("en-US", {
-													day: "2-digit",
-													month: "2-digit",
-													year: "numeric",
-													hour: "2-digit",
-													minute: "2-digit",
-												})}
-									type="number"
-									onChange={this.props.handlePriceChange}
-								/>
+								<DatePicker
+										className="form-control"
+										minDate={new Date()}
+										onChange={(date) => this.props.handleDateChange(date)}
+										selected={this.props.selectedDate}
+									/>
 							</div>
 							
 						</td>
