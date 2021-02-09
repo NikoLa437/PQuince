@@ -106,19 +106,17 @@ class DrugsPage extends Component {
 	};
 
 	handleResetSearch = () => {
-	
 		Axios.get(BASE_URL + "/api/drug/grade")
 
 			.then((res) => {
 				this.setState({
-					 drugs: res.data ,
+					drugs: res.data,
 					formShowed: false,
 					showingSearched: false,
 					searchName: "",
 					searchGradeFrom: "",
 					searchGradeTo: "",
 					drugKind: "",
-				 
 				});
 			})
 			.catch((err) => {
@@ -143,7 +141,6 @@ class DrugsPage extends Component {
 			let gradeTo = this.state.searchGradeTo;
 			let name = this.state.searchName;
 			let drugKind = this.state.drugKind;
-
 
 			if (gradeFrom === "") gradeFrom = -1;
 			if (gradeTo === "") gradeTo = -1;
@@ -172,7 +169,7 @@ class DrugsPage extends Component {
 	};
 
 	handleDrugClick = (drug) => {
-		console.log(drug)
+		console.log(drug);
 		this.setState({
 			drugAmount: drug.EntityDTO.recommendedAmount,
 			drugQuantity: drug.EntityDTO.quantity,
@@ -394,7 +391,9 @@ class DrugsPage extends Component {
 							<i className="icofont-close-line mr-1"></i>Reset criteria
 						</button>
 					</div>
-					<p className="mb-4 mt-4 text-uppercase">Click on drug to see availability in pharmacies</p>
+					<p hidden={!this.state.loggedPatient} className="mb-4 mt-4 text-uppercase">
+						Click on drug to see availability in pharmacies
+					</p>
 
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>

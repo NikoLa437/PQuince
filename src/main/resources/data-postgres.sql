@@ -48,7 +48,7 @@ insert into patient_allergen (patient_id, allergen_id) values('22793162-52d3-11e
 
 insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac130002', 'Benu', 'Benu apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 450);
 insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac111002', 'Ivancic i sinovi', 'Ivancic i sinovi','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 729);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Zdravlje apoteka','gradska opština Zemun','Serbia','Šilerova ulica',44.845752,20.387903, 999);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Zdravlje apoteka','gradska opština Zemun','Serbia','Šilerova ulica',44.845752,20.387903, 400);
 insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac131302', 'Kopriva', 'Kopriva apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 650);
 
 insert into staff (id, staff_type) values ('11355678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
@@ -207,8 +207,10 @@ insert into drug_feedback (date, grade, drug_id, patient_id) values ('2020-05-03
 
 insert into pharmacy_admin (id,pharmacy_id) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788','cafeddee-56cb-11eb-ae93-0242ac130002');
 
-insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason) values ('eaa44ad0-6940-11eb-9439-0242ac130002', '25345278-52d3-11eb-ae93-0242ac130002', 'ACCEPTED','2021-02-17','2021-02-23', '');
-insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason) values ('eba44ad0-6940-11eb-9439-0242ac130002', '25345278-52d3-13eb-ae93-0242ac130002', 'ACCEPTED','2021-02-18','2021-02-23', '');
+insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('eba44ad0-6940-11eb-9439-0242ac130002', '25345278-52d3-13eb-ae93-0242ac130002', 'ACCEPTED','2021-02-18','2021-02-23', '','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('76eb2495-1499-4f68-8397-48e2a410aa6b', '25345278-52d3-11eb-ae93-0242ac130002', 'WAIT','2021-04-01','2021-04-23', '','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('281707fe-6a54-11eb-9439-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002', 'WAIT','2021-03-01','2021-03-14', '','cafeddee-56cb-11eb-ae93-0242ac130002');
+
 
 insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2965458c-6976-11eb-9439-0242ac130002', 'DRUGDISCOUNT', '2021-02-03','2021-03-15', 15.0,'cafeddee-56cb-11eb-ae93-0242ac130002');
 insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2965458c-6976-11eb-9439-0242ac130555', 'CONSULTATIONDISCOUNT', '2021-02-05','2021-03-15',25.0, 'cafeddee-56cb-11eb-ae93-0242ac130002');

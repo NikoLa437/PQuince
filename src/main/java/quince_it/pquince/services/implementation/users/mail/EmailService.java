@@ -19,6 +19,7 @@ import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
+import quince_it.pquince.entities.users.Absence;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.User;
@@ -28,6 +29,11 @@ public class EmailService {
 
 	@Autowired
 	private JavaMailSender javaMailSender;
+	
+	private final String LOCAL_URL = "http://localhost:8081";
+	
+	private final String HEROKU_URL = "https://pquince.herokuapp.com";
+
 
 	@Autowired
 	private Environment env;
@@ -37,13 +43,15 @@ public class EmailService {
 	public void sendSignUpNotificaitionAsync(Patient patient)
 			throws MailException, InterruptedException, MessagingException {
 		System.out.println("Slanje emaila...");
-
+		boolean isHeroku = env.getProperty("is_heroku").equals("1");
+		
+		String url = isHeroku ? HEROKU_URL + "/api/users/activate-patient/" + patient.getId() : LOCAL_URL + "/api/users/activate-patient/" + patient.getId();
+		
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 		String htmlMsg = "<p>Hello " + patient.getName() + ",</p>" +
 					"<p>You registered an account on PQuince portal, before being able to use your account you need to verify that this is your email address by clicking here:</p>"
-					+ "<a href=\"http://localhost:8081/api/users/activate-patient/" + patient.getId()
-					+ "\">Verify your account</a>.</p>" + "<p>Kind Regards, PQuince</p>"; 
+					+ "<a href=\"" + url + "\">Verify your account</a>.</p>" + "<p>Kind Regards, PQuince</p>"; 
 		helper.setText(htmlMsg, true);
 		helper.setTo(patient.getEmail());
 		helper.setSubject("Activate account");
@@ -211,6 +219,39 @@ public class EmailService {
 		helper.setText(htmlMsg, true);
 		helper.setTo(patient.getEmail());
 		helper.setSubject("Complaint reply");
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
+		System.out.println("Email poslat!");
+	}
+	
+	public void sendMailForApprovedAbsence(Absence absence) throws MessagingException {
+		System.out.println("Slanje emaila...");
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Hello " + absence.getForStaff().getName() + ",</p>" +
+					"<p>Your request for absence in " + absence.getPharmacy().getName() +" is approved"+ "</p>" 
+					+ "<p>Kind Regards, PQuince</p>"; 
+		helper.setText(htmlMsg, true);
+		helper.setTo(absence.getForStaff().getEmail());
+		helper.setSubject("Approved absence");
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
+		System.out.println("Email poslat!");
+	}
+	
+	public void sendMailForRejectAbsence(Absence absence) throws MessagingException {
+		System.out.println("Slanje emaila...");
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Hello " + absence.getForStaff().getName() + ",</p>" +
+					"<p>Your request for absence in " + absence.getPharmacy().getName() +" is reject"+ "</p>" 
+					+"<p>Reason: " + absence.getRejectReason() +"</p>"
+					+ "<p>Kind Regards, PQuince</p>"; 
+		helper.setText(htmlMsg, true);
+		helper.setTo(absence.getForStaff().getEmail());
+		helper.setSubject("Rejected absence");
 		helper.setFrom(env.getProperty("spring.mail.username"));
 		javaMailSender.send(mimeMessage);
 		System.out.println("Email poslat!");

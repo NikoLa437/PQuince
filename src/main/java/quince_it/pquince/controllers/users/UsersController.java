@@ -184,6 +184,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("/pharmacy-admin")
+	@CrossOrigin
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	public ResponseEntity<IdentifiableDTO<PharmacyAdminDTO>> getPharmacyAdminById() {
 		try {
