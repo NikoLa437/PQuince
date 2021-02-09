@@ -278,7 +278,7 @@ public class PharmacyService implements IPharmacyService {
 	public List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceAscending(Date startDateTime) {
 		
 		List<IdentifiableDTO<PharmacyGradePriceDTO>> pharmacies = findAllPharmaciesFreeForPeriodWithGradesAndPrice(startDateTime);
-		Collections.sort(pharmacies, (s1, s2) -> Double.compare(s1.EntityDTO.getPrice(), s2.EntityDTO.getPrice()));
+		Collections.sort(pharmacies, (s1, s2) -> Double.compare(s1.EntityDTO.getDiscountPrice(), s2.EntityDTO.getDiscountPrice()));
 		
 		return pharmacies;
 	}
@@ -289,7 +289,7 @@ public class PharmacyService implements IPharmacyService {
 	public List<IdentifiableDTO<PharmacyGradePriceDTO>> findAllPharmaciesFreeForPeriodWithGradesAndPriceSortByPriceDescending(Date startDateTime) {
 		
 		List<IdentifiableDTO<PharmacyGradePriceDTO>> pharmacies = findAllPharmaciesFreeForPeriodWithGradesAndPrice(startDateTime);
-		Collections.sort(pharmacies, (s1, s2) -> Double.compare(s1.EntityDTO.getPrice(), s2.EntityDTO.getPrice()));
+		Collections.sort(pharmacies, (s1, s2) -> Double.compare(s1.EntityDTO.getDiscountPrice(), s2.EntityDTO.getDiscountPrice()));
 		Collections.reverse(pharmacies);
 		
 		return pharmacies;
