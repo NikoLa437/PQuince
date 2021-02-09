@@ -191,6 +191,7 @@ class PatientsDrugReservationHistory extends Component {
 									</td>
 									<td className="align-middle">
 										<button
+											style={{ marginLeft: "55%" }}
 											type="button"
 											onClick={() => this.handleFeedbackClick(drugReservation.EntityDTO.drugInstance)}
 											className="btn btn-outline-secondary"

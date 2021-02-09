@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
@@ -859,6 +860,7 @@ public class AppointmentService implements IAppointmentService{
 	}
 	
 	@Override
+	@Transactional
 	public void didNotShowUpToAppointment(UUID id) {
 		Appointment appointment = appointmentRepository.findById(id).get();
 		appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
@@ -874,15 +876,18 @@ public class AppointmentService implements IAppointmentService{
 		for (Appointment appointment : expiredAppointments) {
 			try {
 				Patient patient = patientRepository.findById(appointment.getPatient().getId()).get();
-				patient.addPenalty(1);
-				patientRepository.save(patient);
-				appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
-				appointmentRepository.save(appointment);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				executeGivingPatientPenaltyTransaction(appointment, patient);
+			} catch (Exception e) { }
 		}
 		
+	}
+	
+	@Transactional
+	public void executeGivingPatientPenaltyTransaction(Appointment appointment, Patient patient){
+		patient.addPenalty(1);
+		patientRepository.save(patient);
+		appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
+		appointmentRepository.save(appointment);
 	}
 
 }

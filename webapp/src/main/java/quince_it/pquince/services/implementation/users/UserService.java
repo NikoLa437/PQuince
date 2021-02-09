@@ -420,13 +420,10 @@ public class UserService implements IUserService{
 	public void deleteAllPatientsPenalties() {
 		List<Patient> patients = patientRepository.findAllWithMoreThanZeroPenalties();
 		for(Patient patient : patients) {
-			if(patient.getPenalty() > 0) {
-				try {
-					patient.setPenalty(0);
-					patientRepository.save(patient);
-				} catch (Exception e) {
-				}
-			}
+			try {
+				patient.setPenalty(0);
+				patientRepository.save(patient);
+			} catch (Exception e) { }
 		}
 	}
 	
