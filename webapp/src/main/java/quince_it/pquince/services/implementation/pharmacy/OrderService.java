@@ -100,7 +100,7 @@ public class OrderService implements IOrderService {
 
 	private IdentifiableDTO<OrderDTO> MapOrderPersistanceToIndetifiableOrderDTO(Order o) {
 		// TODO Auto-generated method stub
-		return new IdentifiableDTO<OrderDTO>(o.getId(),new OrderDTO(this.mapListOfDrugOrderToListOfDrugOrderDTO(o.getOrder()),o.getDate(),o.getOffers().size(),o.getPharmacyAdmin().getName()+ " " + o.getPharmacyAdmin().getSurname()));
+		return new IdentifiableDTO<OrderDTO>(o.getId(),new OrderDTO(this.mapListOfDrugOrderToListOfDrugOrderDTO(o.getOrder()),o.getDate(),o.getOffers().size(),o.getPharmacyAdmin().getName()+ " " + o.getPharmacyAdmin().getSurname(),o.getOrderStatus()));
 	}
 
 

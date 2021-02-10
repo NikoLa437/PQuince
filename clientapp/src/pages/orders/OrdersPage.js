@@ -9,6 +9,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
 import { confirmAlert } from 'react-confirm-alert'; // Import
+import ViewOffersModal from "../../components/ViewOffersModal";
 
 class OrdersPage extends Component {
 	state = {
@@ -20,6 +21,10 @@ class OrdersPage extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+        offers:[],        
+        showOffersModal: false,
+        selectedOrder:''
+
     };
 
     componentDidMount() {
@@ -113,6 +118,77 @@ class OrdersPage extends Component {
 		this.setState({ hiddenFailAlert: true });
 	};
 
+    handleCloseOffersModal =()=>{
+        this.setState({ showOffersModal: false });
+
+    }
+
+    onViewOrdersClick = (id,num) => {
+        if(num===0){
+            this.setState({
+                hiddenSuccessAlert: true,
+                hiddenFailAlert:false,
+                failHeader: "Unsuccess", 
+                failMessage: "There are currently no offers"
+            })
+        }else{
+            Axios
+            .get(BASE_URL + "/api/offer/offers-for-order?orderId="+ id, {
+                validateStatus: () => true,
+                headers: { Authorization: getAuthHeader() },
+            }).then((res) =>{
+                if(res.status ===200){
+                    this.setState({
+                        offers : res.data,
+                        showOffersModal:true,
+                        selectedOrder:id
+                    });
+                }
+                if(res.status === 400)
+                {
+                    this.setState({
+                        hiddenSuccessAlert: true,
+                        hiddenFailAlert:false,
+                        failHeader: "Unsuccess", 
+                        failMessage: "The order has been processed"
+                    })
+                }else if(res.status === 500)
+                {
+                    this.setState({
+                        hiddenSuccessAlert: true,
+                        hiddenFailAlert:false,
+                        failHeader: "Unsuccess", 
+                        failMessage: "We have some problem. Try later."
+                    })
+                }
+                console.log(res.data);
+            }).catch((err) => {console.log(err);});    
+        }
+    }
+
+
+    onEditOrderClick = (id,num) =>{
+        if(num!==0){
+            this.setState({
+                hiddenSuccessAlert: true,
+                hiddenFailAlert:false,
+                failHeader: "Unsuccess", 
+                failMessage: "Not possible to remove order because have offers"
+            })
+        }
+    }
+
+    handleAcceptOffer = () =>{
+        this.setState({
+            hiddenSuccessAlert: false,
+            hiddenFailAlert:true,
+            successHeader: "Success",
+            successMessage: "You successfully accept offer.",
+            showOffersModal:false
+        })
+        this.updateOrders();
+    }
+
     render() {
 		return (
         <React.Fragment>
@@ -150,12 +226,13 @@ class OrdersPage extends Component {
                                             <div><b>Deadline:</b> {new Date(order.EntityDTO.endDate).toDateString()}</div>
                                             <div><b>Created by:</b> {order.EntityDTO.creator}</div>
                                             <div><b>Number of offers:</b> {order.EntityDTO.numberOfOffers}</div>
+                                            <div><b>Status:</b> {order.EntityDTO.orderStatus}</div>
                                         </td>
                                         <td >
                                             <div  style={{marginLeft:'25%'}}>
-                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-outline-secondary" onClick={() => this.onEditStorageClick(order.Id)} type="button"><i className="icofont-subscribe mr-1"></i>View offers</button>
+                                                <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-outline-secondary" onClick={() => this.onViewOrdersClick(order.Id,order.EntityDTO.numberOfOffers)} type="button"><i className="icofont-subscribe mr-1"></i>View offers</button>
                                                 <br></br>
-                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary" onClick={() => this.onEditPriceClick(order.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Edit order</button>
+                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary" onClick={() => this.onEditOrderClick(order.Id,order.EntityDTO.numberOfOffers)} type="button"><i className="icofont-subscribe mr-1"></i>Edit order</button>
                                                 <br></br>
                                                 <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary mt-1" onClick={() => this.removeOrderClick(order.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Delete order</button>
                                             </div>
@@ -166,6 +243,14 @@ class OrdersPage extends Component {
                         </table>
                     </div>
                     <div>
+                    <ViewOffersModal
+					        show={this.state.showOffersModal}
+					        onCloseModal={this.handleCloseOffersModal}
+                            offers={this.state.offers}
+					        header="Offers"
+                            acceptedOffer={this.handleAcceptOffer}
+                            orderId={this.state.selectedOrder}
+				        />
                     </div>
                 </React.Fragment>
 		);

@@ -16,7 +16,7 @@ public class DrugOrder {
 	private DrugInstance drugInstance;
 	
 	@Column(name = "amount", nullable = false)
-	double amount;
+	int amount;
 
 	
 	public DrugOrder() {
@@ -24,14 +24,14 @@ public class DrugOrder {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DrugOrder(UUID id, DrugInstance drugInstance, double amount) {
+	public DrugOrder(UUID id, DrugInstance drugInstance, int amount) {
 		super();
 		this.id = id;
 		this.drugInstance = drugInstance;
 		this.amount = amount;
 	}
 	
-	public DrugOrder(DrugInstance drugInstance, double amount) {
+	public DrugOrder(DrugInstance drugInstance, int amount) {
 		super();
 		this.id = UUID.randomUUID();
 		this.drugInstance = drugInstance;
@@ -54,11 +54,11 @@ public class DrugOrder {
 		this.drugInstance = drugInstance;
 	}
 
-	public double getAmount() {
+	public int getAmount() {
 		return amount;
 	}
 
-	public void setAmount(double amount) {
+	public void setAmount(int amount) {
 		this.amount = amount;
 	}
 	

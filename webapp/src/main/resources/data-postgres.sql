@@ -223,6 +223,10 @@ insert into drug_order (id, amount, drug_instance_id) values ('99e26092-67ad-11e
 insert into order_drug_for_order (order_id, drug_order_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '99e26092-67ad-11eb-ae93-0242ac130002');
 
 insert into offers (id, date_to_delivery, status, price) values ('33331111-67ac-11eb-ae93-0242ac130002', '2021-04-04', 'WAITING', 9000 );
+insert into offers (id, date_to_delivery, status, price) values ('44441111-67ac-11eb-ae93-0242ac130002', '2021-04-05', 'WAITING', 7500 );
+insert into offers (id, date_to_delivery, status, price) values ('55551111-67ac-11eb-ae93-0242ac130002', '2021-05-02', 'WAITING', 8300 );
 
 insert into offers_for_order (order_id, offers_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '33331111-67ac-11eb-ae93-0242ac130002');
+insert into offers_for_order (order_id, offers_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '44441111-67ac-11eb-ae93-0242ac130002');
+insert into offers_for_order (order_id, offers_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '55551111-67ac-11eb-ae93-0242ac130002');
 

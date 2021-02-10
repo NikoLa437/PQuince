@@ -184,7 +184,8 @@ public class EmailService {
 		javaMailSender.send(mimeMessage);
 		System.out.println("Email poslat!");
 	}
-
+	
+	@Async
 	private String GetMessageFromAction(ActionAndPromotion actionAndPromotion) {
 		if(actionAndPromotion.getActionAndPromotionType()==ActionAndPromotionType.DRUGDISCOUNT) {
 			return "<p>"+ "We have special offer for you" +"</p>" +
@@ -207,6 +208,7 @@ public class EmailService {
 		}
 	}
 
+	@Async
 	public void sendComplaintReplyPharmacyAsync(User patient, String reply) throws MessagingException {
 		System.out.println("Slanje emaila...");
 
@@ -224,6 +226,7 @@ public class EmailService {
 		System.out.println("Email poslat!");
 	}
 	
+	@Async
 	public void sendMailForApprovedAbsence(Absence absence) throws MessagingException {
 		System.out.println("Slanje emaila...");
 
@@ -240,6 +243,7 @@ public class EmailService {
 		System.out.println("Email poslat!");
 	}
 	
+	@Async
 	public void sendMailForRejectAbsence(Absence absence) throws MessagingException {
 		System.out.println("Slanje emaila...");
 
