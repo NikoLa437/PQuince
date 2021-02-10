@@ -71,7 +71,10 @@ class Header extends Component {
 							<li hidden={this.hasRole("*")}>
 								<Link to="/pharmacies">Pharmacies</Link>
 							</li>
-							<li hidden={this.hasRole("ROLE_SUPPLIER")}>
+							<li hidden={this.hasRole("*")}>
+								<Link to="/drugs">Drugs</Link>
+							</li>
+							<li hidden={!this.hasRole("ROLE_SYSADMIN") && !this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
 								<Link to="/drugs">Drugs</Link>
 							</li>
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>

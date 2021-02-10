@@ -225,11 +225,15 @@ insert into orders (id, date, type, pharmacy_id, pharmacy_admin_id) values ('111
 insert into drug_order (id, amount, drug_instance_id) values ('99e26092-67ad-11eb-ae93-0242ac130002', 2, 'dac2b818-5838-11eb-ae93-0242ac130002' );
 insert into drug_order (id, amount, drug_instance_id) values ('44e26092-67ad-11eb-ae93-0242ac130002', 1, 'aecf0eac-68cb-11eb-9f52-838764dae934' );
 insert into drug_order (id, amount, drug_instance_id) values ('55e26092-67ad-11eb-ae93-0242ac130002', 2, 'aecf0eac-68cb-11eb-9f52-838764dae934' );
+insert into drug_order (id, amount, drug_instance_id) values ('66e26092-67ad-11eb-ae93-0242ac130002', 3, 'aecf0eac-68cb-11eb-9f52-838764dae934' );
 
 insert into order_drug_for_order (order_id, drug_order_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '99e26092-67ad-11eb-ae93-0242ac130002');
 insert into order_drug_for_order (order_id, drug_order_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '44e26092-67ad-11eb-ae93-0242ac130002');
 insert into order_drug_for_order (order_id, drug_order_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '55e26092-67ad-11eb-ae93-0242ac130002');
+insert into order_drug_for_order (order_id, drug_order_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '66e26092-67ad-11eb-ae93-0242ac130002');
 
 insert into offers (id, date_to_delivery, status, price, supplier_id) values ('33331111-67ac-11eb-ae93-0242ac130002', '2021-04-04', 'WAITING', 9000, '55555d47-1a8a-4ae1-b109-af7b56e94788' );
+insert into offers (id, date_to_delivery, status, price, supplier_id) values ('44441111-67ac-11eb-ae93-0242ac130002', '2021-04-04', 'REJECTED', 6000, '55555d47-1a8a-4ae1-b109-af7b56e94788' );
 
 insert into offers_for_order (order_id, offers_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '33331111-67ac-11eb-ae93-0242ac130002');
+insert into offers_for_order (order_id, offers_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '44441111-67ac-11eb-ae93-0242ac130002');

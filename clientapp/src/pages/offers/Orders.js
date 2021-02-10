@@ -58,9 +58,7 @@ class Orders extends Component {
 							}
 			Axios.put(BASE_URL + "/api/offer/check-drugs", OfferDTO ,{ headers: { Authorization: getAuthHeader() } })
 					.then((res) => {
-						console.log(res.data, "DIABSDIU");
 						if(res.data){
-							console.log("USO")
 							Axios.post(BASE_URL + "/api/offer", OfferDTO ,{ headers: { Authorization: getAuthHeader() } })
 								.then((res) => {
 									this.setState({
