@@ -328,7 +328,7 @@ public class AppointmentController {
 	@GetMapping("/free-periods-dermatologist")
 	@PreAuthorize("hasRole('DERMATHOLOGIST')")
 	@CrossOrigin
-	public ResponseEntity<List<AppointmentPeriodResponseDTO>> getFreePeriodsDermatologist(@RequestParam Date date,@RequestParam int duration) {
-		return new ResponseEntity<>(appointmentService.getFreePeriodsDermatologist(date, duration),HttpStatus.OK);
+	public ResponseEntity<List<AppointmentPeriodResponseDTO>> getFreePeriodsDermatologist(@RequestParam long datetime,@RequestParam int duration) {
+		return new ResponseEntity<>(appointmentService.getFreePeriodsDermatologist(new Date(datetime), duration),HttpStatus.OK);
 	}
 }

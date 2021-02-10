@@ -874,6 +874,7 @@ public class UserService implements IUserService{
 		Pharmacy pharmacy = null;
 		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);	
 		for(WorkTime wt : workTimes){
+			System.out.println("#######" + wt.getStartDate() + " " + wt.getEndDate());
 			pharmacy = wt.getPharmacy();
 		}
 		if(pharmacy == null)
