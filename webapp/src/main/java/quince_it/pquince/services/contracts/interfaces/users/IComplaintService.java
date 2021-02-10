@@ -10,7 +10,7 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
 public interface IComplaintService {
 	
-	void create(ComplaintStaffDTO entityDTO) throws ComplaintsNotAllowedException;
+	UUID create(ComplaintStaffDTO entityDTO) throws ComplaintsNotAllowedException;
 	
 	void update(ComplaintStaffDTO complaintStaffDTO);
 	
