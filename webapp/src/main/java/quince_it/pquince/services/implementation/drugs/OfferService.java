@@ -149,4 +149,43 @@ public class OfferService implements IOfferService{
 		return false;
 	}
 
+	@Override
+	public List<IdentifiableDTO<OfferDTO>> findAllAccepted() {
+		List<IdentifiableDTO<OfferDTO>> offers = new ArrayList<IdentifiableDTO<OfferDTO>>();
+		
+		for(Offers o: offerRepository.findBySupplier(userService.getLoggedUserId())) {
+			if(o.getOfferStatus().equals(OfferStatus.ACCEPTED))
+				offers.add(OfferMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(o));
+		}
+		
+		
+		return offers;
+	}
+
+	@Override
+	public List<IdentifiableDTO<OfferDTO>> findAllRejected() {
+		List<IdentifiableDTO<OfferDTO>> offers = new ArrayList<IdentifiableDTO<OfferDTO>>();
+		
+		for(Offers o: offerRepository.findBySupplier(userService.getLoggedUserId())) {
+			if(o.getOfferStatus().equals(OfferStatus.REJECTED))
+				offers.add(OfferMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(o));
+		}
+		
+		
+		return offers;	
+	}
+
+	@Override
+	public List<IdentifiableDTO<OfferDTO>> findAllWaiting() {
+		List<IdentifiableDTO<OfferDTO>> offers = new ArrayList<IdentifiableDTO<OfferDTO>>();
+		
+		for(Offers o: offerRepository.findBySupplier(userService.getLoggedUserId())) {
+			if(o.getOfferStatus().equals(OfferStatus.WAITING))
+				offers.add(OfferMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(o));
+		}
+		
+		
+		return offers;
+	}
+
 }

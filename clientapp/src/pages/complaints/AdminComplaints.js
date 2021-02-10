@@ -178,6 +178,7 @@ class AdminComplaints extends Component {
 									<td className="align-middle">
 										<button
 											type="button"
+											hidden={complaint.EntityDTO.reply !== ""}
 											onClick={() => this.handleComplaintClick(complaint)}
 											className="btn btn-outline-secondary"
 										>
