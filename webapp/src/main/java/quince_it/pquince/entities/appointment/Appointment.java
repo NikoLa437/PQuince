@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Version;
 
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
@@ -16,6 +17,9 @@ import quince_it.pquince.entities.users.Staff;
 
 @Entity
 public class Appointment {
+	
+	@Version
+	private Long version;
 
 	@Id
     @Column(name = "id")
@@ -128,6 +132,12 @@ public class Appointment {
 		this.priceToPay = priceToPay;
 	}
     
-    
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
 	
 }
