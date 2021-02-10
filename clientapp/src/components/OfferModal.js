@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, Modal } from "react-bootstrap";
+import DatePicker from "react-datepicker";
 
 class OfferModal extends Component {
 	render() {
@@ -29,6 +30,7 @@ class OfferModal extends Component {
 									className="form-control"
 									id="complaints"
 									type="number"
+									value={this.props.price}
 									onChange={this.props.handlePriceChange}
 								/>
 							</div>
@@ -39,12 +41,11 @@ class OfferModal extends Component {
 								<label>Due to date:</label>
 							</div>
 							<div>
-								<input
-									placeholder="Price"
+								<DatePicker
 									className="form-control"
-									id="complaints"
-									type="number"
-									onChange={this.props.handlePriceChange}
+									minDate={new Date()}
+									onChange={(date) => this.props.handleDateChange(date)}
+									selected={this.props.selectedDate}
 								/>
 							</div>
 							
