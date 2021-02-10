@@ -41,26 +41,6 @@ class CreateAndScheduleAppointmentPage extends Component {
 		}
 	}
 
-	convertDate = str => {
-		str = str.toString();
-		let parts = str.split(" ");
-		let months = {
-			Jan: "01",
-			Feb: "02",
-			Mar: "03",
-			Apr: "04",
-			May: "05",
-			Jun: "06",
-			Jul: "07",
-			Aug: "08",
-			Sep: "09",
-			Oct: "10",
-			Nov: "11",
-			Dec: "12"
-		};
-		return months[parts[1]] + "/" + parts[2] + "/" + parts[3];
-	};
-
 	handleSelectDurationChange = (event) => {
 		if (event.target.value >= 10 && event.target.value <= 60) {
 			this.setState({
@@ -74,7 +54,7 @@ class CreateAndScheduleAppointmentPage extends Component {
 	fetchPeriods = () => {
 		Axios.get(BASE_URL + "/api/appointment/free-periods-dermatologist", {
 			params: {
-				date: this.convertDate(this.state.selectedDate),
+				datetime: this.state.selectedDate.getTime(),
 				duration: this.state.duration
 			},
 			validateStatus: () => true, headers: { Authorization: getAuthHeader() }
@@ -84,7 +64,7 @@ class CreateAndScheduleAppointmentPage extends Component {
 					redirect: true,
 					redirectUrl: "/unauthorized"
 				});
-			} else {
+			} else if (res.status === 200) {
 				this.setState({ periods: res.data });
 				console.log(res.data);
 			}
