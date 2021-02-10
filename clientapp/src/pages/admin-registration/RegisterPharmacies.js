@@ -20,6 +20,7 @@ class RegisterPharmacies extends Component {
 		description: "",
 		address: "",
 		consulationPrice: "",
+		openModalData: false,
 		nameError: "none",
 		addressError: "none",
 		consulationPriceError: "none",
@@ -31,6 +32,12 @@ class RegisterPharmacies extends Component {
 		super(props);
 		this.addressInput = React.createRef();
 	}
+
+	handleModalDataClose = () => {
+		this.setState({ 
+			openModalData: false,
+		});
+	};
 
 	onYmapsLoad = (ymaps) => {
 		this.ymaps = ymaps;
@@ -83,6 +90,11 @@ class RegisterPharmacies extends Component {
 	};
 
 	handleSignUp = () => {
+
+		if(this.state.name !== "" &&
+		this.state.description !== "" &&
+		this.state.consulationPrice !== ""){
+
 		let street;
 		let city;
 		let country;
@@ -122,6 +134,11 @@ class RegisterPharmacies extends Component {
 						});
 				}
 			});
+		}else{
+			this.setState({
+				openModalData: true,
+			})
+		}
 	};
 	
 	handleSelectChange  = (event) => {
@@ -191,7 +208,7 @@ class RegisterPharmacies extends Component {
 											placeholder="Consultation price"
 											class="form-control"
 											id="consulationPrice"
-											type="text"
+											type="number"
 											onChange={this.handleConsulationPriceChange}
 											value={this.state.consulationPrice}
 										/>
@@ -242,6 +259,12 @@ class RegisterPharmacies extends Component {
 					onCloseModal={this.handleModalClose}
 					header="Successful registration"
 					text="You have successfully registered staff."
+				/>
+				<ModalDialog
+					show={this.state.openModalData}
+					onCloseModal={this.handleModalDataClose}
+					header="Error"
+					text="You must fill all the info."
 				/>
 			</React.Fragment>
 		);

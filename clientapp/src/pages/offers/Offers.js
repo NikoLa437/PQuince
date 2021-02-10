@@ -104,7 +104,7 @@ class Offers extends Component {
 
 								})
 								.catch((err) => {
-									console.log("GRESKA");
+									console.log("GRESKA11");
 									console.log(err);
 								});
 							}
@@ -117,7 +117,7 @@ class Offers extends Component {
 						}
 					})
 					.catch((err) => {
-						console.log("GRESKA");
+						console.log("GRESKA2");
 						console.log(err);
 					});
 		}else{

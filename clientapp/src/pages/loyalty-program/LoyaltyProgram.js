@@ -32,6 +32,7 @@ state = {
 		loyalityRegularColor: "#1977cc",
 		loyalitySilverColor: "#808080",
 		loyalityGoldColor: "#FFCC00",
+		openModalData: false,
 	};
 
 	
@@ -146,6 +147,22 @@ state = {
 
 
 	handleChangeInfo = () => {
+
+		if(this.state.pointsForAppointment !== "" && 
+		this.state.pointsForConsulting !== "" &&
+		this.state.pointsToEnterRegularCathegory !== "" &&
+		this.state.pointsToEnterSilverCathegory !== "" &&
+		this.state.pointsToEnterGoldCathegory !== "" &&
+		this.state.appointmentDiscountRegular !== "" &&
+		this.state.drugDiscountRegular !== "" &&
+		this.state.consultationDiscountRegular !== "" &&
+		this.state.appointmentDiscountSilver !== "" &&
+		this.state.drugDiscountSilver !== "" &&
+		this.state.consultationDiscountSilver !== "" &&
+		this.state.appointmentDiscountGold !== "" &&
+		this.state.drugDiscountGold !== "" &&
+		this.state.consultationDiscountGold !== ""){
+
 		let loyaltyProgramDTO = {
 					pointsForAppointment: this.state.pointsForAppointment*1,
 					pointsForConsulting: this.state.pointsForConsulting*1,
@@ -172,9 +189,19 @@ state = {
 						console.log("GRESKA");
 						console.log(err);
 					});
+		}else{
+			this.setState({
+				openModalData: true,
+			})
+		}
 				
 	};
 	
+	handleModalDataClose = () => {
+		this.setState({ 
+			openModalData: false,
+		});
+	};
 	render() {
 		return (
 			<React.Fragment>
@@ -225,6 +252,7 @@ state = {
 												<input
 													className="form-control"
 													type="text"
+													disabled="true"
 													onChange={this.handlePointsToEnterRegularCathegoryChange}
 													value={this.state.pointsToEnterRegularCathegory}
 												/>
@@ -620,6 +648,12 @@ state = {
 					onCloseModal={this.handleSuccessModalClose}
 					header="Successful"
 					text="Your information is changed succesfully."
+				/>
+				<ModalDialog
+					show={this.state.openModalData}
+					onCloseModal={this.handleModalDataClose}
+					header="Error"
+					text="You must fill all the info."
 				/>
 			</React.Fragment>
 		);

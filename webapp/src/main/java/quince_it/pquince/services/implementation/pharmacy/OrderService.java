@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.DrugOrder;
+import quince_it.pquince.entities.drugs.Offers;
 import quince_it.pquince.entities.drugs.Order;
 import quince_it.pquince.entities.drugs.OrderStatus;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
@@ -77,9 +78,19 @@ public class OrderService implements IOrderService {
 	
 	@Override
 	public  List<IdentifiableDTO<OrderForProviderDTO>> findAllProvider() {
-		
+		boolean var = false;
 		List<IdentifiableDTO<OrderForProviderDTO>> orders = new ArrayList<IdentifiableDTO<OrderForProviderDTO>>();
-		orderRepository.findAll().forEach((d) -> orders.add(OrderMapper.MapOrderInstancePersistenceToOrderInstanceIdentifiableDTO(d)));
+		
+		for(Order o: orderRepository.findAll()) {
+			for(Offers of: o.getOffers()) {
+				if(of.getSupplier().getId().equals(userService.getLoggedUserId()))
+					var = true;
+			}
+			if(!var)
+				orders.add(OrderMapper.MapOrderInstancePersistenceToOrderInstanceIdentifiableDTO(o));
+			
+			var = false;
+		}
 		
 		return orders;
 	}

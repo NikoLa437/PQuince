@@ -34,13 +34,15 @@ public class OfferController {
 		
 		return new ResponseEntity<>(offerService.create(offerDTO),HttpStatus.CREATED);
 	}
-	
+
+	@CrossOrigin
 	@GetMapping
 	@PreAuthorize("hasRole('SUPPLIER')") 
 	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAll() {
 		return new ResponseEntity<>(offerService.findAll(),HttpStatus.OK);
 	}
-	
+
+	@CrossOrigin
 	@GetMapping("/check-update/{id}")
 	@PreAuthorize("hasRole('SUPPLIER')") 
 	public ResponseEntity<?> checkIfCanUpdate(@PathVariable UUID id) {
