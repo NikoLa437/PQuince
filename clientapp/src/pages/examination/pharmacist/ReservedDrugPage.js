@@ -57,7 +57,7 @@ class ReservedDrugPage extends Component {
                     });
                 } else if (res.status === 200) {
                     this.setState({
-                        drugName: res.data.EntityDTO.drugInstance.EntityDTO.name,
+                        drugName: res.data.EntityDTO.drugInstance.EntityDTO.drugInstanceName,
                         drugManufacturer: res.data.EntityDTO.drugInstance.EntityDTO.manufacturer.EntityDTO.name,
                         drugQuantity: res.data.EntityDTO.drugInstance.EntityDTO.quantity,
                         drugPrice: res.data.EntityDTO.drugPeacePrice,
