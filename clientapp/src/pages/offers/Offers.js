@@ -228,7 +228,7 @@ class Offers extends Component {
 											aria-haspopup="true"
 											aria-expanded="false"
 										>
-											Sort by
+											Search
 										</button>
 										<div className="dropdown-menu" aria-labelledby="dropdownMenu2">
 											<button className="dropdown-item" type="button" onClick={this.handleReset}>
