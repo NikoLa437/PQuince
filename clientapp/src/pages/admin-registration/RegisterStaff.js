@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import getAuthHeader from "../../GetHeader";
+import HeadingAlert from "../../components/HeadingAlert";
 import Axios from "axios";
 import { withRouter } from "react-router";
 import ModalDialog from "../../components/ModalDialog";
@@ -16,11 +17,15 @@ const mapState = {
 
 class RegisterStaff extends Component {
 	state = {
+		errorHeader: "",
+		errorMessage: "",
+		hiddenErrorAlert: true,
 		email: "",
 		password: "",
 		name: "",
 		surname: "",
 		address: "",
+		openModalData: false,
 		phoneNumber: "",
 		emailError: "none",
 		passwordError: "none",
@@ -41,6 +46,19 @@ class RegisterStaff extends Component {
 		super(props);
 		this.addressInput = React.createRef();
 	}
+
+	
+	handleModalDataClose = () => {
+		this.setState({ 
+			openModalData: false,
+		});
+	};
+
+	handleModalEmailClose = () => {
+		this.setState({ 
+			openModalEmail: false,
+		});
+	};
 	
 	componentDidMount() {
 
@@ -136,11 +154,19 @@ class RegisterStaff extends Component {
 	};
 	
 	handleSignUp = () => {
+
+		if(this.state.surname !== "" &&
+		this.state.name !== "" &&
+		this.state.phoneNumber !== "" &&
+		this.state.password !== "" &&
+		this.state.email !== ""){
+
 		let street;
 		let city;
 		let country;
 		let latitude;
 		let longitude;
+		let found = true;
 
 		this.ymaps
 			.geocode(this.addressInput.current.value, {
@@ -164,27 +190,34 @@ class RegisterStaff extends Component {
 					phoneNumber: this.state.phoneNumber,
 					password: this.state.password,
 				};
-				let pharmacyDTO = {
-					name: this.state.selectedPharmacy.EntityDTO.name,
-					address: this.state.selectedPharmacy.EntityDTO.address,
-					description: this.state.selectedPharmacy.EntityDTO.description,
-					consultationPrice: this.state.selectedPharmacy.EntityDTO.consultationPrice,
-				};
-				
-			
+				console.log(userDTO, "AAAA")
+				if (this.validateForm(userDTO)) {
+					if (found === false) {
+						this.setState({ addressNotFoundError: "initial" });
+					} else {
 					if(this.state.selectValue == "dermathologist"){
 							
-						Axios.post(BASE_URL + "/auth/signup-dermathologist", userDTO, { headers: { Authorization: getAuthHeader()}})
+						Axios.post(BASE_URL + "/auth/signup-dermathologist", userDTO,{ headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
-								console.log("Success");
-								this.setState({ openModal: true });
+								if (res.status === 409) {
+									this.setState({
+										errorHeader: "Resource conflict!",
+										errorMessage: "Email already exist.",
+										hiddenErrorAlert: false,
+									});
+								} else if (res.status === 500) {
+									console.log("USO")
+									this.setState({ openModalData: true });
+								} else {
+									console.log("Success");
+									this.setState({ openModal: true });
+								}
 							})
 							.catch((err) => {
 								console.log(err);
 							});
 					}
 					if(this.state.selectValue == "pharmacyadmin"){
-						console.log("USOOO");
 						console.log(this.state.selectedPharmacy.Id);
 						Axios.post(BASE_URL + "/auth/signup-pharmacyadmin/" + this.state.selectedPharmacy.Id, userDTO, { headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
@@ -218,9 +251,19 @@ class RegisterStaff extends Component {
 								console.log(err);
 							});
 					}
+				}
+				}
 			});
+		}else{
+			this.setState({
+				openModalData: true,
+			})
+		}
+		
 	};
-	
+	handleCloseAlert = () => {
+		this.setState({ hiddenErrorAlert: true });
+	};
 	handleSelectChange  = (event) => {
 		this.setState({ selectValue: event.target.value });
 	};
@@ -232,6 +275,13 @@ class RegisterStaff extends Component {
 				<Header />
 
 				<div className="container" style={{ marginTop: "8%" }}>
+					<HeadingAlert
+						hidden={this.state.hiddenErrorAlert}
+						header={this.state.errorHeader}
+						message={this.state.errorMessage}
+						handleCloseAlert={this.handleCloseAlert}
+					/>
+					
 					<h5 className=" text-center  mb-0 text-uppercase" style={{ marginTop: "2rem" }}>
 						Register staff
 					</h5>
@@ -400,6 +450,18 @@ class RegisterStaff extends Component {
 					onCloseModal={this.handleModalClose}
 					header="Successful registration"
 					text="You have successfully registered staff."
+				/>
+				<ModalDialog
+					show={this.state.openModalData}
+					onCloseModal={this.handleModalDataClose}
+					header="Error"
+					text="You must fill all the info."
+				/>
+				<ModalDialog
+					show={this.state.openModalEmail}
+					onCloseModal={this.handleModalEmailClose}
+					header="Error"
+					text="Email already exist."
 				/>
 			</React.Fragment>
 		);
