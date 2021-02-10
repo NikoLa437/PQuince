@@ -30,6 +30,7 @@ class CalendarPage extends Component {
         redirectUrl: '',
         id: '',
         openModalSuccess: false,
+        appointmentStatus: ""
     };
 
     hasRole = (reqRole) => {
@@ -50,8 +51,9 @@ class CalendarPage extends Component {
     };
 
     handleEventClick = (appointment) => {
-        let name = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.name;
-        let surname = appointment.EntityDTO.patient == null ? "" : appointment.EntityDTO.patient.EntityDTO.surname;
+        console.log(appointment);
+        let name = appointment.EntityDTO.patient == undefined || null ? "" : appointment.EntityDTO.patient.EntityDTO.name;
+        let surname = appointment.EntityDTO.patient == undefined || null ? "" : appointment.EntityDTO.patient.EntityDTO.surname;
 
         this.setState({
             name: name,
@@ -60,7 +62,8 @@ class CalendarPage extends Component {
             endDateTime: appointment.EntityDTO.endDateTime,
             price: appointment.EntityDTO.price,
             openModalInfo: true,
-            id: appointment.Id
+            id: appointment.Id,
+            appointmentStatus: appointment.EntityDTO.appointmentStatus
         });
     };
 
@@ -146,9 +149,8 @@ class CalendarPage extends Component {
     }
 
     handlePharmacyChange = (event) => {
-        this.setState({ pharmacy: event.target.value });
-
-        Axios.get(BASE_URL + "/api/appointment/dermatologist/calendar-for-pharmacy/" + this.state.pharmacy.Id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+        this.setState({ pharmacy: event.target.value }, () => {
+            Axios.get(BASE_URL + "/api/appointment/dermatologist/calendar-for-pharmacy/" + this.state.pharmacy, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
             .then((res) => {
                 this.setState({ appointments: res.data });
                 console.log(res.data);
@@ -157,6 +159,7 @@ class CalendarPage extends Component {
             .catch((err) => {
                 console.log(err);
             });
+        });
     };
 
     handleExamine = () => {
@@ -236,6 +239,7 @@ class CalendarPage extends Component {
                     price={this.state.price}
                     handleExamine={this.handleExamine}
                     handleDidNotShowUp={this.handleDidNotShowUp}
+                    appointmentStatus={this.state.appointmentStatus}
                 />
                 <ModalDialog
 					show={this.state.openModalSuccess}
