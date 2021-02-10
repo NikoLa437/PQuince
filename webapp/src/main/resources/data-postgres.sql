@@ -19,6 +19,7 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788',true, 'pharmacyadmin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('44444d47-1a8a-4ae1-b109-af7b56e94788',true, 'admin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('55555d47-1a8a-4ae1-b109-af7b56e94788',true, 'supplier@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('66666d47-1a8a-4ae1-b109-af7b56e94788',true, 'supplier2@example.com','Mika','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 
 insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',2,5);
 insert into patient (id, penalty, points) values ('23793162-52d3-11eb-ae93-0242ac130002',0,2);
@@ -31,6 +32,7 @@ insert into user_authority (user_id, authority_id) values ('25345678-52d3-11eb-a
 insert into user_authority (user_id, authority_id) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788', 'ea16767c-2c1f-49fb-ac98-c7739c0036e8');
 insert into user_authority (user_id, authority_id) values ('44444d47-1a8a-4ae1-b109-af7b56e94788', '563e9925-cff6-42b7-99fa-6b1235f67655');
 insert into user_authority (user_id, authority_id) values ('55555d47-1a8a-4ae1-b109-af7b56e94788', 'ef9a3723-a72e-44ec-83ac-9d748fd0240f');
+insert into user_authority (user_id, authority_id) values ('66666d47-1a8a-4ae1-b109-af7b56e94788', 'ef9a3723-a72e-44ec-83ac-9d748fd0240f');
 
 insert into user_authority (user_id, authority_id) values ('25345278-52d3-11eb-ae93-0242ac130002', 'a1e3bac1-6093-4705-b835-eed75c3e5f21');
 
@@ -60,6 +62,7 @@ insert into staff (id, staff_type) values ('25345278-52d3-13eb-ae93-0242ac130002
 insert into staff (id, staff_type) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788','PHARMACYADMIN');
 insert into staff (id, staff_type) values ('44444d47-1a8a-4ae1-b109-af7b56e94788','SYSADMIN');
 insert into staff (id, staff_type) values ('55555d47-1a8a-4ae1-b109-af7b56e94788','SUPPLIER');
+insert into staff (id, staff_type) values ('66666d47-1a8a-4ae1-b109-af7b56e94788','SUPPLIER');
 
 insert into dermatologist (id) values ('11355678-52d3-11eb-ae93-0242ac130002');
 insert into dermatologist (id) values ('22345678-52d3-11eb-ae93-0242ac130002');
@@ -217,17 +220,20 @@ insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,
 insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2365458c-6976-11eb-9439-0242ac130555', 'EXAMINATIONDISCOUNT', '2021-02-05','2021-03-15',25.0, 'cafeddee-56cb-11eb-ae93-0242ac130002');
 
 insert into orders (id, date, type, pharmacy_id, pharmacy_admin_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '2021-05-05' , 'CREATED' , 'cafeddee-56cb-11eb-ae93-0242ac130002' , '9ba98d47-1a8a-4ae1-b109-af7b56e94788');
-insert into orders (id, date, type, pharmacy_id, pharmacy_admin_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '2021-05-05' , 'CREATED' , 'cafeddee-56cb-11eb-ae93-0242ac130002' , '9ba98d47-1a8a-4ae1-b109-af7b56e94788');
+insert into orders (id, date, type, pharmacy_id, pharmacy_admin_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '2021-06-05' , 'CREATED' , 'cafeddee-56cb-11eb-ae93-0242ac130002' , '9ba98d47-1a8a-4ae1-b109-af7b56e94788');
 
 insert into drug_order (id, amount, drug_instance_id) values ('99e26092-67ad-11eb-ae93-0242ac130002', 2, 'dac2b818-5838-11eb-ae93-0242ac130002' );
 insert into drug_order (id, amount, drug_instance_id) values ('44e26092-67ad-11eb-ae93-0242ac130002', 1, 'aecf0eac-68cb-11eb-9f52-838764dae934' );
 insert into drug_order (id, amount, drug_instance_id) values ('55e26092-67ad-11eb-ae93-0242ac130002', 2, 'aecf0eac-68cb-11eb-9f52-838764dae934' );
+insert into drug_order (id, amount, drug_instance_id) values ('66e26092-67ad-11eb-ae93-0242ac130002', 3, 'aecf0eac-68cb-11eb-9f52-838764dae934' );
 
 insert into order_drug_for_order (order_id, drug_order_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '99e26092-67ad-11eb-ae93-0242ac130002');
 insert into order_drug_for_order (order_id, drug_order_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '44e26092-67ad-11eb-ae93-0242ac130002');
 insert into order_drug_for_order (order_id, drug_order_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '55e26092-67ad-11eb-ae93-0242ac130002');
+insert into order_drug_for_order (order_id, drug_order_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '66e26092-67ad-11eb-ae93-0242ac130002');
 
-insert into offers (id, date_to_delivery, status, price) values ('33331111-67ac-11eb-ae93-0242ac130002', '2021-04-04', 'WAITING', 9000 );
+insert into offers (id, date_to_delivery, status, price, supplier_id) values ('33331111-67ac-11eb-ae93-0242ac130002', '2021-04-04', 'WAITING', 9000, '55555d47-1a8a-4ae1-b109-af7b56e94788' );
+insert into offers (id, date_to_delivery, status, price, supplier_id) values ('44441111-67ac-11eb-ae93-0242ac130002', '2021-04-04', 'REJECTED', 6000, '55555d47-1a8a-4ae1-b109-af7b56e94788' );
 
 insert into offers_for_order (order_id, offers_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '33331111-67ac-11eb-ae93-0242ac130002');
-
+insert into offers_for_order (order_id, offers_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '44441111-67ac-11eb-ae93-0242ac130002');

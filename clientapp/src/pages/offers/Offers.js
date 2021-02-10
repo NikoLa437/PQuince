@@ -12,14 +12,14 @@ import getAuthHeader from "../../GetHeader";
 class Offers extends Component {
 	state = {
 		price: "",
-        selectedDate: new Date(),
+        selectedDate:new Date(),
 		hours: new Date().getHours(),
         minutes: new Date().getMinutes(),
 		openModal: false,
 		openModalData: false,
 		showOfferModal: false,
+		openModalDate: false,
 		offers: [],
-		date:new Date(),
 		offerId: "",
 	};
 	
@@ -37,8 +37,9 @@ class Offers extends Component {
 	}
 	
 	handleDateChange = (date) => {
-		this.setState({ selectedDate: date });
+		this.setState({ selectedDate: date});
 	};
+
 
 	handleMinutesChange = (event) => {
 		if (event.target.value > 59) this.setState({ minutes: 59 });
@@ -65,18 +66,23 @@ class Offers extends Component {
 		});
 	};
 
+	handleModalDate = () => {
+		this.setState({ 
+			openModalDate: false,
+		});
+	};
+
+
 	handleOffer = () => {
 		
 		if(this.state.price !==""){
 			
 		Axios.get(BASE_URL + "/api/offer/check-update/" + this.state.offerId, { headers: { Authorization: getAuthHeader() } })
 					.then((res) => {
-						console.log(res.data);
 						
 						if(res.data){
-							if(this.state.selectedDate === ""){
-								this.setState({ selectedDate: this.state.date });
-							}else{
+
+							
 							let offerDate = new Date(this.state.selectedDate.getFullYear(),this.state.selectedDate.getMonth(),this.state.selectedDate.getDate(),this.state.hours,this.state.minutes,0,0);
 		
 							let OfferDTO = {
@@ -104,20 +110,14 @@ class Offers extends Component {
 
 								})
 								.catch((err) => {
-									console.log("GRESKA");
+									console.log("GRESKA11");
 									console.log(err);
 								});
 							}
-						}else{
-
-								this.setState({ 
-									openModal: true ,
-									showOfferModal: false,
-								});
-						}
+					
 					})
 					.catch((err) => {
-						console.log("GRESKA");
+						console.log("GRESKA2");
 						console.log(err);
 					});
 		}else{
@@ -139,7 +139,7 @@ class Offers extends Component {
 			price: offer.EntityDTO.price,
 			offerId: offer.Id,
 			date: offer.EntityDTO.dateToDelivery,
-			selectedDate: offer.EntityDTO.dateToDelivery,
+			selectedDate: new Date(offer.EntityDTO.dateToDelivery),
 			showOfferModal: true 
 		});
 	
@@ -149,6 +149,63 @@ class Offers extends Component {
 		this.setState({ showOfferModal: false });
 	};
 
+	handleSortByAccepted = () => {
+
+		Axios.get(BASE_URL + "/api/offer/search-accepted", { headers: { Authorization: getAuthHeader() } })
+					.then((res) => {
+						console.log(res.data);
+						this.setState({
+							offers: res.data,
+						});
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+	};
+
+	handleSortByRejected = () => {
+		
+		Axios.get(BASE_URL + "/api/offer/search-rejected", { headers: { Authorization: getAuthHeader() } })
+					.then((res) => {
+						console.log(res.data);
+						this.setState({
+							offers: res.data,
+						});
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+	};
+
+	handleSortByWaiting = () => {
+		
+		Axios.get(BASE_URL + "/api/offer/search-waiting", { headers: { Authorization: getAuthHeader() } })
+					.then((res) => {
+						console.log(res.data);
+						this.setState({
+							offers: res.data,
+						});
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+	};
+
+	handleReset = () => {
+		
+		Axios.get(BASE_URL + "/api/offer", { headers: { Authorization: getAuthHeader() } })
+					.then((res) => {
+						console.log(res.data);
+						this.setState({
+							offers: res.data,
+						});
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+	};
+
+
 	render() {
 		return (
 			<React.Fragment>
@@ -157,6 +214,44 @@ class Offers extends Component {
 
 				<div className="container" style={{ marginTop: "10%" }}>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Offers </h5>
+						
+					<div className="form-group">
+						<div className="form-group controls mb-0 pb-2">
+							<div className="form-row mt-3">
+								<div className="form-col">
+									<div className="dropdown">
+										<button
+											className="btn btn-primary dropdown-toggle"
+											type="button"
+											id="dropdownMenu2"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="false"
+										>
+											Sort by
+										</button>
+										<div className="dropdown-menu" aria-labelledby="dropdownMenu2">
+											<button className="dropdown-item" type="button" onClick={this.handleReset}>
+												ALL
+											</button>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByAccepted}>
+												ACCEPTED
+											</button>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByRejected}>
+												REJECTED
+											</button>
+											<button className="dropdown-item" type="button" onClick={this.handleSortByWaiting}>
+												WAITING
+											</button>
+										</div>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+						
+						
 						<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 							<tbody>
 								{this.state.offers.map((offer) => (
@@ -186,11 +281,12 @@ class Offers extends Component {
 										</td>
 										<td className="align-middle">
 											<button
+												hidden={offer.EntityDTO.orderStatus !== "WAITING"}
 												type="button"
 												onClick={() => this.handleOfferClick(offer)}
 												className="btn btn-outline-secondary"
 											>
-												See offer
+												Edit offer
 											</button>
 										</td>
 									</tr>

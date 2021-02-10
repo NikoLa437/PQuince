@@ -24,6 +24,7 @@ class RegisterDrug extends Component {
 		loyaltyPoints:"",
 		quantity:"",
 		drugChange: "",
+		openModalData: false,
 		drugKinds: [],
 		drugFormats: [],
 		drugs: [],
@@ -253,12 +254,25 @@ class RegisterDrug extends Component {
 		return true;
 	};
 
+	handleModalDataClose = () => {
+		this.setState({ 
+			openModalData: false,
+		});
+	};
+
 	handleModalClose = () => {
 		this.setState({ openModal: false });
 	};
-
+	
 	handleSignUp = () => {
-		
+		if(this.state.name !== "" &&
+		this.state.instanceName !== "" &&
+		this.state.drugCode !== ""&&
+		this.state.loyaltyPoints !== ""&&
+		this.state.quantity !== ""&&
+		this.state.sideEffects !== ""&&
+		this.state.recommendAmount !== ""){
+
 		let drugInstanceDTO = {
 			name: this.state.name,
 			code: this.state.drugCode,
@@ -336,7 +350,11 @@ class RegisterDrug extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
-			
+		}else{
+			this.setState({
+				openModalData: true,
+			})
+		}
 		
 		
 	};
@@ -608,6 +626,12 @@ class RegisterDrug extends Component {
 					onCloseModal={this.handleModalClose}
 					header="Successful registration"
 					text="You have successfully registered drug."
+				/>
+				<ModalDialog
+					show={this.state.openModalData}
+					onCloseModal={this.handleModalDataClose}
+					header="Error"
+					text="You must fill all the info."
 				/>
 			</React.Fragment>
 		);

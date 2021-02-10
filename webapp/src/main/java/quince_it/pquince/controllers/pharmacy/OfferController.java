@@ -34,13 +34,15 @@ public class OfferController {
 		
 		return new ResponseEntity<>(offerService.create(offerDTO),HttpStatus.CREATED);
 	}
-	
+
+	@CrossOrigin
 	@GetMapping
 	@PreAuthorize("hasRole('SUPPLIER')") 
 	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAll() {
 		return new ResponseEntity<>(offerService.findAll(),HttpStatus.OK);
 	}
-	
+
+	@CrossOrigin
 	@GetMapping("/check-update/{id}")
 	@PreAuthorize("hasRole('SUPPLIER')") 
 	public ResponseEntity<?> checkIfCanUpdate(@PathVariable UUID id) {
@@ -60,6 +62,27 @@ public class OfferController {
 	public ResponseEntity<?> update(@RequestBody OfferDTO offerDTO) {
 		offerService.update(offerDTO, offerDTO.getId());
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/search-accepted")
+	@PreAuthorize("hasRole('SUPPLIER')") 
+	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAllAccepted() {
+		return new ResponseEntity<>(offerService.findAllAccepted(),HttpStatus.OK);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/search-rejected")
+	@PreAuthorize("hasRole('SUPPLIER')") 
+	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAllRejected() {
+		return new ResponseEntity<>(offerService.findAllRejected(),HttpStatus.OK);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/search-waiting")
+	@PreAuthorize("hasRole('SUPPLIER')") 
+	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAllWaiting() {
+		return new ResponseEntity<>(offerService.findAllWaiting(),HttpStatus.OK);
 	}
 	
 }

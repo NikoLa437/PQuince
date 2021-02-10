@@ -21,7 +21,9 @@ class Orders extends Component {
 		showOfferModal: false,
 		orderId: "",
 		showOrderModal: false,
+		openModalSuccess: false,
 		openModal: false,
+		openModalDrugs: false,
 		orders:[],
 		address:"",
 	};
@@ -56,7 +58,34 @@ class Orders extends Component {
 							}
 			Axios.put(BASE_URL + "/api/offer/check-drugs", OfferDTO ,{ headers: { Authorization: getAuthHeader() } })
 					.then((res) => {
-						console.log(res.data);
+						if(res.data){
+							Axios.post(BASE_URL + "/api/offer", OfferDTO ,{ headers: { Authorization: getAuthHeader() } })
+								.then((res) => {
+									this.setState({
+										openModalSuccess: true,
+										showOfferModal: false,
+									});
+									Axios.get(BASE_URL + "/api/order/provider", { headers: { Authorization: getAuthHeader() } })
+										.then((res) => {
+											console.log(res.data);
+											this.setState({
+												orders: res.data
+											});
+										})
+										.catch((err) => {
+											console.log("GRESKA");
+											console.log(err);
+										});
+								})
+								.catch((err) => {
+									console.log("CREATE GRESKA");
+									console.log(err);
+								});
+						}else{
+							this.setState({
+								openModalDrugs: true,
+							})
+						}
 						
 					})
 					.catch((err) => {
@@ -104,6 +133,19 @@ class Orders extends Component {
 			redirect:true, 
 		});
 	};
+
+	handleModalDrugsClose = () => {
+		this.setState({ 
+			openModalDrugs: false,
+		});
+	};
+
+	handleModalSuccessClose = () => {
+		this.setState({ 
+			openModalSuccess: false,
+		});
+	};
+
 	handleOrderClick = (order) => {
 		console.log(order,"AA");
 		this.setState({
@@ -208,6 +250,18 @@ class Orders extends Component {
 					onCloseModal={this.handleModalClose}
 					header="Error"
 					text="You must fill all the info."
+				/>
+				<ModalDialog
+					show={this.state.openModalDrugs}
+					onCloseModal={this.handleModalDrugsClose}
+					header="Error"
+					text="You don't have all required drugs."
+				/>
+				<ModalDialog
+					show={this.state.openModalSuccess}
+					onCloseModal={this.handleModalSuccessClose}
+					header="Success"
+					text="You have successfully made an offer."
 				/>
 			</React.Fragment>
 		);
