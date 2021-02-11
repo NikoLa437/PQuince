@@ -217,6 +217,15 @@ class DermatologistsPage extends Component {
        
     }
 
+    addedDermatologistMessage = () =>{
+        this.setState({
+            hiddenSuccessAlert: false,
+            hiddenFailAlert:true,
+            successHeader: "Success",
+            successMessage: "You successfully add dermatologist.",
+        })
+    }
+
     hangleFormToogle = () => {
 		this.setState({ formShowed: !this.state.formShowed });
     };
@@ -532,6 +541,7 @@ class DermatologistsPage extends Component {
                             dermatologists={this.state.dermatologistToEmploye}
                             updateDermatologist={this.updateDermatologistList}
 					        header="Add dermatologist"
+                            addedDermatologistMessage={this.addedDermatologistMessage}
 				        />
                         <PharmaciesForDermatologistModal
 					        show={this.state.showPharmaciesModal}

@@ -634,7 +634,6 @@ public class PharmacyService implements IPharmacyService {
 			this.calculateDrugForThirdQuartal(pharmacyId, drugStatisticsDTO);
 		else
 			this.calculateDrugForFourthQuartal(pharmacyId, drugStatisticsDTO);
-		
 	}
 
 	private void calculateDrugForFourthQuartal(UUID pharmacyId, DrugsStatisticsDTO drugStatisticsDTO) {
