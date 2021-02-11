@@ -8,6 +8,7 @@ import getAuthHeader from "../../GetHeader";
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
 import { Chart } from "react-google-charts";
+import { NavLink, Redirect } from "react-router-dom";
 
 class PharmacyForAdmin extends Component {
 	state = {
@@ -244,51 +245,6 @@ class PharmacyForAdmin extends Component {
 
 				
 				<div className="container" style={{ marginTop: "8%" }}>
-				<Chart
-						width={'800px'}
-						height={'600px'}
-						chartType="PieChart"
-						loader={<div>Loading Chart</div>}
-						data={[
-							['Task', 'Hours per Day'],
-							['Jan',this.state.montlyExaminationStatistics[0]],
-							['Feb', this.state.montlyExaminationStatistics[1]],
-							['Mar', this.state.montlyExaminationStatistics[2]],
-							['Apr', this.state.montlyExaminationStatistics[3]],
-							['May', this.state.montlyExaminationStatistics[4]],
-							['Jun', this.state.montlyExaminationStatistics[5]],
-							['Jul', this.state.montlyExaminationStatistics[6]],
-							['Avg', this.state.montlyExaminationStatistics[7]],
-							['Sep', this.state.montlyExaminationStatistics[8]],
-							['Okt', this.state.montlyExaminationStatistics[9]],
-							['Nov', this.state.montlyExaminationStatistics[10]],
-							['Dec', this.state.montlyExaminationStatistics[11]],
-
-						]}
-						options={{
-							title: 'Montly examinations',
-						}}
-						rootProps={{ 'data-testid': '1' }}
-						/>
-
-<Chart
-						width={'800px'}
-						height={'600px'}
-						chartType="PieChart"
-						loader={<div>Loading Chart</div>}
-						data={[
-							['Task', 'Hours per Day'],
-							['First',this.state.quartalExaminationStatistics[0]],
-							['Second', this.state.quartalExaminationStatistics[1]],
-							['Third', this.state.quartalExaminationStatistics[2]],
-							['Fourth', this.state.quartalExaminationStatistics[3]],
-
-						]}
-						options={{
-							title: 'Quartals examinations',
-						}}
-						rootProps={{ 'data-testid': '1' }}
-						/>
 					<HeadingSuccessAlert
 						hidden={this.state.hiddenSuccessAlert}
 						header={this.state.successHeader}
@@ -303,6 +259,20 @@ class PharmacyForAdmin extends Component {
 					/>
 
 					<div className="row" style={{ verticalAlign: "center" }}></div>
+					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
+						<NavLink className="nav-link active" exact to="/pharmacy-for-admin">
+							Pharmacy
+						</NavLink>
+						<NavLink className="nav-link" exact to="/pharmacy-statistics">
+							Examination statistics
+						</NavLink>
+						<NavLink className="nav-link " exact to="/pharmacy-drugs-statistics">
+							Drugs statistics
+						</NavLink>
+						<NavLink className="nav-link " exact to="/price-statistics">
+							Prihodi statistics
+						</NavLink>
+					</nav>
 					<div className="row" style={{ marginTop: "3%" }}>
                         <div className="col-xs-4" style={{width:'45%'}}>
 							<div className="col shadow p-3 bg-white rounded">

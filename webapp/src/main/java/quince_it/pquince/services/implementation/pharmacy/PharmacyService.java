@@ -586,11 +586,26 @@ public class PharmacyService implements IPharmacyService {
 
 		this.calculateStatisticsForMontly(pharmacyId,examinationStatisticsDTO);
 		this.calculateStatisticsForQuartals(pharmacyId,examinationStatisticsDTO);
+		this.calculateStatisticsForYears(pharmacyId,examinationStatisticsDTO);
 		
 		return examinationStatisticsDTO;
 	}
 
 	
+
+	private void calculateStatisticsForYears(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
+		Date currentDate = new Date();
+		
+		List<Appointment> appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(currentDate.getYear(),0,1), currentDate);
+		examinationStatisticsDTO.setThisYearValue(appointments.size());
+
+		appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(currentDate.getYear()-1,0,1), new Date(currentDate.getYear()-1,11,31));
+		examinationStatisticsDTO.setLastYearValue(appointments.size());
+		
+		appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(currentDate.getYear()-2,0,1), new Date(currentDate.getYear()-2,11,31));
+		examinationStatisticsDTO.setPrecededYearValue(appointments.size());
+
+	}
 
 	private void calculateStatisticsForMontly(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
 		Date dateTo= new Date();

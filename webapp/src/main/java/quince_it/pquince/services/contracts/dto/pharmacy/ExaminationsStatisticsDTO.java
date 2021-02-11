@@ -1,11 +1,13 @@
 package quince_it.pquince.services.contracts.dto.pharmacy;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ExaminationsStatisticsDTO {
 	private Map<Integer, Integer> montlyStatistics;
 	private Map<Integer, Integer> quartalStatistics;
+	private Map<Integer, Integer> yearsStatistics;
 
 	public ExaminationsStatisticsDTO() {
 		super();
@@ -28,12 +30,19 @@ public class ExaminationsStatisticsDTO {
 		quartalStatistics.put(1, 0);
 		quartalStatistics.put(2, 0);
 		quartalStatistics.put(3, 0);
+		
+		yearsStatistics= new HashMap<Integer,Integer>();
+		yearsStatistics.put(0, 0);
+		yearsStatistics.put(1, 0);
+		yearsStatistics.put(2, 0);
+
 	}
 	
-	public ExaminationsStatisticsDTO(Map<Integer, Integer> montlyStatistics,Map<Integer, Integer> quartalStatistics) {
+	public ExaminationsStatisticsDTO(Map<Integer, Integer> montlyStatistics,Map<Integer, Integer> quartalStatistics,Map<Integer, Integer> yearsStatistics) {
 		super();
 		this.montlyStatistics = montlyStatistics;
 		this.quartalStatistics= quartalStatistics;
+		this.yearsStatistics=yearsStatistics;
 	}
 
 	public Map<Integer, Integer> getMontlyStatistics() {
@@ -52,6 +61,16 @@ public class ExaminationsStatisticsDTO {
 
 	public void setQuartalStatistics(Map<Integer, Integer> quartalStatistics) {
 		this.quartalStatistics = quartalStatistics;
+	}
+	
+	
+
+	public Map<Integer, Integer> getYearsStatistics() {
+		return yearsStatistics;
+	}
+
+	public void setYearsStatistics(Map<Integer, Integer> yearsStatistics) {
+		this.yearsStatistics = yearsStatistics;
 	}
 
 	public void incrementMap(int index) {
@@ -75,6 +94,18 @@ public class ExaminationsStatisticsDTO {
 	public void setFourthQuartalValue(int value) {
 		quartalStatistics.put(3, value);
 
+	}
+	
+	public void setThisYearValue(int value) {
+		yearsStatistics.put(0,value);
+	}
+	
+	public void setLastYearValue(int value) {
+		yearsStatistics.put(1,value);
+	}
+	
+	public void setPrecededYearValue(int value) {
+		yearsStatistics.put(2,value);
 	}
 	
 }
