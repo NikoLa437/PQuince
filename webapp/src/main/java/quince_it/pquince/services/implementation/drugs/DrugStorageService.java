@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.DrugInstance;
 import quince_it.pquince.entities.drugs.DrugPriceForPharmacy;
+import quince_it.pquince.entities.drugs.DrugRequest;
 import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.drugs.DrugStorage;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
@@ -19,6 +20,7 @@ import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
+import quince_it.pquince.repository.drugs.DrugRequestRepository;
 import quince_it.pquince.repository.drugs.DrugReservationRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
@@ -63,6 +65,9 @@ public class DrugStorageService implements IDrugStorageService {
 	
 	@Autowired
 	private PharmacyAdminRepository pharmacyAdminRepository;
+	
+	@Autowired
+	private DrugRequestRepository drugRequestRepository;
 	
 	@Override
 	public List<IdentifiableDTO<DrugStorageDTO>> findAll() {
@@ -196,16 +201,23 @@ public class DrugStorageService implements IDrugStorageService {
 	public void isDrugAmountAvailableInPharamcy(UUID drugId, int amount) throws DrugStorageCountException {
 		UUID staffId = userService.getLoggedUserId();
 		Staff staff = staffRepository.getOne(staffId);
+		DrugInstance drugInstance = drugInstanceRepository.getOne(drugId);
 		Pharmacy pharmacy = null;
 		if(staff.getStaffType() == StaffType.PHARMACIST)
 			pharmacy = pharamacistRepository.getOne(staffId).getPharmacy();
 		else if (staff.getStaffType() == StaffType.DERMATOLOGIST)
 			pharmacy = userService.getPharmacyForLoggedDermatologist();
 		DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugId, pharmacy.getId());
-		if(drugStorage == null)
+		if(drugStorage == null) {
+			DrugRequest drugRequest = new DrugRequest(pharmacy, drugInstance, staff);
+			drugRequestRepository.save(drugRequest);
 			throw new EntityNotFoundException();
-		if(drugStorage.getCount() < amount)
+		}		
+		if(drugStorage.getCount() < amount) {
+			DrugRequest drugRequest = new DrugRequest(pharmacy, drugInstance, staff);
+			drugRequestRepository.save(drugRequest);
 			throw new DrugStorageCountException("Amount exceeds drug storage count");
+		}		
 	}
 	
 	

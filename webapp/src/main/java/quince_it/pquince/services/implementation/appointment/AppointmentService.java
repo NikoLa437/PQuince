@@ -538,9 +538,11 @@ public class AppointmentService implements IAppointmentService{
 		Staff staff = staffRepository.getOne(staffId);
 		List<Appointment> appointments = new ArrayList<Appointment>();
 		if(staff.getStaffType() == StaffType.DERMATOLOGIST) {
-			appointments = appointmentRepository.getDermatologistAppointmentsByPatient(patientId, staffId);
+			Pharmacy pharmacy = userService.getPharmacyForLoggedDermatologist();
+			appointments = appointmentRepository.getDermatologistAppointmentsByPatient(patientId, staffId, pharmacy.getId());
 		} else {
-			appointments = appointmentRepository.getPharmacistAppointmentsByPatient(patientId, staffId);
+			Pharmacist pharmacist = pharmacistRepository.getOne(staffId);
+			appointments = appointmentRepository.getPharmacistAppointmentsByPatient(patientId, staffId, pharmacist.getPharmacy().getId());
 		}
 			
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
