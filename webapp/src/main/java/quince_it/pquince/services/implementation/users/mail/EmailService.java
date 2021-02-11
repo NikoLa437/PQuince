@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.drugs.DrugReservation;
+import quince_it.pquince.entities.drugs.Offers;
+import quince_it.pquince.entities.drugs.Order;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.users.Absence;
@@ -255,6 +257,24 @@ public class EmailService {
 					+ "<p>Kind Regards, PQuince</p>"; 
 		helper.setText(htmlMsg, true);
 		helper.setTo(absence.getForStaff().getEmail());
+		helper.setSubject("Rejected absence");
+		helper.setFrom(env.getProperty("spring.mail.username"));
+		javaMailSender.send(mimeMessage);
+		System.out.println("Email poslat!");
+	}
+
+	@Async
+	public void sendEmailToProviderForAcceptedOffer(Order order,Offers offer) {
+		// TODO Auto-generated method stub
+		System.out.println("Slanje emaila...");
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+		String htmlMsg = "<p>Hello " + offer.getSupplier().getName() + ",</p>" +
+					"<p>Your offer for pharmacy: "+ order.getPharmacy().getName()+ " is accepted</p>" +
+					"<p>Kind Regards, PQuince</p>"; 
+		helper.setText(htmlMsg, true);
+		helper.setTo(offer.getSupplier().getEmail());
 		helper.setSubject("Rejected absence");
 		helper.setFrom(env.getProperty("spring.mail.username"));
 		javaMailSender.send(mimeMessage);

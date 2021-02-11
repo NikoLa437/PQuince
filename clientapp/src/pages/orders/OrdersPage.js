@@ -211,30 +211,6 @@ class OrdersPage extends Component {
      }
 
     onEditOrderClick = (order,num) =>{
-        
-        Axios
-        .get(BASE_URL + "/api/order/find-drugs-by-order?orderId="+ order.Id, {
-			headers: { Authorization: getAuthHeader() },
-		}).then((res) =>{
-            this.setState({drugsFromOrder : res.data});
-            console.log(res.data);
-        }).catch((err) => {console.log(err);});
-
-        Axios
-        .get(BASE_URL + "/api/order/find-drugs-by-order-to-add?orderId="+ order.Id, {
-			headers: { Authorization: getAuthHeader() },
-		}).then((res) =>{
-            this.setState({drugsForAdd : res.data});
-            console.log(res.data);
-        }).catch((err) => {console.log(err);});
-
-
-        this.setState({
-            orderToEdit: order.Id,
-            showEditOrder:true,
-        })
-
-        
 
         if(num!==0){
             this.setState({
@@ -244,7 +220,27 @@ class OrdersPage extends Component {
                 failMessage: "Not possible to remove order because have offers"
             })
         }else{
-            //prebaciti ovde kod
+            Axios
+            .get(BASE_URL + "/api/order/find-drugs-by-order?orderId="+ order.Id, {
+                headers: { Authorization: getAuthHeader() },
+            }).then((res) =>{
+                this.setState({drugsFromOrder : res.data});
+                console.log(res.data);
+            }).catch((err) => {console.log(err);});
+    
+            Axios
+            .get(BASE_URL + "/api/order/find-drugs-by-order-to-add?orderId="+ order.Id, {
+                headers: { Authorization: getAuthHeader() },
+            }).then((res) =>{
+                this.setState({drugsForAdd : res.data});
+                console.log(res.data);
+            }).catch((err) => {console.log(err);});
+    
+    
+            this.setState({
+                orderToEdit: order.Id,
+                showEditOrder:true,
+            })
         }
     }
 

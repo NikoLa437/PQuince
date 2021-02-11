@@ -76,7 +76,6 @@ class EditOrderModal extends Component {
 
     handleCreateOrder = () =>{
         let drugDTO = {
-
             drugs: this.props.drugsFromOrder,
             endDate:this.state.selectedDate,
             orderId:this.props.orderToEdit,

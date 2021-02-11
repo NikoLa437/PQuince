@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IOfferService;
 import quince_it.pquince.services.implementation.users.UserService;
+import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.drugs.OfferMapper;
 
 @Service
@@ -43,7 +46,8 @@ public class OfferService implements IOfferService{
 
 	private SupplierDrugStorageRepository supplierDrugStorageRepository;
 	
-
+	@Autowired
+	private EmailService emailService;
 	
 	@Autowired
 	private StaffRepository staffRepository;
@@ -145,7 +149,7 @@ public class OfferService implements IOfferService{
 
 	@Override
 	@Transactional
-	public boolean acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO) {
+	public boolean acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO) throws MessagingException {
 
 		Order order = orderRepository.getOne(acceptOfferForOrderDTO.getOrderId());
 		
@@ -156,7 +160,7 @@ public class OfferService implements IOfferService{
 			if(offer.getId().equals(acceptOfferForOrderDTO.getOfferId())) {
 				offer.setOfferStatus(OfferStatus.ACCEPTED);
 				offerRepository.save(offer);
-
+				emailService.sendEmailToProviderForAcceptedOffer(order,offer);
 				this.updateDrugsForOrder(order);
 			}
 			else{
