@@ -108,7 +108,6 @@ class WorkTimesModal extends Component {
         .post(BASE_URL + "/api/worktime/", workTimeDTO, {
             headers: { Authorization: getAuthHeader() },
         }).then((res) =>{
-            console.log(res.data);
             this.setState({showAddWorkTime: false, modalSize:'lg'});
             this.setState({
                 hiddenSuccessAlert: false,
@@ -116,6 +115,7 @@ class WorkTimesModal extends Component {
                 successHeader: "Success",
                 successMessage: "You successfully add worktime for staff.",
             })
+            this.props.updateWorkTimes();
 
         }).catch((err) => {
             this.setState({ 
