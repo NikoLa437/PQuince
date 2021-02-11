@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.AcceptOfferForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IOfferService;
-import quince_it.pquince.services.contracts.interfaces.pharmacy.IOrderService;
 
 @RestController
 @RequestMapping(value = "api/offer")
@@ -41,6 +41,39 @@ public class OfferController {
 	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAll() {
 		return new ResponseEntity<>(offerService.findAll(),HttpStatus.OK);
 	}
+	
+	@GetMapping("offers-for-order")
+	@PreAuthorize("hasRole('PHARMACYADMIN')") 
+	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAll(@RequestParam UUID orderId) {
+		try {
+			List<IdentifiableDTO<OfferDTO>> offers = offerService.findOffersForOrder(orderId);
+			
+			if(offers!=null) {
+				return new ResponseEntity<>(offerService.findOffersForOrder(orderId),HttpStatus.OK);
+			}else {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+		}catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PutMapping("/accept")
+	@CrossOrigin
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> acceptOffer(@RequestBody AcceptOfferForOrderDTO acceptOfferForOrderDTO) {
+		
+		try {
+			offerService.acceptOffer(acceptOfferForOrderDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 
 	@CrossOrigin
 	@GetMapping("/check-update/{id}")

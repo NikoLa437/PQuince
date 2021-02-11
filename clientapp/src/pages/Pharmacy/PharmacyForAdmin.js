@@ -7,6 +7,8 @@ import { YMaps, Map, GeoObject, Placemark } from "react-yandex-maps";
 import getAuthHeader from "../../GetHeader";
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
+import { Chart } from "react-google-charts";
+import { NavLink, Redirect } from "react-router-dom";
 
 class PharmacyForAdmin extends Component {
 	state = {
@@ -41,6 +43,8 @@ class PharmacyForAdmin extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+		montlyExaminationStatistics:'',
+		quartalExaminationStatistics:'',
 
     };
     
@@ -171,6 +175,15 @@ class PharmacyForAdmin extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
+
+		Axios
+		.get(BASE_URL + "/api/pharmacy/find-statistics-for-examinations-and-consultations", {
+				headers: { Authorization: getAuthHeader() },
+			}).then((res) =>{
+				this.setState({montlyExaminationStatistics : res.data.montlyStatistics, quartalExaminationStatistics:res.data.quartalStatistics});
+				console.log(this.state.montlyExaminationStatistics)
+				console.log(res.data);
+			}).catch((err) => {console.log(err);});
     }
     
     onYmapsLoad = (ymaps) => {
@@ -224,12 +237,13 @@ class PharmacyForAdmin extends Component {
 			color: "white",
 			textAlign: "center",
 		};
+
 		return (
 			<React.Fragment>
 				<TopBar />
 				<Header />
 
-
+				
 				<div className="container" style={{ marginTop: "8%" }}>
 					<HeadingSuccessAlert
 						hidden={this.state.hiddenSuccessAlert}
@@ -243,7 +257,22 @@ class PharmacyForAdmin extends Component {
 						message={this.state.failMessage}
 						handleCloseAlert={this.handleCloseAlertFail}
 					/>
+
 					<div className="row" style={{ verticalAlign: "center" }}></div>
+					<nav className="nav nav-pills nav-justified justify-content-center mt-5">
+						<NavLink className="nav-link active" exact to="/pharmacy-for-admin">
+							Pharmacy
+						</NavLink>
+						<NavLink className="nav-link" exact to="/pharmacy-statistics">
+							Examination statistics
+						</NavLink>
+						<NavLink className="nav-link " exact to="/pharmacy-drugs-statistics">
+							Drugs statistics
+						</NavLink>
+						<NavLink className="nav-link " exact to="/price-statistics">
+							Prihodi statistics
+						</NavLink>
+					</nav>
 					<div className="row" style={{ marginTop: "3%" }}>
                         <div className="col-xs-4" style={{width:'45%'}}>
 							<div className="col shadow p-3 bg-white rounded">
@@ -381,6 +410,7 @@ class PharmacyForAdmin extends Component {
 							</YMaps>
 						</div>
 					</div>
+
 				</div>
 
 			</React.Fragment>

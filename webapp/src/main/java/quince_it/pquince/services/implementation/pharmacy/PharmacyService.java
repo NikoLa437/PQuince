@@ -1,6 +1,8 @@
 package quince_it.pquince.services.implementation.pharmacy;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.drugs.DrugStorage;
 import quince_it.pquince.entities.drugs.EReceipt;
@@ -26,6 +29,7 @@ import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
+import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.drugs.EReceiptItemsRepository;
@@ -36,6 +40,7 @@ import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.ExaminationsStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
@@ -69,6 +74,9 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Autowired
 	private IAppointmentService appointmentService;
+	
+	@Autowired
+	private AppointmentRepository appointmentRepository;
 	
 	@Autowired
 	private Environment env;
@@ -569,5 +577,146 @@ public class PharmacyService implements IPharmacyService {
 	public IdentifiableDTO<PharmacyGradePriceDTO> findPharmacyByPharmacyId(UUID pharmacyId) {
 		return MapPharmacyPersistenceToPharmacyGradePriceIdentifiableDTO(pharmacyRepository.findById(pharmacyId).get());
 	}
+
+	@Override
+	public ExaminationsStatisticsDTO findStatisticsForExaminationsAndColsutations() {
+		// TODO Auto-generated method stub
+		UUID pharmacyId= userService.getPharmacyIdForPharmacyAdmin();
+		ExaminationsStatisticsDTO examinationStatisticsDTO = new ExaminationsStatisticsDTO();
+
+		this.calculateStatisticsForMontly(pharmacyId,examinationStatisticsDTO);
+		this.calculateStatisticsForQuartals(pharmacyId,examinationStatisticsDTO);
+		this.calculateStatisticsForYears(pharmacyId,examinationStatisticsDTO);
+		
+		return examinationStatisticsDTO;
+	}
+
+	
+
+	private void calculateStatisticsForYears(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
+		Date currentDate = new Date();
+		
+		List<Appointment> appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(currentDate.getYear(),0,1), currentDate);
+		examinationStatisticsDTO.setThisYearValue(appointments.size());
+
+		appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(currentDate.getYear()-1,0,1), new Date(currentDate.getYear()-1,11,31));
+		examinationStatisticsDTO.setLastYearValue(appointments.size());
+		
+		appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(currentDate.getYear()-2,0,1), new Date(currentDate.getYear()-2,11,31));
+		examinationStatisticsDTO.setPrecededYearValue(appointments.size());
+
+	}
+
+	private void calculateStatisticsForMontly(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
+		Date dateTo= new Date();
+		Date dateFrom= new Date(dateTo.getYear()-1,dateTo.getMonth()+1,1);
+	
+		List<Appointment> appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,dateFrom, dateTo);
+	
+		
+		for(Appointment appointment : appointments) {
+			examinationStatisticsDTO.incrementMap(appointment.getStartDateTime().getMonth());
+		}
+	}
+	
+	private void calculateStatisticsForQuartals(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
+		if(new Date().getMonth()<3)
+			this.calculateForFirstQuartal(pharmacyId, examinationStatisticsDTO);
+		else if(new Date().getMonth()<6)
+			this.calculateForSecondQuartal(pharmacyId, examinationStatisticsDTO);
+		else if(new Date().getMonth()<9)
+			this.calculateForThirdQuartal(pharmacyId, examinationStatisticsDTO);
+		else
+			this.calculateForFourthQuartal(pharmacyId, examinationStatisticsDTO);
+
+	}
+
+	private void calculateForFourthQuartal(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
+		Date dateTo= new Date();
+		
+		List<Appointment> appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),0,1), new Date(dateTo.getYear(),2,31));
+		
+		examinationStatisticsDTO.setFirstQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),3,1), new Date(dateTo.getYear(),5,30));
+		
+		examinationStatisticsDTO.setSecondQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),6,1), new Date(dateTo.getYear(),8,30));
+		
+		examinationStatisticsDTO.setThirdQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),9,1), dateTo);
+		
+		examinationStatisticsDTO.setFourthQuartalValue(appointments.size());
+	}
+
+	private void calculateForThirdQuartal(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
+		Date dateTo= new Date();
+		
+		List<Appointment> appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),0,1), new Date(dateTo.getYear(),2,31));
+		
+		examinationStatisticsDTO.setFirstQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),3,1), new Date(dateTo.getYear(),5,30));
+		
+		examinationStatisticsDTO.setSecondQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),6,1), dateTo);
+		
+		examinationStatisticsDTO.setThirdQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,9,1), new Date(dateTo.getYear()-1,11,31));
+		
+		examinationStatisticsDTO.setFourthQuartalValue(appointments.size());
+	}
+
+	private void calculateForSecondQuartal(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
+		Date dateTo= new Date();
+		
+		List<Appointment> appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),0,1), new Date(dateTo.getYear(),2,31));
+		
+		examinationStatisticsDTO.setFirstQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,3,1), dateTo);
+		
+		examinationStatisticsDTO.setSecondQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,6,1), new Date(dateTo.getYear()-1,8,30));
+		
+		examinationStatisticsDTO.setThirdQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,9,1), new Date(dateTo.getYear()-1,11,31));
+		
+		examinationStatisticsDTO.setFourthQuartalValue(appointments.size());
+	}
+
+	private void calculateForFirstQuartal(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
+		Date dateTo= new Date();
+		
+		List<Appointment> appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),0,1), new Date());
+		
+		examinationStatisticsDTO.setFirstQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,3,1), new Date(dateTo.getYear()-1,5,30));
+		
+		examinationStatisticsDTO.setSecondQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,6,1), new Date(dateTo.getYear()-1,8,30));
+		
+		examinationStatisticsDTO.setThirdQuartalValue(appointments.size());
+		
+	    appointments = appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,9,1), new Date(dateTo.getYear()-1,11,31));
+		
+		examinationStatisticsDTO.setFourthQuartalValue(appointments.size());
+	}
+
+	private Date subtractDays(Date date, int days) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, -days);
+        return new Date(c.getTimeInMillis());
+    }
+	
 
 }

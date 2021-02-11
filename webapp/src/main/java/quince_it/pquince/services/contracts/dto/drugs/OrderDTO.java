@@ -3,6 +3,8 @@ package quince_it.pquince.services.contracts.dto.drugs;
 import java.util.Date;
 import java.util.List;
 
+import quince_it.pquince.entities.drugs.OrderStatus;
+
 public class OrderDTO {
 
 	private List<DrugForOrderDTO> drugs;
@@ -12,6 +14,8 @@ public class OrderDTO {
 	private int numberOfOffers;
 	
 	private String creator;
+	
+	private OrderStatus orderStatus;
 
 
 	public OrderDTO() {
@@ -19,12 +23,13 @@ public class OrderDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public OrderDTO(List<DrugForOrderDTO> drugs, Date endDate,int numberOfOffers,String creator) {
+	public OrderDTO(List<DrugForOrderDTO> drugs, Date endDate,int numberOfOffers,String creator, OrderStatus orderStatus) {
 		super();
 		this.drugs = drugs;
 		this.endDate = endDate;
 		this.numberOfOffers=numberOfOffers;
 		this.creator=creator;
+		this.orderStatus=orderStatus;
 	}
 
 	public List<DrugForOrderDTO> getDrugs() {
@@ -58,4 +63,14 @@ public class OrderDTO {
 	public void setCreator(String creator) {
 		this.creator = creator;
 	}
+
+	public OrderStatus getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(OrderStatus orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+	
+	
 }

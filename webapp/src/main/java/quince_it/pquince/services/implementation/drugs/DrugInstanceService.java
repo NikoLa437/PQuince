@@ -213,11 +213,24 @@ public class DrugInstanceService implements IDrugInstanceService{
 
 	@Override
 	public IdentifiablePharmacyDrugPriceAmountDTO findByDrugInPharmacy(UUID drugId, UUID pharmacyId) {
+		Authentication currentUser = SecurityContextHolder.getContext().getAuthentication();
+		String email = currentUser.getName();
+		User user = userRepository.findByEmail(email);
+		
 		for (IdentifiablePharmacyDrugPriceAmountDTO pharmacy : drugPriceForPharmacyRepository.findByDrugId(drugId)) {
 			if(pharmacy.Id.equals(pharmacyId)) {
 				int countDrug = drugStorageService.getDrugCountForDrugAndPharmacy(drugId, pharmacyId);
 				if(countDrug > 0) {
+					double drugPrice = loyalityProgramService.getDiscountDrugPriceForPatient(pharmacy.getPrice(), user.getId());
+					ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacy.Id, ActionAndPromotionType.DRUGDISCOUNT);
+
+					if(action != null) {
+						drugPrice -= (action.getPercentOfDiscount()/ 100.0) * pharmacy.getPrice();
+					}
+					
+					pharmacy.setPriceWithDiscount(drugPrice);
 					pharmacy.setCount(countDrug);
+
 					return pharmacy;
 				}
 			}

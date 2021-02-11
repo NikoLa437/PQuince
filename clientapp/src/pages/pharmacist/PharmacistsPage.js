@@ -38,9 +38,12 @@ class PharmacistPage extends Component {
 
     componentDidMount() {
 		let pharmacyId=localStorage.getItem("keyPharmacyId")
+
+
 		this.setState({
-			pharmacyId: pharmacyId
+			pharmacyId: pharmacyId,
 		})
+
 
 
 		Axios.get(BASE_URL + "/api/users/pharmacist-for-pharmacy/"  + localStorage.getItem("keyPharmacyId"), {
@@ -54,6 +57,7 @@ class PharmacistPage extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
+
     }
 
     updatePharmacist = () =>{
@@ -289,6 +293,7 @@ class PharmacistPage extends Component {
             marginLeft:'195%'
 		};
 		return (
+            
         <React.Fragment>
             <div>
 

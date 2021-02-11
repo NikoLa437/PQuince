@@ -53,7 +53,8 @@ import TimeSelectingPage from "./pages/pharmacist-from-pharmacy/TimeSelectingPag
 import OrdersPage from "./pages/orders/OrdersPage";
 import Orders from "./pages/offers/Orders";
 import AbsencePageForPharmacyAdmin from "./pages/admin-absence/AbsencePageForPharmacyAdmin";
-
+import PharmacyStatisticsExamination from "./pages/Pharmacy/PharmacyStatisticsExamination";
+import PharmacyStatisticsDrugs from "./pages/Pharmacy/PharmacyStatisticsDrugs";
 
 function App() {
 	return (
@@ -126,6 +127,8 @@ function App() {
 
 				<Link exact to="/orders-administrator" path="/orders-administrator" component={OrdersPage} />
 				<Link exact to="/absence-for-administrator" path="/absence-for-administrator" component={AbsencePageForPharmacyAdmin} />
+				<Link exact to="/pharmacy-statistics" path="/pharmacy-statistics" component={PharmacyStatisticsExamination} />
+				<Link exact to="/pharmacy-drugs-statistics" path="/pharmacy-drugs-statistics" component={PharmacyStatisticsDrugs} />
 
 				
 			</Switch>

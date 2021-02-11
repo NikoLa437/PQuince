@@ -22,13 +22,11 @@ import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugOrderDTO;
-import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OrderForProviderDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IOrderService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
-import quince_it.pquince.services.implementation.util.drugs.OfferMapper;
 import quince_it.pquince.services.implementation.util.drugs.OrderMapper;
 
 @Service
@@ -111,7 +109,7 @@ public class OrderService implements IOrderService {
 
 	private IdentifiableDTO<OrderDTO> MapOrderPersistanceToIndetifiableOrderDTO(Order o) {
 		// TODO Auto-generated method stub
-		return new IdentifiableDTO<OrderDTO>(o.getId(),new OrderDTO(this.mapListOfDrugOrderToListOfDrugOrderDTO(o.getOrder()),o.getDate(),o.getOffers().size(),o.getPharmacyAdmin().getName()+ " " + o.getPharmacyAdmin().getSurname()));
+		return new IdentifiableDTO<OrderDTO>(o.getId(),new OrderDTO(this.mapListOfDrugOrderToListOfDrugOrderDTO(o.getOrder()),o.getDate(),o.getOffers().size(),o.getPharmacyAdmin().getName()+ " " + o.getPharmacyAdmin().getSurname(),o.getOrderStatus()));
 	}
 
 
