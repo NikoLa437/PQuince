@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +34,8 @@ public class OfferController {
 		
 		return new ResponseEntity<>(offerService.create(offerDTO),HttpStatus.CREATED);
 	}
-	
+
+	@CrossOrigin
 	@GetMapping
 	@PreAuthorize("hasRole('SUPPLIER')") 
 	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAll() {
@@ -71,4 +73,49 @@ public class OfferController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+
+	@CrossOrigin
+	@GetMapping("/check-update/{id}")
+	@PreAuthorize("hasRole('SUPPLIER')") 
+	public ResponseEntity<?> checkIfCanUpdate(@PathVariable UUID id) {
+		return new ResponseEntity<>(offerService.checkIfCanUpdate(id),HttpStatus.OK);
+	}
+
+	@CrossOrigin
+	@PutMapping("/check-drugs")
+	@PreAuthorize("hasRole('SUPPLIER')") 
+	public ResponseEntity<?> checkIfCanUpdate(@RequestBody OfferDTO offerDTO) {
+		return new ResponseEntity<>(offerService.checkIfHasDrugs(offerDTO.getId()),HttpStatus.OK);
+	}
+
+	@CrossOrigin
+	@PutMapping("/update")
+	@PreAuthorize("hasRole('SUPPLIER')")
+	public ResponseEntity<?> update(@RequestBody OfferDTO offerDTO) {
+		offerService.update(offerDTO, offerDTO.getId());
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/search-accepted")
+	@PreAuthorize("hasRole('SUPPLIER')") 
+	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAllAccepted() {
+		return new ResponseEntity<>(offerService.findAllAccepted(),HttpStatus.OK);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/search-rejected")
+	@PreAuthorize("hasRole('SUPPLIER')") 
+	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAllRejected() {
+		return new ResponseEntity<>(offerService.findAllRejected(),HttpStatus.OK);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/search-waiting")
+	@PreAuthorize("hasRole('SUPPLIER')") 
+	public ResponseEntity<List<IdentifiableDTO<OfferDTO>>> findAllWaiting() {
+		return new ResponseEntity<>(offerService.findAllWaiting(),HttpStatus.OK);
+	}
+	
 }

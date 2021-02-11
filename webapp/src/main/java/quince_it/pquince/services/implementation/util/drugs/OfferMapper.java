@@ -12,7 +12,7 @@ public class OfferMapper {
 	public static IdentifiableDTO<OfferDTO> MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(Offers offer){
 		if(offer == null) throw new IllegalArgumentException();
 				
-		return new IdentifiableDTO<OfferDTO>(offer.getId(), new OfferDTO(offer.getDateToDelivery(), offer.getPrice(), offer.getOrderStatus()));
+		return new IdentifiableDTO<OfferDTO>(offer.getId(), new OfferDTO(offer.getDateToDelivery(), offer.getPrice(), offer.getOfferStatus()));
 	}
 	
 	public static List<IdentifiableDTO<OfferDTO>> MapListDrugOrderPersistenceToListDrugOrderIdentifiableDTO(List<Offers> offers){

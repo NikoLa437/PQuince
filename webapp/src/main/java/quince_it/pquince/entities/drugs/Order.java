@@ -1,6 +1,7 @@
 package quince_it.pquince.entities.drugs;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -112,6 +113,13 @@ public class Order {
 
 	public void setOrder(List<DrugOrder> order) {
 		this.order = order;
+	}
+	
+	public void addOffer(Offers offer) {
+		if(this.offers == null)
+			offers = new ArrayList<Offers>();
+		
+		offers.add(offer);
 	}
 
 	public Date getDate() {
