@@ -277,8 +277,6 @@ class OrdersPage extends Component {
 
                     <TopBar />
                     <Header />
-
-        
                     <div className="container" style={{ marginTop: "10%" }} >
                         <HeadingSuccessAlert
                             hidden={this.state.hiddenSuccessAlert}

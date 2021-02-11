@@ -156,8 +156,13 @@ public class OfferService implements IOfferService{
 	}
 
 	@Override
-	public void acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO) {
+	public boolean acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO) {
+
+		
 		Order order = orderRepository.getOne(acceptOfferForOrderDTO.getOrderId());
+		
+		if(!CanBeAccepted(order))
+			return false;
 		
 		for(Offers offer : order.getOffers()) {
 			if(offer.getId().equals(acceptOfferForOrderDTO.getOfferId())) {
@@ -174,7 +179,18 @@ public class OfferService implements IOfferService{
 		
 		order.setOrderStatus(OrderStatus.PROCESSED);
 		orderRepository.save(order);
+		return true;
+	}
 
+
+	private boolean CanBeAccepted(Order order) {
+		if(order.getDate().after(new Date()))
+			return false;
+		
+		if(!order.getPharmacyAdmin().getId().equals(userService.getLoggedUserId()))
+			return false;
+		
+		return true;
 	}
 
 	private void updateDrugsForOrder(Order order) {
