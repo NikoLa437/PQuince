@@ -20,6 +20,10 @@ public class Constants {
 	public static final UUID CREATED_APPOINTMENT_ID = UUID.fromString("2da86116-5f41-13eb-ab93-0242ac134002");
 	public static final UUID SCHEDULED_APPOINTMENT_ID = UUID.fromString("2bc86117-5c40-11eb-ae93-0242ac130002");
 	
+	public static final UUID DRUG_RESERVATION_ID = UUID.fromString("2bc96117-5c40-12eb-ae93-0242ac131002");
+	public static final Date DRUG_RESERVATION_START_DATE_TIME = new Date(2021, 2, 3, 14, 2);
+	public static final Date DRUG_RESERVATION_END_DATE_TIME = new Date(2021, 4, 15, 14, 2);
+	
 	public static final UUID STAFF_ID = UUID.fromString("25345278-52d3-11eb-ae93-0242ac130002");
 	public static final UUID PHARMACY_ID = UUID.fromString("cafeddee-56cb-11eb-ae93-0242ac130002");
 	public static final UUID ACTION_ID = UUID.fromString("cafeddee-56cb-11eb-ae93-0242ac130002");
