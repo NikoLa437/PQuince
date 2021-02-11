@@ -197,7 +197,6 @@ public class AppointmentService implements IAppointmentService{
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public List<AppointmentPeriodResponseDTO> getFreePeriodsDermatologist(Date date, int duration) {
 		UUID dermatologistId = userService.getLoggedUserId();
@@ -263,7 +262,6 @@ public class AppointmentService implements IAppointmentService{
 		appointment.setPatient(patient);
 		
 		double getDiscountExaminationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(appointment.getPrice(), AppointmentType.EXAMINATION, userService.getLoggedUserId());
-		
 		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(appointment.getPharmacy().getId(), ActionAndPromotionType.EXAMINATIONDISCOUNT);
 		
 		if(action != null) {
@@ -275,9 +273,7 @@ public class AppointmentService implements IAppointmentService{
 		appointmentRepository.save(appointment);
 		try {
 			emailService.sendAppointmentReservationNotificationAsync(appointment, "dr.");
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
+		} catch (MessagingException e) {}
 	}
 
 	private void CanReserveAppointment(Appointment appointment,Patient patient) throws AppointmentTimeOverlappingWithOtherAppointmentException {
@@ -340,7 +336,6 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
 		double discountPercentage = (double)loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION, userService.getLoggedUserId());
-		//TODO : DONE discount based on actions and benefits
 		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacyId, ActionAndPromotionType.EXAMINATIONDISCOUNT);
 		
 		if(action != null) {
@@ -401,7 +396,6 @@ public class AppointmentService implements IAppointmentService{
 		canAppointmentBeCanceled(appointment);
 		
 		appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
-		//appointment.setPriceToPay(appointment.getPrice());
 		appointmentRepository.save(appointment);	
 		
 		if(appointment.getAppointmentType().equals(AppointmentType.EXAMINATION)) {
@@ -742,9 +736,7 @@ public class AppointmentService implements IAppointmentService{
 		appointmentRepository.save(appointment);
 		try {
 			emailService.sendAppointmentReservationNotificationAsync(appointment,"pharmacist");
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
+		} catch (MessagingException e) { }
 
 		return appointment.getId();
 	}
@@ -779,7 +771,6 @@ public class AppointmentService implements IAppointmentService{
 		if(action != null) {
 			discountPrice -= (action.getPercentOfDiscount()/ 100.0) * pharmacy.getConsultationPrice();
 		}
-		// TODO : DONE change price depending on actions and benefits
 		return new Appointment(pharmacy, staff, patient, requestDTO.getStartDateTime(), endDateTime, discountPrice, AppointmentType.CONSULTATION, AppointmentStatus.SCHEDULED);
 	}
 
