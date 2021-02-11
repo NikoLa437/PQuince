@@ -6,6 +6,7 @@ import java.util.UUID;
 public class Constants {
 
 	public static final UUID PATIENT_ID = UUID.fromString("22793162-52d3-11eb-ae93-0242ac130002");
+	public static final UUID DERMATOLOGIST_ID = UUID.fromString("22345678-52d3-11eb-ae93-0242ac130002");
 	public static final String PATIENT_EMAIL = "example@example.com";
 	public static final String PHARMACIST_EMAIL = "exampla11@example.com";
 	public static final String DERMATOLOGIST_EMAIL = "example6@example.com";
