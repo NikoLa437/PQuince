@@ -6,9 +6,17 @@ import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
 import getAuthHeader from "../GetHeader";
 import OrderLogo from "../static/order.png";
+import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
+import HeadingAlert from "../components/HeadingAlert";
 
 class ViewOffersModal extends Component {
     state = {
+        hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
     }
 
     componentDidMount() {
@@ -35,13 +43,40 @@ class ViewOffersModal extends Component {
 
         Axios
         .put(BASE_URL + "/api/offer/accept", acceptOfferForOrderDTO, {
+            validateStatus: () => true,
             headers: { Authorization: getAuthHeader() },
         }).then((res) =>{
-            this.props.acceptedOffer();
+            if (res.status === 204) {
+                this.props.acceptedOffer();
+            }else if(res.status === 400)
+            {
+                this.setState({
+                    hiddenSuccessAlert: true,
+                    hiddenFailAlert:false,
+                    failHeader: "Unsuccess", 
+                    failMessage: "Not possible to remove order because have offers"
+                })
+            }else if(res.status === 500)
+            {
+                this.setState({
+                    hiddenSuccessAlert: true,
+                    hiddenFailAlert:false,
+                    failHeader: "Unsuccess", 
+                    failMessage: "We have some problem. Try later."
+                })
+            }
             console.log(res.data);
         }).catch((err) => {
         });
     }
+
+    handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+    };
+    
+    handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
 
     render() { 
         return ( 
@@ -58,6 +93,18 @@ class ViewOffersModal extends Component {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                <HeadingSuccessAlert
+                            hidden={this.state.hiddenSuccessAlert}
+                            header={this.state.successHeader}
+                            message={this.state.successMessage}
+                            handleCloseAlert={this.handleCloseAlertSuccess}
+                        />
+                        <HeadingAlert
+                                hidden={this.state.hiddenFailAlert}
+                                header={this.state.failHeader}
+                                message={this.state.failMessage}
+                                handleCloseAlert={this.handleCloseAlertFail}
+                        />
                 <div className="container">      
                     <table hidden={this.state.showAddWorkTime} className="table" style={{ width: "100%", marginTop: "3rem" }}>
                         <tbody>

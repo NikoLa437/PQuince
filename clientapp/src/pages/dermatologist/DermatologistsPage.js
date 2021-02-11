@@ -129,6 +129,19 @@ class DermatologistsPage extends Component {
         this.setState({showWorkTimesModal: false});
     }
 
+    handleUpdateWorkTime= ()=>{
+        Axios.get(BASE_URL + "/api/worktime/worktime-for-staff/" + this.state.forStaff, {
+			headers: { Authorization: getAuthHeader() },
+		})
+        .then((res) => {
+            this.setState({ workTimes: res.data});
+            console.log(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }
+
     handlePharmaciesModalClose = () =>{
         this.setState({showPharmaciesModal: false});
     }
@@ -215,6 +228,15 @@ class DermatologistsPage extends Component {
             ]
         });
        
+    }
+
+    addedDermatologistMessage = () =>{
+        this.setState({
+            hiddenSuccessAlert: false,
+            hiddenFailAlert:true,
+            successHeader: "Success",
+            successMessage: "You successfully add dermatologist.",
+        })
     }
 
     hangleFormToogle = () => {
@@ -517,7 +539,7 @@ class DermatologistsPage extends Component {
 
                     </div>
                     <div>
-                        <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} forPharmacy={this.state.pharmacyId} forStaff={this.state.forStaff} header="WorkTimes" />
+                        <WorkTimesModal show={this.state.showWorkTimesModal} updateWorkTimes={this.handleUpdateWorkTime} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} forPharmacy={this.state.pharmacyId} forStaff={this.state.forStaff} header="WorkTimes" />
                         <CreateAppointmentForDermatologistModal
 					        show={this.state.showCreateAppointmentModal}
 					        onCloseModal={this.handleCreateAppoitmentClose}
@@ -532,6 +554,7 @@ class DermatologistsPage extends Component {
                             dermatologists={this.state.dermatologistToEmploye}
                             updateDermatologist={this.updateDermatologistList}
 					        header="Add dermatologist"
+                            addedDermatologistMessage={this.addedDermatologistMessage}
 				        />
                         <PharmaciesForDermatologistModal
 					        show={this.state.showPharmaciesModal}

@@ -19,4 +19,8 @@ public interface IOrderService {
 	boolean removeOrder(EntityIdDTO removeOrderId);
 
 	List<IdentifiableDTO<OrderDTO>> findAll();
+
+	List<IdentifiableDTO<OrderDTO>> filterCreatedOrdersForPharmacy(UUID pharmacyId);
+
+	List<IdentifiableDTO<OrderDTO>> filterProcessedOrdersForPharmacy(UUID pharmacyId);
 }

@@ -150,5 +150,29 @@ public class OrderService implements IOrderService {
 	}
 
 
+	@Override
+	public List<IdentifiableDTO<OrderDTO>> filterCreatedOrdersForPharmacy(UUID pharmacyId) {
+		List<Order> drugOrdersForPharmacy = orderRepository.findFilteredCreatedOrderForPharmacy(pharmacyId);
+		
+		List<IdentifiableDTO<OrderDTO>> retVal = new ArrayList<IdentifiableDTO<OrderDTO>>();
+		
+		drugOrdersForPharmacy.forEach(o -> retVal.add(MapOrderPersistanceToIndetifiableOrderDTO(o)));
+
+		return retVal;
+	}
+
+
+	@Override
+	public List<IdentifiableDTO<OrderDTO>> filterProcessedOrdersForPharmacy(UUID pharmacyId) {
+		List<Order> drugOrdersForPharmacy = orderRepository.findFilteredProcessedOrderForPharmacy(pharmacyId);
+		
+		List<IdentifiableDTO<OrderDTO>> retVal = new ArrayList<IdentifiableDTO<OrderDTO>>();
+		
+		drugOrdersForPharmacy.forEach(o -> retVal.add(MapOrderPersistanceToIndetifiableOrderDTO(o)));
+
+		return retVal;
+	}
+
+
 
 }

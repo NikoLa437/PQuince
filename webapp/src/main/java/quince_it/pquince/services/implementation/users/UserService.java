@@ -571,7 +571,9 @@ public class UserService implements IUserService{
 			Dermatologist dermatologist = dermatologistRepository.getOne(addDermatologistToPharmacyDTO.getDermatologistId());
 			Pharmacy pharmacy = pharmacyRepository.getOne(addDermatologistToPharmacyDTO.getPharmacyId());
 			WorkTimeDTO workTimeDTO = new WorkTimeDTO(addDermatologistToPharmacyDTO.getPharmacyId(),addDermatologistToPharmacyDTO.getDermatologistId(), addDermatologistToPharmacyDTO.getStartDate(), addDermatologistToPharmacyDTO.getEndDate(), addDermatologistToPharmacyDTO.getStartTime(), addDermatologistToPharmacyDTO.getEndTime(),"");
-			workTimeService.create(workTimeDTO);
+			
+			if(workTimeService.create(workTimeDTO)==null)
+				return false;
 			
 			dermatologist.addPharmacy(pharmacy);
 			dermatologistRepository.save(dermatologist);
