@@ -1,5 +1,6 @@
 package quince_it.pquince.repository.drugs;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,4 +34,8 @@ public interface DrugReservationRepository extends JpaRepository<DrugReservation
 
 	@Query(value = "SELECT d FROM DrugReservation d WHERE d.id = ?1 AND d.pharmacy.id = ?2 AND d.reservationStatus = 'ACTIVE'")
 	List<DrugReservation> findByStatusAndIdAndPharmacy(UUID reservationId, UUID pharmacyId);
+
+	@Query(value = "SELECT d FROM DrugReservation d WHERE DATE(d.startDate) >= ?2 AND DATE(d.startDate) <= ?3"
+			+ " AND d.reservationStatus = 'PROCESSED' AND d.pharmacy.id = ?1")
+	List<DrugReservation> findAllReservationForPharmacyInDateRange(UUID pharmacyId, Date dateFrom, Date dateTo);
 }
