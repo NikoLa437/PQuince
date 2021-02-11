@@ -16,4 +16,7 @@ public interface AbsenceRepository extends JpaRepository<Absence, UUID>{
 
 	@Query(value = "SELECT a from Absence a WHERE a.pharmacy.id=?1 AND a.absenceStatus = 'WAIT'")
 	List<Absence> findNotProcessAbsenceForPharmacy(UUID pharmacyId);
+
+	@Query(value = "SELECT a FROM Absence a WHERE a.forStaff.id = ?1 AND DATE(a.startDate) <= ?2 AND DATE(a.endDate) >= ?2 AND a.pharmacy.id =?3")
+	List<Absence> getAbsenceForDermatologistForDateForPharmacy(UUID staff, Date startDateTime, UUID pharmacy);
 }

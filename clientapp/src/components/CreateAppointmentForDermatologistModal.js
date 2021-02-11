@@ -4,7 +4,8 @@ import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
 import getAuthHeader from "../GetHeader";
-
+import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
+import HeadingAlert from "../components/HeadingAlert";
 
 class CreateAppointmentForDermatologistModal extends Component {
     state = {
@@ -13,17 +14,28 @@ class CreateAppointmentForDermatologistModal extends Component {
         duration:'',
         periods:[],
         selectedPeriod: null,
-        price:1
+        price:1,
+        hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
 
     }
 
-    handleDateChange = (date) => {
-        this.setState({selectedDate:date});
-    }
+
+    handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+    };
+    
+    handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
 
     handleAddAppointment = () => {
         
-        if(this.state.dermatologist!='' && this.state.duration !='' && this.state.selectedPeriod!=''){
+        if(this.state.dermatologist!='' && this.state.duration !='' && this.state.selectedPeriod!=null){
             let appointmentDTO = {
                 staff : this.state.dermatologist,
                 pharmacy: this.props.pharmacyId, 
@@ -36,29 +48,76 @@ class CreateAppointmentForDermatologistModal extends Component {
 
         Axios
         .post(BASE_URL + "/api/appointment/create-appointment-for-dermatologist", appointmentDTO, {
+            validateStatus: () => true,
             headers: { Authorization: getAuthHeader() },
         }).then((res) =>{
             console.log(res.data);
+            if (res.status === 200) {
+                this.setState({
+                    hiddenSuccessAlert: false,
+                    hiddenFailAlert:true,
+                    successHeader: "Success",
+                    successMessage: "You successfully add new appointment.",
+                })
+                Axios.get(BASE_URL + "/api/appointment/getFreePeriod", {
+                    params:{
+                        dermatologistId: this.state.dermatologist,
+                        pharmacyId:this.props.pharmacyId,
+                        date: this.convertDate(this.state.selectedDate),
+                        duration: this.state.duration,
+                    },
+                    headers: { Authorization: getAuthHeader() }
+                }).then((res) => {
+                        this.setState({ periods: res.data, selectedPeriod:res.data[0]
+                        });
+                        console.log(res.data);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }else if(res.status===400){
+                this.setState({ 
+                    hiddenSuccessAlert: true,
+                    hiddenFailAlert: false, 
+                    failHeader: "Unsuccess", 
+                    failMessage: "Dermatologist has absence at this day"
+                });
                 
-                alert('Uspesno kreiran appointment')
-                this.handleCloseAppointment();
+            }else if(res.status===500){
+                this.setState({ 
+                    hiddenSuccessAlert: true,
+                    hiddenFailAlert: false, 
+                    failHeader: "Unsuccess", 
+                    failMessage: "We have internal server problem. Please try later."
+                });
+            }
         }).catch((err) => {
-            alert('Nije moguce kreirati termin u naznacenom roku');
+            this.setState({ 
+                hiddenSuccessAlert: true,
+                hiddenFailAlert: false, 
+                failHeader: "Unsuccess", 
+                failMessage: "Please enter a valid data"
+            });
         });        
         }
         else{
-            alert("MORATE UNETI NEOPHODNE PODATKE")
-        }
+            this.setState({ 
+                hiddenSuccessAlert: true,
+                hiddenFailAlert: false, 
+                failHeader: "Unsuccess", 
+                failMessage: "Please enter a valid data"
+            });        }
     }
 
     handleCloseAppointment= () => {
         this.setState({
             selectedDate:new Date(),
             duration:'',
-            dermatologist:'',
             periods:[],
             selectedPeriod:'',
-            price:1
+            price:1,
+            hiddenSuccessAlert: true,
+            hiddenFailAlert: true, 
         });
         this.props.onCloseModal();
     }
@@ -74,7 +133,11 @@ class CreateAppointmentForDermatologistModal extends Component {
     handleDateChange = (date) => {
         this.setState({
             selectedDate:date,
+            selectedPeriod:null,
+            periods:[],
+            duration:0,
         });
+
     }
     
     
@@ -157,6 +220,18 @@ class CreateAppointmentForDermatologistModal extends Component {
 
                 </Modal.Header>
                 <Modal.Body>
+                    <HeadingSuccessAlert
+                            hidden={this.state.hiddenSuccessAlert}
+                            header={this.state.successHeader}
+                            message={this.state.successMessage}
+                            handleCloseAlert={this.handleCloseAlertSuccess}
+                        />
+                        <HeadingAlert
+                                hidden={this.state.hiddenFailAlert}
+                                header={this.state.failHeader}
+                                message={this.state.failMessage}
+                                handleCloseAlert={this.handleCloseAlertFail}
+                        />
                     <div >
                         <form >
                             <div  className="control-group" >

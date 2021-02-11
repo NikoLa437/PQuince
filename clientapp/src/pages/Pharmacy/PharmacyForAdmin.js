@@ -7,6 +7,9 @@ import { YMaps, Map, GeoObject, Placemark } from "react-yandex-maps";
 import getAuthHeader from "../../GetHeader";
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
+import { IgrPieChartModule, IgrPieChart } from 'igniteui-react-charts';
+IgrPieChartModule.register();
+
 
 class PharmacyForAdmin extends Component {
 	state = {
@@ -224,12 +227,29 @@ class PharmacyForAdmin extends Component {
 			color: "white",
 			textAlign: "center",
 		};
+
+		var data = [
+			{ MarketShare: 1234, Company: "Jan ()",    },
+			{ MarketShare: 1000, Company: "Feb ()",    },
+			{ MarketShare: 800, Company: "Mar ()",    },
+			{ MarketShare: 1400, Company: "Apr (1234)",    },
+			{ MarketShare: 1200, Company: "Maj (1234)",    },
+			{ MarketShare: 1350, Company: "Jun (1234)",    },
+			{ MarketShare: 1240, Company: "Jul (1234)",    },
+			{ MarketShare: 500, Company: "Avg (1234)",    },
+			{ MarketShare: 4800, Company: "Sep (1234)",    },
+			{ MarketShare: 1500, Company: "Okt (1234)",    },
+			{ MarketShare: 1934, Company: "Nov (1234)",    },
+			{ MarketShare: 1234, Company: "Dec (1234)",    },
+
+
+		];
 		return (
 			<React.Fragment>
 				<TopBar />
 				<Header />
 
-
+				
 				<div className="container" style={{ marginTop: "8%" }}>
 					<HeadingSuccessAlert
 						hidden={this.state.hiddenSuccessAlert}
@@ -243,6 +263,12 @@ class PharmacyForAdmin extends Component {
 						message={this.state.failMessage}
 						handleCloseAlert={this.handleCloseAlertFail}
 					/>
+					<IgrPieChart
+						dataSource={data}
+						labelMemberPath="Company"
+						valueMemberPath="MarketShare"
+						width="700px"
+						height="700px" />
 					<div className="row" style={{ verticalAlign: "center" }}></div>
 					<div className="row" style={{ marginTop: "3%" }}>
                         <div className="col-xs-4" style={{width:'45%'}}>
@@ -381,6 +407,7 @@ class PharmacyForAdmin extends Component {
 							</YMaps>
 						</div>
 					</div>
+
 				</div>
 
 			</React.Fragment>

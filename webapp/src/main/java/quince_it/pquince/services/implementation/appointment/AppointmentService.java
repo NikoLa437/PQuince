@@ -21,6 +21,7 @@ import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Absence;
 import quince_it.pquince.entities.users.DateRange;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
@@ -109,8 +110,10 @@ public class AppointmentService implements IAppointmentService{
 	
 	@Override
 	public UUID createTerminForDermatologist(AppointmentCreateDTO appointmentDTO) {
-		// TODO NIKOLA : srediti try catch blok
 		try {
+			if(hasDoctorAbsenceAtThisPeriod(appointmentDTO))
+				return null;
+			
 			Pharmacy pharmacy = pharmacyRepository.getOne(appointmentDTO.getPharmacy());
 			Staff dermatologist = staffRepository.getOne(appointmentDTO.getStaff());
 			
@@ -122,6 +125,14 @@ public class AppointmentService implements IAppointmentService{
 		}
 	}
 	
+	private boolean hasDoctorAbsenceAtThisPeriod(AppointmentCreateDTO appointmentDTO) {
+		List<Absence> absences = absenceRepository.getAbsenceForDermatologistForDateForPharmacy(appointmentDTO.getStaff(),appointmentDTO.getStartDateTime(),appointmentDTO.getPharmacy());
+		if(absences.size()>0)
+			return true;
+		
+		return false;
+	}
+
 	@Override
 	public UUID createAndSchuduleAppointment(DermatologistCreateAppointmentDTO appointmentDTO) {
 		try {

@@ -10,6 +10,8 @@ import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
 import HeadingAlert from "../../components/HeadingAlert";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import ViewOffersModal from "../../components/ViewOffersModal";
+import EditOrderModal from "../../components/EditOrderModal";
+
 
 class OrdersPage extends Component {
 	state = {
@@ -23,7 +25,11 @@ class OrdersPage extends Component {
 		failMessage: "",
         offers:[],        
         showOffersModal: false,
-        selectedOrder:''
+        selectedOrder:'',
+        drugsToAdd:[],
+        addedDrugs:[],
+        showEditOrder:false,
+        drugs:[]
 
     };
 
@@ -38,6 +44,14 @@ class OrdersPage extends Component {
 			headers: { Authorization: getAuthHeader() },
 		}).then((res) =>{
             this.setState({orders : res.data});
+            console.log(res.data);
+        }).catch((err) => {console.log(err);});
+
+        Axios
+        .get(BASE_URL + "/api/drug/find-drugs-by-pharmacy-for-admin?pharmacyId="+ pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) =>{
+            this.setState({drugs : res.data});
             console.log(res.data);
         }).catch((err) => {console.log(err);});
     }
@@ -166,8 +180,42 @@ class OrdersPage extends Component {
         }
     }
 
+    addItem = item => {
+        this.setState({
+            drugsToAdd: [
+            ...this.state.drugsToAdd,
+            item 
+          ]
+        })
+    }
 
-    onEditOrderClick = (id,num) =>{
+    removeDrugs(drugs) {
+        for(let drug in drugs){
+            for(let drugToAdd in this.state.drugs){
+                if(this.state.drugs[drugToAdd].Id!==drugs[drug].drugInstanceId){
+                    let drugDTO = {
+                        drugInstanceId: this.state.drugs[drugToAdd].Id,
+                        drugName: this.state.drugs[drugToAdd].EntityDTO.name,
+                        drugInstanceName: this.state.drugs[drugToAdd].EntityDTO.drugInstanceName,
+                        drugManufacturer: this.state.drugs[drugToAdd].EntityDTO.manufacturerName,
+                    }
+                    this.addItem(drugDTO);
+                }
+            }
+        }
+      }
+
+    onEditOrderClick = (order,num) =>{
+        
+        
+        this.setState({
+            addedDrugs: order.EntityDTO.drugs,
+            showEditOrder:true,
+        })
+
+        this.removeDrugs(order.EntityDTO.drugs);
+        
+
         if(num!==0){
             this.setState({
                 hiddenSuccessAlert: true,
@@ -188,6 +236,7 @@ class OrdersPage extends Component {
         })
         this.updateOrders();
     }
+
 
     render() {
 		return (
@@ -232,7 +281,7 @@ class OrdersPage extends Component {
                                             <div  style={{marginLeft:'25%'}}>
                                                 <button style={{height:'30px'},{verticalAlign:'center'}} className="btn btn-outline-secondary" onClick={() => this.onViewOrdersClick(order.Id,order.EntityDTO.numberOfOffers)} type="button"><i className="icofont-subscribe mr-1"></i>View offers</button>
                                                 <br></br>
-                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary" onClick={() => this.onEditOrderClick(order.Id,order.EntityDTO.numberOfOffers)} type="button"><i className="icofont-subscribe mr-1"></i>Edit order</button>
+                                                <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary" onClick={() => this.onEditOrderClick(order,order.EntityDTO.numberOfOffers)} type="button"><i className="icofont-subscribe mr-1"></i>Edit order</button>
                                                 <br></br>
                                                 <button style={{height:'30px'},{verticalAlign:'center'},{marginTop:'2%'}} className="btn btn-outline-secondary mt-1" onClick={() => this.removeOrderClick(order.Id)} type="button"><i className="icofont-subscribe mr-1"></i>Delete order</button>
                                             </div>
@@ -250,6 +299,17 @@ class OrdersPage extends Component {
 					        header="Offers"
                             acceptedOffer={this.handleAcceptOffer}
                             orderId={this.state.selectedOrder}
+				        />
+
+                    <EditOrderModal
+                            drugsToAdd={this.state.drugsToAdd}
+					        show={this.state.showEditOrder}
+                            addedDrugs={this.state.addedDrugs}
+                            onCloseSuccess={this.handleCreateOrderModalCloseSuccess}
+					        onCloseModal={this.handleCreateOrderModalClose}
+                            pharmacyId={this.state.pharmacyId}
+                            drugs={this.state.drugsToAdd}
+					        header="Create order"
 				        />
                     </div>
                 </React.Fragment>
