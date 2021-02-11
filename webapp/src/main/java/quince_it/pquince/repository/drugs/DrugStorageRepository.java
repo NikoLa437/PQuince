@@ -18,6 +18,5 @@ public interface DrugStorageRepository extends JpaRepository<DrugStorage, DrugSt
 	DrugStorage findByDrugIdAndPharmacyId(UUID drugId, UUID pharmacyId);
 	
 	@Query(value = "SELECT d FROM DrugStorage d WHERE d.drugStorageId.pharmacy.id = ?1")
-	List<DrugStorage> findAllBPharmacyId(UUID pharmacyId);
-	
+	List<DrugStorage> findAllBPharmacyId(UUID pharmacyId);	
 }

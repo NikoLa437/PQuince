@@ -12,15 +12,14 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import quince_it.pquince.entities.drugs.DrugInstance;
 import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.drugs.ReservationStatus;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
-import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Pharmacist;
 import quince_it.pquince.entities.users.Staff;
@@ -85,6 +84,7 @@ public class DrugReservationService implements IDrugReservationService{
 	}
 
 	@Override
+	@Transactional
 	public UUID create(DrugReservationRequestDTO entityDTO) {
 		
 		UUID patientId = userService.getLoggedUserId();
@@ -115,7 +115,7 @@ public class DrugReservationService implements IDrugReservationService{
 	private void CanReserveDrug(DrugReservation drugReservation,Patient patient) {
 			
 		if(!(drugReservation.getEndDate().compareTo(new Date()) > 0 && drugReservation.getEndDate().compareTo(drugReservation.getStartDate()) > 0))
-			throw new IllegalArgumentException("Invalid arguments.");
+			throw new IllegalArgumentException("Invalid date argument.");
 
 		if(!(patient.getPenalty() < Integer.parseInt(env.getProperty("max_penalty_count"))))
 			throw new AuthorizationServiceException("Too many penalty points.");
@@ -135,6 +135,7 @@ public class DrugReservationService implements IDrugReservationService{
 	}
 
 	@Override
+	@Transactional
 	public void cancelDrugReservation(UUID id) {
 		
 		DrugReservation drugReservation = drugReservationRepository.getOne(id);
@@ -165,25 +166,25 @@ public class DrugReservationService implements IDrugReservationService{
 	@Override
 	public void givePenaltyForMissedDrugReservation() {
 
-		
 		List<DrugReservation> expiredReservations = drugReservationRepository.findExpiredDrugReservations();
 		for (DrugReservation drugReservation : expiredReservations) {
-			
 			try {
 				Patient patient = patientRepository.findById(drugReservation.getPatient().getId()).get();
-				
-				drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
-				
-				patient.addPenalty(1);
-				patientRepository.save(patient);
-				
-				drugReservation.setReservationStatus(ReservationStatus.EXPIRED);
-				drugReservationRepository.save(drugReservation);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				executeGivingPatientPenaltyTransaction(drugReservation, patient);
+			} catch (Exception e) {	}
 		}
+	}
+	
+	@Transactional
+	private void executeGivingPatientPenaltyTransaction(DrugReservation drugReservation, Patient patient) {		
+		
+		drugStorageService.addAmountOfCanceledDrug(drugReservation.getDrugInstance().getId(), drugReservation.getPharmacy().getId(), drugReservation.getAmount());
+		
+		patient.addPenalty(1);
+		patientRepository.save(patient);
+
+		drugReservation.setReservationStatus(ReservationStatus.EXPIRED);
+		drugReservationRepository.save(drugReservation);
 	}
 
 	@Override
@@ -201,6 +202,7 @@ public class DrugReservationService implements IDrugReservationService{
 	}
 
 	@Override
+	@Transactional
 	public UUID reserveDrugAsStaff(StaffDrugReservationDTO staffDrugReservationDTO) {
 		//TODO: validation and exceptions
 		UUID staffId = userService.getLoggedUserId();

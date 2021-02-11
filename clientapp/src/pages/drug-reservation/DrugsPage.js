@@ -415,16 +415,20 @@ class DrugsPage extends Component {
 										</div>
 									</td>
 									<td className="align-middle">
-										<div>
-											<button type="button" onClick={() => this.handleDrugClick(drug)} className="btn btn-outline-secondary">
+										<div style={{ marginLeft: "55%" }}>
+											<button
+												type="button"
+												onClick={() => this.handleDrugClick(drug)}
+												className="btn btn-outline-secondary btn-block"
+											>
 												Specification
 											</button>
 										</div>
-										<div className="mt-2" hidden={!this.state.loggedPatient}>
+										<div style={{ marginLeft: "55%" }} className="mt-2" hidden={!this.state.loggedPatient}>
 											<button
 												type="button"
 												onClick={() => this.handleFeedbackClick(drug)}
-												className="btn btn-outline-secondary"
+												className="btn btn-outline-secondary btn-block"
 											>
 												Give feedback
 											</button>

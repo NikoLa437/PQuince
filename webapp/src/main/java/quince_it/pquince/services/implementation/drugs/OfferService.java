@@ -7,24 +7,25 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import quince_it.pquince.entities.drugs.DrugInstance;
 import quince_it.pquince.entities.drugs.DrugOrder;
+import quince_it.pquince.entities.drugs.DrugStorage;
 import quince_it.pquince.entities.drugs.OfferStatus;
 import quince_it.pquince.entities.drugs.Offers;
 import quince_it.pquince.entities.drugs.Order;
+import quince_it.pquince.entities.drugs.OrderStatus;
 import quince_it.pquince.entities.drugs.SupplierDrugStorage;
-import quince_it.pquince.repository.drugs.DrugInstanceRepository;
+import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.drugs.OfferRepository;
 import quince_it.pquince.repository.drugs.OrderRepository;
 import quince_it.pquince.repository.drugs.SupplierDrugStorageRepository;
 import quince_it.pquince.repository.users.StaffRepository;
-import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
+import quince_it.pquince.services.contracts.dto.drugs.AcceptOfferForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IOfferService;
 import quince_it.pquince.services.implementation.users.UserService;
-import quince_it.pquince.services.implementation.util.drugs.DrugInstanceMapper;
 import quince_it.pquince.services.implementation.util.drugs.OfferMapper;
 
 @Service
@@ -35,16 +36,21 @@ public class OfferService implements IOfferService{
 	private OfferRepository offerRepository;
 	
 	@Autowired
-	private SupplierDrugStorageRepository supplierDrugStorageRepository;
+	private OrderRepository orderRepository;
 	
 	@Autowired
-	private OrderRepository orderRepository;
+	private DrugStorageRepository drugStorageRepository;
+
+	private SupplierDrugStorageRepository supplierDrugStorageRepository;
+	
+
 	
 	@Autowired
 	private StaffRepository staffRepository;
 	
 	@Autowired
 	private UserService userService;
+
 	
 	@Override
 	public List<IdentifiableDTO<OfferDTO>> findAll() {
@@ -122,6 +128,52 @@ public class OfferService implements IOfferService{
 	}
 
 	@Override
+
+	public List<IdentifiableDTO<OfferDTO>> findOffersForOrder(UUID orderId) {
+		Order order = orderRepository.getOne(orderId);
+		
+		if(order.getOrderStatus()== OrderStatus.PROCESSED)
+			return null;
+		
+		List<IdentifiableDTO<OfferDTO>> retOffers = new ArrayList<IdentifiableDTO<OfferDTO>>();
+
+		order.getOffers().forEach((d) -> retOffers.add(OfferMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(d)));
+
+		return retOffers;
+	}
+
+	@Override
+	@Transactional
+	public void acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO) {
+		Order order = orderRepository.getOne(acceptOfferForOrderDTO.getOrderId());
+		
+		for(Offers offer : order.getOffers()) {
+			if(offer.getId().equals(acceptOfferForOrderDTO.getOfferId())) {
+				offer.setOfferStatus(OfferStatus.ACCEPTED);
+				offerRepository.save(offer);
+
+				this.updateDrugsForOrder(order);
+			}
+			else{
+				offer.setOfferStatus(OfferStatus.REJECTED);
+				offerRepository.save(offer);
+			}
+		}
+		
+		order.setOrderStatus(OrderStatus.PROCESSED);
+		orderRepository.save(order);
+
+	}
+
+	private void updateDrugsForOrder(Order order) {
+		
+		for(DrugOrder drugOrder : order.getOrder()) {
+			DrugStorage drugStorage = drugStorageRepository.findByDrugIdAndPharmacyId(drugOrder.getDrugInstance().getId(), order.getPharmacy().getId());
+			drugStorage.addAmount(drugOrder.getAmount());
+			drugStorageRepository.save(drugStorage);
+		}
+	}
+	
 	public boolean checkIfHasDrugs(UUID id) {
 		
 		Order order = orderRepository.getOne(id);

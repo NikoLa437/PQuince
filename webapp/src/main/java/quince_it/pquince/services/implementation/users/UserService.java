@@ -420,13 +420,10 @@ public class UserService implements IUserService{
 	public void deleteAllPatientsPenalties() {
 		List<Patient> patients = patientRepository.findAllWithMoreThanZeroPenalties();
 		for(Patient patient : patients) {
-			if(patient.getPenalty() > 0) {
-				try {
-					patient.setPenalty(0);
-					patientRepository.save(patient);
-				} catch (Exception e) {
-				}
-			}
+			try {
+				patient.setPenalty(0);
+				patientRepository.save(patient);
+			} catch (Exception e) { }
 		}
 	}
 	
@@ -573,12 +570,12 @@ public class UserService implements IUserService{
 		try {
 			Dermatologist dermatologist = dermatologistRepository.getOne(addDermatologistToPharmacyDTO.getDermatologistId());
 			Pharmacy pharmacy = pharmacyRepository.getOne(addDermatologistToPharmacyDTO.getPharmacyId());
+			WorkTimeDTO workTimeDTO = new WorkTimeDTO(addDermatologistToPharmacyDTO.getPharmacyId(),addDermatologistToPharmacyDTO.getDermatologistId(), addDermatologistToPharmacyDTO.getStartDate(), addDermatologistToPharmacyDTO.getEndDate(), addDermatologistToPharmacyDTO.getStartTime(), addDermatologistToPharmacyDTO.getEndTime(),"");
+			workTimeService.create(workTimeDTO);
 			
 			dermatologist.addPharmacy(pharmacy);
 			dermatologistRepository.save(dermatologist);
 			
-			WorkTimeDTO workTimeDTO = new WorkTimeDTO(addDermatologistToPharmacyDTO.getPharmacyId(),addDermatologistToPharmacyDTO.getDermatologistId(), addDermatologistToPharmacyDTO.getStartDate(), addDermatologistToPharmacyDTO.getEndDate(), addDermatologistToPharmacyDTO.getStartTime(), addDermatologistToPharmacyDTO.getEndTime(),"");
-			workTimeService.create(workTimeDTO);
 			return true;
 		} 
 		catch (EntityNotFoundException e) { return false; } 
@@ -867,18 +864,21 @@ public class UserService implements IUserService{
 		return retPharmacists;
 	}
 	
-
 	public Pharmacy getPharmacyForLoggedDermatologist() {
 		UUID dermatologistId = getLoggedUserId();
-		Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
 		Pharmacy pharmacy = null;
-		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);	
+		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);
+		Date currentDateTime = new Date();
+		int currentHours = currentDateTime.getHours();
 		for(WorkTime wt : workTimes){
-			System.out.println("#######" + wt.getStartDate() + " " + wt.getEndDate());
-			pharmacy = wt.getPharmacy();
+			if(wt.getStartTime() <= currentHours && wt.getEndTime() >= currentHours)
+				pharmacy = wt.getPharmacy();
 		}
 		if(pharmacy == null)
-			throw new IllegalArgumentException("Dermatologist doesn't work in any pharamcy today");
+			for(WorkTime wt : workTimes)
+					pharmacy = wt.getPharmacy();
+		if(pharmacy == null)
+			throw new IllegalArgumentException("Dermatologist doesn't work in any pharamcy at current hours");
 		return pharmacy;
 	}
 	

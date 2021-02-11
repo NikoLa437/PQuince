@@ -7,7 +7,7 @@ import HeadingAlert from "./HeadingAlert";
 
 class DrugReservationModal extends Component {
 	state = {
-		selectedDate: new Date(),
+		selectedDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
 		drugAmount: 1,
 	};
 
@@ -64,14 +64,14 @@ class DrugReservationModal extends Component {
 							</div>
 							<div className="form-row mt-3">
 								<div className="form-col" style={{ color: "#6c757d", opacity: 1 }}>
-									<label>Date of drug pickup:</label>
+									<label>Drug reservation lasts until date:</label>
 								</div>
 							</div>
 							<div className="form-row">
 								<div className="form-col" style={{ color: "#6c757d", opacity: 1 }}>
 									<DatePicker
 										className="form-control mr-3"
-										minDate={new Date()}
+										minDate={new Date(new Date().getTime() + 24 * 60 * 60 * 1000)}
 										onChange={(date) => this.handleDateChange(date)}
 										selected={this.state.selectedDate}
 									/>

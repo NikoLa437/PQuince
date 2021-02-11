@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
@@ -22,6 +22,7 @@ import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Absence;
 import quince_it.pquince.entities.users.DateRange;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
@@ -110,8 +111,10 @@ public class AppointmentService implements IAppointmentService{
 	
 	@Override
 	public UUID createTerminForDermatologist(AppointmentCreateDTO appointmentDTO) {
-		// TODO NIKOLA : srediti try catch blok
 		try {
+			if(hasDoctorAbsenceAtThisPeriod(appointmentDTO))
+				return null;
+			
 			Pharmacy pharmacy = pharmacyRepository.getOne(appointmentDTO.getPharmacy());
 			Staff dermatologist = staffRepository.getOne(appointmentDTO.getStaff());
 			
@@ -123,6 +126,15 @@ public class AppointmentService implements IAppointmentService{
 		}
 	}
 	
+
+	private boolean hasDoctorAbsenceAtThisPeriod(AppointmentCreateDTO appointmentDTO) {
+		List<Absence> absences = absenceRepository.getAbsenceForDermatologistForDateForPharmacy(appointmentDTO.getStaff(),appointmentDTO.getStartDateTime(),appointmentDTO.getPharmacy());
+		if(absences.size()>0)
+			return true;
+		
+		return false;
+	}
+
 	@Transactional
 	@Override
 	public UUID createAndSchuduleAppointment(DermatologistCreateAppointmentDTO appointmentDTO) {
@@ -185,7 +197,6 @@ public class AppointmentService implements IAppointmentService{
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public List<AppointmentPeriodResponseDTO> getFreePeriodsDermatologist(Date date, int duration) {
 		UUID dermatologistId = userService.getLoggedUserId();
@@ -231,9 +242,7 @@ public class AppointmentService implements IAppointmentService{
 		if(action != null) {
 			discountPercentage += action.getPercentOfDiscount();
 		}
-		
-		//TODO : DONE discount based on actions and benefits
-		
+				
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, discountPercentage);
 		
 		return returnAppointments;
@@ -252,9 +261,7 @@ public class AppointmentService implements IAppointmentService{
 		appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 		appointment.setPatient(patient);
 		
-		//TODO: DONE change price depending on actions and benefits
 		double getDiscountExaminationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(appointment.getPrice(), AppointmentType.EXAMINATION, userService.getLoggedUserId());
-		
 		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(appointment.getPharmacy().getId(), ActionAndPromotionType.EXAMINATIONDISCOUNT);
 		
 		if(action != null) {
@@ -266,9 +273,7 @@ public class AppointmentService implements IAppointmentService{
 		appointmentRepository.save(appointment);
 		try {
 			emailService.sendAppointmentReservationNotificationAsync(appointment, "dr.");
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
+		} catch (MessagingException e) {}
 	}
 
 	private void CanReserveAppointment(Appointment appointment,Patient patient) throws AppointmentTimeOverlappingWithOtherAppointmentException {
@@ -331,7 +336,6 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
 		double discountPercentage = (double)loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION, userService.getLoggedUserId());
-		//TODO : DONE discount based on actions and benefits
 		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacyId, ActionAndPromotionType.EXAMINATIONDISCOUNT);
 		
 		if(action != null) {
@@ -352,7 +356,6 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
 		double discountPercentage = (double)loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION, userService.getLoggedUserId());
-		//TODO : DONE discount based on actions and benefits
 		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacyId, ActionAndPromotionType.EXAMINATIONDISCOUNT);
 		
 		if(action != null) {
@@ -393,8 +396,12 @@ public class AppointmentService implements IAppointmentService{
 		canAppointmentBeCanceled(appointment);
 		
 		appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
-		appointment.setPriceToPay(appointment.getPrice());
 		appointmentRepository.save(appointment);	
+		
+		if(appointment.getAppointmentType().equals(AppointmentType.EXAMINATION)) {
+			Appointment newAppointment = new Appointment(appointment.getPharmacy(), appointment.getStaff(), null, appointment.getStartDateTime(), appointment.getEndDateTime(), appointment.getPrice(), appointment.getAppointmentType(), AppointmentStatus.CREATED);
+			appointmentRepository.save(newAppointment);
+		}
 
 	}
 
@@ -729,9 +736,7 @@ public class AppointmentService implements IAppointmentService{
 		appointmentRepository.save(appointment);
 		try {
 			emailService.sendAppointmentReservationNotificationAsync(appointment,"pharmacist");
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
+		} catch (MessagingException e) { }
 
 		return appointment.getId();
 	}
@@ -766,7 +771,6 @@ public class AppointmentService implements IAppointmentService{
 		if(action != null) {
 			discountPrice -= (action.getPercentOfDiscount()/ 100.0) * pharmacy.getConsultationPrice();
 		}
-		// TODO : DONE change price depending on actions and benefits
 		return new Appointment(pharmacy, staff, patient, requestDTO.getStartDateTime(), endDateTime, discountPrice, AppointmentType.CONSULTATION, AppointmentStatus.SCHEDULED);
 	}
 
@@ -868,6 +872,7 @@ public class AppointmentService implements IAppointmentService{
 	}
 	
 	@Override
+	@Transactional
 	public void didNotShowUpToAppointment(UUID id) {
 		Appointment appointment = appointmentRepository.findById(id).get();
 		appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
@@ -883,15 +888,18 @@ public class AppointmentService implements IAppointmentService{
 		for (Appointment appointment : expiredAppointments) {
 			try {
 				Patient patient = patientRepository.findById(appointment.getPatient().getId()).get();
-				patient.addPenalty(1);
-				patientRepository.save(patient);
-				appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
-				appointmentRepository.save(appointment);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				executeGivingPatientPenaltyTransaction(appointment, patient);
+			} catch (Exception e) { }
 		}
 		
+	}
+	
+	@Transactional
+	public void executeGivingPatientPenaltyTransaction(Appointment appointment, Patient patient){
+		patient.addPenalty(1);
+		patientRepository.save(patient);
+		appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
+		appointmentRepository.save(appointment);
 	}
 
 }
