@@ -506,7 +506,6 @@ public class PharmacyController {
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	public ResponseEntity<ExaminationsStatisticsDTO> findStatisticsForExaminationsAndColsutations() {
 		try {
-			
 			return new ResponseEntity<>(pharmacyService.findStatisticsForExaminationsAndColsutations(),HttpStatus.OK);
 		}catch (Exception e) {
 			e.printStackTrace();
