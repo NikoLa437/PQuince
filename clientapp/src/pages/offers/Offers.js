@@ -8,6 +8,7 @@ import ModalDialog from "../../components/ModalDialog";
 import { withRouter } from "react-router";
 import EditOfferModal from "../../components/EditOfferModal";
 import getAuthHeader from "../../GetHeader";
+import { Redirect } from "react-router-dom";
 
 class Offers extends Component {
 	state = {
@@ -21,6 +22,8 @@ class Offers extends Component {
 		openModalDate: false,
 		offers: [],
 		offerId: "",
+        redirect: false,
+        redirectUrl: '',
 	};
 	
 	componentDidMount() {
@@ -30,6 +33,21 @@ class Offers extends Component {
 						this.setState({
 							offers: res.data,
 						});
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+
+			Axios.get(BASE_URL + "/api/users/supplier/auth", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+					.then((res) => {
+						if (res.status === 401) {
+							this.setState({
+								redirect: true,
+								redirectUrl: "/unauthorized"
+							});
+						} else {
+							console.log(res.data);
+						}
 					})
 					.catch((err) => {
 						console.log(err);
@@ -207,6 +225,8 @@ class Offers extends Component {
 
 
 	render() {
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
