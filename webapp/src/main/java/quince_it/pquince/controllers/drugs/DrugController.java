@@ -28,6 +28,7 @@ import quince_it.pquince.services.contracts.dto.drugs.DrugFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugFormatIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugKindIdDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugRequestDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugReservationRequestDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugWithPriceDTO;
@@ -48,6 +49,7 @@ import quince_it.pquince.services.contracts.interfaces.drugs.IDrugFormatService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugKindIdService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugPriceInPharmacyService;
+import quince_it.pquince.services.contracts.interfaces.drugs.IDrugRequestService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugReservationService;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugStorageService;
 
@@ -76,6 +78,9 @@ public class DrugController {
 	
 	@Autowired
 	private IDrugPriceInPharmacyService drugPriceInPharmacyService;
+	
+	@Autowired
+	private IDrugRequestService drugRequestService;
 	
 	@CrossOrigin
 	@GetMapping
@@ -411,6 +416,19 @@ public class DrugController {
 		try {
 			drugStorageService.addDrugToPharmacy(addDrugToPharmacyDTO);
 			return new ResponseEntity<>(HttpStatus.CREATED);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@CrossOrigin
+	@GetMapping("/requests-drug-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<DrugRequestDTO>> getDrugRequestsForPharmacy() {
+		try {
+			return new ResponseEntity<>(drugRequestService.getDrugRequestsForPharmacy() ,HttpStatus.OK);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

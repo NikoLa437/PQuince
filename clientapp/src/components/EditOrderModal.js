@@ -11,8 +11,6 @@ import { Redirect } from "react-router-dom";
 
 class EditOrderModal extends Component {
     state = {
-        drugsToAdd: [] ,
-        drugs:[],
         showModalPage:'FIRST',
         modalSize:'lg',    
         selectedDate:new Date(),
@@ -39,28 +37,8 @@ class EditOrderModal extends Component {
     }
 
     componentDidMount() {
-		let pharmacyId=localStorage.getItem("keyPharmacyId")
-		this.setState({
-			pharmacyId: pharmacyId
-		})
 
-        Axios
-        .get(BASE_URL + "/api/drug/find-drugs-by-pharmacy-for-admin?pharmacyId="+ pharmacyId, {
-			headers: { Authorization: getAuthHeader() },
-		}).then((res) =>{
-            this.setState({drugs : res.data});
-            console.log(res.data);
-        }).catch((err) => {console.log(err);});
     }
-
-    removePeople(e) {
-        var array = [...this.state.drugs]; // make a separate copy of the array
-        var index = array.indexOf(e)
-        if (index !== -1) {
-          array.splice(index, 1);
-          this.setState({drugs: array});
-        }
-      }
 
     handleAdd = () => {
 
@@ -79,11 +57,15 @@ class EditOrderModal extends Component {
                 drugManufacturer: this.state.drugForAdd.drugManufacturer,
                 amount:this.state.selectedCount
             }
-    
-            this.removePeople(this.state.drugForAdd);
-            
-            this.addItem(drugDTO);
-    
+
+            //dolazi dobar drugDTO, njega obrisati iz drugsFromAdd a ubaciti u drugsToAdd
+            let state= this.state.drugForAdd;
+            state.amount= this.state.selectedCount
+
+            this.props.removeFromDrugToAdd(this.state.drugForAdd);
+            this.props.addToAddedDrugs(state);
+
+
             this.setState({
                 showModalPage:'FIRST',
                 selectedCount:'',
@@ -94,26 +76,26 @@ class EditOrderModal extends Component {
 
     handleCreateOrder = () =>{
         let drugDTO = {
-            drugs: this.state.drugsToAdd,
-            endDate:this.state.selectedDate
+
+            drugs: this.props.drugsFromOrder,
+            endDate:this.state.selectedDate,
+            orderId:this.props.orderToEdit,
         }
 
         Axios
-        .post(BASE_URL + "/api/order", drugDTO, {
+        .put(BASE_URL + "/api/order", drugDTO, {
             validateStatus: () => true,
             headers: { Authorization: getAuthHeader() },})
         .then((res) =>{
-            if (res.status === 201) {
+            if (res.status === 204) {
                 this.setState({
                     hiddenSuccessAlert: false,
                     hiddenFailAlert:true,
                     successHeader: "Success",
-                    successMessage: "You successfully add new order for drugs.",
-                    newPrice:1, 
+                    successMessage: "You successfully edit order.",
                     selectedStartDate:new Date(),
                 })
-                this.props.updateDrugs();
-                this.props.onCloseSuccess();
+                this.props.updateOrders();
             }else if(res.status===400){
                 this.setState({ 
                     hiddenSuccessAlert: true,
@@ -166,7 +148,7 @@ class EditOrderModal extends Component {
     }
 
     handleClickOnCreateOrder = () =>{
-        if(this.state.drugsToAdd.length<1){
+        if(this.props.drugsFromOrder.length<1){
             this.setState({ 
                 hiddenSuccessAlert: true,
                 hiddenFailAlert: false, 
@@ -209,7 +191,6 @@ class EditOrderModal extends Component {
             hiddenSuccessAlert: true,
             hiddenFailAlert: true, 
         }); 
-
     }
 
      handleBack = (event) =>{
@@ -268,7 +249,7 @@ class EditOrderModal extends Component {
                                     <th>Manufacturer</th>
                                     <th>Count</th>
                                 </tr>
-                                {this.props.addedDrugs.map((drug) => (
+                                {this.props.drugsFromOrder.map((drug) => (
                                 
                                 <tr>
                                     <td>{drug.drugName}</td>
@@ -280,7 +261,7 @@ class EditOrderModal extends Component {
                 </table>    
                     <table hidden={this.state.showModalPage!=='FIRST'} className="table" style={{ width: "100%", marginTop: "3rem" }}>
                         <tbody>
-                            {this.props.drugsToAdd.map((drug) => (
+                            {this.props.drugsForAdd.map((drug) => (
                                 <tr id={drug.Id} key={drug.Id}>
                                     <td width="130em">
                                         <img className="img-fluid" src={CapsuleLogo} width="70em"/>
@@ -344,7 +325,7 @@ class EditOrderModal extends Component {
                                             </tr>
                                         </table>
                                         <div  className="form-group text-center">
-                                            <Button className="mt-3"  onClick = {() => this.handleCreateOrder()} >Create order</Button>
+                                            <Button className="mt-3"  onClick = {() => this.handleCreateOrder()} >Edit order</Button>
                                         </div>
                                     </div>
                                 </form>
@@ -352,7 +333,7 @@ class EditOrderModal extends Component {
                 </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button  hidden={this.state.showModalPage==='THIRD'} onClick={() => this.handleClickOnCreateOrder()}>Create order</Button>
+                    <Button  hidden={this.state.showModalPage==='THIRD'} onClick={() => this.handleClickOnCreateOrder()}>Edit order</Button>
                     <Button onClick={() => this.handleClickOnClose()}>Close</Button>
                 </Modal.Footer>
             </Modal>

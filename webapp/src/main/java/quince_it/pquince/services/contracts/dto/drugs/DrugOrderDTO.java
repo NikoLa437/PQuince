@@ -5,7 +5,7 @@ import java.util.UUID;
 public class DrugOrderDTO {
 	private UUID drugInstanceId;
 	private int amount;
-	
+
 
 	public DrugOrderDTO() {
 		super();
@@ -17,8 +17,7 @@ public class DrugOrderDTO {
 		this.drugInstanceId = drugInstanceId;
 		this.amount = amount;
 	}
-
-
+	
 	public UUID getDrugInstanceId() {
 		return drugInstanceId;
 	}
@@ -31,6 +30,6 @@ public class DrugOrderDTO {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	
+
 	
 }
