@@ -208,6 +208,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createSupplier(UserRequestDTO entityDTO) {
 		Staff staff = CreateSupplierFromDTO(entityDTO);
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_SUPPLIER");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -230,6 +231,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createDermatologist(UserRequestDTO entityDTO) {
 		Staff staff = CreateDermathologistFromDTO(entityDTO);
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_DERMATHOLOGIST");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -248,6 +250,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createPharmacist(UserRequestDTO entityDTO) {
 		Staff staff = CreatePharmacistFromDTO(entityDTO);
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACIST");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -264,11 +267,9 @@ public class UserService implements IUserService{
 	
 	@Override
 	public UUID createPharmacyAdmin(UserRequestDTO entityDTO, UUID pharmacyId) {
-		//Pharmacy pharmacy = CreatePharmacyFromDTO(pharmacyDTO);
 		Pharmacy pharmacy = pharmacyRepository.getOne(pharmacyId);
-		System.out.println(pharmacy.getName() + pharmacy.getId() + "PHARMACY");
 		PharmacyAdmin staff = CreatePharmacyAdminFromDTO(entityDTO, pharmacy);
-		System.out.println(staff.getName() + staff.getEmail() + "STAFF");
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACYADMIN");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));

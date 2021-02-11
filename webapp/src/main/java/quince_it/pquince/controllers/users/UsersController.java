@@ -603,5 +603,23 @@ public class UsersController {
 	public ResponseEntity<?>checkAuthority() {	  
 		return new ResponseEntity<>(HttpStatus.OK); 
 	}
+
+	@GetMapping("/sysadmin/auth") 
+	@PreAuthorize("hasRole('SYSADMIN')")
+	public ResponseEntity<?>checkAuthorityAdmin() {	  
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	@GetMapping("/supplier/auth") 
+	@PreAuthorize("hasRole('SUPPLIER')")
+	public ResponseEntity<?>checkAuthoritySupplier() {	  
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
+	
+	@GetMapping("/patient/auth") 
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?>checkAuthorityPatient() {	  
+		return new ResponseEntity<>(HttpStatus.OK); 
+	}
 	
 }
