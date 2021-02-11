@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 import quince_it.pquince.entities.drugs.DrugOrder;
 import quince_it.pquince.entities.drugs.DrugStorage;
@@ -15,30 +15,17 @@ import quince_it.pquince.entities.drugs.OfferStatus;
 import quince_it.pquince.entities.drugs.Offers;
 import quince_it.pquince.entities.drugs.Order;
 import quince_it.pquince.entities.drugs.OrderStatus;
-import quince_it.pquince.repository.drugs.DrugStorageRepository;
-import quince_it.pquince.repository.drugs.OfferRepository;
-import quince_it.pquince.repository.drugs.OrderRepository;
-import quince_it.pquince.services.contracts.dto.drugs.AcceptOfferForOrderDTO;
-import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
-import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
-import quince_it.pquince.services.contracts.interfaces.drugs.IOfferService;
-import quince_it.pquince.entities.drugs.DrugInstance;
-import quince_it.pquince.entities.drugs.DrugOrder;
-import quince_it.pquince.entities.drugs.OfferStatus;
-import quince_it.pquince.entities.drugs.Offers;
-import quince_it.pquince.entities.drugs.Order;
 import quince_it.pquince.entities.drugs.SupplierDrugStorage;
-import quince_it.pquince.repository.drugs.DrugInstanceRepository;
+import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.drugs.OfferRepository;
 import quince_it.pquince.repository.drugs.OrderRepository;
 import quince_it.pquince.repository.drugs.SupplierDrugStorageRepository;
 import quince_it.pquince.repository.users.StaffRepository;
-import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
+import quince_it.pquince.services.contracts.dto.drugs.AcceptOfferForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IOfferService;
 import quince_it.pquince.services.implementation.users.UserService;
-import quince_it.pquince.services.implementation.util.drugs.DrugInstanceMapper;
 import quince_it.pquince.services.implementation.util.drugs.OfferMapper;
 
 @Service
@@ -155,10 +142,11 @@ public class OfferService implements IOfferService{
 		return retOffers;
 	}
 
+
 	@Override
+	@Transactional
 	public boolean acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO) {
 
-		
 		Order order = orderRepository.getOne(acceptOfferForOrderDTO.getOrderId());
 		
 		if(!CanBeAccepted(order))
