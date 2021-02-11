@@ -61,6 +61,28 @@ public class OrderController {
 		}
 	}
 	
+	@CrossOrigin
+	@GetMapping("/find-processed-orders-for-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<IdentifiableDTO<OrderDTO>>> filterProcessedOrdersForPharmacy(@RequestParam UUID pharmacyId) {
+		try {
+			return new ResponseEntity<>(orderService.filterProcessedOrdersForPharmacy(pharmacyId),HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@CrossOrigin
+	@GetMapping("/find-created-orders-for-pharmacy")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<List<IdentifiableDTO<OrderDTO>>> filterCreatedOrdersForPharmacy(@RequestParam UUID pharmacyId) {
+		try {
+			return new ResponseEntity<>(orderService.filterCreatedOrdersForPharmacy(pharmacyId),HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	@PutMapping("/remove-order-from-pharmacy")
 	@CrossOrigin
 	@PreAuthorize("hasRole('PHARMACYADMIN')")

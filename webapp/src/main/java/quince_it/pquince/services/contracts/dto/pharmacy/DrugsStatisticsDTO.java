@@ -3,12 +3,12 @@ package quince_it.pquince.services.contracts.dto.pharmacy;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ExaminationsStatisticsDTO {
+public class DrugsStatisticsDTO {
 	private Map<Integer, Integer> montlyStatistics;
 	private Map<Integer, Integer> quartalStatistics;
 	private Map<Integer, Integer> yearsStatistics;
 
-	public ExaminationsStatisticsDTO() {
+	public DrugsStatisticsDTO() {
 		super();
 		montlyStatistics = new HashMap<Integer,Integer>();
 		montlyStatistics.put(0, 0);
@@ -37,12 +37,16 @@ public class ExaminationsStatisticsDTO {
 
 	}
 	
-	public ExaminationsStatisticsDTO(Map<Integer, Integer> montlyStatistics,Map<Integer, Integer> quartalStatistics,Map<Integer, Integer> yearsStatistics) {
+
+	public DrugsStatisticsDTO(Map<Integer, Integer> montlyStatistics, Map<Integer, Integer> quartalStatistics,
+			Map<Integer, Integer> yearsStatistics) {
 		super();
 		this.montlyStatistics = montlyStatistics;
-		this.quartalStatistics= quartalStatistics;
-		this.yearsStatistics=yearsStatistics;
+		this.quartalStatistics = quartalStatistics;
+		this.yearsStatistics = yearsStatistics;
 	}
+
+
 
 	public Map<Integer, Integer> getMontlyStatistics() {
 		return montlyStatistics;
@@ -51,9 +55,7 @@ public class ExaminationsStatisticsDTO {
 	public void setMontlyStatistics(Map<Integer, Integer> montlyStatistics) {
 		this.montlyStatistics = montlyStatistics;
 	}
-	
-	
-	
+
 	public Map<Integer, Integer> getQuartalStatistics() {
 		return quartalStatistics;
 	}
@@ -61,8 +63,6 @@ public class ExaminationsStatisticsDTO {
 	public void setQuartalStatistics(Map<Integer, Integer> quartalStatistics) {
 		this.quartalStatistics = quartalStatistics;
 	}
-	
-	
 
 	public Map<Integer, Integer> getYearsStatistics() {
 		return yearsStatistics;
@@ -71,10 +71,11 @@ public class ExaminationsStatisticsDTO {
 	public void setYearsStatistics(Map<Integer, Integer> yearsStatistics) {
 		this.yearsStatistics = yearsStatistics;
 	}
-
-	public void incrementMap(int index) {
+	
+	public void incrementDrugMontlyMap(int index, int i) {
 		int value = montlyStatistics.get(index);
-		montlyStatistics.put(index, ++value);
+		int amount = value+i;
+		montlyStatistics.put(index, amount);
 	}
 	
 	public void setFirstQuartalValue(int value) {
@@ -106,5 +107,4 @@ public class ExaminationsStatisticsDTO {
 	public void setPrecededYearValue(int value) {
 		yearsStatistics.put(2,value);
 	}
-	
 }

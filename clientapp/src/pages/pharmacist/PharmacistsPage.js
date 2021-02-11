@@ -34,6 +34,7 @@ class PharmacistPage extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+        pharmacyId:'',
     };
 
     componentDidMount() {
@@ -88,6 +89,20 @@ class PharmacistPage extends Component {
 				console.log(err);
 			});
         this.setState({ showAddPharmacistModal: false });
+    }
+
+    
+    handleUpdateWorkTime= ()=>{
+        Axios.get(BASE_URL + "/api/worktime/worktime-for-staff/" + this.state.forStaff, {
+			headers: { Authorization: getAuthHeader() },
+		})
+        .then((res) => {
+            this.setState({ workTimes: res.data});
+            console.log(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     }
     
     
@@ -467,7 +482,7 @@ class PharmacistPage extends Component {
 
                     </div>
                     <div>
-                        <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} workTimesForStaff={this.state.workTimes} forPharmacy={this.state.forPharmacy} forStaff={this.state.forStaff} header="WorkTimes" />
+                        <WorkTimesModal show={this.state.showWorkTimesModal} onCloseModal={this.handleModalClose} updateWorkTimes={this.handleUpdateWorkTime} workTimesForStaff={this.state.workTimes} forPharmacy={this.state.pharmacyId} forStaff={this.state.forStaff} header="WorkTimes" />
                         <AddPharmacistToPharmacy
 					        show={this.state.showAddPharmacistModal}
 					        onCloseModal={this.handleAddPharmacistModalClose}
