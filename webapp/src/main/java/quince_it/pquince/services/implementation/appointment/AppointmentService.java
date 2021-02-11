@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -232,9 +231,7 @@ public class AppointmentService implements IAppointmentService{
 		if(action != null) {
 			discountPercentage += action.getPercentOfDiscount();
 		}
-		
-		//TODO : DONE discount based on actions and benefits
-		
+				
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, discountPercentage);
 		
 		return returnAppointments;
@@ -253,7 +250,6 @@ public class AppointmentService implements IAppointmentService{
 		appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 		appointment.setPatient(patient);
 		
-		//TODO: DONE change price depending on actions and benefits
 		double getDiscountExaminationPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(appointment.getPrice(), AppointmentType.EXAMINATION, userService.getLoggedUserId());
 		
 		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(appointment.getPharmacy().getId(), ActionAndPromotionType.EXAMINATIONDISCOUNT);
@@ -353,7 +349,6 @@ public class AppointmentService implements IAppointmentService{
 		List<IdentifiableDTO<StaffGradeDTO>> staffWithGrades = userService.findAllStaffWithAvgGradeByStaffType(StaffType.DERMATOLOGIST);
 		
 		double discountPercentage = (double)loyalityProgramService.getDiscountPercentageForAppointmentForPatient(AppointmentType.EXAMINATION, userService.getLoggedUserId());
-		//TODO : DONE discount based on actions and benefits
 		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacyId, ActionAndPromotionType.EXAMINATIONDISCOUNT);
 		
 		if(action != null) {
@@ -394,8 +389,13 @@ public class AppointmentService implements IAppointmentService{
 		canAppointmentBeCanceled(appointment);
 		
 		appointment.setAppointmentStatus(AppointmentStatus.CANCELED);
-		appointment.setPriceToPay(appointment.getPrice());
+		//appointment.setPriceToPay(appointment.getPrice());
 		appointmentRepository.save(appointment);	
+		
+		if(appointment.getAppointmentType().equals(AppointmentType.EXAMINATION)) {
+			Appointment newAppointment = new Appointment(appointment.getPharmacy(), appointment.getStaff(), null, appointment.getStartDateTime(), appointment.getEndDateTime(), appointment.getPrice(), appointment.getAppointmentType(), AppointmentStatus.CREATED);
+			appointmentRepository.save(newAppointment);
+		}
 
 	}
 
