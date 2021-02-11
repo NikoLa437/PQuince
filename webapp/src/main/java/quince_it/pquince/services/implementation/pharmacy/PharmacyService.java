@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.drugs.DrugReservation;
 import quince_it.pquince.entities.drugs.DrugStorage;
 import quince_it.pquince.entities.drugs.EReceipt;
 import quince_it.pquince.entities.drugs.EReceiptItems;
@@ -32,6 +33,7 @@ import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
 import quince_it.pquince.repository.drugs.DrugPriceForPharmacyRepository;
+import quince_it.pquince.repository.drugs.DrugReservationRepository;
 import quince_it.pquince.repository.drugs.DrugStorageRepository;
 import quince_it.pquince.repository.drugs.EReceiptItemsRepository;
 import quince_it.pquince.repository.drugs.EReceiptRepository;
@@ -40,6 +42,7 @@ import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.PatientRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.DrugsStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.ExaminationsStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
@@ -78,6 +81,9 @@ public class PharmacyService implements IPharmacyService {
 	
 	@Autowired
 	private AppointmentRepository appointmentRepository;
+	
+	@Autowired
+	private DrugReservationRepository drugReservationRepository;
 	
 	@Autowired
 	private Environment env;
@@ -593,7 +599,144 @@ public class PharmacyService implements IPharmacyService {
 		return examinationStatisticsDTO;
 	}
 
+	@Override
+	public DrugsStatisticsDTO findStatisticsForDrugs() {
+		// TODO Auto-generated method stub
+		UUID pharmacyId= userService.getPharmacyIdForPharmacyAdmin();
+		DrugsStatisticsDTO drugStatisticsDTO = new DrugsStatisticsDTO();
+
+		this.calculateDrugStatisticsForMontly(pharmacyId,drugStatisticsDTO);
+		this.calculateDrugStatisticsForQuartals(pharmacyId,drugStatisticsDTO);
+		this.calculateDrugStatisticsForYears(pharmacyId,drugStatisticsDTO);
+		
+		return drugStatisticsDTO;
+	}
 	
+
+	private void calculateDrugStatisticsForYears(UUID pharmacyId, DrugsStatisticsDTO drugStatisticsDTO) {
+		Date currentDate = new Date();
+		
+		List<DrugReservation> reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(currentDate.getYear(),0,1), currentDate);
+		drugStatisticsDTO.setThisYearValue(this.sumOfReservationsAmount(reservations));
+
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(currentDate.getYear()-1,0,1), new Date(currentDate.getYear()-1,11,31));
+		drugStatisticsDTO.setLastYearValue(this.sumOfReservationsAmount(reservations));
+
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(currentDate.getYear()-2,0,1), new Date(currentDate.getYear()-2,11,31));
+		drugStatisticsDTO.setPrecededYearValue(this.sumOfReservationsAmount(reservations));
+		
+	}
+
+	private void calculateDrugStatisticsForQuartals(UUID pharmacyId, DrugsStatisticsDTO drugStatisticsDTO) {
+		if(new Date().getMonth()<3)
+			this.calculateDrugForFirstQuartal(pharmacyId, drugStatisticsDTO);
+		else if(new Date().getMonth()<6)
+			this.calculateDrugForSecondQuartal(pharmacyId, drugStatisticsDTO);
+		else if(new Date().getMonth()<9)
+			this.calculateDrugForThirdQuartal(pharmacyId, drugStatisticsDTO);
+		else
+			this.calculateDrugForFourthQuartal(pharmacyId, drugStatisticsDTO);
+	}
+
+	private void calculateDrugForFourthQuartal(UUID pharmacyId, DrugsStatisticsDTO drugStatisticsDTO) {
+		Date dateTo= new Date();
+		
+		List<DrugReservation> reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),0,1), new Date(dateTo.getYear(),2,31));
+		
+		drugStatisticsDTO.setFirstQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),3,1), new Date(dateTo.getYear(),5,30));
+		
+		drugStatisticsDTO.setSecondQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),6,1), new Date(dateTo.getYear(),8,30));
+		
+		drugStatisticsDTO.setThirdQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),9,1), dateTo);
+		
+		drugStatisticsDTO.setFourthQuartalValue(this.sumOfReservationsAmount(reservations));	
+	}
+
+	private void calculateDrugForThirdQuartal(UUID pharmacyId, DrugsStatisticsDTO drugStatisticsDTO) {
+		Date dateTo= new Date();
+		
+		List<DrugReservation> reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),0,1), new Date(dateTo.getYear(),2,31));
+		
+		drugStatisticsDTO.setFirstQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),3,1), new Date(dateTo.getYear(),5,30));
+		
+		drugStatisticsDTO.setSecondQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),6,1), dateTo);
+		
+		drugStatisticsDTO.setThirdQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,9,1), new Date(dateTo.getYear()-1,11,31));
+		
+		drugStatisticsDTO.setFourthQuartalValue(this.sumOfReservationsAmount(reservations));	
+	}
+
+	private void calculateDrugForSecondQuartal(UUID pharmacyId, DrugsStatisticsDTO drugStatisticsDTO) {
+		Date dateTo= new Date();
+		
+		List<DrugReservation> reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),0,1), new Date(dateTo.getYear(),2,31));
+		
+		drugStatisticsDTO.setFirstQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,3,1), dateTo);
+		
+		drugStatisticsDTO.setSecondQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,6,1), new Date(dateTo.getYear()-1,8,30));
+		
+		drugStatisticsDTO.setThirdQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,9,1), new Date(dateTo.getYear()-1,11,31));
+		
+		drugStatisticsDTO.setFourthQuartalValue(this.sumOfReservationsAmount(reservations));			
+	}
+
+	private void calculateDrugForFirstQuartal(UUID pharmacyId, DrugsStatisticsDTO drugStatisticsDTO) {
+		Date dateTo= new Date();
+		
+		List<DrugReservation> reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear(),0,1), new Date());
+		
+		drugStatisticsDTO.setFirstQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,3,1), new Date(dateTo.getYear()-1,5,30));
+		
+		drugStatisticsDTO.setSecondQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,6,1), new Date(dateTo.getYear()-1,8,30));
+		
+		drugStatisticsDTO.setThirdQuartalValue(this.sumOfReservationsAmount(reservations));
+		
+		reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,new Date(dateTo.getYear()-1,9,1), new Date(dateTo.getYear()-1,11,31));
+		
+		drugStatisticsDTO.setFourthQuartalValue(this.sumOfReservationsAmount(reservations));		
+	}
+
+	private int sumOfReservationsAmount(List<DrugReservation> reservations) {
+		int sum=0;
+		for(DrugReservation drugReservation : reservations) {
+			sum+= drugReservation.getAmount();
+		}
+		return sum;
+	}
+
+	private void calculateDrugStatisticsForMontly(UUID pharmacyId, DrugsStatisticsDTO drugStatisticsDTO) {
+		Date dateTo= new Date();
+		Date dateFrom= new Date(dateTo.getYear()-1,dateTo.getMonth()+1,1);
+	
+		List<DrugReservation> reservations = drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,dateFrom, dateTo);
+	
+		
+		for(DrugReservation reservation : reservations) {
+			drugStatisticsDTO.incrementDrugMontlyMap(reservation.getStartDate().getMonth(),reservation.getAmount());
+		}
+	}
 
 	private void calculateStatisticsForYears(UUID pharmacyId, ExaminationsStatisticsDTO examinationStatisticsDTO) {
 		Date currentDate = new Date();

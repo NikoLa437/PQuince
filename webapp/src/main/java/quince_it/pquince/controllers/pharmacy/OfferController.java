@@ -64,8 +64,10 @@ public class OfferController {
 	public ResponseEntity<?> acceptOffer(@RequestBody AcceptOfferForOrderDTO acceptOfferForOrderDTO) {
 		
 		try {
-			offerService.acceptOffer(acceptOfferForOrderDTO);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			if(offerService.acceptOffer(acceptOfferForOrderDTO))
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			else
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {

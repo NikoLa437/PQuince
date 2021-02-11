@@ -14,7 +14,7 @@ public interface IOfferService extends IService<OfferDTO, IdentifiableDTO<OfferD
 
 	List<IdentifiableDTO<OfferDTO>> findOffersForOrder(UUID orderId);
 
-	void acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO);
+	boolean acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO);
 
 	boolean checkIfCanUpdate(UUID id);
 

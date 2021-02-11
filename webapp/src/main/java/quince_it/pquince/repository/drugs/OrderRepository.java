@@ -13,4 +13,10 @@ public interface OrderRepository extends JpaRepository<Order, UUID>{
 	
 	@Query(value = "SELECT o from Order o WHERE o.pharmacy.id = ?1")
 	List<Order> findDrugOrderForPharmacy(UUID pharmacyId);
+
+	@Query(value = "SELECT o from Order o WHERE o.pharmacy.id = ?1 AND o.orderStatus='CREATED'")
+	List<Order> findFilteredCreatedOrderForPharmacy(UUID pharmacyId);
+
+	@Query(value = "SELECT o from Order o WHERE o.pharmacy.id = ?1 AND o.orderStatus='PROCESSED'")
+	List<Order> findFilteredProcessedOrderForPharmacy(UUID pharmacyId);
 }
