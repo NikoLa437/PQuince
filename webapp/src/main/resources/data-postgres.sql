@@ -277,3 +277,5 @@ insert into offers_for_order (order_id, offers_id) values ('11111111-67ac-11eb-a
 insert into offers_for_order (order_id, offers_id) values ('11111111-67ac-11eb-ae93-0242ac130002', '33331111-67ac-11eb-ae93-0242ac130002');
 insert into offers_for_order (order_id, offers_id) values ('11112222-67ac-11eb-ae93-0242ac130002', '44441111-67ac-11eb-ae93-0242ac130002');
 
+insert into drug_request(id, date_time, drug_instance_id, pharmacy_id, staff_Id) values('2219010c-a30e-477c-a61f-2301c7222c6a', '2021-02-11 15:42:33.936', '2fe1cd8e-5839-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', '25345278-52d3-11eb-ae93-0242ac130002');
+insert into drug_request(id, date_time, drug_instance_id, pharmacy_id, staff_Id) values('28c98597-0d66-4619-b4ea-64584aab0db1', '2021-02-11 15:40:24.324', '1fe1cd8e-5839-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', '25345278-52d3-11eb-ae93-0242ac130002');
