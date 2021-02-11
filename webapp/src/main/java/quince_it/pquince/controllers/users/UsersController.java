@@ -333,7 +333,6 @@ public class UsersController {
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
 	public ResponseEntity<?> addDermatologistToPharmacy(@RequestBody AddDermatologistToPharmacyDTO addDermatologistToPharmacyDTO) {
-		
 		try {
 			if(userService.addDermatologistToPharmacy(addDermatologistToPharmacyDTO))
 				return new ResponseEntity<>(HttpStatus.OK); 

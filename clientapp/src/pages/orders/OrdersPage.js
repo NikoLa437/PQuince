@@ -29,7 +29,8 @@ class OrdersPage extends Component {
         drugsToAdd:[],
         addedDrugs:[],
         showEditOrder:false,
-        drugs:[]
+        drugs:[],
+        showingSorted:false
 
     };
 
@@ -237,6 +238,35 @@ class OrdersPage extends Component {
         this.updateOrders();
     }
 
+    handleResetFilter = () =>{
+        Axios
+        .get(BASE_URL + "/api/order/find-orders-for-pharmacy?pharmacyId="+ this.state.pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) =>{
+            this.setState({orders : res.data,showingSorted:false});
+            console.log(res.data);
+        }).catch((err) => {console.log(err);});
+    }
+
+    handleFilterOrderPerCreated = () =>{
+        Axios
+        .get(BASE_URL + "/api/order/find-created-orders-for-pharmacy?pharmacyId="+ this.state.pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) =>{
+            this.setState({orders : res.data,showingSorted:true});
+            console.log(res.data);
+        }).catch((err) => {console.log(err);});
+    }
+
+    handleFilterOrderPerProccessed = () =>{
+        Axios
+        .get(BASE_URL + "/api/order/find-processed-orders-for-pharmacy?pharmacyId="+ this.state.pharmacyId, {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) =>{
+            this.setState({orders : res.data,showingSorted:true});
+            console.log(res.data);
+        }).catch((err) => {console.log(err);});
+    }
 
     render() {
 		return (
@@ -263,7 +293,33 @@ class OrdersPage extends Component {
                                 handleCloseAlert={this.handleCloseAlertFail}
                         />
 						<h5 className=" text-center mb-0 mt-2 text-uppercase">Orders </h5>
-
+                        <div className="dropdown">
+										<button
+											className="btn btn-primary dropdown-toggle"
+											type="button"
+											id="dropdownMenu2"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="false"
+										>
+											Filter by
+										</button>
+										<div className="dropdown-menu" aria-labelledby="dropdownMenu2">
+											<button className="dropdown-item" type="button" onClick={this.handleFilterOrderPerCreated}>
+												CREATED
+											</button>
+											<button className="dropdown-item" type="button" onClick={this.handleFilterOrderPerProccessed}>
+												PROCESSED
+											</button>
+										</div>
+                                        <div className="form-col ml-3">
+									        <div className={this.state.showingSorted ? "form-group" : "form-group collapse"}>
+										        <button type="button" className="btn btn-outline-secondary" onClick={this.handleResetFilter}>
+											            <i className="icofont-close-line mr-1"></i>Reset filter
+										        </button>
+									        </div>
+								        </div>
+									</div>
                         <table className="table mt-5" style={{width:"100%"}}>
                             <tbody>
                                 {this.state.orders.map(order => 
