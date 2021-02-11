@@ -81,6 +81,18 @@ public class PharmacyController {
 		
 	}
 	
+	@GetMapping("/has-qrpharmacies")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> findIfPharmacyHasQR(@RequestParam UUID pharamcyId,@RequestParam UUID qrID) {
+		
+		if(pharmacyService.findIfPharmacyHasQRCode(pharamcyId,qrID)) {
+			return new ResponseEntity<>(HttpStatus.OK); 
+		}
+		
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+
+	}
+	
 	@PostMapping("/qrpharmacies/buy")
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> buyWithQR(@RequestBody PharmacyERecipeDTO pharmacyERecipeDTO) {

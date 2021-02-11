@@ -77,4 +77,6 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	ExaminationsStatisticsDTO findStatisticsForExaminationsAndColsutations();
 
 	DrugsStatisticsDTO findStatisticsForDrugs();
+
+	boolean findIfPharmacyHasQRCode(UUID pharamcyId, UUID qrID);
 }

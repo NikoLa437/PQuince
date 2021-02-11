@@ -862,6 +862,20 @@ public class PharmacyService implements IPharmacyService {
         c.add(Calendar.DATE, -days);
         return new Date(c.getTimeInMillis());
     }
+
+	@Override
+	public boolean findIfPharmacyHasQRCode(UUID pharamcyId, UUID qrID) {
+		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(qrID);
+		List<Pharmacy> allPharmacies = pharmacyRepository.findAll();
+
+		for(Pharmacy p : allPharmacies) {
+			if((allDrugsAreInPharmacy(items,p)) != -1 && p.getId().equals(pharamcyId)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 
 }

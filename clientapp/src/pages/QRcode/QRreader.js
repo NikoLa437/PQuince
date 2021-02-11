@@ -116,7 +116,7 @@ class QRreader extends Component {
     <React.Fragment>
 			<TopBar />
 			<Header />
-    <div className="container" style={{ marginTop: "10%" }}>
+    		<div className="container" style={{ marginTop: "10%" }}>
 					<h5 className=" text-center mb-0 mt-2 text-uppercase">Enter QR code</h5>
        		<div className="container" style={{ marginTop: "0%" }}>
                 <QrReader ref="qrReader1"

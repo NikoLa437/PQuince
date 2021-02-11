@@ -264,7 +264,7 @@ public class EmailService {
 	}
 
 	@Async
-	public void sendEmailToProviderForAcceptedOffer(Order order,Offers offer) {
+	public void sendEmailToProviderForAcceptedOffer(Order order,Offers offer) throws MessagingException {
 		// TODO Auto-generated method stub
 		System.out.println("Slanje emaila...");
 
