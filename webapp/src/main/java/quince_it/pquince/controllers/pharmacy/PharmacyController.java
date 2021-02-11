@@ -36,9 +36,9 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IDrugInstanceService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IActionAndPromotionsService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyComplaintService;
+import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
-import quince_it.pquince.services.implementation.IPharmacyFeedbackService;
 
 @RestController
 @RequestMapping(value = "api/pharmacy")

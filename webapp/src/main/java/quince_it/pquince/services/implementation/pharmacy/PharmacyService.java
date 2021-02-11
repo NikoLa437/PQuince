@@ -17,6 +17,7 @@ import org.springframework.mail.MailException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentType;
@@ -48,10 +49,10 @@ import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
+import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 import quince_it.pquince.services.contracts.interfaces.users.ILoyaltyProgramService;
 import quince_it.pquince.services.contracts.interfaces.users.IUserService;
-import quince_it.pquince.services.implementation.IPharmacyFeedbackService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
 import quince_it.pquince.services.implementation.util.LocationUtil;
 import quince_it.pquince.services.implementation.util.pharmacy.PharmacyMapper;
@@ -487,6 +488,7 @@ public class PharmacyService implements IPharmacyService {
 	}
 	
 	@Override
+	@Transactional
 	public UUID buyWithQR(PharmacyERecipeDTO pharmacyERecipeDTO) {
 		
 		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(pharmacyERecipeDTO.geteRecipeId());
