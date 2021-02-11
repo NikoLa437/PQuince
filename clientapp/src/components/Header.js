@@ -41,9 +41,7 @@ class Header extends Component {
 							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
 								<Link to="/patients">Patients</Link>
 							</li>
-							<li hidden={!this.hasRole("ROLE_PATIENT")}>
-								<Link to="/patient-complaint">Make complaint</Link>
-							</li>
+
 							<li hidden={!this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
 								<Link to="/calendar">Calendar</Link>
 							</li>
@@ -61,7 +59,7 @@ class Header extends Component {
 										<Link to="/patient-ereceipts">eReciepts</Link>
 									</li>
 									<li>
-										<Link to="/drugs-reservation">Reserved medicines</Link>
+										<Link to="/drugs-reservation">Reserved drugs</Link>
 									</li>
 									<li>
 										<Link to="/patient-pharmacies-subscription">Pharmacy subscription</Link>
@@ -84,10 +82,10 @@ class Header extends Component {
 								<a href="#">Services</a>
 								<ul>
 									<li hidden={!this.hasRole("ROLE_PATIENT")}>
-										<Link to="/dermatologists-for-patient">Dermatologist</Link>
+										<Link to="/dermatologists-for-patient">Dermatologists</Link>
 									</li>
 									<li hidden={!this.hasRole("ROLE_PATIENT")}>
-										<Link to="/pharmacist-for-patient">Pharmacist</Link>
+										<Link to="/pharmacist-for-patient">Pharmacists</Link>
 									</li>
 									<li hidden={this.hasRole("ROLE_PHARMACYADMIN")}>
 										<Link to="/pharmacies">Pharmacies</Link>
@@ -97,6 +95,9 @@ class Header extends Component {
 									</li>
 									<li hidden={!this.hasRole("ROLE_PATIENT")}>
 										<Link to="/qr">Get drugs from QR code</Link>
+									</li>
+									<li hidden={!this.hasRole("ROLE_PATIENT")}>
+										<Link to="/patient-complaint">Make complaint</Link>
 									</li>
 								</ul>
 							</li>
