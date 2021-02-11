@@ -4,7 +4,6 @@ import TopBar from "../components/TopBar";
 import { Link } from "react-router-dom";
 
 class HomePage extends React.Component {
-
 	hasRole = (reqRole) => {
 		let roles = JSON.parse(localStorage.getItem("keyRole"));
 
@@ -25,9 +24,9 @@ class HomePage extends React.Component {
 				<Header />
 
 				<section id="hero" className="d-flex align-items-center">
-					<div className="container"  hidden={this.hasRole("ROLE_DERMATHOLOGIST")}>
+					<div className="container" hidden={this.hasRole("ROLE_DERMATHOLOGIST")}>
 						<h1>Welcome to PQuince</h1>
-						<Link to="/registration" className="btn-get-started scrollto">
+						<Link hidden={this.hasRole("*")} to="/registration" className="btn-get-started scrollto">
 							Register
 						</Link>
 					</div>
