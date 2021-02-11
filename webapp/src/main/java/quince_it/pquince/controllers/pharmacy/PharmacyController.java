@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.ActionAndPromotionsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.ExaminationsStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
@@ -499,4 +500,18 @@ public class PharmacyController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@CrossOrigin
+	@GetMapping("/find-statistics-for-examinations-and-consultations")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<ExaminationsStatisticsDTO> findStatisticsForExaminationsAndColsutations() {
+		try {
+			return new ResponseEntity<>(pharmacyService.findStatisticsForExaminationsAndColsutations(),HttpStatus.OK);
+		}catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
 }

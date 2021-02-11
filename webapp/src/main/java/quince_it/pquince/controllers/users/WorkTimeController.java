@@ -30,7 +30,7 @@ public class WorkTimeController {
 	
 	@CrossOrigin
 	@PostMapping 
-	public ResponseEntity<?>addWorkTimeForPatient(@RequestBody WorkTimeDTO workTimeDTO) {
+	public ResponseEntity<?>addWorkTimeForStaff(@RequestBody WorkTimeDTO workTimeDTO) {
 		
 		try {
 			if(workTimeService.create(workTimeDTO)!=null)

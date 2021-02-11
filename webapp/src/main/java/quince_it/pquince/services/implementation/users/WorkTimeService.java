@@ -1,6 +1,8 @@
 package quince_it.pquince.services.implementation.users;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,9 +36,7 @@ public class WorkTimeService implements IWorkTimeService{
 
 	@Override
 	public UUID create(WorkTimeDTO workTimeDTO) {
-		// TODO WORKTIME Service:  Implement try catch 
-
-		if(!checkIfStaffHasWorkTimeAtThatTime(workTimeDTO)) {
+		if(checkIfStaffHasWorkTimeAtThatTime(workTimeDTO)) {
 			return null;
 		}
 			
@@ -50,12 +50,8 @@ public class WorkTimeService implements IWorkTimeService{
 		return null;
 	}
 
-
-	
-
 	@Override
 	public List<IdentifiableDTO<WorkTimeDTO>> findWorkTimeForStaff(UUID staffId) {
-		// TODO WORKTIME Service: Implement try catch 
 		List<IdentifiableDTO<WorkTimeDTO>> retWorkTimes = new ArrayList<IdentifiableDTO<WorkTimeDTO>>();
 		
 		for(WorkTime workTime : workTimeRepository.findAll()) {
@@ -76,21 +72,44 @@ public class WorkTimeService implements IWorkTimeService{
 		List<WorkTime> workTimes= workTimeRepository.findAll();
 		
 		for(WorkTime workTime : workTimes) {
-			if(workTime.getStaff().getId().equals(workTimeDTO.getForStaff()) && isDateOverlap(workTime,workTimeDTO))
-				return false;
+			if((workTime.getStaff().getId().equals(workTimeDTO.getForStaff()) && isDateOverlap(workTime,workTimeDTO)))
+				return true;
 		}
 		
-		return true;
+		return false;
 	}
 	
 	private boolean isDateOverlap(WorkTime workTime, WorkTimeDTO workTimeDTO){
-	    if(workTime.getStartDate().before(workTimeDTO.getEndDate()) && workTimeDTO.getStartDate().before(workTime.getEndDate())) {
+	    if(workTime.getStartDate().before(workTimeDTO.getEndDate()) && workTimeDTO.getStartDate().before(workTime.getEndDate()) || checkDateExtremes(workTime,workTimeDTO)) {
+	    	if(workTime.getPharmacy().getId().equals(workTimeDTO.getForPharmacy()))
+	    		return true;
+	    	
 	    	if(workTime.getStartTime()<=workTimeDTO.getEndTime() && workTimeDTO.getStartTime()<=workTime.getEndTime()) {
 	    		return true;
 	    	}
 	    }
+	    
 	    return false;
 	}  
+	
+	private boolean checkDateExtremes(WorkTime workTime, WorkTimeDTO workTimeDTO) {
+		if(workTime.getEndDate().getDate() == workTimeDTO.getStartDate().getDate() && workTime.getEndDate().getDay() == workTimeDTO.getStartDate().getDay() && workTime.getEndDate().getMonth() == workTimeDTO.getStartDate().getMonth() )
+			return true;
+			
+		if(workTime.getStartDate().getDate() == workTimeDTO.getEndDate().getDate() && workTime.getStartDate().getDay() == workTimeDTO.getEndDate().getDay() && workTime.getStartDate().getMonth() == workTimeDTO.getEndDate().getMonth() )
+			return true;
+		
+		return false;
+	}
+
+
+
+
+	private java.sql.Date convertDateToSQLDate(Date date){
+        long timeInMilliSeconds = date.getTime();
+        return new java.sql.Date(timeInMilliSeconds);
+	}
+	
 	
 	@Override
 	public IdentifiableDTO<WorkTimeDTO> findById(UUID id) {

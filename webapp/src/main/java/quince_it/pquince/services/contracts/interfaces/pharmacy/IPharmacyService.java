@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.ExaminationsStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
@@ -71,4 +72,6 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByPriceDescending(UUID id);
 
 	List<IdentifiableDTO<PharmacyDrugPriceDTO>> findQrPharmaciesWithGradesByPriceAscending(UUID id);
+
+	ExaminationsStatisticsDTO findStatisticsForExaminationsAndColsutations();
 }

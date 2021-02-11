@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class DrugOrderDTO {
 	private UUID drugInstanceId;
-	private double amount;
+	private int amount;
 	
 
 	public DrugOrderDTO() {
@@ -12,8 +12,7 @@ public class DrugOrderDTO {
 		// TODO Auto-generated constructor stub
 	}
 	
-	
-	public DrugOrderDTO(UUID drugInstanceId, double amount) {
+	public DrugOrderDTO(UUID drugInstanceId, int amount) {
 		super();
 		this.drugInstanceId = drugInstanceId;
 		this.amount = amount;
@@ -26,10 +25,10 @@ public class DrugOrderDTO {
 	public void setDrugInstanceId(UUID drugInstanceId) {
 		this.drugInstanceId = drugInstanceId;
 	}
-	public double getAmount() {
+	public int getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public void setAmount(int amount) {
 		this.amount = amount;
 	}
 	
