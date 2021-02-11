@@ -17,8 +17,8 @@ insert into users (id, active,email, name,password,phone_number,surname, city, c
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-12eb-ac93-0242ac130002',true, 'exampla21@example.com','Sredoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Mikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('25345278-52d3-13eb-ae93-0242ac130002',true, 'exampla31@example.com','Radoje','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0600000','Bikic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788',true, 'pharmacyadmin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('44444d47-1a8a-4ae1-b109-af7b56e94788',true, 'admin@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
-insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('55555d47-1a8a-4ae1-b109-af7b56e94788',true, 'supplier@example.com','Petar','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('44444d47-1a8a-4ae1-b109-af7b56e94788',true, 'admin@example.com','Petar','$2a$10$sqes3IpPL4mBgAAmimisyOWj5DlqPRndrJFNFw9zWiJjyNa5ozKS6','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
+insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('55555d47-1a8a-4ae1-b109-af7b56e94788',true, 'supplier@example.com','Petar','$2y$10$/vLDfCyu.2agCDFchcXnM.EURgHs7f.aoKoLStnzWKq19okEphrpS','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 insert into users (id, active,email, name,password,phone_number,surname, city, country, street, latitude, longitude, version) values ('66666d47-1a8a-4ae1-b109-af7b56e94788',true, 'supplier2@example.com','Mika','$2a$10$Amd0M3ETJ/9hhxh5zJebvOf9Bx33aDyLS2qmCWbIksaHTS1h9DSAy','0624932342','Dusanic','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 1);
 
 insert into patient (id, penalty, points) values ('22793162-52d3-11eb-ae93-0242ac130002',0,5);
@@ -215,13 +215,13 @@ insert into drug_format_id (id, type) values ('39545278-52d3-13eb-ae93-0242ac130
 insert into drug_format_id (id, type) values ('40645278-52d3-13eb-ae93-0242ac130002','INJECTION');
 
 
-insert into ereceipt (id, price, creation_date, status, patient_id) values ('e672e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, price, creation_date, status, patient_id, pharmacy_id) values ('15df3e98-67ad-11eb-ae93-0242ac130002', 2200, '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002');
-insert into ereceipt (id, price, creation_date, status, patient_id) values ('19e26092-67ad-11eb-ae93-0242ac130002', -1, '2021-01-05', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, price, creation_date, status, patient_id) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-13', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, price, creation_date, status, patient_id) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, price, creation_date, status, patient_id) values ('8872e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
-insert into ereceipt (id, price, creation_date, status, patient_id) values ('9972e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002');
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('e672e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, pharmacy_id, version) values ('15df3e98-67ad-11eb-ae93-0242ac130002', 2200, '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('19e26092-67ad-11eb-ae93-0242ac130002', -1, '2021-01-05', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-13', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('8872e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('9972e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
 
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('8872e844-67ac-11eb-ae93-0242ac130002','dac2b818-5838-11eb-ae93-0242ac130002',2);
 

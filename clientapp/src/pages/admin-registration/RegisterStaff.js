@@ -233,6 +233,7 @@ class RegisterStaff extends Component {
 							
 						Axios.post(BASE_URL + "/auth/signup-sysadmin", userDTO, { headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
+								alert(res.data);
 								console.log("Success");
 								this.setState({ openModal: true });
 							})
