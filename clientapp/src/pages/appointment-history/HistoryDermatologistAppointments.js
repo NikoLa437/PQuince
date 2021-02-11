@@ -103,7 +103,7 @@ class HistoryDermatologistAppointments extends Component {
 			staffSurname: this.state.StaffSurame,
 			profession: "dermathologist",
 		};
-		
+
 		Axios.post(BASE_URL + "/api/staff/complaint", entityDTO, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((resp) => {
 				if (resp.status === 405) {

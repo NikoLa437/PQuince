@@ -77,6 +77,9 @@ class Header extends Component {
 							<li hidden={!this.hasRole("ROLE_SYSADMIN") && !this.hasRole("ROLE_DERMATHOLOGIST") && !this.hasRole("ROLE_PHARMACIST")}>
 								<Link to="/drugs">Drugs</Link>
 							</li>
+							<li hidden={!this.hasRole("ROLE_SYSADMIN")}>
+								<Link to="/pharmacies">Pharmacies</Link>
+							</li>
 							<li className="drop-down" hidden={!this.hasRole("ROLE_PATIENT")}>
 								<a href="#">Services</a>
 								<ul>
@@ -93,12 +96,12 @@ class Header extends Component {
 										<Link to="/drugs">Drugs</Link>
 									</li>
 									<li hidden={!this.hasRole("ROLE_PATIENT")}>
-										<Link to="/qr">QR code</Link>
+										<Link to="/qr">Get drugs from QR code</Link>
 									</li>
 								</ul>
 							</li>
-							
-								<li className="drop-down" hidden={!this.hasRole("ROLE_SYSADMIN")}>
+
+							<li className="drop-down" hidden={!this.hasRole("ROLE_SYSADMIN")}>
 								<a href="#">Register</a>
 								<ul>
 									<li hidden={!this.hasRole("ROLE_SYSADMIN")}>
@@ -112,15 +115,15 @@ class Header extends Component {
 									</li>
 								</ul>
 							</li>
-							
+
 							<li hidden={!this.hasRole("ROLE_SUPPLIER")}>
 								<Link to="/offers">Offers</Link>
 							</li>
-							
+
 							<li hidden={!this.hasRole("ROLE_SUPPLIER")}>
 								<Link to="/orders">Orders</Link>
 							</li>
-							
+
 							<li className="drop-down" hidden={!this.hasRole("ROLE_SYSADMIN")}>
 								<a href="#">Complaints</a>
 								<ul>
@@ -132,7 +135,7 @@ class Header extends Component {
 									</li>
 								</ul>
 							</li>
-							
+
 							<li hidden={!this.hasRole("ROLE_SYSADMIN")}>
 								<Link to="/loyalty-program">Loyalty program</Link>
 							</li>

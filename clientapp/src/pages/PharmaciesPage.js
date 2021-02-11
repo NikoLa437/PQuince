@@ -59,11 +59,13 @@ class PharmaciesPage extends Component {
 	};
 
 	handleGradeFromChange = (event) => {
-		this.setState({ gradeFrom: event.target.value });
+		if (event.target.value < 0) this.setState({ gradeFrom: 0 });
+		else this.setState({ gradeFrom: event.target.value });
 	};
 
 	handleGradeToChange = (event) => {
-		this.setState({ gradeTo: event.target.value });
+		if (event.target.value > 5) this.setState({ gradeTo: 5 });
+		else this.setState({ gradeTo: event.target.value });
 	};
 
 	handleDistanceFromChange = (event) => {
@@ -186,24 +188,37 @@ class PharmaciesPage extends Component {
 	};
 
 	handleResetSearch = () => {
-		Axios.get(BASE_URL + "/api/pharmacy")
-			.then((res) => {
-				this.setState({
-					pharmacies: res.data,
-					formShowed: false,
-					showingSearched: false,
-					name: "",
-					city: "",
-					gradeFrom: "",
-					gradeTo: "",
-					distanceFrom: "",
-					distanceTo: "",
-				});
-				console.log(res.data);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
+		this.setState(
+			{
+				formShowed: false,
+				showingSearched: false,
+				name: "",
+				city: "",
+				gradeFrom: "",
+				gradeTo: "",
+				distanceFrom: "",
+				distanceTo: "",
+			},
+			() => {
+				if (this.state.showingSorted === true) {
+					if (this.state.sortIndicator === 1) this.handleSortByNameAscending();
+					else if (this.state.sortIndicator === 2) this.handleSortByNameDescending();
+					else if (this.state.sortIndicator === 3) this.handleSortByCityAscending();
+					else if (this.state.sortIndicator === 4) this.handleSortByCityDescending();
+					else if (this.state.sortIndicator === 5) this.handleSortByGradeAscending();
+					else if (this.state.sortIndicator === 6) this.handleSortByGradeDescending();
+				} else {
+					Axios.get(BASE_URL + "/api/pharmacy")
+						.then((res) => {
+							this.setState({ pharmacies: res.data });
+							console.log(res.data);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				}
+			}
+		);
 	};
 
 	handleResetSort = () => {

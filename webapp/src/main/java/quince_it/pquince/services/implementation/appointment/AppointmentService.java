@@ -286,7 +286,7 @@ public class AppointmentService implements IAppointmentService{
 		
 		if (!(appointment.getStartDateTime().after(new Date()) &&
 				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED))))
-			throw new IllegalArgumentException("Bad request");
+			throw new IllegalArgumentException("Cannot reserve appointment.");
 	}
 	
 	private void CanReserveAppointmentAllRestrictions(Appointment appointment) throws AppointmentTimeOverlappingWithOtherAppointmentException, AppointmentTimeOutofWorkTimeRange {
