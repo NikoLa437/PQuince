@@ -864,17 +864,21 @@ public class UserService implements IUserService{
 		return retPharmacists;
 	}
 	
-
 	public Pharmacy getPharmacyForLoggedDermatologist() {
 		UUID dermatologistId = getLoggedUserId();
-		Dermatologist dermatologist = dermatologistRepository.getOne(dermatologistId);
 		Pharmacy pharmacy = null;
-		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);	
+		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);
+		Date currentDateTime = new Date();
+		int currentHours = currentDateTime.getHours();
 		for(WorkTime wt : workTimes){
-			pharmacy = wt.getPharmacy();
+			if(wt.getStartTime() <= currentHours && wt.getEndTime() >= currentHours)
+				pharmacy = wt.getPharmacy();
 		}
 		if(pharmacy == null)
-			throw new IllegalArgumentException("Dermatologist doesn't work in any pharamcy today");
+			for(WorkTime wt : workTimes)
+					pharmacy = wt.getPharmacy();
+		if(pharmacy == null)
+			throw new IllegalArgumentException("Dermatologist doesn't work in any pharamcy at current hours");
 		return pharmacy;
 	}
 	

@@ -75,7 +75,8 @@ public class OrderController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
+	@CrossOrigin
 	@GetMapping("/provider")
 	@PreAuthorize("hasRole('SUPPLIER')") 
 	public ResponseEntity<List<IdentifiableDTO<OrderForProviderDTO>>> findAllForProvider() {

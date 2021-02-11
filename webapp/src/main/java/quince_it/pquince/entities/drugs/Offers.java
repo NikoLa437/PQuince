@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import quince_it.pquince.entities.users.Staff;
 
 @Entity
 @Table(name="Offers")
@@ -28,6 +31,9 @@ public class Offers {
     @Enumerated(EnumType.STRING)
 	@Column(name = "Status", nullable = false)
 	private OfferStatus offerStatus;
+    
+    @ManyToOne
+    private Staff supplier;
 
     public Offers(){}
     
@@ -71,12 +77,20 @@ public class Offers {
 		this.price = price;
 	}
 
-	public OfferStatus getOrderStatus() {
+	public OfferStatus getOfferStatus() {
 		return offerStatus;
 	}
 
-	public void setOrderStatus(OfferStatus offerStatus) {
+	public void setOfferStatus(OfferStatus offerStatus) {
 		this.offerStatus = offerStatus;
+	}
+
+	public Staff getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(Staff supplier) {
+		this.supplier = supplier;
 	}
     
     

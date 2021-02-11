@@ -1,5 +1,10 @@
 package quince_it.pquince.util;
 
+import static quince_it.pquince.constants.Constants.DERMATOLOGIST_ID;
+import static quince_it.pquince.constants.Constants.PHARMACY_ID;
+import static quince_it.pquince.constants.Constants.WORKTIME_START_DATE;
+import static quince_it.pquince.constants.Constants.WORKTIME_END_DATE;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +26,8 @@ import quince_it.pquince.entities.users.Address;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
+import quince_it.pquince.entities.users.User;
+import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 
 public class TestUtil {
@@ -86,4 +93,15 @@ public class TestUtil {
 		return new Appointment(app.getPharmacy(), app.getStaff(), app.getPatient(), start , end, app.getPrice(), app.getAppointmentType(), AppointmentStatus.SCHEDULED);
 	}
 	
+	public static User getDermatologist() {
+		return new User(DERMATOLOGIST_ID, "", "", "","", null, "", true);
+	}
+	public static Pharmacy getPharmacy() {
+		return new Pharmacy(PHARMACY_ID, "", "", null,1000);
+	}
+	public static List<WorkTime> getWorkTimes() {
+		List<WorkTime> workTimes = new ArrayList<WorkTime>();
+		workTimes.add(new WorkTime(getPharmacy(), null, WORKTIME_START_DATE, WORKTIME_END_DATE, 8, 20));
+		return workTimes;
+	}
 }

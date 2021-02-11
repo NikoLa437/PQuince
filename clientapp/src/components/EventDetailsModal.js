@@ -79,7 +79,7 @@ class EventDetailsModal extends Component {
 										</div>
 									</div>
 								</div>
-								<div className="row align-items-end m-4" hidden={!this.canInteractWithAppointment(this.props.startDateTime)}>
+								<div className="row align-items-end m-4" hidden={!this.canInteractWithAppointment(this.props.startDateTime) || this.props.appointmentStatus != "SCHEDULED"}>
 											<button
 												type="button"
 												onClick={() =>

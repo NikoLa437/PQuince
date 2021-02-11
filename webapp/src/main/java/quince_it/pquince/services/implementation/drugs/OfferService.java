@@ -1,6 +1,7 @@
 package quince_it.pquince.services.implementation.drugs;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -8,13 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import quince_it.pquince.entities.drugs.DrugInstance;
+import quince_it.pquince.entities.drugs.DrugOrder;
+import quince_it.pquince.entities.drugs.OfferStatus;
 import quince_it.pquince.entities.drugs.Offers;
+import quince_it.pquince.entities.drugs.Order;
+import quince_it.pquince.entities.drugs.SupplierDrugStorage;
 import quince_it.pquince.repository.drugs.DrugInstanceRepository;
 import quince_it.pquince.repository.drugs.OfferRepository;
+import quince_it.pquince.repository.drugs.OrderRepository;
+import quince_it.pquince.repository.drugs.SupplierDrugStorageRepository;
+import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.services.contracts.dto.drugs.DrugInstanceDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IOfferService;
+import quince_it.pquince.services.implementation.users.UserService;
 import quince_it.pquince.services.implementation.util.drugs.DrugInstanceMapper;
 import quince_it.pquince.services.implementation.util.drugs.OfferMapper;
 
@@ -25,11 +34,23 @@ public class OfferService implements IOfferService{
 	@Autowired
 	private OfferRepository offerRepository;
 	
+	@Autowired
+	private SupplierDrugStorageRepository supplierDrugStorageRepository;
+	
+	@Autowired
+	private OrderRepository orderRepository;
+	
+	@Autowired
+	private StaffRepository staffRepository;
+	
+	@Autowired
+	private UserService userService;
+	
 	@Override
 	public List<IdentifiableDTO<OfferDTO>> findAll() {
 		
 		List<IdentifiableDTO<OfferDTO>> offers = new ArrayList<IdentifiableDTO<OfferDTO>>();
-		offerRepository.findAll().forEach((d) -> offers.add(OfferMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(d)));
+		offerRepository.findBySupplier(userService.getLoggedUserId()).forEach((d) -> offers.add(OfferMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(d)));
 		
 		return offers;
 	}
@@ -39,11 +60,46 @@ public class OfferService implements IOfferService{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	@Override
+	public boolean checkIfCanUpdate(UUID id) {
+		Date todayDate = new Date();
+		List<Order> orders = orderRepository.findAll();
+		for(Order o: orders){
+			if(o.getOffers() == null)
+				continue;
+			
+			if(findIfThereIsOffer(o.getOffers(), id)) {
+				if( todayDate.before(o.getDate()) )
+					return true;
+				else 
+					return false;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean findIfThereIsOffer(List<Offers> offers, UUID id) {
+		for(Offers o: offers) {
+			if(o.getId().equals(id))
+				return true;
+		}
+		
+		return false;
+		
+	}
+	
+	//ovde mogu konflikti mozda
 	@Override
 	public UUID create(OfferDTO entityDTO) {
 		Offers offer = CreateOfferInstanceFromDTO(entityDTO);
+		offer.setSupplier(staffRepository.getOne(userService.getLoggedUserId()));
+		offer.setOfferStatus(OfferStatus.WAITING);
+		Order order = orderRepository.getOne(entityDTO.getId());
 		offerRepository.save(offer);
+		order.addOffer(offer);
+		orderRepository.save(order);
 		return offer.getId();
 	}
 	
@@ -55,13 +111,81 @@ public class OfferService implements IOfferService{
 	public void update(OfferDTO entityDTO, UUID id) {
 		Offers offer = offerRepository.getOne(id);
 		offer.setPrice(entityDTO.getPrice());
-		offer.setDateToDelivery(entityDTO.getDateToDelivery());
+		if(entityDTO.getDateToDelivery() != null)
+			offer.setDateToDelivery(entityDTO.getDateToDelivery());
+		offerRepository.save(offer);
 	}
 
 	@Override
 	public boolean delete(UUID id) {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean checkIfHasDrugs(UUID id) {
+		
+		Order order = orderRepository.getOne(id);
+		
+		List<DrugOrder> drugOrders = order.getOrder();
+		for(DrugOrder o: drugOrders) {
+			if(checkIfExist(o)) {
+				continue;
+			}else
+				return false;
+		}
+		
+		return true;
+	}
+
+	private boolean checkIfExist(DrugOrder o) {
+
+		for(SupplierDrugStorage storage: supplierDrugStorageRepository.findAll()){
+			if(storage.getDrugInstance().getId().equals(o.getDrugInstance().getId())) {
+				if(storage.getCount() >= o.getAmount())
+					return true;
+			}
+		}
+		
+		return false;
+	}
+
+	@Override
+	public List<IdentifiableDTO<OfferDTO>> findAllAccepted() {
+		List<IdentifiableDTO<OfferDTO>> offers = new ArrayList<IdentifiableDTO<OfferDTO>>();
+		
+		for(Offers o: offerRepository.findBySupplier(userService.getLoggedUserId())) {
+			if(o.getOfferStatus().equals(OfferStatus.ACCEPTED))
+				offers.add(OfferMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(o));
+		}
+		
+		
+		return offers;
+	}
+
+	@Override
+	public List<IdentifiableDTO<OfferDTO>> findAllRejected() {
+		List<IdentifiableDTO<OfferDTO>> offers = new ArrayList<IdentifiableDTO<OfferDTO>>();
+		
+		for(Offers o: offerRepository.findBySupplier(userService.getLoggedUserId())) {
+			if(o.getOfferStatus().equals(OfferStatus.REJECTED))
+				offers.add(OfferMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(o));
+		}
+		
+		
+		return offers;	
+	}
+
+	@Override
+	public List<IdentifiableDTO<OfferDTO>> findAllWaiting() {
+		List<IdentifiableDTO<OfferDTO>> offers = new ArrayList<IdentifiableDTO<OfferDTO>>();
+		
+		for(Offers o: offerRepository.findBySupplier(userService.getLoggedUserId())) {
+			if(o.getOfferStatus().equals(OfferStatus.WAITING))
+				offers.add(OfferMapper.MapDrugInstancePersistenceToDrugInstanceIdentifiableDTO(o));
+		}
+		
+		
+		return offers;
 	}
 
 }

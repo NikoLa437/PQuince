@@ -83,11 +83,10 @@ public class ComplaintController {
 	
 	@PostMapping
 	@PreAuthorize("hasRole('PATIENT')")
-	public ResponseEntity<?> createComplaintStuff(@RequestBody ComplaintStaffDTO complaintStaffDTO) {
+	public ResponseEntity<UUID> createComplaintStuff(@RequestBody ComplaintStaffDTO complaintStaffDTO) {
 		
 		try {
-			complaintService.create(complaintStaffDTO);
-			return new ResponseEntity<>(HttpStatus.CREATED);
+			return new ResponseEntity<UUID>(complaintService.create(complaintStaffDTO),HttpStatus.CREATED);
 		} catch (ComplaintsNotAllowedException e) {
 			return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
 		} catch (Exception e) {

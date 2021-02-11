@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -123,6 +124,7 @@ public class AppointmentService implements IAppointmentService{
 		}
 	}
 	
+	@Transactional
 	@Override
 	public UUID createAndSchuduleAppointment(DermatologistCreateAppointmentDTO appointmentDTO) {
 		try {
@@ -134,11 +136,16 @@ public class AppointmentService implements IAppointmentService{
 			if(pharmacy == null)
 				throw new IllegalArgumentException("Dermatologist can't create and schedule appointment outside work hours");
 			double discountPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(appointmentDTO.getPrice(), AppointmentType.EXAMINATION, patientId);
+			ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacy.getId(), ActionAndPromotionType.EXAMINATIONDISCOUNT);
+			if(action != null) {
+				discountPrice -= (action.getPercentOfDiscount()/ 100.0) * discountPrice;
+			}
 			Appointment newAppointment = new Appointment(pharmacy,dermatologist,patient, appointmentDTO.getStartDateTime(),appointmentDTO.getEndDateTime(),discountPrice,AppointmentType.EXAMINATION,AppointmentStatus.CREATED);
 			CanReserveAppointmentAllRestrictions(newAppointment);
 			newAppointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 			emailService.sendAppointmentReservationNotificationAsync(newAppointment, "dr.");
 			appointmentRepository.save(newAppointment);
+			dermatologistRepository.save(dermatologist);
 			return newAppointment.getId();
 		}catch(Exception e) {
 			return null;
@@ -183,14 +190,8 @@ public class AppointmentService implements IAppointmentService{
 	@Override
 	public List<AppointmentPeriodResponseDTO> getFreePeriodsDermatologist(Date date, int duration) {
 		UUID dermatologistId = userService.getLoggedUserId();
-		
-		List<WorkTime> workTimes = workTimeRepository.findWorkTimesForDeramtologistAndCurrentDate(dermatologistId);
-		
+				
 		Pharmacy pharmacy = userService.getPharmacyForLoggedDermatologist();
-		
-		if(pharmacy==null) {
-			return new ArrayList<AppointmentPeriodResponseDTO>();
-		}
 		
 		UUID pharmacyId = pharmacy.getId();
 		
@@ -670,6 +671,7 @@ public class AppointmentService implements IAppointmentService{
 		return returnPharmacists;
 	}
 	
+	@Transactional
 	@Override
 	public UUID newConsultation(NewConsultationDTO newConsultationDTO) throws AppointmentNotScheduledException, AppointmentTimeOverlappingWithOtherAppointmentException, AppointmentTimeOutofWorkTimeRange{
 		long time = newConsultationDTO.getStartDateTime().getTime();
@@ -679,9 +681,14 @@ public class AppointmentService implements IAppointmentService{
 		Pharmacist pharmacist = pharmacistRepository.findById(staffId).get();
 		Pharmacy pharmacy = pharmacist.getPharmacy();
 		double discountPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(pharmacy.getConsultationPrice(), AppointmentType.CONSULTATION, newConsultationDTO.getPatientId());
+		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacy.getId(), ActionAndPromotionType.CONSULTATIONDISCOUNT);
+		if(action != null) {
+			discountPrice -= (action.getPercentOfDiscount()/ 100.0) * pharmacy.getConsultationPrice();
+		}
 		Appointment appointment = new Appointment(pharmacy, pharmacist, patient, newConsultationDTO.getStartDateTime(), endDateTime, discountPrice, AppointmentType.CONSULTATION, AppointmentStatus.SCHEDULED);		
-		CanCreateConsultationAllRestrictions(appointment);
+		CanCreateConsultationAllRestrictions(appointment);	
 		appointmentRepository.save(appointment);
+		pharmacistRepository.save(pharmacist);
 		try {
 			emailService.sendAppointmentReservationNotificationAsync(appointment,"pharmacist");
 		} catch (MessagingException e) {
@@ -799,16 +806,18 @@ public class AppointmentService implements IAppointmentService{
 	@Override
 	public boolean scheduleAppointment(UUID patientId, UUID appointmentId) {
 		try {
-			UUID dermatologistId = userService.getLoggedUserId();
-			
 			Appointment appointment = appointmentRepository.findById(appointmentId).get();
 			Patient patient = patientRepository.findById(patientId).get();
-
+			appointment.setPatient(patient);
 			CanReserveAppointmentAllRestrictions(appointment);
-			
 			appointment.setAppointmentStatus(AppointmentStatus.SCHEDULED);
 			appointment.setPatient(patient);
-			
+			double discountPrice = loyalityProgramService.getDiscountAppointmentPriceForPatient(appointment.getPrice(), AppointmentType.EXAMINATION, patientId);
+			ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(appointment.getPharmacy().getId(), ActionAndPromotionType.EXAMINATIONDISCOUNT);
+			if(action != null) {
+				discountPrice -= (action.getPercentOfDiscount()/ 100.0) * discountPrice;
+			}
+			appointment.setPrice(discountPrice);
 			appointmentRepository.save(appointment);
 			emailService.sendAppointmentReservationNotificationAsync(appointment, "dr.");
 			

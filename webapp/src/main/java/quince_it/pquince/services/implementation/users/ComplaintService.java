@@ -66,7 +66,7 @@ public class ComplaintService implements IComplaintService{
 	private UserRepository userRepository;
 	
 	@Override
-	public void create(ComplaintStaffDTO entityDTO) throws ComplaintsNotAllowedException {
+	public UUID create(ComplaintStaffDTO entityDTO) throws ComplaintsNotAllowedException {
 		
 		
 		UUID patientId = getLoggedUserId();
@@ -78,6 +78,8 @@ public class ComplaintService implements IComplaintService{
 		
 		ComplaintStaff complaintStaff = new ComplaintStaff(staff,patient, entityDTO.getText(), entityDTO.getStaffName(),entityDTO.getStaffSurname(), entityDTO.getProfession(), patient.getEmail());
 		complaintRepository.save(complaintStaff);
+		
+		return complaintStaff.getId();
 		
 	}
 	
