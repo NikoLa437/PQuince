@@ -40,7 +40,7 @@ public class ComplaintStaffMapperTests {
 	}
 	
 	@Test
-	public void MapComplaintStaffPersistenceToComplaintStaffIdentifiableDTO() {
+	public void testMapComplaintStaffPersistenceToComplaintStaffIdentifiableDTO() {
 		ComplaintStaff complaintStaff = new ComplaintStaff(staffMock, patientMock, "Test",PATIENT_NAME,PATIENT_SURNAME, "dermathologist", PATIENT_EMAIL);
 		
 		IdentifiableDTO<ComplaintStaffDTO> identifiableComplaintStaffDTO = ComplaintStaffMapper.MapComplaintStaffPersistenceToComplaintStaffIdentifiableDTO(complaintStaff);

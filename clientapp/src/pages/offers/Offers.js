@@ -292,7 +292,7 @@ class Offers extends Component {
 											</div>
 											<div>
 												<b>Status : </b>{" "}
-												{offer.EntityDTO.orderStatus}
+												{offer.EntityDTO.offerStatus}
 											</div>
 											<div>
 												<b>Price : </b>{" "}
@@ -301,7 +301,7 @@ class Offers extends Component {
 										</td>
 										<td className="align-middle">
 											<button
-												hidden={offer.EntityDTO.orderStatus !== "WAITING"}
+												hidden={offer.EntityDTO.offerStatus !== "WAITING"}
 												type="button"
 												onClick={() => this.handleOfferClick(offer)}
 												className="btn btn-outline-secondary"

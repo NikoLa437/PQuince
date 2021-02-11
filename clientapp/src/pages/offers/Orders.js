@@ -112,6 +112,10 @@ class Orders extends Component {
 					});
 
 			console.log(OfferDTO, "AJDE RADI")
+		}else{
+			this.setState({
+				openModal: true,
+			})
 		}
 			
 	};
@@ -148,7 +152,6 @@ class Orders extends Component {
 	handleModalClose = () => {
 		this.setState({ 
 			openModal: false,
-			redirect:true, 
 		});
 	};
 

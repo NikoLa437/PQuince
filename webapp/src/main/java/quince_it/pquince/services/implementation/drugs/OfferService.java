@@ -41,9 +41,8 @@ public class OfferService implements IOfferService{
 	@Autowired
 	private DrugStorageRepository drugStorageRepository;
 
+	@Autowired
 	private SupplierDrugStorageRepository supplierDrugStorageRepository;
-	
-
 	
 	@Autowired
 	private StaffRepository staffRepository;
@@ -110,7 +109,7 @@ public class OfferService implements IOfferService{
 	}
 	
 	private Offers CreateOfferInstanceFromDTO(OfferDTO offerDTO) {
-		return new Offers(offerDTO.getDateToDelivery(), offerDTO.getPrice(), offerDTO.getOrderStatus());
+		return new Offers(offerDTO.getDateToDelivery(), offerDTO.getPrice(), offerDTO.getOfferStatus());
 	}
 
 	@Override
