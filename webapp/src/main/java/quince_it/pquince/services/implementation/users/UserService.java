@@ -286,6 +286,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createAdmin(UserRequestDTO entityDTO) {
 		Staff staff = CreateAdminFromDTO(entityDTO);
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_SYSADMIN");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));

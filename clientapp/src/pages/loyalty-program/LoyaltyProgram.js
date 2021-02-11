@@ -5,6 +5,7 @@ import { BASE_URL } from "../../constants.js";
 import { withRouter } from "react-router";
 import ModalDialog from "../../components/ModalDialog";
 import Axios from "axios";
+import { Redirect } from "react-router-dom";
 import getAuthHeader from "../../GetHeader";
 
 class LoyaltyProgram extends Component {
@@ -33,6 +34,8 @@ state = {
 		loyalitySilverColor: "#808080",
 		loyalityGoldColor: "#FFCC00",
 		openModalData: false,
+		redirect: false,
+		redirectUrl: '',
 	};
 
 	
@@ -40,27 +43,36 @@ state = {
 		
 		console.log(localStorage.getItem("keyRole"))
 		
-		Axios.get(BASE_URL + "/api/loyaltyProgram/791fee27-bb12-4340-9b0a-a7c9ef575278", { headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/loyaltyProgram/791fee27-bb12-4340-9b0a-a7c9ef575278", {validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				console.log(res.data);
-				this.setState({
-					id: res.data.Id,
-					pointsForAppointment: res.data.EntityDTO.pointsForAppointment,
-					pointsForConsulting: res.data.EntityDTO.pointsForConsulting,
-					pointsToEnterRegularCathegory: res.data.EntityDTO.pointsToEnterRegularCathegory,
-					pointsToEnterSilverCathegory: res.data.EntityDTO.pointsToEnterSilverCathegory,
-					pointsToEnterGoldCathegory: res.data.EntityDTO.pointsToEnterGoldCathegory,
-					appointmentDiscountRegular: res.data.EntityDTO.appointmentDiscountRegular,
-					drugDiscountRegular: res.data.EntityDTO.drugDiscountRegular,
-					consultationDiscountRegular: res.data.EntityDTO.consultationDiscountRegular,
-					appointmentDiscountSilver: res.data.EntityDTO.appointmentDiscountSilver,
-					drugDiscountSilver: res.data.EntityDTO.drugDiscountSilver,
-					consultationDiscountSilver: res.data.EntityDTO.consultationDiscountSilver,
-					appointmentDiscountGold: res.data.EntityDTO.appointmentDiscountGold,
-					drugDiscountGold: res.data.EntityDTO.drugDiscountGold,
-					consultationDiscountGold: res.data.EntityDTO.consultationDiscountGold,
-				});
-				console.log(res.data);
+
+				if (res.status === 401) {
+					this.setState({
+						redirect: true,
+						redirectUrl: "/unauthorized"
+					});
+				} else {
+
+					console.log(res.data);
+					this.setState({
+						id: res.data.Id,
+						pointsForAppointment: res.data.EntityDTO.pointsForAppointment,
+						pointsForConsulting: res.data.EntityDTO.pointsForConsulting,
+						pointsToEnterRegularCathegory: res.data.EntityDTO.pointsToEnterRegularCathegory,
+						pointsToEnterSilverCathegory: res.data.EntityDTO.pointsToEnterSilverCathegory,
+						pointsToEnterGoldCathegory: res.data.EntityDTO.pointsToEnterGoldCathegory,
+						appointmentDiscountRegular: res.data.EntityDTO.appointmentDiscountRegular,
+						drugDiscountRegular: res.data.EntityDTO.drugDiscountRegular,
+						consultationDiscountRegular: res.data.EntityDTO.consultationDiscountRegular,
+						appointmentDiscountSilver: res.data.EntityDTO.appointmentDiscountSilver,
+						drugDiscountSilver: res.data.EntityDTO.drugDiscountSilver,
+						consultationDiscountSilver: res.data.EntityDTO.consultationDiscountSilver,
+						appointmentDiscountGold: res.data.EntityDTO.appointmentDiscountGold,
+						drugDiscountGold: res.data.EntityDTO.drugDiscountGold,
+						consultationDiscountGold: res.data.EntityDTO.consultationDiscountGold,
+					});
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -203,6 +215,8 @@ state = {
 		});
 	};
 	render() {
+		
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
 		return (
 			<React.Fragment>
 				<TopBar />

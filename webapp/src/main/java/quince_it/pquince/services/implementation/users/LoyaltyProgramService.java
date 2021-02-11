@@ -50,7 +50,7 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 	public void update(LoyaltyProgramDTO entityDTO) {
 
 		try {
-			//LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.findById(id).get();
+			
 			LoyaltyProgram loyaltyProgram = loyaltyProgramRepository.getOne(LOYALITY_PROGRAM_ID);
 			loyaltyProgram.setPointsForAppointment(entityDTO.getPointsForAppointment());
 			loyaltyProgram.setPointsForConsulting(entityDTO.getPointsForConsulting());
@@ -76,7 +76,12 @@ public class LoyaltyProgramService implements ILoyaltyProgramService {
 		}catch (Exception e) {
 		}
 	}
-
+	
+	@Override
+	public LoyaltyProgram get() {
+		return  loyaltyProgramRepository.getOne(LOYALITY_PROGRAM_ID);
+	}
+	
 	@Override
 	public List<IdentifiableDTO<LoyaltyProgramDTO>> findAll() {
 		// TODO Auto-generated method stub

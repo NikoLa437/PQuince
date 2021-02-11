@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Version;
 
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
@@ -35,6 +36,9 @@ public class EReceipt {
 	@Column(name = "price")
 	private double price;
 	
+	@Version
+	private Long version;
+	
 	public EReceipt() {}
 
 	public EReceipt(UUID id, Patient patient, Date creationDate, Pharmacy pharmacy, EReceiptStatus status) {
@@ -49,6 +53,10 @@ public class EReceipt {
 
 	public Patient getPatient() {
 		return patient;
+	}
+	
+	public Long getVersion() {
+		return version;
 	}
 
 	public void setPatient(Patient patient) {
