@@ -7,6 +7,7 @@ import Axios from "axios";
 import { withRouter } from "react-router";
 import ComplaintCreateModal from "../../components/ComplaintReplyModal";
 import getAuthHeader from "../../GetHeader";
+import { Redirect } from "react-router-dom";
 
 class AdminComplaints extends Component {
 	state = {
@@ -33,6 +34,8 @@ class AdminComplaints extends Component {
 		hiddenSuccessAlert: true,
 		successHeader: "",
 		successMessage: "",
+        redirect: false,
+        redirectUrl: '',
 	};
 
 	componentDidMount() {
@@ -44,6 +47,22 @@ class AdminComplaints extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
+		
+		Axios.get(BASE_URL + "/api/users/sysadmin/auth", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+            .then((res) => {
+				console.log(res.statusm, "TEST")
+                if (res.status === 401) {
+                    this.setState({
+                        redirect: true,
+                        redirectUrl: "/unauthorized"
+                    });
+                } else {
+                    console.log(res.data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
 	}
 
 
@@ -138,6 +157,8 @@ class AdminComplaints extends Component {
 	
 
 	render() {
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
 			<React.Fragment>
 				<TopBar />

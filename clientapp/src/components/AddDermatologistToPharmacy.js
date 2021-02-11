@@ -5,6 +5,8 @@ import Axios from 'axios';
 import {BASE_URL} from '../constants.js';
 import DatePicker from "react-datepicker";
 import getAuthHeader from "../GetHeader";
+import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
+import HeadingAlert from "../components/HeadingAlert";
 
 class AddDermatologistToPharmacy extends Component {
     state = {
@@ -16,7 +18,13 @@ class AddDermatologistToPharmacy extends Component {
         selectedEndDate:new Date(),
         timeFrom:1,
         timeTo:2,    
-        pharmacyId:''
+        pharmacyId:'',
+        hiddenSuccessAlert: true,
+		successHeader: "",
+		successMessage: "",
+		hiddenFailAlert: true,
+		failHeader: "",
+		failMessage: "",
     }
 
     componentDidMount() {
@@ -30,6 +38,14 @@ class AddDermatologistToPharmacy extends Component {
         });
     }
 
+    handleCloseAlertSuccess = () => {
+		this.setState({ hiddenSuccessAlert: true });
+    };
+    
+    handleCloseAlertFail = () => {
+		this.setState({ hiddenFailAlert: true });
+	};
+
     handleAdd = () => {
         let addDermatologistToPharmacyDTO = {
             pharmacyId : this.props.pharmacyId,
@@ -42,13 +58,35 @@ class AddDermatologistToPharmacy extends Component {
 
         Axios
         .put(BASE_URL + "/api/users/add-dermatologist-to-pharmacy", addDermatologistToPharmacyDTO, {
+            validateStatus: () => true,
             headers: { Authorization: getAuthHeader() },
         }).then((res) =>{
-            console.log(res.data);
-            this.props.updateDermatologist();
-            this.setState({showAddWorkTime: false, modalSize:'lg'});
-            alert("Uspesno dodat dermatolog u apoteku")
-            this.handleClickOnClose();
+            if (res.status === 200) {
+                this.setState({
+                    hiddenSuccessAlert: false,
+                    hiddenFailAlert:true,
+                    successHeader: "Success",
+                    successMessage: "You successfully add new appointment.",
+                })
+                this.props.updateDermatologist();
+                this.setState({showAddWorkTime: false, modalSize:'lg'});
+                this.handleSuccessClose();
+            }else if(res.status===400){
+                this.setState({ 
+                    hiddenSuccessAlert: true,
+                    hiddenFailAlert: false, 
+                    failHeader: "Unsuccess", 
+                    failMessage: "Dermatologist has worktime in other pharmacy at this date range"
+                });
+            }else if(res.status===500){
+                this.setState({ 
+                    hiddenSuccessAlert: true,
+                    hiddenFailAlert: false, 
+                    failHeader: "Unsuccess", 
+                    failMessage: "We have internal server error,please try later"
+                });
+            }
+            
         }).catch((err) => {
             alert('Nije moguce dodati dermatologa');
         });
@@ -109,6 +147,19 @@ class AddDermatologistToPharmacy extends Component {
             }
     }
 
+    handleSuccessClose = () =>{
+        this.setState({
+            showAddWorkTime: false, 
+            modalSize:'lg',
+            selectedStartDate:new Date(),
+            selectedEndDate:new Date(),
+            timeFrom:1,
+            timeTo:2,
+        });
+        this.props.onCloseModal();
+        this.props.addedDermatologistMessage();
+    }
+
     handleClickOnClose = () => {
         this.setState({
             showAddWorkTime: false, 
@@ -136,6 +187,18 @@ class AddDermatologistToPharmacy extends Component {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                <HeadingSuccessAlert
+                            hidden={this.state.hiddenSuccessAlert}
+                            header={this.state.successHeader}
+                            message={this.state.successMessage}
+                            handleCloseAlert={this.handleCloseAlertSuccess}
+                        />
+                        <HeadingAlert
+                                hidden={this.state.hiddenFailAlert}
+                                header={this.state.failHeader}
+                                message={this.state.failMessage}
+                                handleCloseAlert={this.handleCloseAlertFail}
+                        />
                 <div className="container">      
                     <table hidden={this.state.showAddWorkTime} className="table" style={{ width: "100%", marginTop: "3rem" }}>
                         <tbody>

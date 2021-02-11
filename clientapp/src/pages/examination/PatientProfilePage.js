@@ -41,7 +41,7 @@ class PatientProfilePage extends Component {
 
 	fetchAppointments = () => {
 		const id = this.props.match.params.id;
-		Axios.get(BASE_URL + "/api/appointment/patient/" + id, { headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/appointment/patient/" + id, {validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 
 				if (res.status === 401) {

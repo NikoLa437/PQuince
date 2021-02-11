@@ -21,7 +21,7 @@ class PharmacyStatisticsDrugs extends Component {
 	componentDidMount() {
 
 		Axios
-		.get(BASE_URL + "/api/pharmacy/find-statistics-for-examinations-and-consultations", {
+		.get(BASE_URL + "/api/pharmacy/find-statistics-for-drugs", {
 				headers: { Authorization: getAuthHeader() },
 			}).then((res) =>{
 				this.setState({
@@ -87,7 +87,7 @@ class PharmacyStatisticsDrugs extends Component {
 
 						]}
 						options={{
-							title: 'Montly examinations',
+							title: 'Montly drugs',
 						}}
 						rootProps={{ 'data-testid': '1' }}
 						/>
@@ -106,7 +106,7 @@ class PharmacyStatisticsDrugs extends Component {
 
 						]}
 						options={{
-							title: 'Quartals examinations',
+							title: 'Quartals drugs',
 						}}
 						rootProps={{ 'data-testid': '1' }}
 						/>
@@ -124,7 +124,7 @@ class PharmacyStatisticsDrugs extends Component {
 
 						]}
 						options={{
-							title: 'years examinations',
+							title: 'years drugs',
 						}}
 						rootProps={{ 'data-testid': '1' }}
 						/>

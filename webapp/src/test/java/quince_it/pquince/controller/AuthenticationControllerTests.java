@@ -57,7 +57,7 @@ public class AuthenticationControllerTests {
     @WithMockUser(username = ADMIN_EMAIL,authorities = {"ROLE_SYSADMIN"})
 	@Transactional
 	@Rollback(true)
-	public void testAddPharmacy() throws Exception {
+	public void testSignUpAdmin() throws Exception {
 		
 		UserRequestDTO userRequestDTO = new UserRequestDTO("123@example.com","123","Pera","Peric", new Address(22.2,22.2,"Novi Sad","Srbija", "Bul Oslobodjenja"), "132456789");
 		String json = TestUtil.json(userRequestDTO);

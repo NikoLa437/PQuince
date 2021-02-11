@@ -13,7 +13,7 @@ public class Constants {
 	public static final String ADMIN_EMAIL = "admin@example.com";
 	public static final String PATIENT_NAME = "Stefan";
 	public static final String PATIENT_SURNAME = "Stefic";
-
+	
 	public static final UUID DERMATHOLOGIST_ID = UUID.fromString("11355678-52d3-11eb-ae93-0242ac130002");
 	public static final UUID PHARMACIST_ID = UUID.fromString("25345278-52d3-11eb-ae93-0242ac130002");
 	public static final long APPOINTMENT_START = Long.parseLong("1613394120000");

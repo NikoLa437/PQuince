@@ -51,7 +51,7 @@ class OrderDrugsModal extends Component {
 											<b>Order drugs: {" "}</b>
 										{this.props.replacingDrugs.map((drug) => (
 											<div>
-													<i>{drug.EntityDTO.drugInstanceId} </i>
+													<b>Drug id: </b><i>{drug.EntityDTO.drugInstanceId} </i>
 													<b>Amount: </b> {drug.EntityDTO.amount}
 											</div>	
 										))}

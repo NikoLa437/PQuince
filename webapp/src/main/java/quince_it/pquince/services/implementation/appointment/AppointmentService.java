@@ -538,9 +538,11 @@ public class AppointmentService implements IAppointmentService{
 		Staff staff = staffRepository.getOne(staffId);
 		List<Appointment> appointments = new ArrayList<Appointment>();
 		if(staff.getStaffType() == StaffType.DERMATOLOGIST) {
-			appointments = appointmentRepository.getDermatologistAppointmentsByPatient(patientId, staffId);
+			Pharmacy pharmacy = userService.getPharmacyForLoggedDermatologist();
+			appointments = appointmentRepository.getDermatologistAppointmentsByPatient(patientId, staffId, pharmacy.getId());
 		} else {
-			appointments = appointmentRepository.getPharmacistAppointmentsByPatient(patientId, staffId);
+			Pharmacist pharmacist = pharmacistRepository.getOne(staffId);
+			appointments = appointmentRepository.getPharmacistAppointmentsByPatient(patientId, staffId, pharmacist.getPharmacy().getId());
 		}
 			
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
@@ -865,8 +867,16 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	@Override
+	@Transactional
 	public void finishAppointment(UUID id) {
 		Appointment appointment = appointmentRepository.findById(id).get();
+		Patient patient = appointment.getPatient();
+		if(appointment.getAppointmentType() == AppointmentType.EXAMINATION)
+			patient.setPoints(patient.getPoints() + loyalityProgramService.get().getPointsForAppointment());
+		else
+			patient.setPoints(patient.getPoints() + loyalityProgramService.get().getPointsForConsulting());
+		
+		patientRepository.save(patient);
 		appointment.setAppointmentStatus(AppointmentStatus.FINISHED);
 		appointmentRepository.save(appointment);
 	}

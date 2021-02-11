@@ -11,6 +11,8 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,6 +42,7 @@ import quince_it.pquince.repository.users.PharmacyAdminRepository;
 import quince_it.pquince.repository.users.StaffRepository;
 import quince_it.pquince.repository.users.UserRepository;
 import quince_it.pquince.repository.users.WorkTimeRepository;
+import quince_it.pquince.security.auth.JwtAuthenticationRequest;
 import quince_it.pquince.security.exception.ResourceConflictException;
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.AllergenDTO;
@@ -205,6 +208,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createSupplier(UserRequestDTO entityDTO) {
 		Staff staff = CreateSupplierFromDTO(entityDTO);
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_SUPPLIER");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -227,6 +231,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createDermatologist(UserRequestDTO entityDTO) {
 		Staff staff = CreateDermathologistFromDTO(entityDTO);
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_DERMATHOLOGIST");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -245,6 +250,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createPharmacist(UserRequestDTO entityDTO) {
 		Staff staff = CreatePharmacistFromDTO(entityDTO);
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACIST");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -261,11 +267,9 @@ public class UserService implements IUserService{
 	
 	@Override
 	public UUID createPharmacyAdmin(UserRequestDTO entityDTO, UUID pharmacyId) {
-		//Pharmacy pharmacy = CreatePharmacyFromDTO(pharmacyDTO);
 		Pharmacy pharmacy = pharmacyRepository.getOne(pharmacyId);
-		System.out.println(pharmacy.getName() + pharmacy.getId() + "PHARMACY");
 		PharmacyAdmin staff = CreatePharmacyAdminFromDTO(entityDTO, pharmacy);
-		System.out.println(staff.getName() + staff.getEmail() + "STAFF");
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACYADMIN");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -283,6 +287,7 @@ public class UserService implements IUserService{
 	@Override
 	public UUID createAdmin(UserRequestDTO entityDTO) {
 		Staff staff = CreateAdminFromDTO(entityDTO);
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
 		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_SYSADMIN");
 		List<Authority> authorities = new ArrayList<Authority>();
 		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
@@ -540,6 +545,20 @@ public class UserService implements IUserService{
 		
 	}
 	
+	public void changeFirstPassword(String oldPassword, String newPassword) {
+	
+		User user = userRepository.findById(UUID.fromString(oldPassword)).get();
+		
+		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), oldPassword));
+		
+		if(newPassword.isEmpty())
+			throw new IllegalArgumentException("Invalid new password");
+		
+		user.setPassword(passwordEncoder.encode(newPassword));
+		userRepository.save(user);
+		
+	}
+	
 	@Override
 	public List<IdentifiableDTO<PharmacyDTO>> getPharmaciesWhereDermatologistWork(UUID dermatologistId) {
 		try {
@@ -571,7 +590,9 @@ public class UserService implements IUserService{
 			Dermatologist dermatologist = dermatologistRepository.getOne(addDermatologistToPharmacyDTO.getDermatologistId());
 			Pharmacy pharmacy = pharmacyRepository.getOne(addDermatologistToPharmacyDTO.getPharmacyId());
 			WorkTimeDTO workTimeDTO = new WorkTimeDTO(addDermatologistToPharmacyDTO.getPharmacyId(),addDermatologistToPharmacyDTO.getDermatologistId(), addDermatologistToPharmacyDTO.getStartDate(), addDermatologistToPharmacyDTO.getEndDate(), addDermatologistToPharmacyDTO.getStartTime(), addDermatologistToPharmacyDTO.getEndTime(),"");
-			workTimeService.create(workTimeDTO);
+			
+			if(workTimeService.create(workTimeDTO)==null)
+				return false;
 			
 			dermatologist.addPharmacy(pharmacy);
 			dermatologistRepository.save(dermatologist);
@@ -939,6 +960,14 @@ public class UserService implements IUserService{
 		pharmacyAdmin.setSurname(userInfoChangeDTO.getSurname());
 		
 		pharmacyAdminRepository.save(pharmacyAdmin);		
+	}
+	
+	public boolean IsFirstPassword(JwtAuthenticationRequest authenticationRequest) {
+		User user = userRepository.findByEmail(authenticationRequest.getUsername());
+		if (passwordEncoder.matches(user.getId().toString(), user.getPassword()))
+			return true;
+		else
+			return false;
 	}
 	
 }
