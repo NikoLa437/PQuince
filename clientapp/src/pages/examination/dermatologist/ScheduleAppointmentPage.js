@@ -31,7 +31,7 @@ class ScheduleAppointmentPage extends Component {
 						redirect: true,
 						redirectUrl: "/unauthorized"
 					});
-				} else {
+				} else if (res.state == 200) {
 					this.setState({ appointments: res.data });
 					console.log(res.data);
 				}

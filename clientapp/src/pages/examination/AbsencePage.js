@@ -70,6 +70,7 @@ class AbsencePage extends Component {
                 window.location.reload();
             })
             .catch((err) => {
+                alert("Can't request absence")
                 console.log(err);
             });
     }
