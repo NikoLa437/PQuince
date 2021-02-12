@@ -37,7 +37,8 @@ public class Constants {
 	public static final long WORKTIME_END = Long.parseLong("1613395020000");
 	public static final UUID ABSENCE_ID_FOR_APPROVE = UUID.fromString("dac2b818-5838-11eb-ae93-0242ac199992");
 	public static final UUID ABSENCE_ID_FOR_REJECT = UUID.fromString("dac2b818-5838-11eb-ae93-0242ac188882");
-
+	public static final UUID DRUG_ID_FOR_REMOVE = UUID.fromString("1fe1cd8e-5839-11eb-ae93-0242ac137772");
+	
 	@SuppressWarnings("deprecation")
 	public static final Date APPOINTMENT_START_DATE_TIME = new Date(2021, 2, 15, 14, 2);
 	@SuppressWarnings("deprecation")

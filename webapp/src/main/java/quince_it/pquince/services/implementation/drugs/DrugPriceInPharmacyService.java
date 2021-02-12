@@ -5,6 +5,8 @@ import java.util.List;
 import java.sql.Date;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,7 @@ public class DrugPriceInPharmacyService implements IDrugPriceInPharmacyService {
 	@Autowired
 	private IUserService userService;
 	
+	@Transactional
 	@Override
 	public boolean editPriceForDrug(EditPriceForDrugDTO editPriceForDrugDTO) {
 		

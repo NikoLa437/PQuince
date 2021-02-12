@@ -7,11 +7,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Version;
 
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Entity
 public class DrugPriceForPharmacy{
+   
+	@Version
+	private Long version;
 	
 	@Id
 	private UUID id;
@@ -104,5 +108,8 @@ public class DrugPriceForPharmacy{
 		this.price = price;
 	}
 	
+	public Long getVersion() {
+		return version;
+	}
 	
 }

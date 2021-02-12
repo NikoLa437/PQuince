@@ -1,9 +1,13 @@
 package quince_it.pquince.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static quince_it.pquince.constants.Constants.DRUG_ID;
 import static quince_it.pquince.constants.Constants.PATIENT_EMAIL;
+import static quince_it.pquince.constants.Constants.PHARMACYADMIN_EMAIL;
+import static quince_it.pquince.constants.Constants.PHARMACY_ID;
+import static quince_it.pquince.constants.Constants.DRUG_ID_FOR_REMOVE;
 
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
+import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
 import quince_it.pquince.util.TestUtil;
 
 @SpringBootTest
@@ -50,6 +55,16 @@ public class DrugControllerTests {
 		DrugFeedbackDTO drugFeedbackDTO = new DrugFeedbackDTO(DRUG_ID, new Date(), 3);
 		String json = TestUtil.json(drugFeedbackDTO);
 		this.mockMvc.perform(post(URL_PREFIX + "/feedback").contentType(contentType).content(json)).andExpect(status().isCreated());
+	}
+	
+	@Test
+    @WithMockUser(username = PHARMACYADMIN_EMAIL,authorities = {"ROLE_PHARMACYADMIN"})
+	@Transactional
+	@Rollback(true)
+	public void removeDrugFromPharmacy() throws Exception {
+		RemoveDrugFromPharmacyDTO removeDrugFromPharmacyDTO = new RemoveDrugFromPharmacyDTO(DRUG_ID_FOR_REMOVE, PHARMACY_ID);
+		String json = TestUtil.json(removeDrugFromPharmacyDTO);
+		this.mockMvc.perform(put(URL_PREFIX + "/remove-drug-from-pharmacy").contentType(contentType).content(json)).andExpect(status().isNoContent());
 	}
 	
 }
