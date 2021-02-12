@@ -108,7 +108,7 @@ class ActionAndPromotionsPage extends Component {
                         <nav className="nav-menu d-none d-lg-block">
                             <ul>
                                 <li>
-                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddActionClick}>
+                                    <a  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddActionClick}>
                                         Add action and promotions
                                     </a>
                                 </li>

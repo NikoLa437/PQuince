@@ -257,6 +257,8 @@ insert into pharmacy_admin (id,pharmacy_id) values ('9ba98d47-1a8a-4ae1-b109-af7
 insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('eba44ad0-6940-11eb-9439-0242ac130002', '25345278-52d3-13eb-ae93-0242ac130002', 'ACCEPTED','2021-02-18','2021-02-23', '','cafeddee-56cb-11eb-ae93-0242ac130002');
 insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('76eb2495-1499-4f68-8397-48e2a410aa6b', '25345278-52d3-11eb-ae93-0242ac130002', 'WAIT','2021-04-01','2021-04-23', '','cafeddee-56cb-11eb-ae93-0242ac130002');
 insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('281707fe-6a54-11eb-9439-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002', 'WAIT','2021-03-01','2021-03-14', '','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('dac2b818-5838-11eb-ae93-0242ac199992', '25345278-52d3-12eb-ac93-0242ac130002', 'WAIT','2018-03-01','2018-03-14', '','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('dac2b818-5838-11eb-ae93-0242ac188882', '25345278-52d3-12eb-ac93-0242ac130002', 'WAIT','2019-07-01','2018-07-14', '','cafeddee-56cb-11eb-ae93-0242ac130002');
 
 
 insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2965458c-6976-11eb-9439-0242ac130002', 'DRUGDISCOUNT', '2021-02-03','2021-03-15', 15.0,'cafeddee-56cb-11eb-ae93-0242ac130002');

@@ -12,6 +12,7 @@ public class Constants {
 	public static final String PHARMACIST_EMAIL = "exampla11@example.com";
 	public static final String DERMATOLOGIST_EMAIL = "example6@example.com";
 	public static final String ADMIN_EMAIL = "admin@example.com";
+	public static final String PHARMACYADMIN_EMAIL = "pharmacyAdmin@example.com";
 	public static final String PATIENT_NAME = "Stefan";
 	public static final String PATIENT_SURNAME = "Stefic";
 	

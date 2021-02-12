@@ -64,16 +64,11 @@ class WorkTimesModal extends Component {
             this.setState({timeFrom:23});
         }else if(event.target.value < 1){
             this.setState({timeFrom:1});
-        }
-        
-        if(event.target.value >= this.state.timeTo){
-            this.setState({
-                timeFrom:event.target.value,
-                timeTo: event.target.value++
-            });
         }else{
             this.setState({timeFrom:event.target.value});
         }
+        
+
     }
 
     handleTimeToChange = (event) => {
@@ -81,16 +76,20 @@ class WorkTimesModal extends Component {
                 this.setState({timeTo:24});
             }else if(event.target.value < 2){
                 this.setState({timeTo:2});
-            }
-            
-            if(event.target.value <= this.state.timeFrom){
-                this.setState({
-                    timeTo:event.target.value,
-                    timeFrom: event.target.value--
-                });
             }else{
                 this.setState({timeTo:event.target.value});
             }
+            
+
+            
+    }
+
+    validateDTO = (wtDTO) =>{
+        if(wtDTO.startTime < wtDTO.endTime){
+            return false
+        }
+
+        return true;
     }
 
     handleAdd = () => {
@@ -104,7 +103,14 @@ class WorkTimesModal extends Component {
             endTime:this.state.timeTo
         };
 
-        Axios
+        if(this.validateDTO(workTimeDTO)){
+            this.setState({
+                hiddenSuccessAlert: true,
+                hiddenFailAlert: false, 
+                failHeader: "Unsuccess", 
+                failMessage: "Time from must be least time to"});
+        }else{
+            Axios
         .post(BASE_URL + "/api/worktime/", workTimeDTO, {
             headers: { Authorization: getAuthHeader() },
         }).then((res) =>{
@@ -124,6 +130,9 @@ class WorkTimesModal extends Component {
                 failHeader: "Unsuccess", 
                 failMessage: "It is not possible to add worktime"});
         });
+        }
+
+
     }
 
     handleClickOnClose = () => {
