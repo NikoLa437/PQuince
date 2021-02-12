@@ -15,10 +15,16 @@ import static quince_it.pquince.constants.Constants.PHARMACY_ID;
 import static quince_it.pquince.constants.Constants.STAFF_ID;
 import static quince_it.pquince.constants.Constants.WORKTIME_END_DATE;
 import static quince_it.pquince.constants.Constants.WORKTIME_START_DATE;
+import static quince_it.pquince.constants.Constants.DERMATOLOGIST_APPOINTMENT_START_DATE_TIME;
+import static quince_it.pquince.constants.Constants.DERMATOLOGIST_APPOINTMENT_END_DATE_TIME;
+
+
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -200,9 +206,19 @@ public class AppointmentServiceTests {
         assertThat(appointment.getEndDateTime()).isEqualTo(APPOINTMENT_END_DATE_TIME);
         assertThat(appointment.getPrice()).isEqualTo(378.0);
         assertThat(appointment.getPriceToPay()).isEqualTo(378.0);
-
 	}
 	
+	@Test
+	@Transactional
+	public void testCreateDermatologistPeriodForAppointmentWhenHasAbsence() {
+		int dbSizeBeforeAdd = ((List<Appointment>) appointmentRepository.findAll()).size();
 
-	
+		when(absenceRepository.getAbsenceForDermatologistForDateForPharmacy(STAFF_ID,DERMATOLOGIST_APPOINTMENT_START_DATE_TIME,PHARMACY_ID)).thenReturn(TestUtil.getAbsenceForCreateAppointment());
+
+		UUID retVal = appointmentService.createTerminForDermatologist(TestUtil.getAppointmentCreateDTO());
+		
+		List<Appointment> appointments = (List<Appointment>) appointmentRepository.findAll();
+        assertThat(appointments).hasSize(dbSizeBeforeAdd); 
+        assertThat(retVal).isEqualTo(null);
+	}
 }

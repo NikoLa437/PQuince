@@ -8,7 +8,7 @@ import {BASE_URL} from '../constants.js';
 
 class ReserveDrugsInPharmacy extends Component {
     state = {
-        selectedDate:new Date(),
+        selectedDate: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
         drugAmount:1,
         showReservation:false,
         drugId:'',
@@ -148,7 +148,7 @@ class ReserveDrugsInPharmacy extends Component {
                                         </div>
                                          <div className="form-row">                        
                                             <div className="form-col" style={{color: "#6c757d",opacity: 1}}>
-                                                <DatePicker className="form-control mr-3"  minDate={new Date()} onChange={date => this.handleDateChange(date)} selected={this.state.selectedDate}/>
+                                                <DatePicker className="form-control mr-3"  minDate={new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)} onChange={date => this.handleDateChange(date)} selected={this.state.selectedDate}/>
                                             </div>
                                         </div>
                                         <div className="form-row">

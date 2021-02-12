@@ -50,10 +50,10 @@ insert into allergen (id, name) values ('c7bd9b04-58c7-11eb-ae93-0242ac130002', 
 
 insert into patient_allergen (patient_id, allergen_id) values('22793162-52d3-11eb-ae93-0242ac130002','3b27db4c-48bb-4f78-a3da-745d9c9458ba');
 
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac130002', 'Benu', 'Benu apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 450);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac111002', 'Ivancic i sinovi', 'Ivancic i sinovi','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 729);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Zdravlje apoteka','gradska opština Zemun','Serbia','Šilerova ulica',44.845752,20.387903, 400);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac131302', 'Kopriva', 'Kopriva apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 650);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price,version) values ('cafeddee-56cb-11eb-ae93-0242ac130002', 'Benu', 'Benu apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 450,1);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price,version) values ('cafeddee-56cb-11eb-ae93-0242ac111002', 'Ivancic i sinovi', 'Ivancic i sinovi','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 729,1);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price,version) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Zdravlje apoteka','gradska opština Zemun','Serbia','Šilerova ulica',44.845752,20.387903, 400,1);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price,version) values ('cafeddee-56cb-11eb-ae93-0242ac131302', 'Kopriva', 'Kopriva apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 650,1);
 
 insert into staff (id, staff_type) values ('11355678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
 insert into staff (id, staff_type) values ('22345678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
@@ -97,6 +97,7 @@ insert into drug (id, code, name) values ('2fe1cd8e-5839-11eb-ae93-0242ac130002'
 insert into drug (id, code, name) values ('aecf0eac-68cb-11eb-9f52-838764dae934', '3162001', 'Ibuprofen');  -- blokmax
 insert into drug (id, code, name) values ('b4abdfc6-68cb-11eb-a102-d7374f9803ba', '3162325', 'Ibuprofen');  -- ibalgin
 insert into drug (id, code, name) values ('1fe1cd8e-5839-11eb-ae93-0242ac130002', '3162002', 'Ibuprofen');
+insert into drug (id, code, name) values ('1fe1cd8e-5839-11eb-ae93-0242ac137772', '3162302', 'Ibuprofen'); -- za integracioni test
 
 insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_reciept, quantity, recommended_amount, side_effects, manufacturer_id, id, drug_kind) values('CAPSULE', 'Brufen',1, false, 500, '3x1 na dan', 'Nema nezeljenih dejstava', '20ddef44-5838-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002', 'HUMAN');
 insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_reciept, quantity, recommended_amount, side_effects, manufacturer_id, id, drug_kind) values('CAPSULE', 'Rapidol',1, false, 600, '3x1 na dan', 'Nema nezeljenih dejstava, tako kazu', '574c3c20-5838-11eb-ae93-0242ac130002','2c797174-5839-11eb-ae93-0242ac130002', 'HUMAN');
@@ -104,6 +105,8 @@ insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_r
 insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_reciept, quantity, recommended_amount, side_effects, manufacturer_id, id, drug_kind) values('CAPSULE', 'BlokMax',1, false, 500, '3x1 na dan', 'Nema nezeljenih dejstava', '5c49beb4-5838-11eb-ae93-0242ac130002','aecf0eac-68cb-11eb-9f52-838764dae934', 'HUMAN'); 
 insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_reciept, quantity, recommended_amount, side_effects, manufacturer_id, id, drug_kind) values('CAPSULE', 'IBALGIN',1, false, 400, '2x1 na dan', 'Nema nezeljenih dejstava', '574c3c20-5838-11eb-ae93-0242ac130002','b4abdfc6-68cb-11eb-a102-d7374f9803ba', 'HUMAN');
 insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_reciept, quantity, recommended_amount, side_effects, manufacturer_id, id, drug_kind) values('CAPSULE', 'Blokmax',1, false, 500, '2x1 na dan', 'Nema nezeljenih dejstava', '61297672-5838-11eb-ae93-0242ac130002','1fe1cd8e-5839-11eb-ae93-0242ac130002', 'BIOLOGICAL');
+
+insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_reciept, quantity, recommended_amount, side_effects, manufacturer_id, id, drug_kind) values('CAPSULE', 'Blokmax',1, false, 500, '2x1 na dan', 'Nema nezeljenih dejstava', '61297672-5838-11eb-ae93-0242ac130002','1fe1cd8e-5839-11eb-ae93-0242ac137772', 'BIOLOGICAL');
 
 insert into drug_allergen (drug_id, allergen_id) values ('2c797174-5839-11eb-ae93-0242ac130002','062d319f-f393-464c-98fb-b3db29e77626');
 insert into drug_allergen (drug_id, allergen_id) values ('dac2b818-5838-11eb-ae93-0242ac130002','3b27db4c-48bb-4f78-a3da-745d9c9458ba');
@@ -125,6 +128,7 @@ insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from,
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130127','2c797174-5839-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac111002','2020-11-11','2021-02-22', 999);
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130128','aecf0eac-68cb-11eb-9f52-838764dae934','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 230);
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130129','b4abdfc6-68cb-11eb-a102-d7374f9803ba','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 550);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130777','1fe1cd8e-5839-11eb-ae93-0242ac137772','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 340);
 
 
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('dac2b818-5838-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24, 1);
@@ -133,6 +137,8 @@ insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values (
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('2c797174-5839-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002', 40, 1);
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('aecf0eac-68cb-11eb-9f52-838764dae934', 'cafeddee-56cb-11eb-ae93-0242ac130002', 30, 1);
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('b4abdfc6-68cb-11eb-a102-d7374f9803ba', 'cafeddee-56cb-11eb-ae93-0242ac130002', 20, 1);
+insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('1fe1cd8e-5839-11eb-ae93-0242ac137772', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24, 1);
+
 
 insert into supplier_drug_storage(drug_instance_id, count, version) values ('dac2b818-5838-11eb-ae93-0242ac130002', 20, 1);
 insert into supplier_drug_storage(drug_instance_id, count, version) values ('2c797174-5839-11eb-ae93-0242ac130002', 40, 1);
@@ -259,6 +265,8 @@ insert into pharmacy_admin (id,pharmacy_id) values ('9ba98d47-1a8a-4ae1-b109-af7
 insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('eba44ad0-6940-11eb-9439-0242ac130002', '25345278-52d3-13eb-ae93-0242ac130002', 'ACCEPTED','2021-02-18','2021-02-23', '','cafeddee-56cb-11eb-ae93-0242ac130002');
 insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('76eb2495-1499-4f68-8397-48e2a410aa6b', '25345278-52d3-11eb-ae93-0242ac130002', 'WAIT','2021-04-01','2021-04-23', '','cafeddee-56cb-11eb-ae93-0242ac130002');
 insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('281707fe-6a54-11eb-9439-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002', 'WAIT','2021-03-01','2021-03-14', '','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('dac2b818-5838-11eb-ae93-0242ac199992', '25345278-52d3-12eb-ac93-0242ac130002', 'WAIT','2018-03-01','2018-03-14', '','cafeddee-56cb-11eb-ae93-0242ac130002');
+insert into absence (id, for_staff_id ,absence_status, start_date, end_date, reject_reason,pharmacy_id) values ('dac2b818-5838-11eb-ae93-0242ac188882', '25345278-52d3-12eb-ac93-0242ac130002', 'WAIT','2019-07-01','2018-07-14', '','cafeddee-56cb-11eb-ae93-0242ac130002');
 
 
 insert into action_and_promotion (id,type,date_from,date_to,percent_of_discount,pharmacy_id) values ('2965458c-6976-11eb-9439-0242ac130002', 'DRUGDISCOUNT', '2021-02-03','2021-03-15', 15.0,'cafeddee-56cb-11eb-ae93-0242ac130002');

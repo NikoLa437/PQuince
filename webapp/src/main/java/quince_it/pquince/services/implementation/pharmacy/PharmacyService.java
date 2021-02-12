@@ -397,6 +397,7 @@ public class PharmacyService implements IPharmacyService {
 		return pharmacies;
 	}
 
+	@Transactional
 	@Override
 	public void updatePharmacy(EditPharmacyDTO editPharmacyDTO) {
 		Pharmacy pharmacy = pharmacyRepository.getOne(editPharmacyDTO.getPharmacyId());		

@@ -54,7 +54,7 @@ class ViewOffersModal extends Component {
                     hiddenSuccessAlert: true,
                     hiddenFailAlert:false,
                     failHeader: "Unsuccess", 
-                    failMessage: "Not possible to remove order because have offers"
+                    failMessage: "Not possible to accept offer"
                 })
             }else if(res.status === 500)
             {
