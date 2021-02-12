@@ -128,6 +128,7 @@ class RegisterStaff extends Component {
 	};
 
 	validateForm = (userDTO) => {
+		alert('test')
 		this.setState({
 			emailError: "none",
 			emailNotValid: "none",
@@ -319,20 +320,6 @@ class RegisterStaff extends Component {
 						<div className="col-lg-8 mx-auto">
 							<br />
 							<form id="contactForm" name="sentMessage" novalidate="novalidate">
-								<div className="control-group">
-									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
-										<label>Staff type:</label><br></br>
-										<select
-									        onChange={this.handleSelectChange} 
-											value={this.state.selectValue} 
-									     >
-										  <option value="dermathologist">Dermathologist</option>
-										  <option value="pharmacyadmin">Pharmacy admin</option>
-										  <option value="supplier">Supplier</option>
-										  <option value="sysadmin">System admin</option>
-										</select>	
-									</div>
-								</div>
 								<div className="control-group" hidden={this.state.selectValue !== "pharmacyadmin"}>
 									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
 										<label>Pharmacy:</label><br></br>

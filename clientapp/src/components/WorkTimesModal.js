@@ -40,6 +40,17 @@ class WorkTimesModal extends Component {
 		this.setState({ showAddWorkTime: true, modalSize: "md" });
 	};
 
+
+    handleTimeToChange = (event) => {
+            if(event.target.value > 24){
+                this.setState({timeTo:24});
+            }else if(event.target.value < 1){
+                this.setState({timeTo:1});
+            }else{
+                this.setState({timeTo:event.target.value});
+            }      
+    }
+
 	handleStartDateChange = (date) => {
 		this.setState({
 			selectedStartDate: date,
@@ -51,6 +62,7 @@ class WorkTimesModal extends Component {
 			});
 		}
 	};
+
 
 	handleEndDateChange = (date) => {
 		this.setState({ selectedEndDate: date });
