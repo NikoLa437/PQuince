@@ -130,7 +130,9 @@ class PatientsAppointments extends Component {
 							Examination history
 						</NavLink>
 					</nav>
-					<p className="mb-0 mt-2 text-uppercase">Click on appointment to see further details</p>
+					<p hidden={this.state.appointments.length === 0} className="mb-0 mt-4 text-uppercase">
+						Click on appointment to see further details
+					</p>
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.appointments.map((appointment) => (

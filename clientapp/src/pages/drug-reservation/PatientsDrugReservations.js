@@ -136,6 +136,9 @@ class PatientsDrugReservations extends Component {
 							Reservation history
 						</NavLink>
 					</nav>
+					<p hidden={this.state.drugReservations.length === 0} className="mb-0 mt-4 text-uppercase">
+						Click on reservation to see further details
+					</p>
 					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.drugReservations.map((drugReservation) => (
