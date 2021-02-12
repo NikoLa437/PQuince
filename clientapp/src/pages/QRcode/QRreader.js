@@ -19,6 +19,7 @@ class QRreader extends Component {
 		city: "",
 		openModal: false,
 		openModalRefused: false,
+		openModalCantUse: false,
 		gradeFrom: "",
 		gradeTo: "",
 		distanceFrom: "",
@@ -86,31 +87,52 @@ class QRreader extends Component {
 			openModalRefused: false,
 		});
 	};
+
+	handleModalCloseCantUse= () => {
+		this.setState({ 
+			openModalCantUse: false,
+		});
+	};
     
     handleScan(data){
 	    let RefuseReceiptDTO = {
 	    	id: data
 	    }
 	    
-    	Axios.post(BASE_URL + "/api/ereceipt/check-if-refused", RefuseReceiptDTO, { headers: { Authorization: getAuthHeader() } })
+
+		Axios.get(BASE_URL + "/api/ereceipt/can-patient-use/" + data, { headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				console.log(res.data)
-				if(res.data.allergic == true){
-					console.log("REJECT")
-					this.setState({
-						openModalRefused: true ,
-        			})
+				if(res.data){
+
+					Axios.post(BASE_URL + "/api/ereceipt/check-if-refused", RefuseReceiptDTO, { headers: { Authorization: getAuthHeader() } })
+					.then((res) => {
+						console.log(res.data)
+						if(res.data.allergic == true){
+							this.setState({
+								openModalRefused: true ,
+							})
+						}else{
+						this.setState({
+							result: data,
+							redirect:true,
+							redirectUrl : "/qrpharmacies/"+data
+							})
+						}
+					})
+					.catch((err) => {
+						console.log(err);
+					});
 				}else{
-				  this.setState({
-		            result: data,
-		            redirect:true,
-					redirectUrl : "/qrpharmacies/"+data
-		       	 })
-		        }
+					this.setState({
+						openModalCantUse: true ,
+					})
+				}
+
 			})
 			.catch((err) => {
 				console.log(err);
 			});
+    
 	
     }
     handleError(err){
@@ -163,6 +185,12 @@ class QRreader extends Component {
 				onCloseModal={this.handleModalCloseRefused}
 				header="Error"
 				text="This EReceipt can't be used. It has already been used, or it was refused."
+			/>
+			<ModalDialog
+				show={this.state.openModalCantUse}
+				onCloseModal={this.handleModalCloseCantUse}
+				header="Error"
+				text="You can't use this ERecipe. It's not for you. :)"
 			/>
 		</React.Fragment>
     )

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -184,6 +185,7 @@ public class DrugStorageService implements IDrugStorageService {
 
 	}
 
+	@Transactional
 	@Override
 	public boolean editPriceForDrug(EditStorageAmountForDrugDTO editStorageAmountForDrugDTO) {
 		// TODO Auto-generated method stub

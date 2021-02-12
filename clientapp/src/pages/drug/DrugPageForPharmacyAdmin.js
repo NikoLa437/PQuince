@@ -423,17 +423,17 @@ class DrugPageForPharmacyAdmin extends Component {
                         <nav className="nav-menu d-none d-lg-block">
                             <ul style={myStyle}>
                                 <li>
-                                    <a href="#" style={{color:'white'}}  className="appointment-btn scrollto"  onClick={this.handleAddDrugClick}>
+                                    <a style={{color:'white'}}  className="appointment-btn scrollto"  onClick={this.handleAddDrugClick}>
                                         Add drug
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" style={{color:'white'}} className="appointment-btn scrollto" onClick={this.handleCreateOrderClick}>
+                                    <a style={{color:'white'}} className="appointment-btn scrollto" onClick={this.handleCreateOrderClick}>
                                         Create order
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" style={{color:'white'}} className="appointment-btn scrollto"  onClick={this.handleDrugRequestsClick}>
+                                    <a style={{color:'white'}} className="appointment-btn scrollto"  onClick={this.handleDrugRequestsClick}>
                                         Drug requests
                                     </a>
                                 </li>

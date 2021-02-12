@@ -67,9 +67,9 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 			+ " AND a.appointmentStatus = 'CREATED' AND a.appointmentType = ?2 ORDER BY a.price DESC")
 	List<Appointment> findAllFreeAppointmentsByPharmacyAndAppointmentTypeSortByPriceDescending(UUID pharmacyId, AppointmentType appointmentType);
 
-	@Query(value = "SELECT a FROM Appointment a WHERE a.staff.id = ?1 AND a.startDateTime > CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.staff.id = ?1 AND a.pharmacy.id = ?2 AND a.startDateTime > CURRENT_TIMESTAMP"
 			+ " AND a.appointmentStatus = 'CREATED' AND a.appointmentType = 'EXAMINATION'  ORDER BY a.startDateTime DESC")
-	List<Appointment> getCreatedAppointmentsByDermatologist(UUID dermatologistId);
+	List<Appointment> getCreatedAppointmentsByDermatologist(UUID dermatologistId, UUID pharmacyId);
 	
 	@Query(value = "SELECT a FROM Appointment a WHERE a.appointmentType = 'CONSULTATION' AND NOT (a.startDateTime >= ?2 OR a.endDateTime <= ?1)"
 				+ " AND a.appointmentStatus = 'SCHEDULED'")

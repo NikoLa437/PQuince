@@ -286,7 +286,7 @@ public class AppointmentController {
 			return new ResponseEntity<>(appointmentService.getAppointment(appointmentId),HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
 		}
 	}
 	

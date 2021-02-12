@@ -85,4 +85,6 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	boolean findIfPharmacyHasQRCode(UUID pharamcyId, UUID qrID);
 
 	PharmacyIncomeStatistics findIncomeStatisticsForPharmacy(Date dateFrom, Date dateTo) throws Exception;
+
+	boolean canPatientUseQR(UUID id);
 }

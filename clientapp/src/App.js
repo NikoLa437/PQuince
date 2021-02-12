@@ -131,7 +131,6 @@ function App() {
 				<Link exact to="/pharmacy-statistics" path="/pharmacy-statistics" component={PharmacyStatisticsExamination} />
 				<Link exact to="/pharmacy-drugs-statistics" path="/pharmacy-drugs-statistics" component={PharmacyStatisticsDrugs} />
 				<Link exact to="/pharmacy-income-statistics" path="/pharmacy-income-statistics" component={PharmacyIncomePriceStatistics}/>
-
 			</Switch>
 		</Router>
 	);

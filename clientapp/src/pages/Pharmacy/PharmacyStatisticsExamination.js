@@ -60,7 +60,7 @@ class PharmacyStatisticsExamination extends Component {
 							Drugs statistics
 						</NavLink>
 						<NavLink className="nav-link " exact to="/pharmacy-income-statistics">
-						Pharmacy income
+							Pharmacy income
 						</NavLink>
 					</nav>
 					<div className="row" style={{ marginTop: "3%" }}>

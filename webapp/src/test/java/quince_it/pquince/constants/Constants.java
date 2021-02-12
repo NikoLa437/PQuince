@@ -12,6 +12,7 @@ public class Constants {
 	public static final String PHARMACIST_EMAIL = "exampla11@example.com";
 	public static final String DERMATOLOGIST_EMAIL = "example6@example.com";
 	public static final String ADMIN_EMAIL = "admin@example.com";
+	public static final String PHARMACYADMIN_EMAIL = "pharmacyAdmin@example.com";
 	public static final String PATIENT_NAME = "Stefan";
 	public static final String PATIENT_SURNAME = "Stefic";
 	
@@ -34,13 +35,23 @@ public class Constants {
 	public static final UUID WORKTIME_ID = UUID.fromString("dac2b818-5838-11eb-ae93-0242ac133332");
 	public static final long WORKTIME_START = Long.parseLong("1613394120000");
 	public static final long WORKTIME_END = Long.parseLong("1613395020000");
+	public static final UUID ABSENCE_ID_FOR_APPROVE = UUID.fromString("dac2b818-5838-11eb-ae93-0242ac199992");
+	public static final UUID ABSENCE_ID_FOR_REJECT = UUID.fromString("dac2b818-5838-11eb-ae93-0242ac188882");
+	public static final UUID DRUG_ID_FOR_REMOVE = UUID.fromString("1fe1cd8e-5839-11eb-ae93-0242ac137772");
 	
 	@SuppressWarnings("deprecation")
 	public static final Date APPOINTMENT_START_DATE_TIME = new Date(2021, 2, 15, 14, 2);
 	@SuppressWarnings("deprecation")
 	public static final Date APPOINTMENT_END_DATE_TIME = new Date(2021, 2, 15, 14, 17);
+	@SuppressWarnings("deprecation")
+	public static final Date DERMATOLOGIST_APPOINTMENT_START_DATE_TIME = new Date(2020, 1, 1, 14, 30);
+	@SuppressWarnings("deprecation")
+	public static final Date DERMATOLOGIST_APPOINTMENT_END_DATE_TIME = new Date(2020, 1, 1, 15, 30);
+	@SuppressWarnings("deprecation")
+	public static final Date DERMATOLOGIST_ABSENCE_START_DATE_TIME = new Date(2019, 11, 11, 00, 00);
+	@SuppressWarnings("deprecation")
+	public static final Date DERMATOLOGIST_ABSENCE_END_DATE_TIME = new Date(2020, 2, 1, 00, 00);
 
-	
 	@SuppressWarnings("deprecation")
 	public static final Date WORKTIME_START_DATE = new Date(2021, 2, 3, 14, 2);
 	@SuppressWarnings("deprecation")
@@ -50,5 +61,5 @@ public class Constants {
 	public static final Date ABSENCE_START_DATE = new Date(2021, 2, 13, 0, 0);
 	@SuppressWarnings("deprecation")
 	public static final Date ABSENCE_END_DATE = new Date(2021, 2, 18, 0, 0);
-			
+	
 }

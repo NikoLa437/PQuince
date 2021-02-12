@@ -120,7 +120,6 @@ class PharmacyForAdmin extends Component {
 	};
 
 	validateForm = (pharmacyDTO) => {
-		alert(pharmacyDTO.name)
 		this.setState({
 			nameError: "none",
 			descriptionError: "none",

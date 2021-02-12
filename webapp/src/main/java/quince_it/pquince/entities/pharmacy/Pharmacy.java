@@ -6,12 +6,16 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 import quince_it.pquince.entities.users.Address;
 
 @Entity
 public class Pharmacy {
 
+	@Version
+	private Long version;
+	
 	@Id
 	private UUID id;
 	
@@ -76,6 +80,14 @@ public class Pharmacy {
 
 	public void setConsultationPrice(double consultationPrice) {
 		this.consultationPrice = consultationPrice;
+	}
+	
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 	
 }
