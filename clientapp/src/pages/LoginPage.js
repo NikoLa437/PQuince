@@ -253,6 +253,8 @@ render() {
 		</React.Fragment>
 	);
 }
+
+
 }
 
 export default LoginPage;

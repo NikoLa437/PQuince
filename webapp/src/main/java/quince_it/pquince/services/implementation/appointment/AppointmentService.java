@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.mail.MessagingException;
 
@@ -539,14 +542,26 @@ public class AppointmentService implements IAppointmentService{
 		List<Appointment> appointments = new ArrayList<Appointment>();
 		if(staff.getStaffType() == StaffType.DERMATOLOGIST) {
 			Pharmacy pharmacy = userService.getPharmacyForLoggedDermatologist();
-			appointments = appointmentRepository.getDermatologistAppointmentsByPatient(patientId, staffId, pharmacy.getId());
+			List<Appointment> scheduledAppointments = appointmentRepository.getScheduledDermatologistAppointmentsByPatient(patientId, staffId, pharmacy.getId());
+			List<Appointment> finishedAppointments = new ArrayList<Appointment>();
+			if (hasExaminedPatient(patientId))
+				finishedAppointments = appointmentRepository.getFinishedDermatologistAppointmentsByPatient(patientId, staffId, pharmacy.getId());
+			appointments = Stream.concat(scheduledAppointments.stream(), finishedAppointments.stream()).collect(Collectors.toList());
 		} else {
 			Pharmacist pharmacist = pharmacistRepository.getOne(staffId);
-			appointments = appointmentRepository.getPharmacistAppointmentsByPatient(patientId, staffId, pharmacist.getPharmacy().getId());
+			List<Appointment> scheduledAppointments = appointmentRepository.getScheduledPharmacistAppointmentsByPatient(patientId, staffId, pharmacist.getPharmacy().getId());
+			List<Appointment> finishedAppointments = new ArrayList<Appointment>();
+			if (hasExaminedPatient(patientId))
+				finishedAppointments = appointmentRepository.getFinishedPharmacistAppointmentsByPatient(patientId, staffId, pharmacist.getPharmacy().getId());
+			appointments = Stream.concat(scheduledAppointments.stream(), finishedAppointments.stream()).collect(Collectors.toList());
 		}
-			
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
 		return returnAppointments;
+	}
+	
+	@Override
+	public boolean hasExaminedPatient(UUID patientId) {
+		return appointmentRepository.getFinishedAppointmentsForStaffForPatient(userService.getLoggedUserId(), patientId).size() > 0;
 	}
 
 	@Override
