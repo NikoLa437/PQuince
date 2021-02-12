@@ -36,7 +36,6 @@ public class DrugControllerTests {
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 	
-
 	private MockMvc mockMvc;
 
 	@Autowired

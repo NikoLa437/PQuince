@@ -50,10 +50,10 @@ insert into allergen (id, name) values ('c7bd9b04-58c7-11eb-ae93-0242ac130002', 
 
 insert into patient_allergen (patient_id, allergen_id) values('22793162-52d3-11eb-ae93-0242ac130002','3b27db4c-48bb-4f78-a3da-745d9c9458ba');
 
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac130002', 'Benu', 'Benu apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 450);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac111002', 'Ivancic i sinovi', 'Ivancic i sinovi','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 729);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Zdravlje apoteka','gradska opština Zemun','Serbia','Šilerova ulica',44.845752,20.387903, 400);
-insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price) values ('cafeddee-56cb-11eb-ae93-0242ac131302', 'Kopriva', 'Kopriva apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 650);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price,version) values ('cafeddee-56cb-11eb-ae93-0242ac130002', 'Benu', 'Benu apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 450,1);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price,version) values ('cafeddee-56cb-11eb-ae93-0242ac111002', 'Ivancic i sinovi', 'Ivancic i sinovi','grad Novi Sad','Serbia','Futoška ulica',45.249222,19.826699, 729,1);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price,version) values ('cafeddee-56cb-11eb-ae93-0242ac130202', 'Zdravlje', 'Zdravlje apoteka','gradska opština Zemun','Serbia','Šilerova ulica',44.845752,20.387903, 400,1);
+insert into pharmacy (id, name, description, city, country, street, latitude, longitude, consultation_price,version) values ('cafeddee-56cb-11eb-ae93-0242ac131302', 'Kopriva', 'Kopriva apoteka','grad Novi Sad','Serbia','Ulica Novosadskog sajma',45.254488,19.827929, 650,1);
 
 insert into staff (id, staff_type) values ('11355678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');
 insert into staff (id, staff_type) values ('22345678-52d3-11eb-ae93-0242ac130002','DERMATOLOGIST');

@@ -14,8 +14,6 @@ import quince_it.pquince.entities.pharmacy.Pharmacy;
 @Entity
 public class DrugPriceForPharmacy{
    
-	@Version
-	private Long version;
 	
 	@Id
 	private UUID id;
@@ -108,8 +106,5 @@ public class DrugPriceForPharmacy{
 		this.price = price;
 	}
 	
-	public Long getVersion() {
-		return version;
-	}
 	
 }

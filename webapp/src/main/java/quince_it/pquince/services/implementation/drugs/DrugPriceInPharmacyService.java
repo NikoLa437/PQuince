@@ -36,7 +36,6 @@ public class DrugPriceInPharmacyService implements IDrugPriceInPharmacyService {
 	@Autowired
 	private IUserService userService;
 	
-	@Transactional
 	@Override
 	public boolean editPriceForDrug(EditPriceForDrugDTO editPriceForDrugDTO) {
 		
