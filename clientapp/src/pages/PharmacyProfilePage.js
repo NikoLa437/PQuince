@@ -19,7 +19,6 @@ import HeadingAlert from "../components/HeadingAlert";
 import PharmacyPharmacistsModal from "../components/PharmacyPharmacistsModal";
 import CheckQrAvailableModal from "../components/CheckQrAvailableModal";
 
-
 class PharmacyProfilePage extends Component {
 	state = {
 		pharmacy: "",
@@ -29,7 +28,7 @@ class PharmacyProfilePage extends Component {
 		pharmacyAdress: "",
 		pharmacyCity: "",
 		grade: "",
-		patientsGrade: 0,
+		patientsGrade: 1,
 		x: "",
 		y: "",
 		showDermatologistModal: false,
@@ -51,7 +50,7 @@ class PharmacyProfilePage extends Component {
 		failMessage: "",
 		pharmacists: [],
 		showPharmacistsModal: false,
-		drugAvailableModalShow:false
+		drugAvailableModalShow: false,
 	};
 
 	fetchData = (id) => {
@@ -253,7 +252,7 @@ class PharmacyProfilePage extends Component {
 				if (res.status === 404) {
 					this.setState({
 						showFeedbackModal: true,
-						patientsGrade: 0,
+						patientsGrade: 1,
 					});
 				} else if (res.status === 200) {
 					this.setState({
@@ -409,11 +408,11 @@ class PharmacyProfilePage extends Component {
 			});
 	};
 
-	handleCloseCheckQR = () =>{
+	handleCloseCheckQR = () => {
 		this.setState({
-			drugAvailableModalShow:false
-		})
-	}
+			drugAvailableModalShow: false,
+		});
+	};
 
 	handleModifyFeedback = () => {
 		let entityDTO = {
@@ -447,11 +446,11 @@ class PharmacyProfilePage extends Component {
 			});
 	};
 
-	handleCheckDrugAvailable =()=>{
+	handleCheckDrugAvailable = () => {
 		this.setState({
-			drugAvailableModalShow:true
-		})
-	}
+			drugAvailableModalShow: true,
+		});
+	};
 
 	handleClickIcon = (grade) => {
 		this.setState({ patientsGrade: grade });
@@ -663,7 +662,7 @@ class PharmacyProfilePage extends Component {
 						onCloseModal={this.handleCloseCheckQR}
 						pharmacyId={this.state.pharmacyId}
 						header="Check QR"
-					/>				
+					/>
 
 					<ReserveDrugsInPharmacy
 						show={this.state.showReserveDrugsInPharmacy}
