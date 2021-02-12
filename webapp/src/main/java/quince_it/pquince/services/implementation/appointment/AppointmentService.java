@@ -309,6 +309,8 @@ public class AppointmentService implements IAppointmentService{
 		if (!(appointment.getStartDateTime().after(new Date()) &&
 				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED))))
 			throw new IllegalArgumentException("Bad request");
+		if(isAbsent(appointment))
+			throw new IllegalArgumentException("Cannot reserve appointment at date dermatologist is absent");
 	}
 	
 	private boolean doesStaffHasAppointmentInDesiredTime(Appointment appointment, Staff staff) {
@@ -737,6 +739,9 @@ public class AppointmentService implements IAppointmentService{
 	
 		if (!(appointment.getStartDateTime().after(new Date())))
 				throw new IllegalArgumentException("Bad request");
+		
+		if(isAbsent(appointment))
+			throw new IllegalArgumentException("Cannot reserve appointment at date dermatologist is absent");
 	}
 
 	@Override
@@ -925,6 +930,14 @@ public class AppointmentService implements IAppointmentService{
 		patientRepository.save(patient);
 		appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
 		appointmentRepository.save(appointment);
+	}
+	
+	private boolean isAbsent(Appointment appointment) {
+		Staff staff = appointment.getStaff();
+		if (staff.getStaffType() == StaffType.DERMATOLOGIST)
+			return absenceRepository.getAbsenceForDermatologistForDateForPharmacy(staff.getId(), appointment.getStartDateTime(), appointment.getPharmacy().getId()).size() > 0;
+		else
+			return absenceRepository.findPharmacistAbsenceByStaffIdAndDate(staff.getId(), appointment.getStartDateTime()).size() > 0;
 	}
 
 }

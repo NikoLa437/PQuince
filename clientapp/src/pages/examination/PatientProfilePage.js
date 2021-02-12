@@ -50,7 +50,7 @@ class PatientProfilePage extends Component {
 						redirect: true,
 						redirectUrl: "/unauthorized"
 					});
-				} else {
+				}  else if (res.status == 200 || res.status == 201) {
 					let patientsHistory = false;
 					if (res.status == 201)
 						patientsHistory = true;
@@ -79,7 +79,7 @@ class PatientProfilePage extends Component {
 						redirect: true,
 						redirectUrl: "/unauthorized"
 					});
-				} else {
+				} else if (res.status == 200) {
 					this.setState({
 						id: res.data.Id,
 						email: res.data.EntityDTO.email,
