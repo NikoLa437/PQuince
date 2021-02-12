@@ -67,6 +67,7 @@ class AbsencePage extends Component {
             .then((res) => {
                 this.setState({ openSuccessModal: true });
                 console.log(res.data);
+                window.location.reload();
             })
             .catch((err) => {
                 console.log(err);

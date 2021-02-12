@@ -30,7 +30,9 @@ public class AppointmentDTO {
     
     private AppointmentStatus appointmentStatus;
     
-    public AppointmentDTO() {}
+    private TreatmentReportDTO treatmentReportDTO;
+
+	public AppointmentDTO() {}
 
 	public AppointmentDTO(IdentifiableDTO<StaffDTO> staff, IdentifiableDTO<UserDTO> patient, AppointmentStatus appointmentStatus, Date startDateTime, Date endDateTime, double price) {
 		super();
@@ -54,7 +56,6 @@ public class AppointmentDTO {
 		return endDateTime;
 	}
 	
-
 	public void setEndDateTime(Date endDateTime) {
 		this.endDateTime = endDateTime;
 	}
@@ -81,5 +82,13 @@ public class AppointmentDTO {
 
 	public void setAppointmentStatus(AppointmentStatus appointmentStatus) {
 		this.appointmentStatus = appointmentStatus;
+	}
+	
+	public TreatmentReportDTO getTreatmentReportDTO() {
+		return treatmentReportDTO;
+	}
+
+	public void setTreatmentReportDTO(TreatmentReportDTO treatmentReportDTO) {
+		this.treatmentReportDTO = treatmentReportDTO;
 	}
 }

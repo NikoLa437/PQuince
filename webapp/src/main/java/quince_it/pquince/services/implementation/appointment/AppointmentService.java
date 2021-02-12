@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.appointment.TreatmentReport;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
@@ -34,6 +35,7 @@ import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.WorkTime;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
+import quince_it.pquince.repository.appointment.TreatmentReportRepository;
 import quince_it.pquince.repository.pharmacy.ActionAndPromotionsRepository;
 import quince_it.pquince.repository.pharmacy.PharmacyRepository;
 import quince_it.pquince.repository.users.AbsenceRepository;
@@ -51,6 +53,7 @@ import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppoint
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentWithPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistCreateAppointmentDTO;
 import quince_it.pquince.services.contracts.dto.appointment.NewConsultationDTO;
+import quince_it.pquince.services.contracts.dto.appointment.TreatmentReportDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.StaffGradeDTO;
@@ -105,6 +108,9 @@ public class AppointmentService implements IAppointmentService{
 	
 	@Autowired
 	private ActionAndPromotionsRepository actionAndPromotionsRepository;
+	
+	@Autowired
+	private TreatmentReportRepository treatmentReportRepository;
 	
 	@Override
 	public UUID create(DermatologistAppointmentDTO entityDTO) {
@@ -309,6 +315,8 @@ public class AppointmentService implements IAppointmentService{
 		if (!(appointment.getStartDateTime().after(new Date()) &&
 				(appointment.getAppointmentStatus().equals(AppointmentStatus.CREATED) || appointment.getAppointmentStatus().equals(AppointmentStatus.CANCELED))))
 			throw new IllegalArgumentException("Bad request");
+		if(isAbsent(appointment))
+			throw new IllegalArgumentException("Cannot reserve appointment at date dermatologist is absent");
 	}
 	
 	private boolean doesStaffHasAppointmentInDesiredTime(Appointment appointment, Staff staff) {
@@ -556,7 +564,24 @@ public class AppointmentService implements IAppointmentService{
 			appointments = Stream.concat(scheduledAppointments.stream(), finishedAppointments.stream()).collect(Collectors.toList());
 		}
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
+		concatenateTreatmentReport(returnAppointments);
 		return returnAppointments;
+	}
+	
+	private void concatenateTreatmentReport(List<IdentifiableDTO<AppointmentDTO>> appointments) {
+		for (int i = 0; i < appointments.size(); i++) {
+			IdentifiableDTO<AppointmentDTO> appointment = appointments.get(i);
+			if(appointment.EntityDTO.getAppointmentStatus() == AppointmentStatus.FINISHED) {
+				try {
+					TreatmentReport treatmentReport = treatmentReportRepository.findByAppointmentId(appointment.Id);
+					TreatmentReportDTO treatmentReportDTO = new TreatmentReportDTO(treatmentReport.getAnamnesis(), treatmentReport.getDiagnosis(), treatmentReport.getTherapy(), treatmentReport.getId());
+					appointment.EntityDTO.setTreatmentReportDTO(treatmentReportDTO);
+					appointments.set(i, appointment);
+				} catch (Exception e) {
+					continue;
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -737,6 +762,9 @@ public class AppointmentService implements IAppointmentService{
 	
 		if (!(appointment.getStartDateTime().after(new Date())))
 				throw new IllegalArgumentException("Bad request");
+		
+		if(isAbsent(appointment))
+			throw new IllegalArgumentException("Cannot reserve appointment at date dermatologist is absent");
 	}
 
 	@Override
@@ -925,6 +953,14 @@ public class AppointmentService implements IAppointmentService{
 		patientRepository.save(patient);
 		appointment.setAppointmentStatus(AppointmentStatus.EXPIRED);
 		appointmentRepository.save(appointment);
+	}
+	
+	private boolean isAbsent(Appointment appointment) {
+		Staff staff = appointment.getStaff();
+		if (staff.getStaffType() == StaffType.DERMATOLOGIST)
+			return absenceRepository.getAbsenceForDermatologistForDateForPharmacy(staff.getId(), appointment.getStartDateTime(), appointment.getPharmacy().getId()).size() > 0;
+		else
+			return absenceRepository.findPharmacistAbsenceByStaffIdAndDate(staff.getId(), appointment.getStartDateTime()).size() > 0;
 	}
 
 }
