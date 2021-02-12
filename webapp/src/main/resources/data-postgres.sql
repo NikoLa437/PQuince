@@ -197,6 +197,8 @@ insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from,
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130128','aecf0eac-68cb-11eb-9f52-838764dae934','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 230);
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130129','b4abdfc6-68cb-11eb-a102-d7374f9803ba','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 550);
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130777','1fe1cd8e-5839-11eb-ae93-0242ac137772','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 340);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130778','2fe1cd8e-5839-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 340);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130779','2c797174-5839-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 500);
 
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac131129','b4abdfc6-68cb-11eb-a102-d7374f9803ba','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-22', 550);
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac132777','1fe1cd8e-5839-11eb-ae93-0242ac137772','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-22', 340);
@@ -209,6 +211,8 @@ insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values (
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('aecf0eac-68cb-11eb-9f52-838764dae934', 'cafeddee-56cb-11eb-ae93-0242ac130002', 30, 1);
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('b4abdfc6-68cb-11eb-a102-d7374f9803ba', 'cafeddee-56cb-11eb-ae93-0242ac130002', 20, 1);
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('1fe1cd8e-5839-11eb-ae93-0242ac137772', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24, 1);
+insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('2fe1cd8e-5839-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24, 1);
+insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('2c797174-5839-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 40, 1);
 
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('b4abdfc6-68cb-11eb-a102-d7374f9803ba', 'cafeddee-56cb-11eb-ae93-0242ac130202', 25, 1);
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('1fe1cd8e-5839-11eb-ae93-0242ac137772', 'cafeddee-56cb-11eb-ae93-0242ac130202', 25, 1);
@@ -321,25 +325,31 @@ insert into drug_format_id (id, type) values ('50645278-52d3-13eb-ae93-0242ac130
 insert into drug_format_id (id, type) values ('60645278-52d3-13eb-ae93-0242ac130002','CREME');
 
 --erecept
-insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('e672e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('e672e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'REJECTED', '22793162-52d3-11eb-ae93-0242ac130002',1);
 insert into ereceipt (id, price, creation_date, status, patient_id, pharmacy_id, version) values ('15df3e98-67ad-11eb-ae93-0242ac130002', 2200, '2020-12-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac111002',1);
 insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('19e26092-67ad-11eb-ae93-0242ac130002', -1, '2021-01-05', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
 insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-13', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
 insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
 insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('8872e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
-insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('9972e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('9972e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'PROCESSED', '22793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('21e5ba6a-67ad-11eb-ae93-0242ac130002', -1, '2021-01-20', 'REJECTED', '22793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('8972e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '23793162-52d3-11eb-ae93-0242ac130002',1);
+insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('1172e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '23793162-52d3-11eb-ae93-0242ac130002',1);
 
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('8872e844-67ac-11eb-ae93-0242ac130002','dac2b818-5838-11eb-ae93-0242ac130002',2);
-
-insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('e672e844-67ac-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',2);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('19e26092-67ad-11eb-ae93-0242ac130002','2c797174-5839-11eb-ae93-0242ac130002',2);
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('e672e844-67ac-11eb-ae93-0242ac130002','2c797174-5839-11eb-ae93-0242ac130002',3);
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('e672e844-67ac-11eb-ae93-0242ac130002','dac2b818-5838-11eb-ae93-0242ac130002',1);
-
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('e672e844-67ac-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',2);
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('15df3e98-67ad-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',1);
-insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('19e26092-67ad-11eb-ae93-0242ac130002','2c797174-5839-11eb-ae93-0242ac130002',2);
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('1d4ac49a-67ad-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',1);
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('20e5ba6a-67ad-11eb-ae93-0242ac130002','2fe1cd8e-5839-11eb-ae93-0242ac130002',1);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('9972e844-67ac-11eb-ae93-0242ac130002','b4abdfc6-68cb-11eb-a102-d7374f9803ba',2);
 insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('9972e844-67ac-11eb-ae93-0242ac130002','2c797174-5839-11eb-ae93-0242ac130002',1);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('21e5ba6a-67ad-11eb-ae93-0242ac130002','b4abdfc6-68cb-11eb-a102-d7374f9803ba',1);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('8972e844-67ac-11eb-ae93-0242ac130002','b4abdfc6-68cb-11eb-a102-d7374f9803ba',1);
+insert into ereceipt_items(e_receipt_id, drug_instance_id, amount) values ('1172e844-67ac-11eb-ae93-0242ac130002','b4abdfc6-68cb-11eb-a102-d7374f9803ba',1);
+
 
 insert into loyaltyprogram (id, points_for_appointment, points_for_consulting, points_to_enter_regular_cathegory, points_to_enter_silver_cathegory, points_to_enter_gold_cathegory, appointment_discount_regular, drug_discount_regular, consultation_discount_regular, appointment_discount_silver,drug_discount_silver, consultation_discount_silver, appointment_discount_gold,  drug_discount_gold, consultation_discount_gold) values ('791fee27-bb12-4340-9b0a-a7c9ef575278', 5, 4, 0, 50, 100, 0, 0, 0, 5, 6, 7, 15, 20, 25);
 

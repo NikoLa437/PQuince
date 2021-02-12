@@ -284,7 +284,7 @@ public class UsersController {
 		}
 	}
 	
-	@PutMapping("/remove-pharmacyist-from-pharmacy") 
+	@PutMapping("/remove-pharmacist-from-pharmacy") 
 	@PreAuthorize("hasRole('PHARMACYADMIN')")
 	@CrossOrigin
 	public ResponseEntity<?> removePharmacistFromPharmacy(@RequestBody RemovePharmacistFromPharmacyDTO removePharmacistFromPharmacyDTO) {

@@ -29,6 +29,7 @@ import quince_it.pquince.entities.users.User;
 import quince_it.pquince.security.TokenUtils;
 import quince_it.pquince.security.auth.JwtAuthenticationRequest;
 import quince_it.pquince.security.exception.ResourceConflictException;
+import quince_it.pquince.services.contracts.dto.users.PharmacistRequestDTO;
 import quince_it.pquince.services.contracts.dto.users.UserDTO;
 import quince_it.pquince.services.contracts.dto.users.UserRequestDTO;
 import quince_it.pquince.services.contracts.dto.users.UserTokenStateDTO;
@@ -111,6 +112,22 @@ public class AuthenticationController {
 		
 		return new ResponseEntity<>(userId, HttpStatus.CREATED);
 	}
+	
+	@CrossOrigin
+	@PostMapping("/signup-pharmacists")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<UUID> addPharmacists(@RequestBody PharmacistRequestDTO pharmacistRequest, UriComponentsBuilder ucBuilder) {
+
+		IdentifiableDTO<UserDTO> existUser = this.userService.findByEmail(pharmacistRequest.getEmail());
+		if (existUser != null) {
+			throw new ResourceConflictException(pharmacistRequest.getEmail(), "Email already exists");
+		}
+
+		UUID userId = userService.createPharmacists(pharmacistRequest);
+		
+		return new ResponseEntity<>(userId, HttpStatus.CREATED);
+	}
+	
 	@PostMapping("/signup-pharmacyadmin/{pharmacyId}")
 	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<UUID> addPharmacyAdmin(@PathVariable UUID pharmacyId, @RequestBody UserRequestDTO userRequest, UriComponentsBuilder ucBuilder) {

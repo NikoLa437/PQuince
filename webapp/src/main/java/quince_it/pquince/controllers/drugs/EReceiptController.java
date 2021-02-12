@@ -19,6 +19,7 @@ import quince_it.pquince.entities.drugs.EReceiptStatus;
 import quince_it.pquince.services.contracts.dto.drugs.RefuseReceiptDTO;
 import quince_it.pquince.services.contracts.dto.users.PatientAllergicDTO;
 import quince_it.pquince.services.contracts.interfaces.drugs.IEReceiptService;
+import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyService;
 
 @RestController
 @RequestMapping(value = "api/ereceipt")
@@ -26,6 +27,9 @@ public class EReceiptController {
 
 	@Autowired
 	private IEReceiptService eReceiptService;
+	
+	@Autowired
+	private IPharmacyService pharmacyService;
 	
 	@GetMapping("/for-patient")
 	@PreAuthorize("hasRole('PATIENT')")
@@ -67,6 +71,12 @@ public class EReceiptController {
 	@PreAuthorize("hasRole('PATIENT')")
 	public ResponseEntity<?> findAllProcessedDistinctDrugsByPatientId() {
 		return new ResponseEntity<>(eReceiptService.findAllProcessedDistinctDrugsByPatientId(),HttpStatus.OK);
+	}
+	
+	@GetMapping("/can-patient-use/{id}")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> canPatientUseEReceipt(@PathVariable UUID id) {
+		return new ResponseEntity<>(pharmacyService.canPatientUseQR(id),HttpStatus.OK);
 	}
 	
 	@PostMapping("/refuse") 
