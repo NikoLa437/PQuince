@@ -122,7 +122,7 @@ public class ComplaintService implements IComplaintService{
 	}
 
 	@Override
-	public void replyComplaint(UUID id, String reply, String email) {
+	public ComplaintStaff replyComplaint(UUID id, String reply, String email) {
 		ComplaintStaff complaintStaff = complaintRepository.getOne(id);
 		complaintStaff.setReply(reply);
 		
@@ -137,6 +137,8 @@ public class ComplaintService implements IComplaintService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return complaintStaff;
 		
 		
 	}

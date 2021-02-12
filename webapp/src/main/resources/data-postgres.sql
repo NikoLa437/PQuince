@@ -220,6 +220,8 @@ insert into drug_kind_id (id, type) values ('40345278-52d3-13eb-ae93-0242ac13000
 insert into drug_format_id (id, type) values ('38445278-52d3-13eb-ae93-0242ac130002','VACCINE');
 insert into drug_format_id (id, type) values ('39545278-52d3-13eb-ae93-0242ac130002','CAPSULE');
 insert into drug_format_id (id, type) values ('40645278-52d3-13eb-ae93-0242ac130002','INJECTION');
+insert into drug_format_id (id, type) values ('50645278-52d3-13eb-ae93-0242ac130002','GEL');
+insert into drug_format_id (id, type) values ('60645278-52d3-13eb-ae93-0242ac130002','CREME');
 
 
 insert into ereceipt (id, price, creation_date, status, patient_id, version) values ('e672e844-67ac-11eb-ae93-0242ac130002', -1, '2021-01-20', 'NEW', '22793162-52d3-11eb-ae93-0242ac130002',1);
