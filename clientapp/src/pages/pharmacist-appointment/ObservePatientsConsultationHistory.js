@@ -23,7 +23,7 @@ class ObservePatientsCosultationHistory extends Component {
 		complaint: "",
 		StaffName: "",
 		StaffSurame: "",
-		grade: 0,
+		grade: 1,
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
@@ -202,7 +202,7 @@ class ObservePatientsCosultationHistory extends Component {
 						showFeedbackModal: true,
 						StaffName: staff.EntityDTO.name,
 						StaffSurame: staff.EntityDTO.surname,
-						grade: 0,
+						grade: 1,
 					});
 				} else if (res.status === 200) {
 					this.setState({
