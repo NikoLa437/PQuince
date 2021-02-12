@@ -8,5 +8,5 @@ import quince_it.pquince.entities.appointment.TreatmentReport;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 public interface TreatmentReportRepository  extends JpaRepository<TreatmentReport, UUID>{
-
+	TreatmentReport findByAppointmentId(UUID appointmentId);
 }
