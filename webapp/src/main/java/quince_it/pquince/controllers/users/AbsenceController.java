@@ -67,7 +67,16 @@ public class AbsenceController {
 		return new ResponseEntity<>(absences,HttpStatus.OK); 
 	}
 	
-
+	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
+	@CrossOrigin
+	@GetMapping
+	public ResponseEntity<?>getAbsences() {
+	  
+		List<IdentifiableDTO<AbsenceDTO>> absences = absenceService.getAbsencesAsStaff();
+	  
+		return new ResponseEntity<>(absences,HttpStatus.OK); 
+	}
+	
 	@GetMapping("/auth") 
 	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<?>checkAuthority() {	  
