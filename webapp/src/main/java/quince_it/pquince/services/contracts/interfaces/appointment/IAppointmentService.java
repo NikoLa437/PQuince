@@ -96,4 +96,6 @@ public interface IAppointmentService extends IService<DermatologistAppointmentDT
 	UUID newConsultation(NewConsultationDTO newConsultationDTO) throws AppointmentNotScheduledException, AppointmentTimeOverlappingWithOtherAppointmentException, AppointmentTimeOutofWorkTimeRange;
 
 	void givePenaltyForExpiredAppointment();
+	
+	boolean hasExaminedPatient(UUID patientId);
 }

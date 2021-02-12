@@ -24,6 +24,7 @@ class PatientProfilePage extends Component {
 		redirect: false,
 		redirectUrl: '',
 		openModalSuccess: false,
+		patientsHistory: false,
 	};
 
 	hasRole = (reqRole) => {
@@ -41,7 +42,7 @@ class PatientProfilePage extends Component {
 
 	fetchAppointments = () => {
 		const id = this.props.match.params.id;
-		Axios.get(BASE_URL + "/api/appointment/patient/" + id, {validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/appointment/patient/" + id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 
 				if (res.status === 401) {
@@ -50,7 +51,10 @@ class PatientProfilePage extends Component {
 						redirectUrl: "/unauthorized"
 					});
 				} else {
-					this.setState({ appointments: res.data });
+					let patientsHistory = false;
+					if (res.status == 201)
+						patientsHistory = true;
+					this.setState({ appointments: res.data, patientsHistory: patientsHistory }, () => this.handleSortByDate());
 				}
 
 				console.log(res.data);
@@ -66,7 +70,7 @@ class PatientProfilePage extends Component {
 			id: id
 		});
 
-		Axios.get(BASE_URL + "/api/users/patient/" + id, {validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+		Axios.get(BASE_URL + "/api/users/patient/" + id, { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
 				console.log(res.data);
 
@@ -108,7 +112,7 @@ class PatientProfilePage extends Component {
 			{ id: appointmentId },
 			{ headers: { Authorization: getAuthHeader() } })
 			.then((res) => {
-				this.setState({ openModalSuccess: true});
+				this.setState({ openModalSuccess: true });
 				this.fetchAppointments();
 				console.log(res.data);
 			})
@@ -118,7 +122,7 @@ class PatientProfilePage extends Component {
 	};
 
 	handleSchedule = () => {
-		if(this.hasRole("ROLE_DERMATHOLOGIST")){
+		if (this.hasRole("ROLE_DERMATHOLOGIST")) {
 			this.setState({
 				redirect: true,
 				redirectUrl: "/schedule-appointment/" + this.state.id
@@ -128,7 +132,7 @@ class PatientProfilePage extends Component {
 				redirect: true,
 				redirectUrl: "/new-appointment/" + this.state.id
 			});
-		}	
+		}
 	};
 
 	handleCreateAndSchedule = () => {
@@ -151,10 +155,10 @@ class PatientProfilePage extends Component {
 		startDateTime = new Date(startDateTime);
 		if (currentDateTime.getTime() + TIME_INTERAVAL_TO_START_APPOINTMENT < startDateTime.getTime())
 			return false;
-		else if(currentDateTime.getTime() > startDateTime.getTime())
+		else if (currentDateTime.getTime() > startDateTime.getTime())
 			return false;
-		else 
-			return true;	
+		else
+			return true;
 	}
 
 	handleModalSuccessClose = () => {
@@ -162,6 +166,23 @@ class PatientProfilePage extends Component {
 			openModalSuccess: false,
 		});
 	};
+
+	handleSortByDate = () => {
+		console.log(this.state.appointments);
+        this.state.appointments.sort(this.compareDates);
+        this.setState(this.state);
+		console.log(this.state.appointments);
+    };
+
+	compareDates = (a, b) => {
+        if (a.EntityDTO.startDateTime < b.EntityDTO.startDateTime) {
+            return 1;
+        }
+        if (a.EntityDTO.startDateTime > b.EntityDTO.startDateTime) {
+            return -1;
+        }
+        return 0;
+    }
 
 	render() {
 
@@ -264,6 +285,18 @@ class PatientProfilePage extends Component {
 
 							</form>
 						</div>
+						<div className="control-group mt-4">
+							<div
+								className="form-group controls mb-0 pb-2"
+								style={{ color: "#6c757d", opacity: 1 }}
+							>
+								<div>
+									<h3 hidden={this.state.patientsHistory}>You can't observe patient's appointment history because you did not have one already</h3>
+								</div>
+							</div>
+						</div>
+						<br />
+
 
 						<table className="table" style={{ width: "70%", marginTop: "3rem" }}>
 							<tbody>

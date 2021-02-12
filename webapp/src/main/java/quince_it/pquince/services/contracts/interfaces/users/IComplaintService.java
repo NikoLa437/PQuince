@@ -3,6 +3,7 @@ package quince_it.pquince.services.contracts.interfaces.users;
 import java.util.List;
 import java.util.UUID;
 
+import quince_it.pquince.entities.users.ComplaintStaff;
 import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintStaffDTO;
 import quince_it.pquince.services.contracts.exceptions.ComplaintsNotAllowedException;
@@ -22,7 +23,7 @@ public interface IComplaintService {
 
 	List<IdentifiableDTO<ComplaintPharmacyDTO>> findAllPharmacy();
 
-	void replyComplaint(UUID id, String reply, String email);
+	ComplaintStaff replyComplaint(UUID id, String reply, String email);
 
 	void replyComplaintPharmacy(UUID id, String reply);
 
