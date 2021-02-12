@@ -1,7 +1,7 @@
 package quince_it.pquince.services.contracts.dto.drugs;
 
+import java.util.Date;
 import java.util.UUID;
-import java.sql.Date;
 
 import quince_it.pquince.entities.drugs.OfferStatus;
 
@@ -48,11 +48,11 @@ public class OfferDTO {
 			this.price = price;
 		}
 
-		public OfferStatus getOrderStatus() {
+		public OfferStatus getOfferStatus() {
 			return offerStatus;
 		}
 
-		public void setOrderStatus(OfferStatus offerStatus) {
+		public void setOfferStatus(OfferStatus offerStatus) {
 			this.offerStatus = offerStatus;
 		}
 
