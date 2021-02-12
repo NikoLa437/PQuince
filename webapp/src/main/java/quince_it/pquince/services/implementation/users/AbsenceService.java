@@ -28,6 +28,7 @@ import quince_it.pquince.services.contracts.dto.users.RequestAbsenceDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.users.IAbsenceService;
 import quince_it.pquince.services.implementation.users.mail.EmailService;
+import quince_it.pquince.services.implementation.util.users.AbsenceMapper;
 
 @Service
 public class AbsenceService implements IAbsenceService{
@@ -131,6 +132,13 @@ public class AbsenceService implements IAbsenceService{
 			return true;
 		
 		return false;
+	}
+	
+	@Override
+	public List<IdentifiableDTO<AbsenceDTO>> getAbsencesAsStaff(){
+		UUID staffId = userService.getLoggedUserId();
+		List<Absence> absences = absenceRepository.findAllAbsencesByStaff(staffId);
+		return AbsenceMapper.MapAbsencePersistenceListToAbsenceIdentifiableDTOList(absences);
 	}
 	
 }

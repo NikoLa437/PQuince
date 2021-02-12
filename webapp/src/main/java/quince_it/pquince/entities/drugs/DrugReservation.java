@@ -9,20 +9,24 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Version;
 
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Patient;
 
 @Entity
 public class DrugReservation {
-
+	
+	@Version
+	private Long version;
+	
 	@Id
 	private UUID id;
     
     @ManyToOne
     private Pharmacy pharmacy;
-    
-    @ManyToOne
+
+	@ManyToOne
     private DrugInstance drugInstance;
     
     @ManyToOne
@@ -140,6 +144,10 @@ public class DrugReservation {
 
 	public void setReservationStatus(ReservationStatus reservationStatus) {
 		this.reservationStatus = reservationStatus;
+	}
+	
+    public Long getVersion() {
+		return version;
 	}
 	
 }
