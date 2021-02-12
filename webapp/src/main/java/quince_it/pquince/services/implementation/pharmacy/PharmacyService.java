@@ -450,6 +450,15 @@ public class PharmacyService implements IPharmacyService {
 		return pharmacies;
 	}
 	
+	@Override
+	public boolean canPatientUseQR(UUID id) {
+		System.out.println("PATIENT ID recept" + eReceiptRepository.getOne(id).getPatient().getId());
+		System.out.println("PATIENT ID" + userService.getLoggedUserId());
+		if( userService.getLoggedUserId().equals(eReceiptRepository.getOne(id).getPatient().getId()))
+			return true;
+		
+		return false;
+	}
 	
 	private double allDrugsAreInPharmacy(List<EReceiptItems> items, Pharmacy p) {
 		boolean var = false;
