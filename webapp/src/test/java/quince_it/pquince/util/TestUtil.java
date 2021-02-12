@@ -18,11 +18,14 @@ import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.entities.appointment.AppointmentType;
 import quince_it.pquince.entities.drugs.Allergen;
+import quince_it.pquince.entities.drugs.OfferStatus;
+import quince_it.pquince.entities.drugs.Offers;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Absence;
 import quince_it.pquince.entities.users.Address;
+import quince_it.pquince.entities.users.ComplaintStaff;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
@@ -103,5 +106,35 @@ public class TestUtil {
 		List<WorkTime> workTimes = new ArrayList<WorkTime>();
 		workTimes.add(new WorkTime(getPharmacy(), null, WORKTIME_START_DATE, WORKTIME_END_DATE, 8, 20));
 		return workTimes;
+	}
+	public static List<Offers> getOffers() {
+		List<Offers> offers = new ArrayList<Offers>();
+		Date dateToDelivery = new Date();
+		Offers offer = new Offers(dateToDelivery, 2000.0, OfferStatus.WAITING);
+		offers.add(offer);
+		return offers;
+	}
+	
+	public static Offers getOffer() {
+		Date dateToDelivery = new Date();
+		return new Offers(dateToDelivery, 2000.0, OfferStatus.WAITING);
+	}
+	
+	public static ComplaintStaff getComplaintStaff() {
+		return new ComplaintStaff(new Staff(), new Patient(), "Test", "Stefan", "Stefic", "dermathologist","mail@example.com");
+	}
+
+	public static ComplaintStaff getComplaintStaffWithReply() {
+		ComplaintStaff complaintStaff =  new ComplaintStaff(new Staff(), new Patient(), "Test", "Stefan", "Stefic", "dermathologist","mail@example.com");
+		complaintStaff.setReply("TEST");
+		
+		return complaintStaff;
+	}
+
+	public static ComplaintStaff getSavedComplaint() {
+		ComplaintStaff complaintStaff =  new ComplaintStaff(new Staff(), new Patient(), "Test", "Stefan", "Stefic", "dermathologist","mail@example.com");
+		complaintStaff.setReply("TEST");
+		
+		return complaintStaff;
 	}
 }
