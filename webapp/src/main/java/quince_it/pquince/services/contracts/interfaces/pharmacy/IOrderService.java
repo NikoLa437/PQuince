@@ -5,6 +5,10 @@ import java.util.UUID;
 
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugForOrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugOrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugWithPriceDTO;
+import quince_it.pquince.services.contracts.dto.drugs.EditOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OrderForProviderDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -23,4 +27,10 @@ public interface IOrderService {
 	List<IdentifiableDTO<OrderDTO>> filterCreatedOrdersForPharmacy(UUID pharmacyId);
 
 	List<IdentifiableDTO<OrderDTO>> filterProcessedOrdersForPharmacy(UUID pharmacyId);
+
+	List<DrugForOrderDTO> findDrugsFromOrder(UUID orderId);
+
+	List<DrugForOrderDTO> findAllDrugsToAddForOrder(UUID orderId);
+
+	void update(EditOrderDTO editOrderDTO);
 }

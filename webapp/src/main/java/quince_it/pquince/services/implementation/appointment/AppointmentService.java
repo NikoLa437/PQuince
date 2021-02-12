@@ -258,6 +258,7 @@ public class AppointmentService implements IAppointmentService{
 		return returnAppointments;
 	}
 
+	@Transactional
 	@Override
 	public void reserveAppointment(UUID appointmentId) throws AppointmentTimeOverlappingWithOtherAppointmentException {
 
@@ -457,8 +458,16 @@ public class AppointmentService implements IAppointmentService{
 																												StaffType.PHARMACIST);
 		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
-		
+		returnAppointments.forEach((a) -> a.EntityDTO.setTreatmentRaport(getTreatmentForAppointmentDTO(a.Id)));
 		return returnAppointments;
+	}
+
+	private TreatmentReportDTO getTreatmentForAppointmentDTO(UUID appointmentId) {
+		TreatmentReport treatmentReport = treatmentReportRepository.findByAppointmentId(appointmentId);
+		TreatmentReportDTO treatmentReportDTO = treatmentReport != null ? new TreatmentReportDTO(treatmentReport.getAnamnesis(), treatmentReport.getDiagnosis(), treatmentReport.getTherapy(), treatmentReport.getId())
+																		: new TreatmentReportDTO("", "", "", appointmentId);
+		
+		return treatmentReportDTO;
 	}
 
 	@Override
@@ -471,7 +480,8 @@ public class AppointmentService implements IAppointmentService{
 																																		StaffType.PHARMACIST);
 		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
-		
+		returnAppointments.forEach((a) -> a.EntityDTO.setTreatmentRaport(getTreatmentForAppointmentDTO(a.Id)));
+
 		return returnAppointments;
 	}
 
@@ -485,7 +495,8 @@ public class AppointmentService implements IAppointmentService{
 																																		StaffType.PHARMACIST);
 		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
-		
+		returnAppointments.forEach((a) -> a.EntityDTO.setTreatmentRaport(getTreatmentForAppointmentDTO(a.Id)));
+
 		return returnAppointments;
 	}
 
@@ -499,7 +510,8 @@ public class AppointmentService implements IAppointmentService{
 																													StaffType.PHARMACIST);
 		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
-		
+		returnAppointments.forEach((a) -> a.EntityDTO.setTreatmentRaport(getTreatmentForAppointmentDTO(a.Id)));
+
 		return returnAppointments;
 	}
 
@@ -512,7 +524,8 @@ public class AppointmentService implements IAppointmentService{
 																																		StaffType.DERMATOLOGIST :
 																																		StaffType.PHARMACIST);
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
-		
+		returnAppointments.forEach((a) -> a.EntityDTO.setTreatmentRaport(getTreatmentForAppointmentDTO(a.Id)));
+
 		return returnAppointments;
 	}
 
@@ -526,7 +539,8 @@ public class AppointmentService implements IAppointmentService{
 																												StaffType.PHARMACIST);
 		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
-		
+		returnAppointments.forEach((a) -> a.EntityDTO.setTreatmentRaport(getTreatmentForAppointmentDTO(a.Id)));
+
 		return returnAppointments;
 	}
 
@@ -540,7 +554,8 @@ public class AppointmentService implements IAppointmentService{
 																													StaffType.PHARMACIST);
 		
 		List<IdentifiableDTO<DermatologistAppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments, staffWithGrades, 0);
-		
+		returnAppointments.forEach((a) -> a.EntityDTO.setTreatmentRaport(getTreatmentForAppointmentDTO(a.Id)));
+
 		return returnAppointments;
 	}
 	
@@ -768,8 +783,11 @@ public class AppointmentService implements IAppointmentService{
 			throw new IllegalArgumentException("Cannot reserve appointment at date dermatologist is absent");
 	}
 
+	@Transactional
 	@Override
 	public UUID createConsultation(ConsultationRequestDTO requestDTO) throws AppointmentNotScheduledException, AppointmentTimeOverlappingWithOtherAppointmentException {
+		
+		Pharmacist pharmacist = pharmacistRepository.getOne(requestDTO.getPharmacistId());
 		
 		long time = requestDTO.getStartDateTime().getTime();
 		Date endDateTime= new Date(time + (Integer.parseInt(env.getProperty("consultation_time")) * 60000));
@@ -784,6 +802,7 @@ public class AppointmentService implements IAppointmentService{
 			emailService.sendAppointmentReservationNotificationAsync(appointment,"pharmacist");
 		} catch (MessagingException e) { }
 
+		pharmacistRepository.save(pharmacist);
 		return appointment.getId();
 	}
 	

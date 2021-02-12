@@ -7,7 +7,7 @@ import HeadingAlert from "./HeadingAlert";
 
 class DrugReservationModal extends Component {
 	state = {
-		selectedDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+		selectedDate: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
 		drugAmount: 1,
 	};
 
@@ -72,10 +72,15 @@ class DrugReservationModal extends Component {
 								<div className="form-col" style={{ color: "#6c757d", opacity: 1 }}>
 									<DatePicker
 										className="form-control mr-3"
-										minDate={new Date(new Date().getTime() + 24 * 60 * 60 * 1000)}
+										minDate={new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000)}
 										onChange={(date) => this.handleDateChange(date)}
 										selected={this.state.selectedDate}
 									/>
+								</div>
+							</div>
+							<div className="form-row">
+								<div className="form-col" style={{ color: "#6c757d", opacity: 1, fontSize: "0.7em" }}>
+									Minimum period for reservation is 48h before, because you cannot pickup drug 24h before or less.
 								</div>
 							</div>
 							<div className="form-row">

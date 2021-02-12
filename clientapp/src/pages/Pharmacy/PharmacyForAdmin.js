@@ -269,8 +269,8 @@ class PharmacyForAdmin extends Component {
 						<NavLink className="nav-link " exact to="/pharmacy-drugs-statistics">
 							Drugs statistics
 						</NavLink>
-						<NavLink className="nav-link " exact to="/price-statistics">
-							Prihodi statistics
+						<NavLink className="nav-link " exact to="/pharmacy-income-statistics">
+							Pharmacy income
 						</NavLink>
 					</nav>
 					<div className="row" style={{ marginTop: "3%" }}>

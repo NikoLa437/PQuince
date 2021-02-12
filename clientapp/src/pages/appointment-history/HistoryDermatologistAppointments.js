@@ -10,6 +10,7 @@ import getAuthHeader from "../../GetHeader";
 import ComplaintCreateModal from "../../components/ComplaintCreateModal";
 import HeadingAlert from "../../components/HeadingAlert";
 import HeadingSuccessAlert from "../../components/HeadingSuccessAlert";
+import TreatmentReportModal from "../../components/TreatmentReportModal";
 
 class HistoryDermatologistAppointments extends Component {
 	state = {
@@ -30,6 +31,26 @@ class HistoryDermatologistAppointments extends Component {
 		successHeader: "",
 		successMessage: "",
 		unauthorizedRedirect: false,
+
+		showTreatmentModal: false,
+		anamnesis: "",
+		diagnosis: "",
+		therapy: "",
+	};
+
+	handleAppointmentClick = (appointment) => {
+		this.setState({
+			anamnesis: appointment.EntityDTO.treatmentRaport.anamnesis,
+			diagnosis: appointment.EntityDTO.treatmentRaport.diagnosis,
+			therapy: appointment.EntityDTO.treatmentRaport.therapy,
+			showTreatmentModal: true,
+		});
+	};
+
+	handleTreatmentModalClose = () => {
+		this.setState({
+			showTreatmentModal: false,
+		});
 	};
 
 	componentDidMount() {
@@ -401,15 +422,24 @@ class HistoryDermatologistAppointments extends Component {
 							</div>
 						</div>
 					</div>
-
-					<table className="table" style={{ width: "100%", marginTop: "3rem" }}>
+					<p hidden={this.state.appointments.length === 0} className="mb-0 mt-4 text-uppercase">
+						Click on appointment to see treatment report
+					</p>
+					<table
+						className={this.state.appointments.length === 0 ? "table" : "table table-hover"}
+						style={
+							this.state.appointments.length === 0
+								? { width: "100%", marginTop: "3rem" }
+								: { width: "100%", marginTop: "3rem", cursor: "pointer" }
+						}
+					>
 						<tbody>
 							{this.state.appointments.map((appointment) => (
 								<tr id={appointment.Id} key={appointment.Id} className="rounded">
-									<td width="190em">
+									<td width="190em" onClick={() => this.handleAppointmentClick(appointment)}>
 										<img className="img-fluid" src={AppointmentIcon} width="150em" />
 									</td>
-									<td>
+									<td onClick={() => this.handleAppointmentClick(appointment)}>
 										<div>
 											<b>Date: </b>{" "}
 											{new Date(appointment.EntityDTO.startDateTime).toLocaleDateString("en-US", {
@@ -501,6 +531,14 @@ class HistoryDermatologistAppointments extends Component {
 					forWho="consultant"
 					handleClickIcon={this.handleClickIcon}
 					complaint={this.state.complaint}
+				/>
+				<TreatmentReportModal
+					header="Treatment report"
+					show={this.state.showTreatmentModal}
+					onCloseModal={this.handleTreatmentModalClose}
+					anamnesis={this.state.anamnesis}
+					diagnosis={this.state.diagnosis}
+					therapy={this.state.therapy}
 				/>
 			</React.Fragment>
 		);

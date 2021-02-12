@@ -23,39 +23,39 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 				+ " AND a.appointmentStatus = 'SCHEDULED' AND a.appointmentType = ?2")
 	List<Appointment> findAllFutureAppointmentsForPatient(UUID patientId, AppointmentType appointmentType);
 	
-	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
 				+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = ?2")
 	List<Appointment> findAllPreviousAppointmentsForPatient(UUID patientId, AppointmentType appointmentType);
 	
-	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.staff.id = ?2")
 	List<Appointment> findAllPreviousAppointmentsForPatientForStaff(UUID patientId, UUID staffId);
 	
-	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.pharmacy.id = ?2 AND a.appointmentType = ?3")
 	List<Appointment> findAllPreviousAppointmentsForPatientForPharmacy(UUID patientId, UUID pharmacyId, AppointmentType appointmentType);
 	
-	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = ?2 ORDER BY a.startDateTime ASC")
 	List<Appointment> findAllPreviousAppointmentsForPatientSortByDateAscending(UUID patientId, AppointmentType appointmentType);
 	
-	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = ?2  ORDER BY a.startDateTime DESC")
 	List<Appointment> findAllPreviousAppointmentsForPatientSortByDateDescending(UUID patientId, AppointmentType appointmentType);
 	
-	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = ?2  ORDER BY a.priceToPay ASC")
 	List<Appointment> findAllPreviousAppointmentsForPatientSortByPriceAscending(UUID patientId, AppointmentType appointmentType);
 	
-	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = ?2  ORDER BY a.priceToPay DESC")
 	List<Appointment> findAllPreviousAppointmentsForPatientSortByPriceDescending(UUID patientId, AppointmentType appointmentType);
 	
-	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = ?2  ORDER BY a.endDateTime - a.startDateTime ASC")
 	List<Appointment> findAllPreviousAppointmentsForPatientSortByTimeAscending(UUID patientId, AppointmentType appointmentType);
 	
-	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1 AND a.endDateTime < CURRENT_TIMESTAMP"
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = ?2  ORDER BY a.endDateTime - a.startDateTime DESC")
 	List<Appointment> findAllPreviousAppointmentsForPatientSortByTimeDescending(UUID patientId, AppointmentType appointmentType);
 	

@@ -62,4 +62,12 @@ public class DrugRequest {
 	public void setStaff(Staff staff) {
 		this.staff = staff;
 	}
+	public Date getDateTime() {
+		return dateTime;
+	}
+	public void setDateTime(Date dateTime) {
+		this.dateTime = dateTime;
+	}
+
+	
 }
