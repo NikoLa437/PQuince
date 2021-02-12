@@ -37,7 +37,7 @@ class DrugsPage extends Component {
 		showModifyFeedbackModal: false,
 		selectedDrugId: "",
 		drugNameModal: "",
-		grade: 0,
+		grade: 1,
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
@@ -200,7 +200,7 @@ class DrugsPage extends Component {
 						selectedDrugId: drug.Id,
 						showFeedbackModal: true,
 						drugNameModal: drug.EntityDTO.drugInstanceName,
-						grade: 0,
+						grade: 1,
 					});
 				} else if (res.status === 200) {
 					this.setState({

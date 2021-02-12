@@ -23,7 +23,7 @@ class HistoryDermatologistAppointments extends Component {
 		selectedStaffId: "",
 		StaffName: "",
 		StaffSurame: "",
-		grade: 0,
+		grade: 1,
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
@@ -240,7 +240,7 @@ class HistoryDermatologistAppointments extends Component {
 						showFeedbackModal: true,
 						StaffName: staff.EntityDTO.name,
 						StaffSurame: staff.EntityDTO.surname,
-						grade: 0,
+						grade: 1,
 					});
 				} else if (res.status === 200) {
 					this.setState({
