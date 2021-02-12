@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import quince_it.pquince.entities.appointment.Appointment;
 import quince_it.pquince.entities.appointment.AppointmentType;
+import quince_it.pquince.entities.users.Absence;
 import quince_it.pquince.services.contracts.dto.appointment.DermatologistAppointmentDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 
@@ -98,12 +99,20 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 	List<Appointment> findAllAppointmentsByAppointmentTimeAndPatient(Date dateTimeFrom, Date dateTimeTo, UUID patientId);
 
 	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
-			+ " AND ( a.appointmentStatus = 'FINISHED' OR (a.appointmentStatus = 'SCHEDULED' AND a.staff.id = ?2 AND a.pharmacy.id = ?3) ) AND a.appointmentType = 'CONSULTATION' ORDER BY a.startDateTime DESC")
-	List<Appointment> getPharmacistAppointmentsByPatient(UUID patientId, UUID staffId, UUID pharmacyId);
+			+ " AND a.appointmentStatus = 'SCHEDULED' AND a.staff.id = ?2 AND a.pharmacy.id = ?3 AND a.appointmentType = 'CONSULTATION' ORDER BY a.startDateTime DESC")
+	List<Appointment> getScheduledPharmacistAppointmentsByPatient(UUID patientId, UUID staffId, UUID pharmacyId);
 	
 	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
-			+ " AND ( a.appointmentStatus = 'FINISHED' OR (a.appointmentStatus = 'SCHEDULED' AND a.staff.id = ?2 AND a.pharmacy.id = ?3) ) AND a.appointmentType = 'EXAMINATION' ORDER BY a.startDateTime DESC")
-	List<Appointment> getDermatologistAppointmentsByPatient(UUID patientId, UUID staffId, UUID pharmacyId);
+			+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = 'CONSULTATION' ORDER BY a.startDateTime DESC")
+	List<Appointment> getFinishedPharmacistAppointmentsByPatient(UUID patientId, UUID staffId, UUID pharmacyId);
+	
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
+			+ " AND a.appointmentStatus = 'SCHEDULED' AND a.staff.id = ?2 AND a.pharmacy.id = ?3 AND a.appointmentType = 'EXAMINATION' ORDER BY a.startDateTime DESC")
+	List<Appointment> getScheduledDermatologistAppointmentsByPatient(UUID patientId, UUID staffId, UUID pharmacyId);
+	
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?1"
+			+ " AND a.appointmentStatus = 'FINISHED' AND a.appointmentType = 'EXAMINATION' ORDER BY a.startDateTime DESC")
+	List<Appointment> getFinishedDermatologistAppointmentsByPatient(UUID patientId, UUID staffId, UUID pharmacyId);
 	
 	@Query(value = "SELECT a FROM Appointment a WHERE a.staff.id = ?1"
 			+ " AND (a.appointmentStatus = 'CREATED' OR a.appointmentStatus = 'SCHEDULED') AND a.appointmentType = 'EXAMINATION' AND a.pharmacy.id=?2")
@@ -131,4 +140,8 @@ public interface AppointmentRepository extends PagingAndSortingRepository<Appoin
 	@Query(value = "SELECT a FROM Appointment a WHERE DATE(a.startDateTime) >= ?2 AND DATE(a.startDateTime) <= ?3"
 			+ " AND a.appointmentStatus = 'FINISHED' AND a.pharmacy.id = ?1")
 	List<Appointment> findAllAppointmentForPharmacyInDateRange(UUID pharmacyId, Date dateFrom, Date dateTo);
+
+	@Query(value = "SELECT a FROM Appointment a WHERE a.patient.id = ?2 AND a.staff.id = ?1"
+			+ " AND a.appointmentStatus = 'FINISHED'")
+	List<Appointment> getFinishedAppointmentsForStaffForPatient(UUID staffId, UUID patientId);
 }
