@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import quince_it.pquince.entities.users.ComplaintStaff;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
@@ -64,9 +65,9 @@ public class ComplaintController {
 
 	@PostMapping("/reply")
 	@PreAuthorize("hasRole('SYSADMIN')")
-	public ResponseEntity<?> replyComplaintStuff(@RequestBody ComplaintReplyDTO complaintReplyDTO) {
+	public ResponseEntity<?> replyComplaintStsff(@RequestBody ComplaintReplyDTO complaintReplyDTO) {
 		
-		complaintService.replyComplaint(complaintReplyDTO.getId(), complaintReplyDTO.getReply(), complaintReplyDTO.getEmail());
+		ComplaintStaff complaintStuff = complaintService.replyComplaint(complaintReplyDTO.getId(), complaintReplyDTO.getReply(), complaintReplyDTO.getEmail());
 		
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
