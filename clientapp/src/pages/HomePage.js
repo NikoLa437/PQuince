@@ -24,13 +24,20 @@ class HomePage extends React.Component {
 				<Header />
 
 				<section id="hero" className="d-flex align-items-center">
-					<div className="container" hidden={this.hasRole("ROLE_DERMATHOLOGIST")}>
+					<div className="container" hidden={this.hasRole("ROLE_DERMATHOLOGIST") || this.hasRole("ROLE_PHARMACIST")}>
 						<h1>Welcome to PQuince</h1>
 						<Link hidden={this.hasRole("*")} to="/registration" className="btn-get-started scrollto">
 							Register
 						</Link>
 					</div>
-					<h2 hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>Start examination through calendar or by searching for patient</h2>
+					<div hidden={!this.hasRole("ROLE_DERMATHOLOGIST")}>
+					<h2>Start examination through calendar or by searching for patient</h2>
+					<h5>You can start examination for appointments in the next 24 hours <br/> As dermatologist you interact with appointments for pharmacy you work in current hours</h5>
+					</div>
+					<div hidden={!this.hasRole("ROLE_PHARMACIST")}>
+					<h2>Start consultation through calendar or by searching for patient</h2>
+					<h5>You can start consultation for appointments in the next 24 hours</h5>
+					</div>
 				</section>
 
 				<a href="#" className="back-to-top">
