@@ -383,12 +383,12 @@ class DermatologistsPage extends Component {
                         <nav className="nav-menu d-none d-lg-block">
                             <ul style={{ marginLeft: "27%" }}>
                                 <li>
-                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddDermatologistClick}>
+                                    <a className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddDermatologistClick}>
                                         Add dermatologist
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddAppointmentClick}>
+                                    <a className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddAppointmentClick}>
                                         Add appointments
                                     </a>
                                 </li>

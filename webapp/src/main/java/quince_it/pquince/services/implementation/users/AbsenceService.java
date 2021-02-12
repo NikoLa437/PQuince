@@ -72,18 +72,6 @@ public class AbsenceService implements IAbsenceService{
 	}
 
 	@Override
-	public void approveAbsence(UUID absenceId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void rejectAbsence(UUID absenceId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public List<IdentifiableDTO<AbsenceResponseDTO>> getAbsencesForPharmacy(UUID pharmacyId) {
 		// TODO Auto-generated method stub
 		List<Absence> listOfAbsences = absenceRepository.findNotProcessAbsenceForPharmacy(pharmacyId);

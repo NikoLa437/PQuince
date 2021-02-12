@@ -3,14 +3,13 @@ package quince_it.pquince.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static quince_it.pquince.constants.Constants.DRUG_ID;
-import static quince_it.pquince.constants.Constants.PATIENT_EMAIL;
 import static quince_it.pquince.constants.Constants.PHARMACYADMIN_EMAIL;
 import static quince_it.pquince.constants.Constants.PHARMACY_ID;
-import static quince_it.pquince.constants.Constants.DRUG_ID_FOR_REMOVE;
+import static quince_it.pquince.constants.Constants.DERMATHOLOGIST_ID;
 
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,14 +23,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
-import quince_it.pquince.services.contracts.dto.drugs.RemoveDrugFromPharmacyDTO;
+import quince_it.pquince.services.contracts.dto.EntityIdDTO;
+import quince_it.pquince.services.contracts.dto.users.WorkTimeDTO;
 import quince_it.pquince.util.TestUtil;
 
 @SpringBootTest
-public class DrugControllerTests {
-
-	private static final String URL_PREFIX = "/api/drug";
+public class WorkTimeControllerTests {
+	private static final String URL_PREFIX = "/api/worktime";
 
 	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
 			MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
@@ -40,30 +38,21 @@ public class DrugControllerTests {
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
-
+	
 	@BeforeEach
 	public void setup() throws Exception {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 	
 	@Test
-    @WithMockUser(username = PATIENT_EMAIL,authorities = {"ROLE_PATIENT"})
-	@Transactional
-	@Rollback(true)
-	public void testAddDrugFeedback() throws Exception {
-		DrugFeedbackDTO drugFeedbackDTO = new DrugFeedbackDTO(DRUG_ID, new Date(), 3);
-		String json = TestUtil.json(drugFeedbackDTO);
-		this.mockMvc.perform(post(URL_PREFIX + "/feedback").contentType(contentType).content(json)).andExpect(status().isCreated());
-	}
-	
-	@Test
     @WithMockUser(username = PHARMACYADMIN_EMAIL,authorities = {"ROLE_PHARMACYADMIN"})
 	@Transactional
 	@Rollback(true)
-	public void removeDrugFromPharmacy() throws Exception {
-		RemoveDrugFromPharmacyDTO removeDrugFromPharmacyDTO = new RemoveDrugFromPharmacyDTO(DRUG_ID_FOR_REMOVE, PHARMACY_ID);
-		String json = TestUtil.json(removeDrugFromPharmacyDTO);
-		this.mockMvc.perform(put(URL_PREFIX + "/remove-drug-from-pharmacy").contentType(contentType).content(json)).andExpect(status().isNoContent());
-	}
-	
+	public void testCreateWorkTimeForStaff() throws Exception{		
+
+		@SuppressWarnings("deprecation")
+		WorkTimeDTO workTimeDTO = new WorkTimeDTO(PHARMACY_ID,DERMATHOLOGIST_ID,new Date(2015,5,5),new Date(2015,7,5),8,17,"");
+		String json = TestUtil.json(workTimeDTO);
+		this.mockMvc.perform(post(URL_PREFIX).contentType(contentType).content(json)).andExpect(status().isOk());
+		}
 }

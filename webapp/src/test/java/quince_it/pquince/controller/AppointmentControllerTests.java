@@ -11,8 +11,14 @@ import static quince_it.pquince.constants.Constants.APPOINTMENT_END;
 import static quince_it.pquince.constants.Constants.PATIENT_EMAIL;
 import static quince_it.pquince.constants.Constants.PHARMACIST_EMAIL;
 import static quince_it.pquince.constants.Constants.DERMATOLOGIST_EMAIL;
+import static quince_it.pquince.constants.Constants.DRUG_ID;
 import static quince_it.pquince.constants.Constants.PHARMACIST_ID;
 import static quince_it.pquince.constants.Constants.PATIENT_ID;
+import static quince_it.pquince.constants.Constants.PHARMACYADMIN_EMAIL;
+import static quince_it.pquince.constants.Constants.PHARMACY_ID;
+import static quince_it.pquince.constants.Constants.DERMATHOLOGIST_ID;
+
+
 
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -31,7 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import quince_it.pquince.entities.appointment.Appointment;
+import quince_it.pquince.entities.appointment.AppointmentStatus;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugFeedbackDTO;
 import quince_it.pquince.util.TestUtil;
 
 
@@ -116,11 +125,21 @@ public class AppointmentControllerTests {
 	@Transactional
 	@Rollback(true)
 	public void testCancelAppointment() throws Exception{		
-
 		Appointment app = appointmentRepository.findById(APPOINTMENT_ID).get();
 		Appointment newApp = TestUtil.CreateAppointment(app);
 		appointmentRepository.save(newApp);
 		String json = "{\"id\":\"" + newApp.getId() + "\"}";
 		this.mockMvc.perform(put(URL_PREFIX + "/cancel-appointment").contentType(contentType).content(json)).andExpect(status().isNoContent());
+	}
+	
+	@Test
+    @WithMockUser(username = PHARMACYADMIN_EMAIL,authorities = {"ROLE_PHARMACYADMIN"})
+	@Transactional
+	@Rollback(true)
+	public void testAddPeriodForDermatologistAppointment() throws Exception {
+		@SuppressWarnings("deprecation")
+		AppointmentCreateDTO appointmentCreateDTO = new AppointmentCreateDTO(DERMATHOLOGIST_ID, PHARMACY_ID, PATIENT_ID,AppointmentStatus.CREATED,new Date(2000,1,5,16,00),new Date(2000,1,5,16,30),1500);
+		String json = TestUtil.json(appointmentCreateDTO);
+		this.mockMvc.perform(post(URL_PREFIX + "/create-appointment-for-dermatologist").contentType(contentType).content(json)).andExpect(status().isOk());
 	}
 }

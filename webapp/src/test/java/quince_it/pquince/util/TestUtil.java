@@ -4,6 +4,14 @@ import static quince_it.pquince.constants.Constants.DERMATOLOGIST_ID;
 import static quince_it.pquince.constants.Constants.PHARMACY_ID;
 import static quince_it.pquince.constants.Constants.WORKTIME_START_DATE;
 import static quince_it.pquince.constants.Constants.WORKTIME_END_DATE;
+import static quince_it.pquince.constants.Constants.PATIENT_ID;
+//import static quince_it.pquince.constants.Constants.PHARMACY_ID;
+import static quince_it.pquince.constants.Constants.DERMATOLOGIST_APPOINTMENT_START_DATE_TIME;
+import static quince_it.pquince.constants.Constants.DERMATOLOGIST_APPOINTMENT_END_DATE_TIME;
+import static quince_it.pquince.constants.Constants.DERMATOLOGIST_ABSENCE_START_DATE_TIME;
+import static quince_it.pquince.constants.Constants.DERMATOLOGIST_ABSENCE_END_DATE_TIME;
+import static quince_it.pquince.constants.Constants.ABSENCE_ID_FOR_APPROVE;
+import static quince_it.pquince.constants.Constants.CREATED_APPOINTMENT_ID;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +32,7 @@ import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
 import quince_it.pquince.entities.users.Absence;
+import quince_it.pquince.entities.users.AbsenceStatus;
 import quince_it.pquince.entities.users.Address;
 import quince_it.pquince.entities.users.ComplaintStaff;
 import quince_it.pquince.entities.users.Patient;
@@ -31,6 +40,7 @@ import quince_it.pquince.entities.users.Staff;
 import quince_it.pquince.entities.users.StaffType;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.entities.users.WorkTime;
+import quince_it.pquince.services.contracts.dto.appointment.AppointmentCreateDTO;
 import quince_it.pquince.services.contracts.dto.appointment.ConsultationRequestDTO;
 
 public class TestUtil {
@@ -137,4 +147,35 @@ public class TestUtil {
 		
 		return complaintStaff;
 	}
+	
+	public static Staff getDermatologistForWorkTime() {
+		return new Staff(DERMATOLOGIST_ID, "", "", "","", null, "", null,StaffType.DERMATOLOGIST);
+	}
+
+	public static AppointmentCreateDTO getAppointmentCreateDTO() {
+		return new AppointmentCreateDTO(DERMATOLOGIST_ID,PHARMACY_ID,PATIENT_ID,AppointmentStatus.CREATED,DERMATOLOGIST_APPOINTMENT_START_DATE_TIME,DERMATOLOGIST_APPOINTMENT_END_DATE_TIME,1500);
+	}
+	
+	public static List<Absence> getAbsenceForCreateAppointment(){
+		List<Absence> absences = new ArrayList<Absence>();
+
+		absences.add(new Absence(ABSENCE_ID_FOR_APPROVE,getDermatologistForWorkTime(),getPharmacy(),DERMATOLOGIST_ABSENCE_START_DATE_TIME,DERMATOLOGIST_ABSENCE_END_DATE_TIME,AbsenceStatus.ACCEPTED,""));
+		
+		return absences;
+	}
+	
+	
+	public static Absence GetAbsenceForApprove() {
+		return new Absence(ABSENCE_ID_FOR_APPROVE,getDermatologistForWorkTime(),getPharmacy(),DERMATOLOGIST_ABSENCE_START_DATE_TIME,DERMATOLOGIST_ABSENCE_END_DATE_TIME,AbsenceStatus.WAIT,"");
+	}
+
+
+	@SuppressWarnings("deprecation")
+	public static List<Appointment> getAppointmentsForAbsenceReject() {
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		appointments.add(new Appointment(CREATED_APPOINTMENT_ID,getPharmacy(),getDermatologistForWorkTime(),getPatient(UUID.randomUUID(),null),new Date(2020,1,20,10,00),new Date(2020,1,20,10,30),1500,AppointmentType.EXAMINATION,AppointmentStatus.SCHEDULED));
+		return appointments;
+	}
+	
+
 }

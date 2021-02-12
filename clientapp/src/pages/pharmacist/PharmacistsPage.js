@@ -336,7 +336,7 @@ class PharmacistPage extends Component {
                         <nav className="nav-menu d-none d-lg-block">
                             <ul>
                                 <li>
-                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddPharmacistClick}>
+                                    <a  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddPharmacistClick}>
                                         Add pharmacists
                                     </a>
                                 </li>
