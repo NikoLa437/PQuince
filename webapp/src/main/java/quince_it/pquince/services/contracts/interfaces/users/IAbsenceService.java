@@ -15,8 +15,6 @@ import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 public interface IAbsenceService {
 	UUID createAbsence(RequestAbsenceDTO requestAbsenceDTO);
 	List<IdentifiableDTO<AbsenceDTO>> getAbsencesForStaff(UUID staffId);
-	void approveAbsence(UUID absenceId);
-	void rejectAbsence(UUID absenceId);
 	List<IdentifiableDTO<AbsenceResponseDTO>> getAbsencesForPharmacy(UUID pharmacyId);
 	boolean approveAbsence(EntityIdDTO pharmacyIdDTO) throws MessagingException;
 	void rejectAbsence(RejectAbsenceDTO rejectAbsenceDTO) throws MessagingException;
