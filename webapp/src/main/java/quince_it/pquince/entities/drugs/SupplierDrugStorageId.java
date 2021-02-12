@@ -3,10 +3,7 @@ package quince_it.pquince.entities.drugs;
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-
-import quince_it.pquince.entities.pharmacy.Pharmacy;
 
 @Embeddable
 public class SupplierDrugStorageId implements Serializable{
