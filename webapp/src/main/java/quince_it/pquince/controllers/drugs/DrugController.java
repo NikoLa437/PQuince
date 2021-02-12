@@ -162,12 +162,12 @@ public class DrugController {
 		return new ResponseEntity<>(drugFeedbackService.searchDrugs(name, gradeFrom, gradeTo, drugKind) ,HttpStatus.CREATED);
 	}
 	
-	@PutMapping("/ingredient/{drugId}") 
+	@PutMapping("/ingredient") 
 	@CrossOrigin
-	@PreAuthorize("hasRole('PATIENT')")
-	public ResponseEntity<UUID> addDrugIngredient(@PathVariable UUID drugId, @RequestBody IngredientDTO ingredientDTO) {
+	@PreAuthorize("hasRole('SYSADMIN')")
+	public ResponseEntity<UUID> addDrugIngredient(@RequestBody IngredientDTO ingredientDTO) {
 		
-		UUID drugInstanceId = drugInstanceService.addDrugIngredients(drugId, ingredientDTO);
+		UUID drugInstanceId = drugInstanceService.addDrugIngredients(ingredientDTO.getId(), ingredientDTO);
 		
 		return new ResponseEntity<>(drugInstanceId ,HttpStatus.CREATED);
 	}
@@ -184,7 +184,7 @@ public class DrugController {
 	
 	@PutMapping("/replacement") 
 	@CrossOrigin
-	@PreAuthorize("hasRole('PATIENT')")
+	@PreAuthorize("hasRole('SYSADMIN')")
 	public ResponseEntity<UUID> addDrugReplacement(@RequestBody ReplaceDrugIdDTO replaceDrugIdDTO) {
 		
 		

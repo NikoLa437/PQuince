@@ -329,19 +329,20 @@ class RegisterDrug extends Component {
 				for (const [index, value] of this.state.ingredients.entries()) {
 					let ingredientDTO = {
 						name: this.state.ingredients[index],
+						id: res.data,
 					};
 					
 					Axios.post(BASE_URL + "/api/ingredients", ingredientDTO)
 						.then((res) => {
-							console.log("Success");
+							console.log("Success ingredients");
 						})
 						.catch((err) => {
 							console.log(err);
 						});
 						
-					Axios.put(BASE_URL + "/api/drug/ingredient/" + res.data, ingredientDTO, { headers: { Authorization: getAuthHeader()}})
+					Axios.put(BASE_URL + "/api/drug/ingredient", ingredientDTO, { headers: { Authorization: getAuthHeader()}})
 						.then((res) => {
-							console.log("Success");					
+							console.log("Success add ingredient");					
 						})
 						.catch((err) => {
 							console.log(err);
