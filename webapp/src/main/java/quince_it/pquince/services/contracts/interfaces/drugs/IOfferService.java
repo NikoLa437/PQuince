@@ -3,6 +3,7 @@ package quince_it.pquince.services.contracts.interfaces.drugs;
 import java.util.List;
 import java.util.UUID;
 
+import javax.mail.MessagingException;
 
 import quince_it.pquince.services.contracts.dto.drugs.AcceptOfferForOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OfferDTO;
@@ -14,7 +15,7 @@ public interface IOfferService extends IService<OfferDTO, IdentifiableDTO<OfferD
 
 	List<IdentifiableDTO<OfferDTO>> findOffersForOrder(UUID orderId);
 
-	boolean acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO);
+	boolean acceptOffer(AcceptOfferForOrderDTO acceptOfferForOrderDTO) throws MessagingException;
 
 	boolean checkIfCanUpdate(UUID id);
 

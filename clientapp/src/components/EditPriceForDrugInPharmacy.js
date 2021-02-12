@@ -74,7 +74,6 @@ class EditPriceForDrugInPharmacy extends Component {
                 }
                 console.log(res.data);
             }).catch((err) => {
-                this.props.OnCloseModalUnsuccess();
             });
         }else{
             this.setState({ 

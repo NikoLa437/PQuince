@@ -1,11 +1,15 @@
 package quince_it.pquince.services.implementation.pharmacy;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -28,7 +32,9 @@ import quince_it.pquince.entities.drugs.EReceiptItems;
 import quince_it.pquince.entities.drugs.EReceiptStatus;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotion;
 import quince_it.pquince.entities.pharmacy.ActionAndPromotionType;
+import quince_it.pquince.entities.pharmacy.IncomeStatistics;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.pharmacy.PharmacyIncomeStatistics;
 import quince_it.pquince.entities.users.Patient;
 import quince_it.pquince.entities.users.User;
 import quince_it.pquince.repository.appointment.AppointmentRepository;
@@ -45,11 +51,13 @@ import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.DrugsStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.ExaminationsStatisticsDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.IncomeStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyIncomeStatisticsDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
 import quince_it.pquince.services.contracts.interfaces.pharmacy.IPharmacyFeedbackService;
@@ -862,6 +870,45 @@ public class PharmacyService implements IPharmacyService {
         c.add(Calendar.DATE, -days);
         return new Date(c.getTimeInMillis());
     }
+
+	@Override
+	public boolean findIfPharmacyHasQRCode(UUID pharamcyId, UUID qrID) {
+		List<EReceiptItems> items = eReceiptItemsRepository.findAllByEReceiptId(qrID);
+		List<Pharmacy> allPharmacies = pharmacyRepository.findAll();
+
+		for(Pharmacy p : allPharmacies) {
+			if((allDrugsAreInPharmacy(items,p)) != -1 && p.getId().equals(pharamcyId)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	@Override
+	public PharmacyIncomeStatistics findIncomeStatisticsForPharmacy(Date dateFrom, Date dateTo) throws Exception  {
+		PharmacyIncomeStatistics pharmacyIncomeStatistics = new PharmacyIncomeStatistics();
+		UUID pharmacyId= userService.getPharmacyIdForPharmacyAdmin();
+
+		for(Appointment app : appointmentRepository.findAllAppointmentForPharmacyInDateRange(pharmacyId,dateFrom, dateTo)) {
+			pharmacyIncomeStatistics.addPrice(getDateWithoutTime(app.getStartDateTime()),app.getPriceToPay());
+		}
+
+		for(DrugReservation drugReservation: drugReservationRepository.findAllReservationForPharmacyInDateRange(pharmacyId,dateFrom, dateTo)) {
+			pharmacyIncomeStatistics.addPrice(getDateWithoutTime(drugReservation.getStartDate()), drugReservation.getAmount()*drugReservation.getDrugPeacePrice());
+		}
+		pharmacyIncomeStatistics.createList();
+		return pharmacyIncomeStatistics;
+	}
 	
+
+
+	public Date getDateWithoutTime(Date date) throws ParseException {
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Date dateWithoutTime = formatter.parse(formatter.format(date));
+		
+		return dateWithoutTime;
+	}
 
 }

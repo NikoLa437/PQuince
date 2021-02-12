@@ -13,7 +13,7 @@ import AddDrugToPharmacy from "../../components/AddDrugToPharmacy";
 import EditPriceForDrugInPharmacy from "../../components/EditPriceForDrugInPharmacy";
 import EditStorageAmountForDrug from "../../components/EditStorageAmountForDrug";
 import CreateOrdersModal from "../../components/CreateOrdersModal";
-
+import ViewDrugRequestsModal from "../../components/ViewDrugRequestsModal";
 
 class DrugPageForPharmacyAdmin extends Component {
 	state = {
@@ -39,6 +39,8 @@ class DrugPageForPharmacyAdmin extends Component {
 		hiddenFailAlert: true,
 		failHeader: "",
 		failMessage: "",
+        drugRequests:[],
+        showDrugRequests:false,
     };
 
     componentDidMount() {
@@ -297,6 +299,18 @@ class DrugPageForPharmacyAdmin extends Component {
 		});
     }
 
+    handleDrugRequestsClick = ()=>{
+        Axios.get(BASE_URL + "/api/drug/requests-drug-pharmacy", {
+			headers: { Authorization: getAuthHeader() },
+		}).then((res) => {
+                this.setState({ drugRequests: res.data, showDrugRequests:true });
+
+				console.log(res.data);
+		})
+			.catch((err) => {
+				console.log(err);
+		});
+    }
 
     
     handleSearchClick = () =>{
@@ -348,7 +362,11 @@ class DrugPageForPharmacyAdmin extends Component {
 			}
      }
 
-
+     handleCloseDrugRequestsModal = () =>{
+         this.setState({
+             showDrugRequests:false
+         })
+     }
 
      handleResetSearch = () => {
         this.updateDrugs();
@@ -374,7 +392,7 @@ class DrugPageForPharmacyAdmin extends Component {
         const myStyle = {
 			color: "white",
             textAlign: "center",
-            marginLeft:'145%'
+            marginLeft:'17%'
 		};
 		return (
         <React.Fragment>
@@ -403,15 +421,20 @@ class DrugPageForPharmacyAdmin extends Component {
                         />
 
                         <nav className="nav-menu d-none d-lg-block">
-                            <ul>
+                            <ul style={myStyle}>
                                 <li>
-                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleAddDrugClick}>
+                                    <a href="#" style={{color:'white'}}  className="appointment-btn scrollto"  onClick={this.handleAddDrugClick}>
                                         Add drug
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#"  className="appointment-btn scrollto" style={myStyle} onClick={this.handleCreateOrderClick}>
+                                    <a href="#" style={{color:'white'}} className="appointment-btn scrollto" onClick={this.handleCreateOrderClick}>
                                         Create order
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" style={{color:'white'}} className="appointment-btn scrollto"  onClick={this.handleDrugRequestsClick}>
+                                        Drug requests
                                     </a>
                                 </li>
                             </ul>
@@ -569,6 +592,12 @@ class DrugPageForPharmacyAdmin extends Component {
                             updateDrugs={this.updateDrugs}
 					        header="Edit storage amount"
                          />
+                        <ViewDrugRequestsModal
+					        show={this.state.showDrugRequests}
+					        onCloseModal={this.handleCloseDrugRequestsModal}
+                            drugRequests={this.state.drugRequests}
+					        header="Drug requests"
+				        />
                     </div>
                 </React.Fragment>
 		);

@@ -30,8 +30,10 @@ class OrdersPage extends Component {
         addedDrugs:[],
         showEditOrder:false,
         drugs:[],
-        showingSorted:false
-
+        showingSorted:false,
+        drugsFromOrder:[],
+        drugsForAdd:[],
+        orderToEdit:'',
     };
 
     componentDidMount() {
@@ -182,40 +184,33 @@ class OrdersPage extends Component {
     }
 
     addItem = item => {
+
         this.setState({
-            drugsToAdd: [
-            ...this.state.drugsToAdd,
+            drugsFromOrder: [
+            ...this.state.drugsFromOrder,
             item 
           ]
         })
     }
 
-    removeDrugs(drugs) {
-        for(let drug in drugs){
-            for(let drugToAdd in this.state.drugs){
-                if(this.state.drugs[drugToAdd].Id!==drugs[drug].drugInstanceId){
-                    let drugDTO = {
-                        drugInstanceId: this.state.drugs[drugToAdd].Id,
-                        drugName: this.state.drugs[drugToAdd].EntityDTO.name,
-                        drugInstanceName: this.state.drugs[drugToAdd].EntityDTO.drugInstanceName,
-                        drugManufacturer: this.state.drugs[drugToAdd].EntityDTO.manufacturerName,
-                    }
-                    this.addItem(drugDTO);
-                }
-            }
+    removePeople(e) {
+        var array = [...this.state.drugsForAdd]; // make a separate copy of the array
+        var index = array.indexOf(e)
+        if (index !== -1) {
+          array.splice(index, 1);
+          this.setState({drugsForAdd: array});
         }
       }
 
-    onEditOrderClick = (order,num) =>{
-        
-        
-        this.setState({
-            addedDrugs: order.EntityDTO.drugs,
-            showEditOrder:true,
-        })
+    handleRemoveFromDrugToAdd = (drug) =>{
+        this.removePeople(drug)
+     }
 
-        this.removeDrugs(order.EntityDTO.drugs);
-        
+     handleAddToAddedDrugs = (drug) =>{
+        this.addItem(drug);
+     }
+
+    onEditOrderClick = (order,num) =>{
 
         if(num!==0){
             this.setState({
@@ -223,6 +218,28 @@ class OrdersPage extends Component {
                 hiddenFailAlert:false,
                 failHeader: "Unsuccess", 
                 failMessage: "Not possible to remove order because have offers"
+            })
+        }else{
+            Axios
+            .get(BASE_URL + "/api/order/find-drugs-by-order?orderId="+ order.Id, {
+                headers: { Authorization: getAuthHeader() },
+            }).then((res) =>{
+                this.setState({drugsFromOrder : res.data});
+                console.log(res.data);
+            }).catch((err) => {console.log(err);});
+    
+            Axios
+            .get(BASE_URL + "/api/order/find-drugs-by-order-to-add?orderId="+ order.Id, {
+                headers: { Authorization: getAuthHeader() },
+            }).then((res) =>{
+                this.setState({drugsForAdd : res.data});
+                console.log(res.data);
+            }).catch((err) => {console.log(err);});
+    
+    
+            this.setState({
+                orderToEdit: order.Id,
+                showEditOrder:true,
             })
         }
     }
@@ -266,6 +283,12 @@ class OrdersPage extends Component {
             this.setState({orders : res.data,showingSorted:true});
             console.log(res.data);
         }).catch((err) => {console.log(err);});
+    }
+
+    handleEditOrderModalClose = () =>{
+        this.setState({
+            showEditOrder:false
+        })
     }
 
     render() {
@@ -356,14 +379,17 @@ class OrdersPage extends Component {
 				        />
 
                     <EditOrderModal
-                            drugsToAdd={this.state.drugsToAdd}
+                            removeFromDrugToAdd={this.handleRemoveFromDrugToAdd}
+                            addToAddedDrugs={this.handleAddToAddedDrugs}
+                            drugsForAdd={this.state.drugsForAdd}
 					        show={this.state.showEditOrder}
-                            addedDrugs={this.state.addedDrugs}
-                            onCloseSuccess={this.handleCreateOrderModalCloseSuccess}
-					        onCloseModal={this.handleCreateOrderModalClose}
+                            drugsFromOrder={this.state.drugsFromOrder}
+					        onCloseModal={this.handleEditOrderModalClose}
                             pharmacyId={this.state.pharmacyId}
                             drugs={this.state.drugsToAdd}
+                            orderToEdit={this.state.orderToEdit}
 					        header="Create order"
+                            updateOrders={this.updateOrders}
 				        />
                     </div>
                 </React.Fragment>
