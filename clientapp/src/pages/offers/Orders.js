@@ -9,6 +9,7 @@ import ModalDialog from "../../components/ModalDialog";
 import OfferModal from "../../components/OfferModal";
 import getAuthHeader from "../../GetHeader";
 import OrderDrugsModal from "../../components/OrderDrugsModal";
+import { Redirect } from "react-router-dom";
 
 class Orders extends Component {
 	state = {
@@ -26,6 +27,8 @@ class Orders extends Component {
 		openModalDrugs: false,
 		orders:[],
 		address:"",
+        redirect: false,
+        redirectUrl: '',
 	};
 
 	componentDidMount() {
@@ -38,6 +41,21 @@ class Orders extends Component {
 					})
 					.catch((err) => {
 						console.log("GRESKA");
+						console.log(err);
+					});
+			Axios.get(BASE_URL + "/api/users/supplier/auth", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+					.then((res) => {
+						console.log(res.statusm, "TEST")
+						if (res.status === 401) {
+							this.setState({
+								redirect: true,
+								redirectUrl: "/unauthorized"
+							});
+						} else {
+							console.log(res.data);
+						}
+					})
+					.catch((err) => {
 						console.log(err);
 					});
 	}
@@ -94,6 +112,10 @@ class Orders extends Component {
 					});
 
 			console.log(OfferDTO, "AJDE RADI")
+		}else{
+			this.setState({
+				openModal: true,
+			})
 		}
 			
 	};
@@ -130,7 +152,6 @@ class Orders extends Component {
 	handleModalClose = () => {
 		this.setState({ 
 			openModal: false,
-			redirect:true, 
 		});
 	};
 
@@ -166,6 +187,8 @@ class Orders extends Component {
 	};
 
 	render() {
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
 			<React.Fragment>
 				<TopBar />

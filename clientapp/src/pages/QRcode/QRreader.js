@@ -47,6 +47,21 @@ class QRreader extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
+
+		Axios.get(BASE_URL + "/api/users/patient/auth", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+			.then((res) => {
+				if (res.status === 401) {
+					this.setState({
+						redirect: true,
+						redirectUrl: "/unauthorized"
+					});
+				} else {
+					console.log(res.data);
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	
 	}
 	

@@ -1,6 +1,6 @@
 import "./App.css";
 import HomePage from "./pages/HomePage";
-import { BrowserRouter as Router, Link, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Link, Switch, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import PharmacyAdminProfilPage from "./pages/PharmacyAdminProfilPage";
@@ -59,7 +59,7 @@ import PharmacyIncomePriceStatistics from "./pages/Pharmacy/PharmacyIncomePriceS
 
 function App() {
 	return (
-		<Router basename="/clientapp">
+		<Router>
 			<Switch>
 				<Link exact to="/" path="/" component={HomePage} />
 				<Link exact to="/login" path="/login" component={LoginPage} />
@@ -85,7 +85,7 @@ function App() {
 				<Link exact to="/offers" path="/offers" component={Offers} />
 				<Link exact to="/orders" path="/orders" component={Orders} />
 				<Link exact to="/admin-complaints-pharmacy" path="/admin-complaints-pharmacy" component={ComplaintsPharmacy} />
-				
+
 				<Link exact to="/schedule-consultation" path="/schedule-consultation" component={ConsultationTimeSelectPage} />
 				<Link exact to="/loyalty-program" path="/loyalty-program" component={LoyaltyProgram} />
 				<Link exact to="/observe-consultations" path="/observe-consultations" component={ObservePatientsCosultation} />
@@ -131,7 +131,7 @@ function App() {
 				<Link exact to="/pharmacy-statistics" path="/pharmacy-statistics" component={PharmacyStatisticsExamination} />
 				<Link exact to="/pharmacy-drugs-statistics" path="/pharmacy-drugs-statistics" component={PharmacyStatisticsDrugs} />
 				<Link exact to="/pharmacy-income-statistics" path="/pharmacy-income-statistics" component={PharmacyIncomePriceStatistics}/>
-				
+
 			</Switch>
 		</Router>
 	);

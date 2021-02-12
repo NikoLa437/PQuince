@@ -127,7 +127,7 @@ public class EmailService {
 		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 		String htmlMsg = "<p>Hello " + drugReservation.getPatient().getName() + ",</p>" +
-					"<p>You reservation code for drug " + drugReservation.getDrugInstance().getName() + " is:" + drugReservation.getId() +".</p>"
+					"<p>You reservation code for drug " + drugReservation.getDrugInstance().getName() + " is: " + drugReservation.getId() +"</p>"
 				  + "<p>Yor reservation lasts until "+ new SimpleDateFormat("yyyy-MM-dd HH:mm").format(drugReservation.getEndDate()) + ", and you can pick up your drugs at "
 				  + drugReservation.getPharmacy().getName() + " pharmacy at "+ drugReservation.getPharmacy().getAddress().getStreet() + ", "
 				  + drugReservation.getPharmacy().getAddress().getCity() + ", " 

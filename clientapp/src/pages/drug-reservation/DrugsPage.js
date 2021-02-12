@@ -395,10 +395,10 @@ class DrugsPage extends Component {
 						Click on drug to see availability in pharmacies
 					</p>
 
-					<table className="table table-hover" style={{ width: "100%", marginTop: "3rem" }}>
+					<table className={this.state.loggedPatient === true ? "table table-hover" : "table"} style={{ width: "100%", marginTop: "3rem" }}>
 						<tbody>
 							{this.state.drugs.map((drug) => (
-								<tr id={drug.Id} key={drug.Id} style={{ cursor: "pointer" }}>
+								<tr id={drug.Id} key={drug.Id} style={this.state.loggedPatient === true ? { cursor: "pointer" } : {}}>
 									<td width="130em">
 										<img className="img-fluid" src={CapsuleLogo} width="70em" />
 									</td>

@@ -20,4 +20,5 @@ public interface IAbsenceService {
 	List<IdentifiableDTO<AbsenceResponseDTO>> getAbsencesForPharmacy(UUID pharmacyId);
 	boolean approveAbsence(EntityIdDTO pharmacyIdDTO) throws MessagingException;
 	void rejectAbsence(RejectAbsenceDTO rejectAbsenceDTO) throws MessagingException;
+	public List<IdentifiableDTO<AbsenceDTO>> getAbsencesAsStaff();
 }

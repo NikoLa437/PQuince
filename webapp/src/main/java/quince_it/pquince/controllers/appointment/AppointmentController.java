@@ -35,6 +35,7 @@ import quince_it.pquince.services.contracts.exceptions.AppointmentNotScheduledEx
 import quince_it.pquince.services.contracts.exceptions.AppointmentTimeOverlappingWithOtherAppointmentException;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.appointment.IAppointmentService;
+import quince_it.pquince.services.implementation.users.UserService;
 
 @RestController
 @RequestMapping(value = "api/appointment")
@@ -274,7 +275,8 @@ public class AppointmentController {
 	@GetMapping("/patient/{patientId}")
 	@PreAuthorize("hasRole('DERMATHOLOGIST') or hasRole('PHARMACIST')")
 	public ResponseEntity<List<IdentifiableDTO<AppointmentDTO>>> getAppointmentsByPatientAsStaff(@PathVariable UUID patientId) {
-		return new ResponseEntity<>(appointmentService.getAppointmentsByPatientAsStaff(patientId),HttpStatus.OK);
+		HttpStatus status = appointmentService.hasExaminedPatient(patientId) ? HttpStatus.CREATED : HttpStatus.OK;
+		return new ResponseEntity<>(appointmentService.getAppointmentsByPatientAsStaff(patientId), status);
 	}
 	
 	@GetMapping("/{appointmentId}")

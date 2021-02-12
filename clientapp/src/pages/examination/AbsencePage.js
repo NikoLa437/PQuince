@@ -8,6 +8,8 @@ import DatePicker from "react-datepicker";
 import ModalDialog from "../../components/ModalDialog";
 import getAuthHeader from "../../GetHeader";
 import { Redirect } from "react-router-dom";
+import WorkTimeIcon from "../../static/schedule.png";
+
 
 class AbsencePage extends Component {
     state = {
@@ -15,11 +17,12 @@ class AbsencePage extends Component {
         selectedStartDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()),
         selectedEndDate: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1),
         redirect: false,
-        redirectUrl: ''
+        redirectUrl: '',
+        absences: [],
     };
 
     componentDidMount() {
-        Axios.get(BASE_URL + "/api/absence/auth", { validateStatus: () => true,headers: { Authorization: getAuthHeader() } })
+        Axios.get(BASE_URL + "/api/absence", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
             .then((res) => {
                 if (res.status === 401) {
                     this.setState({
@@ -27,6 +30,7 @@ class AbsencePage extends Component {
                         redirectUrl: "/unauthorized"
                     });
                 } else {
+                    this.setState({ absences: res.data });
                     console.log(res.data);
                 }
             })
@@ -61,13 +65,21 @@ class AbsencePage extends Component {
             { startDate: this.state.selectedStartDate, endDate: this.state.selectedEndDate },
             { headers: { Authorization: getAuthHeader() } })
             .then((res) => {
-                this.setState({openSuccessModal: true});
+                this.setState({ openSuccessModal: true });
                 console.log(res.data);
+                window.location.reload();
             })
             .catch((err) => {
                 console.log(err);
             });
     }
+
+    handleAbsenceBackground = (absenceStatus) => {
+        if (absenceStatus == "ACCEPTED")
+            return "#93c2aa";
+        else if (absenceStatus == "REJECTED")
+            return "#f56056";
+    };
 
     render() {
 
@@ -106,6 +118,24 @@ class AbsencePage extends Component {
                         </div>
                     </form>
                 </div>
+
+                <table className="table mt-5 ml-5" style={{ width: "60%" }}>
+                    <tbody>
+                        {this.state.absences.map(absence =>
+                            <tr hidden={false} id={absence.Id} key={absence.Id} style={{ background: this.handleAbsenceBackground(absence.EntityDTO.absenceStatus)}}>
+                                <td width="130em">
+                                    <img className="img-fluid" src={WorkTimeIcon} width="100em" />
+                                </td>
+                                <td >
+                                    <div><b>Date from:</b> {new Date(absence.EntityDTO.startDate).toDateString()}</div>
+                                    <div><b>Date to:</b> {new Date(absence.EntityDTO.endDate).toDateString()}</div>
+                                    <div><b>Absence status:</b> {absence.EntityDTO.absenceStatus}</div>
+                                    <div hidden={absence.EntityDTO.absenceStatus != "REJECTED"}><b>Reject reason:</b> {absence.EntityDTO.rejectReason}</div>
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
 
 
                 <ModalDialog

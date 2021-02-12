@@ -6,13 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 
 @Entity
 @Table(name="loyaltyprogram")
 public class LoyaltyProgram {
-
-	private static final long serialVersionUID = 1L;
 	
 	@Id
     @Column(name = "id")
@@ -60,6 +59,9 @@ public class LoyaltyProgram {
 	@Column(name = "consultationDiscountGold")
 	private int consultationDiscountGold;
 	
+	@Version
+	private Long version;
+	
 	public LoyaltyProgram() {}
 	
 	public LoyaltyProgram(int pointsForAppointment, int pointsForConsulting, int pointsToEnterRegularCathegory,
@@ -98,6 +100,11 @@ public class LoyaltyProgram {
 	
 	public UUID getId() {
 		return id;
+	}
+	
+
+	public Long getVersion() {
+		return version;
 	}
 
 	public int getPointsForAppointment() {

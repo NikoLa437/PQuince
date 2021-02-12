@@ -16,6 +16,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +45,9 @@ public class AuthenticationController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
-
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	@Autowired
 	private UserService userService;
 	
@@ -53,7 +56,7 @@ public class AuthenticationController {
 	@CrossOrigin
 	public ResponseEntity<UserTokenStateDTO> createAuthenticationToken(@RequestBody JwtAuthenticationRequest authenticationRequest,
 			HttpServletResponse response) {
-
+		
 		String jwt;
 		int expiresIn;
 		List<String> roles = new ArrayList<String>();
@@ -71,11 +74,14 @@ public class AuthenticationController {
 			user.getUserAuthorities().forEach((a) -> roles.add(a.getName()));
 
 		} catch (BadCredentialsException e) {
-			
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		
+		if (userService.IsFirstPassword(authenticationRequest))
+			return new ResponseEntity<>(HttpStatus.FOUND);
+		
 		return new ResponseEntity<UserTokenStateDTO>(new UserTokenStateDTO(jwt, expiresIn, roles), HttpStatus.OK);
 	}
 
@@ -151,6 +157,22 @@ public class AuthenticationController {
 		
 		try {
 			userService.changePassword(passwordChanger.oldPassword, passwordChanger.newPassword);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		} catch (BadCredentialsException e){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@PostMapping("/change-first-password")
+	public ResponseEntity<?> changeFirstPassword(@RequestBody PasswordChanger passwordChanger) {
+		
+		try {
+			userService.changeFirstPassword(passwordChanger.oldPassword, passwordChanger.newPassword);
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		} catch (BadCredentialsException e){
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);

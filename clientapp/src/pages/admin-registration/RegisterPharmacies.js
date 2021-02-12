@@ -7,6 +7,7 @@ import { withRouter } from "react-router";
 import getAuthHeader from "../../GetHeader";
 import ModalDialog from "../../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
+import { Redirect } from "react-router-dom";
 
 const mapState = {
 	center: [44, 21],
@@ -26,11 +27,32 @@ class RegisterPharmacies extends Component {
 		consulationPriceError: "none",
 		openModal: false,
 		coords: [],
+        redirect: false,
+        redirectUrl: '',
 	};
 
 	constructor(props) {
 		super(props);
 		this.addressInput = React.createRef();
+	}
+
+	
+	componentDidMount() {
+		Axios.get(BASE_URL + "/api/users/sysadmin/auth", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+		.then((res) => {
+			console.log(res.statusm, "TEST")
+			if (res.status === 401) {
+				this.setState({
+					redirect: true,
+					redirectUrl: "/unauthorized"
+				});
+			} else {
+				console.log(res.data);
+			}
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 	}
 
 	handleModalDataClose = () => {
@@ -146,6 +168,8 @@ class RegisterPharmacies extends Component {
 	};
 	
 	render() {
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
 			<React.Fragment>
 				<TopBar />

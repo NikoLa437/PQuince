@@ -17,6 +17,7 @@ class DrugReservationModal extends Component {
 
 	handleDrugAmountChange = (event) => {
 		if (event.target.value < 1) this.setState({ drugAmount: 1 });
+		else if (event.target.value > this.props.maxDrugAmount) this.setState({ drugAmount: this.props.maxDrugAmount });
 		else this.setState({ drugAmount: event.target.value });
 	};
 

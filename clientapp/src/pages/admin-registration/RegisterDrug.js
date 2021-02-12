@@ -4,6 +4,7 @@ import TopBar from "../../components/TopBar";
 import { BASE_URL } from "../../constants.js";
 import Axios from "axios";
 import { withRouter } from "react-router";
+import { Redirect } from "react-router-dom";
 import ModalDialog from "../../components/ModalDialog";
 import getAuthHeader from "../../GetHeader";
 
@@ -43,17 +44,27 @@ class RegisterDrug extends Component {
 		consulationPriceError: "none",
 		openModal: false,
 		coords: [],
+        redirect: false,
+        redirectUrl: '',
 	};
 	
 	componentDidMount() {
 
 		Axios.get(BASE_URL + "/api/drug/manufacturers")
 			.then((res) => {
+
+				if (res.status === 401) {
+                    this.setState({
+                        redirect: true,
+                        redirectUrl: "/unauthorized"
+                    });
+                } else {
 				this.setState({ 
 					manufacturers: res.data,
 					manufacturer: res.data[0],
 				 });
 				console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -61,12 +72,20 @@ class RegisterDrug extends Component {
 
 		Axios.get(BASE_URL + "/api/drug/drugkind")
 			.then((res) => {
-				this.setState({ 
-					drugKinds: res.data ,
-					drugKind: res.data[0].EntityDTO.type
-				});
-                console.log(res.data);
-            
+
+				if (res.status === 401) {
+                    this.setState({
+                        redirect: true,
+                        redirectUrl: "/unauthorized"
+                    });
+                } else {
+
+					this.setState({ 
+						drugKinds: res.data ,
+						drugKind: res.data[0].EntityDTO.type
+					});
+					console.log(res.data);
+				}
 			})
 			.catch((err) => {
 				console.log(err);
@@ -94,6 +113,22 @@ class RegisterDrug extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
+
+		Axios.get(BASE_URL + "/api/users/sysadmin/auth", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+            .then((res) => {
+				console.log(res.statusm, "TEST")
+                if (res.status === 401) {
+                    this.setState({
+                        redirect: true,
+                        redirectUrl: "/unauthorized"
+                    });
+                } else {
+                    console.log(res.data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
 		
     }
     
@@ -364,6 +399,8 @@ class RegisterDrug extends Component {
 	};
 	
 	render() {
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
 			<React.Fragment>
 				<TopBar />

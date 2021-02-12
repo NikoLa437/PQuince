@@ -35,6 +35,7 @@ class UserProfilePage extends Component {
 		surnameError: "none",
 		addressError: "none",
 		phoneError: "none",
+		phoneValidateError: "none",
 		oldPasswordEmptyError: "none",
 		newPasswordEmptyError: "none",
 		newPasswordRetypeEmptyError: "none",
@@ -161,14 +162,19 @@ class UserProfilePage extends Component {
 	};
 
 	validateForm = (userDTO) => {
+		console.log("AAA");
 		this.setState({
 			nameError: "none",
 			surnameError: "none",
 			cityError: "none",
 			addressError: "none",
 			phoneError: "none",
+			phoneValidateError: "none",
+			addressNotFoundError: "none",
 		});
 
+		const regexPhone = /^([+]?[0-9]{3,6}[-]?[\/]?[0-9]{3,5}[-]?[\/]?[0-9]*)$/;
+		console.log(regexPhone.test(userDTO.phoneNumber));
 		if (userDTO.name === "") {
 			this.setState({ nameError: "initial" });
 			return false;
@@ -180,6 +186,9 @@ class UserProfilePage extends Component {
 			return false;
 		} else if (userDTO.phoneNumber === "") {
 			this.setState({ phoneError: "initial" });
+			return false;
+		} else if (regexPhone.test(userDTO.phoneNumber) === false) {
+			this.setState({ phoneValidateError: "initial" });
 			return false;
 		}
 		return true;
@@ -593,6 +602,9 @@ class UserProfilePage extends Component {
 									</div>
 									<div className="text-danger" style={{ display: this.state.phoneError }}>
 										Phone number must be entered.
+									</div>
+									<div className="text-danger" style={{ display: this.state.phoneValidateError }}>
+										Incorect phone number.
 									</div>
 								</div>
 								<div className="form-group text-center" hidden={this.state.hiddenEditInfo}>

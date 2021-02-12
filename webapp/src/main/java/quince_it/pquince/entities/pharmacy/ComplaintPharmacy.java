@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 import quince_it.pquince.entities.users.Patient;
 
@@ -30,6 +31,9 @@ public class ComplaintPharmacy {
 	@Column(name="reply")
 	private String reply;
 	
+	@Version
+	private Long version;
+	
 	public ComplaintPharmacy() {}
 	
 	public ComplaintPharmacy(Pharmacy pharmacy, Patient patient, String text, String name) {
@@ -47,6 +51,10 @@ public class ComplaintPharmacy {
 	}
 
 
+	public Long getVersion() {
+		return version;
+	}
+	
 	public UUID getId() {
 		return id;
 	}

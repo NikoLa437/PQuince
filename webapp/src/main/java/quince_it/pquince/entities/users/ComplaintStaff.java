@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 @Entity
 public class ComplaintStaff {
@@ -36,6 +37,9 @@ public class ComplaintStaff {
 	
 	private String profession;
 	
+	@Version
+	private Long version;
+	
 	public ComplaintStaff() {}
 	
 	public ComplaintStaff(Staff staff, Patient patient, String text, String name, String surname, String profession, String email) {
@@ -57,6 +61,10 @@ public class ComplaintStaff {
 
 	public UUID getId() {
 		return id;
+	}
+	
+	public Long getVersion() {
+		return version;
 	}
 
 	public String getEmail() {

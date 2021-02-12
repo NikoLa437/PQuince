@@ -3,7 +3,6 @@ package quince_it.pquince.entities.users;
 import java.util.List;
 import java.util.UUID;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
