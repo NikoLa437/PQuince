@@ -85,4 +85,9 @@ public class Pharmacy {
 	public Long getVersion() {
 		return version;
 	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+	
 }
