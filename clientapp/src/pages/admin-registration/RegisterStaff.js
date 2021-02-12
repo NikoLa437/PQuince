@@ -8,6 +8,7 @@ import Axios from "axios";
 import { withRouter } from "react-router";
 import ModalDialog from "../../components/ModalDialog";
 import { YMaps, Map } from "react-yandex-maps";
+import { Redirect } from "react-router-dom";
 
 const mapState = {
 	center: [44, 21],
@@ -23,6 +24,7 @@ class RegisterStaff extends Component {
 		email: "",
 		password: "",
 		name: "",
+		userRegister: "",
 		surname: "",
 		address: "",
 		openModalData: false,
@@ -40,6 +42,8 @@ class RegisterStaff extends Component {
 		pharmacy:"",
 		coords: [],
 		selectValue:"dermathologist",
+        redirect: false,
+        redirectUrl: '',
 	};
 
 	constructor(props) {
@@ -70,6 +74,22 @@ class RegisterStaff extends Component {
 			.catch((err) => {
 				console.log(err);
 			});
+
+		Axios.get(BASE_URL + "/api/users/sysadmin/auth", { validateStatus: () => true, headers: { Authorization: getAuthHeader() } })
+            .then((res) => {
+				console.log(res.statusm, "TEST")
+                if (res.status === 401) {
+                    this.setState({
+                        redirect: true,
+                        redirectUrl: "/unauthorized"
+                    });
+                } else {
+                    console.log(res.data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
 	}
 	onYmapsLoad = (ymaps) => {
 		this.ymaps = ymaps;
@@ -115,7 +135,6 @@ class RegisterStaff extends Component {
 			surnameError: "none",
 			addressError: "none",
 			phoneError: "none",
-			passwordError: "none",
 		});
 
 		if (userDTO.email === "") {
@@ -136,10 +155,8 @@ class RegisterStaff extends Component {
 		} else if (userDTO.phoneNumber === "") {
 			this.setState({ phoneError: "initial" });
 			return false;
-		} else if (userDTO.password === "") {
-			this.setState({ passwordError: "initial" });
-			return false;
 		}
+		
 		return true;
 	};
 
@@ -158,7 +175,6 @@ class RegisterStaff extends Component {
 		if(this.state.surname !== "" &&
 		this.state.name !== "" &&
 		this.state.phoneNumber !== "" &&
-		this.state.password !== "" &&
 		this.state.email !== ""){
 
 		let street;
@@ -188,9 +204,8 @@ class RegisterStaff extends Component {
 					surname: this.state.surname,
 					address: { street, country, city, latitude, longitude },
 					phoneNumber: this.state.phoneNumber,
-					password: this.state.password,
+					password: "test",
 				};
-				console.log(userDTO, "AAAA")
 				if (this.validateForm(userDTO)) {
 					if (found === false) {
 						this.setState({ addressNotFoundError: "initial" });
@@ -210,7 +225,10 @@ class RegisterStaff extends Component {
 									this.setState({ openModalData: true });
 								} else {
 									console.log("Success");
-									this.setState({ openModal: true });
+									this.setState({ 
+										openModal: true,
+										userRegister: "You have successfully registered staff with password " + res.data,
+									});
 								}
 							})
 							.catch((err) => {
@@ -222,7 +240,10 @@ class RegisterStaff extends Component {
 						Axios.post(BASE_URL + "/auth/signup-pharmacyadmin/" + this.state.selectedPharmacy.Id, userDTO, { headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
 								console.log("Success");
-								this.setState({ openModal: true });
+								this.setState({
+									 openModal: true,
+									 userRegister: "You have successfully registered staff with password " + res.data,
+									});
 							})
 							.catch((err) => {
 								console.log(err);
@@ -233,9 +254,11 @@ class RegisterStaff extends Component {
 							
 						Axios.post(BASE_URL + "/auth/signup-sysadmin", userDTO, { headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
-								alert(res.data);
 								console.log("Success");
-								this.setState({ openModal: true });
+								this.setState({ 
+									openModal: true,
+									userRegister: "You have successfully registered staff with password " + res.data,
+								});
 							})
 							.catch((err) => {
 								console.log(err);
@@ -246,7 +269,10 @@ class RegisterStaff extends Component {
 						Axios.post(BASE_URL + "/auth/signup-supplier", userDTO, { headers: { Authorization: getAuthHeader()}})
 							.then((res) => {
 								console.log("Success");
-								this.setState({ openModal: true });
+								this.setState({
+									openModal: true,
+									userRegister: "You have successfully registered staff with password " + res.data,
+								 });
 							})
 							.catch((err) => {
 								console.log(err);
@@ -270,6 +296,8 @@ class RegisterStaff extends Component {
 	};
 	
 	render() {
+		if (this.state.redirect) return <Redirect push to={this.state.redirectUrl} />;
+
 		return (
 			<React.Fragment>
 				<TopBar />
@@ -409,21 +437,6 @@ class RegisterStaff extends Component {
 										Phone number must be entered.
 									</div>
 								</div>
-								<div className="control-group">
-									<label>Password:</label>
-									<div className="form-group controls mb-0 pb-2" style={{ color: "#6c757d", opacity: 1 }}>
-										<input
-											placeholder="Password"
-											class="form-control"
-											type="password"
-											onChange={this.handlePasswordChange}
-											value={this.state.password}
-										/>
-									</div>
-									<div className="text-danger" style={{ display: this.state.passwordError }}>
-										Password must be entered.
-									</div>
-								</div>
 
 								<div className="form-group">
 									<button
@@ -450,7 +463,7 @@ class RegisterStaff extends Component {
 					href="/"
 					onCloseModal={this.handleModalClose}
 					header="Successful registration"
-					text="You have successfully registered staff."
+					text={this.state.userRegister}
 				/>
 				<ModalDialog
 					show={this.state.openModalData}

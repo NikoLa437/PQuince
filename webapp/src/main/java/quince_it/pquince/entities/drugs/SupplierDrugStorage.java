@@ -5,8 +5,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Version;
 
-import quince_it.pquince.entities.pharmacy.Pharmacy;
-
 @Entity
 public class SupplierDrugStorage {
 	

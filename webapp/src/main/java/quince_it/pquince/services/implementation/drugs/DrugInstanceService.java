@@ -193,16 +193,7 @@ public class DrugInstanceService implements IDrugInstanceService{
 		for (IdentifiablePharmacyDrugPriceAmountDTO pharmacy : drugPriceForPharmacyRepository.findByDrugId(drugId)) {
 			int countDrug = drugStorageService.getDrugCountForDrugAndPharmacy(drugId, pharmacy.Id);
 			if(countDrug > 0) {
-				double drugPrice = loyalityProgramService.getDiscountDrugPriceForPatient(pharmacy.getPrice(), user.getId());
-				System.out.println("ID " + pharmacy.Id + "\n\n\n");
-				ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacy.Id, ActionAndPromotionType.DRUGDISCOUNT);
-
-				if(action != null) {
-					System.out.println("USAO U SERVIS ");
-					drugPrice -= (action.getPercentOfDiscount()/ 100.0) * pharmacy.getPrice();
-				}
-				pharmacy.setPriceWithDiscount(drugPrice);
-				//TODO : DONE change price based on actions and benefits
+				pharmacy.setPriceWithDiscount(getDrugPriceWithDiscount(pharmacy.Id, pharmacy.getPrice(), user.getId()));
 				pharmacy.setCount(countDrug);
 				retVal.add(pharmacy);
 			}
@@ -220,23 +211,25 @@ public class DrugInstanceService implements IDrugInstanceService{
 		for (IdentifiablePharmacyDrugPriceAmountDTO pharmacy : drugPriceForPharmacyRepository.findByDrugId(drugId)) {
 			if(pharmacy.Id.equals(pharmacyId)) {
 				int countDrug = drugStorageService.getDrugCountForDrugAndPharmacy(drugId, pharmacyId);
-				if(countDrug > 0) {
-					double drugPrice = loyalityProgramService.getDiscountDrugPriceForPatient(pharmacy.getPrice(), user.getId());
-					ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacy.Id, ActionAndPromotionType.DRUGDISCOUNT);
-
-					if(action != null) {
-						drugPrice -= (action.getPercentOfDiscount()/ 100.0) * pharmacy.getPrice();
-					}
-					
-					pharmacy.setPriceWithDiscount(drugPrice);
+				if(countDrug > 0) {				
+					pharmacy.setPriceWithDiscount(getDrugPriceWithDiscount(pharmacy.Id, pharmacy.getPrice(), user.getId()));
 					pharmacy.setCount(countDrug);
-
 					return pharmacy;
 				}
 			}
 		}
 
 		return null;
+	}
+	
+	private double getDrugPriceWithDiscount(UUID pharmacyId, double regularPrice, UUID userId) {
+		double drugPrice = loyalityProgramService.getDiscountDrugPriceForPatient(regularPrice, userId);
+		ActionAndPromotion action = actionAndPromotionsRepository.findCurrentActionAndPromotionForPharmacyForActionType(pharmacyId, ActionAndPromotionType.DRUGDISCOUNT);
+
+		if(action != null) {
+			drugPrice -= (action.getPercentOfDiscount()/ 100.0) * regularPrice;
+		}
+		return drugPrice;
 	}
 
 	@Override

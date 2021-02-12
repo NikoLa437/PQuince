@@ -12,8 +12,6 @@ import javax.persistence.Version;
 @Entity
 @Table(name="loyaltyprogram")
 public class LoyaltyProgram {
-
-	private static final long serialVersionUID = 1L;
 	
 	@Id
     @Column(name = "id")
