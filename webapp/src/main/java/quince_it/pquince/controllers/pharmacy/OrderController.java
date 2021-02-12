@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import quince_it.pquince.services.contracts.dto.EntityIdDTO;
 import quince_it.pquince.services.contracts.dto.drugs.CreateOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.DrugForOrderDTO;
+import quince_it.pquince.services.contracts.dto.drugs.DrugWithPriceDTO;
+import quince_it.pquince.services.contracts.dto.drugs.EditOrderDTO;
 import quince_it.pquince.services.contracts.dto.drugs.OrderDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
@@ -45,6 +47,18 @@ public class OrderController {
 		try {
 			return new ResponseEntity<>(orderService.create(createOrderDTO),HttpStatus.CREATED);
 
+		}catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@CrossOrigin
+	@PutMapping
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<?> update(@RequestBody EditOrderDTO editOrderDTO) {
+		try {
+			orderService.update(editOrderDTO);
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}catch(Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
@@ -103,5 +117,19 @@ public class OrderController {
 	@PreAuthorize("hasRole('SUPPLIER')") 
 	public ResponseEntity<List<IdentifiableDTO<OrderForProviderDTO>>> findAllForProvider() {
 		return new ResponseEntity<>(orderService.findAllProvider(),HttpStatus.OK);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/find-drugs-by-order")
+	@PreAuthorize("hasRole('PHARMACYADMIN')") 
+	public ResponseEntity<List<DrugForOrderDTO>> findAllAddedDrugsToOrder(@RequestParam UUID orderId) {
+		return new ResponseEntity<>(orderService.findDrugsFromOrder(orderId),HttpStatus.OK);
+	}
+	
+	@CrossOrigin
+	@GetMapping("/find-drugs-by-order-to-add")
+	@PreAuthorize("hasRole('PHARMACYADMIN')") 
+	public ResponseEntity<List<DrugForOrderDTO>> findAllDrugsToAddForOrder(@RequestParam UUID orderId) {
+		return new ResponseEntity<>(orderService.findAllDrugsToAddForOrder(orderId),HttpStatus.OK);
 	}
 }

@@ -17,6 +17,8 @@ import StarOutline from "../static/star-outline.png";
 import HeadingSuccessAlert from "../components/HeadingSuccessAlert";
 import HeadingAlert from "../components/HeadingAlert";
 import PharmacyPharmacistsModal from "../components/PharmacyPharmacistsModal";
+import CheckQrAvailableModal from "../components/CheckQrAvailableModal";
+
 
 class PharmacyProfilePage extends Component {
 	state = {
@@ -49,6 +51,7 @@ class PharmacyProfilePage extends Component {
 		failMessage: "",
 		pharmacists: [],
 		showPharmacistsModal: false,
+		drugAvailableModalShow:false
 	};
 
 	fetchData = (id) => {
@@ -406,6 +409,12 @@ class PharmacyProfilePage extends Component {
 			});
 	};
 
+	handleCloseCheckQR = () =>{
+		this.setState({
+			drugAvailableModalShow:false
+		})
+	}
+
 	handleModifyFeedback = () => {
 		let entityDTO = {
 			pharmacyId: this.state.pharmacyId,
@@ -437,6 +446,12 @@ class PharmacyProfilePage extends Component {
 				console.log(err);
 			});
 	};
+
+	handleCheckDrugAvailable =()=>{
+		this.setState({
+			drugAvailableModalShow:true
+		})
+	}
 
 	handleClickIcon = (grade) => {
 		this.setState({ patientsGrade: grade });
@@ -477,8 +492,8 @@ class PharmacyProfilePage extends Component {
 							</a>
 						</li>
 						<li>
-							<a href="#" className="appointment-btn scrollto" style={myStyle}>
-								Check drug availability ***
+							<a onClick={this.handleCheckDrugAvailable} href="#" className="appointment-btn scrollto" style={myStyle}>
+								Check drug availability
 							</a>
 						</li>
 						<li className="drop-down">
@@ -642,6 +657,13 @@ class PharmacyProfilePage extends Component {
 						drugs={this.state.drugsInPharmacy}
 						header="Our drugs in stock"
 					/>
+
+					<CheckQrAvailableModal
+						show={this.state.drugAvailableModalShow}
+						onCloseModal={this.handleCloseCheckQR}
+						pharmacyId={this.state.pharmacyId}
+						header="Check QR"
+					/>				
 
 					<ReserveDrugsInPharmacy
 						show={this.state.showReserveDrugsInPharmacy}

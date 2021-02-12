@@ -18,18 +18,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import quince_it.pquince.entities.pharmacy.IncomeStatistics;
+import quince_it.pquince.entities.pharmacy.PharmacyIncomeStatistics;
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.ActionAndPromotionsDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.DateRangeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.DrugsStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.ExaminationsStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.IdentifiablePharmacyDrugPriceAmountDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.IncomeStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFeedbackDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyIncomeStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.users.ComplaintPharmacyDTO;
 import quince_it.pquince.services.contracts.exceptions.ComplaintsNotAllowedException;
 import quince_it.pquince.services.contracts.exceptions.FeedbackNotAllowedException;
@@ -79,6 +84,18 @@ public class PharmacyController {
 		
 		return new ResponseEntity<List<IdentifiableDTO<PharmacyDrugPriceDTO>>>(pharmacyService.findWithQR(id),HttpStatus.OK);
 		
+	}
+	
+	@GetMapping("/has-qrpharmacies")
+	@PreAuthorize("hasRole('PATIENT')")
+	public ResponseEntity<?> findIfPharmacyHasQR(@RequestParam UUID pharamcyId,@RequestParam UUID qrID) {
+		
+		if(pharmacyService.findIfPharmacyHasQRCode(pharamcyId,qrID)) {
+			return new ResponseEntity<>(HttpStatus.OK); 
+		}
+		
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+
 	}
 	
 	@PostMapping("/qrpharmacies/buy")
@@ -520,6 +537,18 @@ public class PharmacyController {
 	public ResponseEntity<DrugsStatisticsDTO> findStatisticsForDrugs() {
 		try {
 			return new ResponseEntity<>(pharmacyService.findStatisticsForDrugs(),HttpStatus.OK);
+		}catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@CrossOrigin
+	@GetMapping("/find-income-statistics-for-pharmacy/{startDateTime}/{endDateTime}")
+	@PreAuthorize("hasRole('PHARMACYADMIN')")
+	public ResponseEntity<PharmacyIncomeStatistics> findIncomeStatisticsForPharmacy(@PathVariable long startDateTime,@PathVariable long endDateTime) {
+		try {
+			return new ResponseEntity<>(pharmacyService.findIncomeStatisticsForPharmacy(new Date(startDateTime),new Date(endDateTime)),HttpStatus.OK);
 		}catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

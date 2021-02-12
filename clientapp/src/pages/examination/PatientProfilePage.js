@@ -50,7 +50,7 @@ class PatientProfilePage extends Component {
 						redirect: true,
 						redirectUrl: "/unauthorized"
 					});
-				} else {
+				} else if (res.status == 200 || res.status == 201) {
 					let patientsHistory = false;
 					if (res.status == 201)
 						patientsHistory = true;
@@ -79,7 +79,7 @@ class PatientProfilePage extends Component {
 						redirect: true,
 						redirectUrl: "/unauthorized"
 					});
-				} else {
+				} else if (res.status == 200) {
 					this.setState({
 						id: res.data.Id,
 						email: res.data.EntityDTO.email,
@@ -169,20 +169,20 @@ class PatientProfilePage extends Component {
 
 	handleSortByDate = () => {
 		console.log(this.state.appointments);
-        this.state.appointments.sort(this.compareDates);
-        this.setState(this.state);
+		this.state.appointments.sort(this.compareDates);
+		this.setState(this.state);
 		console.log(this.state.appointments);
-    };
+	};
 
 	compareDates = (a, b) => {
-        if (a.EntityDTO.startDateTime < b.EntityDTO.startDateTime) {
-            return 1;
-        }
-        if (a.EntityDTO.startDateTime > b.EntityDTO.startDateTime) {
-            return -1;
-        }
-        return 0;
-    }
+		if (a.EntityDTO.startDateTime < b.EntityDTO.startDateTime) {
+			return 1;
+		}
+		if (a.EntityDTO.startDateTime > b.EntityDTO.startDateTime) {
+			return -1;
+		}
+		return 0;
+	}
 
 	render() {
 
@@ -349,6 +349,29 @@ class PatientProfilePage extends Component {
 												<b>{this.hasRole("ROLE_DERMATOLOGIST") ? "Dermatologist:" : "Pharmacist:"}</b>{" "}
 												{appointment.EntityDTO.staff.EntityDTO.name +
 													" " + appointment.EntityDTO.staff.EntityDTO.surname}
+											</div>
+											<div hidden={appointment.EntityDTO.appointmentStatus != "FINISHED"}>
+												{appointment.EntityDTO.appointmentStatus == "FINISHED" && appointment.EntityDTO.treatmentReportDTO != undefined && appointment.EntityDTO.treatmentReportDTO != null ? (
+													<div style={{whiteSpace: "pre"}}>
+														<div>
+															<b>Anamensis</b>{" "}
+															{appointment.EntityDTO.treatmentReportDTO.anamnesis}
+														</div>
+														<div>
+															<b>Diagnosis</b>{" "}
+															{appointment.EntityDTO.treatmentReportDTO.diagnosis}
+														</div>
+														<div>
+															<b>Therapy</b><br />
+															<div>
+																{appointment.EntityDTO.treatmentReportDTO.therapy}
+															</div>	
+														</div>
+													</div>
+												) : (
+														<div></div>
+													)}
+
 											</div>
 										</td>
 										<td className="align-right" style={{ width: "35%" }}>
