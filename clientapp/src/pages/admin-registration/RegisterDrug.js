@@ -332,7 +332,7 @@ class RegisterDrug extends Component {
 						id: res.data,
 					};
 					
-					Axios.post(BASE_URL + "/api/ingredients", ingredientDTO)
+					Axios.post(BASE_URL + "/api/ingredients", ingredientDTO, { headers: { Authorization: getAuthHeader()}})
 						.then((res) => {
 							console.log("Success ingredients");
 						})
