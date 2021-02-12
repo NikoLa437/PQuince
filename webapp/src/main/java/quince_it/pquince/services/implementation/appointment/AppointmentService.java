@@ -180,6 +180,7 @@ public class AppointmentService implements IAppointmentService{
 			dermatologistRepository.save(dermatologist);
 			return newAppointment.getId();
 		}catch(Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -618,7 +619,7 @@ public class AppointmentService implements IAppointmentService{
 
 	@Override
 	public List<IdentifiableDTO<AppointmentDTO>> getCreatedAppointmentsByDermatologist() {
-		List<Appointment> appointments = appointmentRepository.getCreatedAppointmentsByDermatologist(userService.getLoggedUserId());
+		List<Appointment> appointments = appointmentRepository.getCreatedAppointmentsByDermatologist(userService.getLoggedUserId(), userService.getPharmacyForLoggedDermatologist().getId());
 		
 		List<IdentifiableDTO<AppointmentDTO>> returnAppointments = AppointmentMapper.MapAppointmentPersistenceListToAppointmentIdentifiableDTOList(appointments);
 		
@@ -936,7 +937,16 @@ public class AppointmentService implements IAppointmentService{
 	}
 
 	public IdentifiableDTO<AppointmentDTO> getAppointment(UUID appointmentId) {
+		// current pharmacy?
+		Staff staff = staffRepository.getOne(userService.getLoggedUserId());
+		Pharmacy pharmacy;
+		if (staff.getStaffType() == StaffType.DERMATOLOGIST)
+			pharmacy = userService.getPharmacyForLoggedDermatologist();
+		else
+			pharmacy = pharmacistRepository.getOne(staff.getId()).getPharmacy();
 		Appointment appointment = appointmentRepository.findById(appointmentId).get();
+		if (appointment.getStaff().getId() != staff.getId() || appointment.getPharmacy().getId() != pharmacy.getId())
+			throw new IllegalArgumentException("Can't access appointment not scheduled for given staff and pharmacy");
 		return AppointmentMapper.MapAppointmentPersistenceToAppointmentIdentifiableDTO(appointment);
 	}
 
