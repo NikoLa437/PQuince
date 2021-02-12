@@ -30,7 +30,10 @@ public class Constants {
 	public static final UUID PHARMACY_ID = UUID.fromString("cafeddee-56cb-11eb-ae93-0242ac130002");
 	public static final UUID ACTION_ID = UUID.fromString("cafeddee-56cb-11eb-ae93-0242ac130002");
 	public static final UUID DRUG_ID = UUID.fromString("dac2b818-5838-11eb-ae93-0242ac130002");
-
+	public static final UUID WORKTIME_ID = UUID.fromString("dac2b818-5838-11eb-ae93-0242ac133332");
+	public static final long WORKTIME_START = Long.parseLong("1613394120000");
+	public static final long WORKTIME_END = Long.parseLong("1613395020000");
+	
 	@SuppressWarnings("deprecation")
 	public static final Date APPOINTMENT_START_DATE_TIME = new Date(2021, 2, 15, 14, 2);
 	@SuppressWarnings("deprecation")

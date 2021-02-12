@@ -4,15 +4,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import quince_it.pquince.entities.pharmacy.IncomeStatistics;
+import quince_it.pquince.entities.pharmacy.PharmacyIncomeStatistics;
 import quince_it.pquince.services.contracts.dto.drugs.PharmacyERecipeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.DrugsStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.EditPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.ExaminationsStatisticsDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.IncomeStatisticsDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyDrugPriceDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradeDTO;
 import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyGradePriceDTO;
+import quince_it.pquince.services.contracts.dto.pharmacy.PharmacyIncomeStatisticsDTO;
 import quince_it.pquince.services.contracts.identifiable_dto.IdentifiableDTO;
 import quince_it.pquince.services.contracts.interfaces.IService;
 
@@ -79,4 +83,6 @@ public interface IPharmacyService extends IService<PharmacyDTO, IdentifiableDTO<
 	DrugsStatisticsDTO findStatisticsForDrugs();
 
 	boolean findIfPharmacyHasQRCode(UUID pharamcyId, UUID qrID);
+
+	PharmacyIncomeStatistics findIncomeStatisticsForPharmacy(Date dateFrom, Date dateTo) throws Exception;
 }
