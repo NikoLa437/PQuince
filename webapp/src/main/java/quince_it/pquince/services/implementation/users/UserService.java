@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import quince_it.pquince.entities.drugs.Allergen;
 import quince_it.pquince.entities.drugs.EReceiptItems;
 import quince_it.pquince.entities.pharmacy.Pharmacy;
+import quince_it.pquince.entities.users.Address;
 import quince_it.pquince.entities.users.Authority;
 import quince_it.pquince.entities.users.Dermatologist;
 import quince_it.pquince.entities.users.Patient;
@@ -56,6 +57,7 @@ import quince_it.pquince.services.contracts.dto.users.IdentifiableDermatologistF
 import quince_it.pquince.services.contracts.dto.users.PatientDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistFiltrationDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacistForPharmacyGradeDTO;
+import quince_it.pquince.services.contracts.dto.users.PharmacistRequestDTO;
 import quince_it.pquince.services.contracts.dto.users.PharmacyAdminDTO;
 import quince_it.pquince.services.contracts.dto.users.RemoveDermatologistFromPharmacyDTO;
 import quince_it.pquince.services.contracts.dto.users.RemovePharmacistFromPharmacyDTO;
@@ -969,5 +971,29 @@ public class UserService implements IUserService{
 		else
 			return false;
 	}
-	
+
+	public UUID createPharmacists(PharmacistRequestDTO pharmacistRequest) {
+		Pharmacy pharmacy = pharmacyRepository.getOne(this.getPharmacyIdForPharmacyAdmin());
+
+		Pharmacist staff = CreatePharamacistsFromDTO(pharmacistRequest,pharmacy);
+		staff.setPassword(passwordEncoder.encode(staff.getId().toString()));
+		IdentifiableDTO<AuthorityDTO> authority = authorityService.findByName("ROLE_PHARMACIST");
+		List<Authority> authorities = new ArrayList<Authority>();
+		authorities.add(new Authority(authority.Id,authority.EntityDTO.getName()));
+		staff.setUserAuthorities(authorities);
+		
+		WorkTimeDTO workTimeDTO = new WorkTimeDTO(pharmacy.getId(),staff.getId(), pharmacistRequest.getStartDate(), pharmacistRequest.getEndDate(), pharmacistRequest.getStartTime(), pharmacistRequest.getEndTime(),"");
+		userRepository.save(staff);
+
+		workTimeService.create(workTimeDTO);
+			
+		return staff.getId();
+
+	}
+
+	private Pharmacist CreatePharamacistsFromDTO(PharmacistRequestDTO pharmacistRequest,Pharmacy pharmacy) {
+		// TODO Auto-generated method stub
+		return new Pharmacist(pharmacistRequest.getEmail(), passwordEncoder.encode(pharmacistRequest.getPassword()), pharmacistRequest.getName(), pharmacistRequest.getSurname(), pharmacistRequest.getAddress(), pharmacistRequest.getPhoneNumber(),pharmacy);
+	}
+
 }

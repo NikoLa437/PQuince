@@ -40,10 +40,10 @@ class AddDrugToPharmacy extends Component {
             headers: { Authorization: getAuthHeader() },}).then((res) =>{
                 this.props.updateDrugs();
                 this.setState({showAddStorageAndPrice: false, modalSize:'lg'});
-                alert("Uspesno dodat dermatolog u apoteku")
+                alert("Uspesno dodat lek u apoteku")
                 this.handleClickOnClose();
             }).catch((err) => {
-                alert('Nije moguce dodati dermatologa');
+                alert('Nije moguce dodati lek');
             });
         }else{
             // aktivirati error

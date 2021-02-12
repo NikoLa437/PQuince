@@ -154,11 +154,11 @@ class PharmacistPage extends Component {
                 onClick: () => {
                     let removeDrugDTO = {
                         pharmacyId : this.state.pharmacyId,
-                        drugId: id,
+                        pharmacistId: id,
                     };
             
                     Axios
-                    .put(BASE_URL + "/api/drug/remove-drug-from-pharmacy", removeDrugDTO, {
+                    .put(BASE_URL + "/api/users/remove-pharmacist-from-pharmacy", removeDrugDTO, {
                         headers: { Authorization: getAuthHeader() },
                     }).then((res) =>{
                         console.log(res.data);
