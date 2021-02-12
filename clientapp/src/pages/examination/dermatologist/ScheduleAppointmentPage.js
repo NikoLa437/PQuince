@@ -52,6 +52,7 @@ class ScheduleAppointmentPage extends Component {
 			})
 			.catch((err) => {
 				console.log(err);
+				alert("Appointment can't be scheduled");
 			});
 	};
 
