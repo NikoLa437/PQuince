@@ -141,6 +141,7 @@ insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('1135
 insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('35345678-52d3-11eb-ae93-0242ac130002' ,'cafeddee-56cb-11eb-ae93-0242ac130002');
 insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('22345678-52d3-11eb-ae93-0242ac130002' ,'cafeddee-56cb-11eb-ae93-0242ac130202');
 insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('25345678-52d3-11eb-ae93-0242ac130002' ,'cafeddee-56cb-11eb-ae93-0242ac130202');
+insert into dermatologist_pharmacy (dermatologist_id, pharmacy_id) values ('22345678-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002');
 --pharmacyadmin-pharmacy
 insert into pharmacy_admin (id,pharmacy_id) values ('9ba98d47-1a8a-4ae1-b109-af7b56e94788','cafeddee-56cb-11eb-ae93-0242ac130002');
 insert into pharmacy_admin (id,pharmacy_id) values ('9ba88d47-1a8a-4ae1-b109-af7b56e94788','cafeddee-56cb-11eb-ae93-0242ac130002');
@@ -199,6 +200,9 @@ insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from,
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130778','2fe1cd8e-5839-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 340);
 insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac130779','2c797174-5839-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002','2020-11-11','2021-02-22', 500);
 
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac131129','b4abdfc6-68cb-11eb-a102-d7374f9803ba','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-22', 550);
+insert into drug_price_for_pharmacy(id,drug_instance_id, pharmacy_id, date_from, date_to, price) values ('ffc6bec4-6964-11eb-9439-0242ac132777','1fe1cd8e-5839-11eb-ae93-0242ac137772','cafeddee-56cb-11eb-ae93-0242ac130202','2020-11-11','2021-02-22', 340);
+
 --drug storage
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('dac2b818-5838-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24, 1);
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('dac2b818-5838-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130202', 55, 1);
@@ -209,6 +213,9 @@ insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values (
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('1fe1cd8e-5839-11eb-ae93-0242ac137772', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24, 1);
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('2fe1cd8e-5839-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 24, 1);
 insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('2c797174-5839-11eb-ae93-0242ac130002', 'cafeddee-56cb-11eb-ae93-0242ac130002', 40, 1);
+
+insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('b4abdfc6-68cb-11eb-a102-d7374f9803ba', 'cafeddee-56cb-11eb-ae93-0242ac130202', 25, 1);
+insert into drug_storage(drug_instance_id, pharmacy_id, count, version) values ('1fe1cd8e-5839-11eb-ae93-0242ac137772', 'cafeddee-56cb-11eb-ae93-0242ac130202', 25, 1);
 
 --suplier drug storage
 insert into supplier_drug_storage(drug_instance_id, count, version) values ('dac2b818-5838-11eb-ae93-0242ac130002', 20, 1);
@@ -252,7 +259,7 @@ insert into appointment (id, appointment_status, appointment_type, start_date_ti
 
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, patient_id, version) values ('2ba86116-5f40-11eb-ae93-0242ac130002','EXPIRED','EXAMINATION', '2021-02-11 11:00:00', '2021-02-11 11:30:00', 1400, 1400, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002', 1);
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, version) values ('2ba86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-11 11:30:00', '2021-02-11 12:00:00', 1300, 1300, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002', 1);
-insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, version) values ('2ca86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-13 11:30:00', '2021-02-13 12:00:00', 1500, 1500, 'cafeddee-56cb-11eb-ae93-0242ac130202', '22345678-52d3-11eb-ae93-0242ac130002', 1);
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, version) values ('2ca86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-16 11:30:00', '2021-02-16 12:00:00', 1500, 1500, 'cafeddee-56cb-11eb-ae93-0242ac130202', '22345678-52d3-11eb-ae93-0242ac130002', 1);
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, version) values ('2da86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-13 11:30:00', '2021-02-13 12:00:00', 1500, 1500, 'cafeddee-56cb-11eb-ae93-0242ac130002', '25345678-52d3-11eb-ae93-0242ac130002', 1);
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, version) values ('2da86116-5f40-12eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-14 11:30:00', '2021-02-14 12:00:00', 1300, 1300, 'cafeddee-56cb-11eb-ae93-0242ac130002', '35345678-52d3-11eb-ae93-0242ac130002', 1);
 
