@@ -109,6 +109,7 @@ insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_r
 insert into drug_instance(drug_format, drug_instance_name, loyality_points, on_reciept, quantity, recommended_amount, side_effects, manufacturer_id, id, drug_kind) values('CAPSULE', 'Blokmax',1, false, 500, '2x1 na dan', 'Nema nezeljenih dejstava', '61297672-5838-11eb-ae93-0242ac130002','1fe1cd8e-5839-11eb-ae93-0242ac137772', 'BIOLOGICAL');
 
 insert into drug_allergen (drug_id, allergen_id) values ('2c797174-5839-11eb-ae93-0242ac130002','062d319f-f393-464c-98fb-b3db29e77626');
+insert into drug_allergen (drug_id, allergen_id) values ('dac2b818-5838-11eb-ae93-0242ac130002','3b27db4c-48bb-4f78-a3da-745d9c9458ba');
 
 insert into patient_allergen (patient_id, allergen_id) values ('22793162-52d3-11eb-ae93-0242ac130002','062d319f-f393-464c-98fb-b3db29e77626');
 
@@ -169,7 +170,7 @@ insert into appointment (id, appointment_status, appointment_type, start_date_ti
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, staff_id, pharmacy_id, patient_id, version) values ('2cc86117-5c40-13ab-ae93-0242ac130002','FINISHED','CONSULTATION', '2021-01-29 11:55:00', '2021-01-29 12:10:00', 999, 999, '25345278-52d3-12eb-ac93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130202','22793162-52d3-11eb-ae93-0242ac130002', 1);
 
 
-insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, patient_id, version) values ('2ba86116-5f40-11eb-ae93-0242ac130002','SCHEDULED','EXAMINATION', '2021-02-11 11:00:00', '2021-02-11 11:30:00', 1400, 1400, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002', 1);
+insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, patient_id, version) values ('2ba86116-5f40-11eb-ae93-0242ac130002','EXPIRED','EXAMINATION', '2021-02-11 11:00:00', '2021-02-11 11:30:00', 1400, 1400, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002', 1);
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, version) values ('2ba86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-11 11:30:00', '2021-02-11 12:00:00', 1300, 1300, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002', 1);
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, version) values ('2ca86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-13 11:30:00', '2021-02-13 12:00:00', 1500, 1500, 'cafeddee-56cb-11eb-ae93-0242ac130202', '22345678-52d3-11eb-ae93-0242ac130002', 1);
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, version) values ('2da86116-5f40-11eb-ae93-0242ac134002','CREATED','EXAMINATION', '2021-02-13 11:30:00', '2021-02-13 12:00:00', 1500, 1500, 'cafeddee-56cb-11eb-ae93-0242ac130002', '25345678-52d3-11eb-ae93-0242ac130002', 1);
@@ -208,6 +209,7 @@ insert into appointment (id, appointment_status, appointment_type, start_date_ti
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, patient_id, version) values ('026c7fb3-df04-4c0c-8ebe-411717961cac','FINISHED','EXAMINATION', '2021-01-15 11:00:00', '2021-01-15 11:30:00', 1800, 1800, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002', 1);
 insert into appointment (id, appointment_status, appointment_type, start_date_time, end_date_time, price, price_to_pay, pharmacy_id, staff_id, patient_id, version) values ('027c7fb3-df04-4c0c-8ebe-411717961cac','FINISHED','EXAMINATION', '2021-01-16 11:00:00', '2021-01-16 11:30:00', 1800, 1800, 'cafeddee-56cb-11eb-ae93-0242ac130002', '11355678-52d3-11eb-ae93-0242ac130002','22793162-52d3-11eb-ae93-0242ac130002', 1);
 
+insert into treatment_report (id, appointment_id, anamnesis, diagnosis, therapy) values ('115c7fb3-df04-4c0c-8ebe-411717961cac', '005c7fb3-df04-4c0c-8ebe-411717961cac', 'Upala pluca', 'Upalitis plucatitisaaaaaaaaaaaaaaaaaaaaaaaaaaa plucatitisaaaaaaaaaaaaaaaaaaaaaaaaaaa plucatitisaaaaaaaaaaaaaaaaaaaaaaaaaaa plucatitisaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'Respirator');
 
 insert into work_time (id, start_date, start_time, end_date, end_time, staff_id, pharmacy_id) values ('2fb41318-60d4-11eb-ae93-0242ac130002', '2021-02-20', 8, '2021-03-20', 17, '35345678-52d3-11eb-ae93-0242ac130002','cafeddee-56cb-11eb-ae93-0242ac130002');
 
